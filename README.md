@@ -43,19 +43,9 @@ composer require middag-io/moodle
 
 This pulls `middag-io/framework` and `middag-io/ui` automatically.
 
-> The `middag-io/*` packages are published under the `middag-io` GitHub
-> organization. If they are not available on your default Composer registry yet,
-> add the source repositories to your project's `composer.json`:
->
-> ```json
-> {
->     "repositories": [
->         { "type": "vcs", "url": "https://github.com/middag-io/middag-php-moodle" },
->         { "type": "vcs", "url": "https://github.com/middag-io/middag-php-framework" },
->         { "type": "vcs", "url": "https://github.com/middag-io/middag-php-ui" }
->     ]
-> }
-> ```
+> The `middag-io/*` packages are published on [Packagist](https://packagist.org/packages/middag-io/),
+> so they resolve from the default Composer registry with no extra
+> configuration. No manual `repositories` entry is required.
 
 ## Development
 
