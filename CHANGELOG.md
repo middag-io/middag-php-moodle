@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/middag-io/middag-php-moodle/compare/v0.4.0...v0.5.0) (2026-06-26)
+
+
+### Features
+
+* **definition:** add capabilities to Service external-function definition ([489b8ab](https://github.com/middag-io/middag-php-moodle/commit/489b8ab1b32e910341f3c455706b1d295e67a048))
+
 ## [0.4.0](https://github.com/middag-io/middag-php-moodle/compare/v0.3.0...v0.4.0) (2026-06-26)
 
 
