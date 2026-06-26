@@ -1,0 +1,112 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * middag-io/moodle — MIDDAG Moodle adapter.
+ *
+ * @author      Michael Meneses <michael@middag.io>
+ * @copyright   2026 MIDDAG (https://middag.io)
+ * @license     Apache-2.0
+ */
+
+use Middag\Framework\Bus\Contract\UserContextResolverInterface;
+use Middag\Moodle\Kernel\Config\ComponentContext;
+
+/*
+ * PHPUnit bootstrap for middag-io/moodle tests.
+ *
+ * Provides minimal Moodle function stubs that allow testing adapter classes
+ * without a full Moodle runtime. Tests control return values via $GLOBALS.
+ */
+
+// Moodle constants required by source code
+if (!defined('MOODLE_INTERNAL')) {
+    define('MOODLE_INTERNAL', true);
+}
+if (!defined('IGNORE_MISSING')) {
+    define('IGNORE_MISSING', 0);
+}
+if (!defined('IGNORE_MULTIPLE')) {
+    define('IGNORE_MULTIPLE', 1);
+}
+if (!defined('MUST_EXIST')) {
+    define('MUST_EXIST', 2);
+}
+if (!defined('SITEID')) {
+    define('SITEID', 1);
+}
+
+// Stub: get_config() — reads from $GLOBALS['__middag_test_config']
+if (!function_exists('get_config')) {
+    function get_config(string $plugin, ?string $name = null): mixed
+    {
+        if ($name === null) {
+            return (object) ($GLOBALS['__middag_test_config'] ?? []);
+        }
+
+        return $GLOBALS['__middag_test_config'][$name] ?? false;
+    }
+}
+
+if (!function_exists('set_config')) {
+    function set_config(string $name, mixed $value, string $plugin = ''): bool
+    {
+        $GLOBALS['__middag_test_config'][$name] = $value;
+
+        return true;
+    }
+}
+
+if (!function_exists('unset_config')) {
+    function unset_config(string $name, string $plugin = ''): bool
+    {
+        unset($GLOBALS['__middag_test_config'][$name]);
+
+        return true;
+    }
+}
+
+// Stub: get_plugins_with_function() — reads from $GLOBALS['__middag_test_plugin_functions']
+if (!function_exists('get_plugins_with_function')) {
+    function get_plugins_with_function(string $function, string $file = 'lib.php', bool $include = true): array
+    {
+        $registry = $GLOBALS['__middag_test_plugin_functions'] ?? [];
+
+        return $registry[$function] ?? [];
+    }
+}
+
+// Stub: core\url (Moodle's URL class — implements __toString as Stringable)
+if (!class_exists('core\url', false)) {
+    eval('namespace core; class url implements \Stringable { public function __construct(public string $url = "") {} public function __toString(): string { return $this->url; } public function out(bool $escaped = true): string { return $this->url; } }');
+}
+if (!class_exists('moodle_url', false)) {
+    class_alias('core\url', 'moodle_url');
+}
+
+// Stub: core\task\adhoc_task (base class for Moodle adhoc tasks)
+if (!class_exists('core\task\adhoc_task', false)) {
+    eval('namespace core\task; abstract class adhoc_task { private $customdata = null; private $userid = null; public function set_custom_data($customdata): void { $this->customdata = json_encode($customdata); } public function get_custom_data() { return $this->customdata === null ? null : json_decode($this->customdata); } public function set_userid($userid): void { $this->userid = $userid; } public function get_userid() { return $this->userid; } }');
+}
+
+// Stub: core\component::get_component_directory() — returns the path from
+// $GLOBALS['__middag_test_component_dir'] (null when unset, mirroring an
+// unknown/uninstalled component). moodle-stubs provide this for PHPStan only;
+// it is not autoloadable at runtime, so tests need a behavioral stand-in.
+if (!class_exists('core\component', false)) {
+    eval('namespace core; class component { public static function get_component_directory($component) { return $GLOBALS["__middag_test_component_dir"] ?? null; } }');
+}
+
+// Composer autoloader (loads moodle-stubs + framework deps)
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+// Configure the adapter component seam for the test runtime (mirrors the product
+// composition root). Adapter helpers resolve the running component via
+// ComponentContext::name(), which throws when the adapter is unconfigured.
+ComponentContext::configure('local_example', 'local_example_autoload');
+
+// Post-autoload: framework interface stubs if not resolved by autoloader
+if (!interface_exists(UserContextResolverInterface::class, false)) {
+    require_once __DIR__ . '/stubs/framework-stubs.php';
+}

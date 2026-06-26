@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * middag-io/moodle — MIDDAG Moodle adapter.
+ *
+ * @author      Michael Meneses <michael@middag.io>
+ * @copyright   2026 MIDDAG (https://middag.io)
+ * @license     Apache-2.0
+ */
+
+namespace Middag\Moodle\Dto;
+
+use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Moodle\Enum\TextFormat as text_format;
+
+/**
+ * Site-level information projection (course id=1).
+ *
+ * Typed projection of Moodle's $SITE global (course id=1).
+ *
+ * @api
+ */
+final class SiteInfoDto extends abstract_dto
+{
+    public function __construct(
+        public int $id = 1,
+        public string $fullname = '',
+        public string $shortname = '',
+        public string $summary = '',
+        public text_format $summaryformat = text_format::HTML,
+        public string $format = '',
+        public string $lang = '',
+        public string $theme = '',
+        public int $timecreated = 0,
+        public int $timemodified = 0,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'fullname' => $this->fullname,
+            'shortname' => $this->shortname,
+            'summary' => $this->summary,
+            'summaryformat' => $this->summaryformat->value,
+            'format' => $this->format,
+            'lang' => $this->lang,
+            'theme' => $this->theme,
+            'timecreated' => $this->timecreated,
+            'timemodified' => $this->timemodified,
+        ];
+    }
+}

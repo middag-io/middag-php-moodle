@@ -1,0 +1,13 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 6
+    paths:
+        - src
+    scanDirectories:
+        - vendor/michaelmeneses/moodle-stubs/stubs
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - identifier: missingType.iterableValue
+    excludePaths:

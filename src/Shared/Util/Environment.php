@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * middag-io/moodle — MIDDAG Moodle adapter.
+ *
+ * @author      Michael Meneses <michael@middag.io>
+ * @copyright   2026 MIDDAG (https://middag.io)
+ * @license     Apache-2.0
+ */
+
+namespace Middag\Moodle\Shared\Util;
+
+use Middag\Framework\Shared\Util\Environment as base_environment;
+
+/**
+ * Environment detection (Moodle-flavor).
+ *
+ * Extends the framework `Environment` to plug Moodle-native signals into
+ * the resolution chain — `$CFG->middag_env` config + `DEBUG_DEVELOPER`
+ * inference from `$CFG->debug`. `MOODLE_ENV` env var still recognized for
+ * backwards-compat with prior deployments.
+ *
+ * @internal
+ */
+final class Environment extends base_environment
+{
+    /**
+     * Read Moodle-native environment signals.
+     *
+     * Order: legacy `MOODLE_ENV` env var → `$CFG->middag_env` config →
+     * `$CFG->debug === DEBUG_DEVELOPER` inference → null (let framework
+     * resolution default to production).
+     *
+     * NOTE: Direct `$CFG` access is an accepted boundary exception —
+     * environment detection runs during early bootstrap, before the
+     * container exists.
+     */
+    protected static function detectHostEnvironment(): ?string
+    {
+        $legacy_env = getenv('MOODLE_ENV');
+        if ($legacy_env !== false && $legacy_env !== '') {
+            return $legacy_env;
+        }
+
+        global $CFG;
+
+        if (!empty($CFG->middag_env)) {
+            return $CFG->middag_env;
+        }
+
+        if (isset($CFG->debug) && $CFG->debug === DEBUG_DEVELOPER) {
+            return self::ENV_DEVELOPMENT;
+        }
+
+        return null;
+    }
+}

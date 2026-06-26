@@ -1,0 +1,28 @@
+   0/247 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+ 247/247 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+---------
+  33     Parameter #1 $dto                                                      
+  33     Return type                                                            
+  31     Parameter #1 $dto                                                      
+  31     Return type                                                            
+  40     Return type                                                            
+  64     Parameter #1 $event (Middag\Moodle\Domain\Audit\audit_log_interface)   
+  64     Return type Middag\Moodle\Domain\Audit\audit_log_interface of method   
+  112    Return type Middag\Moodle\Domain\Audit\audit_log_interface|null of     
+  39     Parameter #2 $snapshot                                                 
+  45     Return type Middag\Moodle\Domain\Audit\audit_snapshot_interface|null   
+  204    Return type Middag\Moodle\Domain\Item\item_repository_interface of     
+  64     Return type Middag\Moodle\Domain\ItemRevision\item_revision_interface  
+  151    Return type                                                            
+  37     Parameter #2 $attempt                                                  
+  37     Parameter #1 $dto (Middag\Moodle\Domain\Job\job_dto) of method         
+  37     Return type Middag\Moodle\Domain\Job\job_interface of method           
+  51     Parameter #1 $job (Middag\Moodle\Domain\Job\job_interface) of method   
+  51     Return type Middag\Moodle\Domain\Job\job_interface of method           
+  63     Parameter #2 $attempt                                                  
+  68     Return type Middag\Moodle\Domain\Job\job_interface|null of method      
+  80     Return type Middag\Moodle\Domain\Job\job_interface|null of method      
+  36     Class                                                                  
+  347    Return type core\url of method                                         
+  217    Parameter #2 $contextlevel (Middag\Moodle\Enum\ContextLevel|null) of   
+  284    Return type core\url of method                                       
