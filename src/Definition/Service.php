@@ -19,6 +19,12 @@ namespace Middag\Moodle\Definition;
  */
 final readonly class Service implements DefinitionInterface
 {
+    /**
+     * @param string[] $services     web service shortnames this function is published in
+     * @param ?string  $capabilities comma-separated Moodle capability names required to call this
+     *                               function (advisory metadata in db/services.php; actual enforcement
+     *                               is the external function's own validate_context()/require_capability())
+     */
     public function __construct(
         public string $name,
         public string $classname,
@@ -29,6 +35,7 @@ final readonly class Service implements DefinitionInterface
         public array $services = [],
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,
+        public ?string $capabilities = null,
     ) {}
 
     public function toMoodleArray(string $plugin_name): array
@@ -40,6 +47,10 @@ final readonly class Service implements DefinitionInterface
             'type' => $this->type,
             'ajax' => $this->ajax,
         ];
+
+        if ($this->capabilities !== null && trim($this->capabilities) !== '') {
+            $entry['capabilities'] = trim($this->capabilities);
+        }
 
         if ($this->services !== []) {
             $entry['services'] = $this->services;

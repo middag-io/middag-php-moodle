@@ -139,6 +139,10 @@ final readonly class StaticsRenderer
             $parts[] = sprintf("        'type' => '%s',", $array['type']);
             $parts[] = sprintf("        'ajax' => %s,", empty($array['ajax']) ? 'false' : 'true');
 
+            if (!empty($array['capabilities'])) {
+                $parts[] = sprintf("        'capabilities' => '%s',", addslashes((string) $array['capabilities']));
+            }
+
             if (!empty($array['services'])) {
                 $servicesRendered = [];
                 foreach ($array['services'] as $svc) {

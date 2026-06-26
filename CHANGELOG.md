@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/middag-io/middag-php-moodle/compare/v0.3.0...v0.4.0) (2026-06-26)
+
+
+### Miscellaneous Chores
+
+* initial public release ([c99f8b7](https://github.com/middag-io/middag-php-moodle/commit/c99f8b735618a0f23ecb70951211daea1c77fc72))
+
 ## [0.3.0](https://github.com/middag-io/middag-php-moodle/compare/v0.2.2...v0.3.0) (2026-06-06)
 
 
@@ -100,9 +107,9 @@
 * **service:** restore LicenseManager + LicenseService accidentally deleted in B-044 commit ([c718ac3](https://github.com/middag-io/middag-php-moodle/commit/c718ac3370c312f54725abd59984601479ad4357))
 * **test:** add bootstrap with Moodle stubs and framework interface stubs ([b059b7c](https://github.com/middag-io/middag-php-moodle/commit/b059b7c80e34071c9b41e4dd30945a7d87c9ae29))
 
-## [0.1.1](https://github.com/middag-io/middag-moodle/compare/v0.1.0...v0.1.1) (2026-05-13)
+## [0.1.1](https://github.com/middag-io/middag-php-moodle/compare/v0.1.0...v0.1.1) (2026-05-13)
 
 
 ### Bug Fixes
 
-* use semver constraints for internal deps ([d1c43ff](https://github.com/middag-io/middag-moodle/commit/d1c43ffacba715a64deb97cfdeba701b89aaf5b4))
+* use semver constraints for internal deps ([d1c43ff](https://github.com/middag-io/middag-php-moodle/commit/d1c43ffacba715a64deb97cfdeba701b89aaf5b4))
