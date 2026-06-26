@@ -98,6 +98,11 @@ if (!class_exists('core\component', false)) {
     eval('namespace core; class component { public static function get_component_directory($component) { return $GLOBALS["__middag_test_component_dir"] ?? null; } }');
 }
 
+// Stub: core_external API (external_api + structure classes). moodle-stubs
+// provide these for PHPStan only; classes extending external_api need a runtime
+// stand-in. See tests/stubs/external-api-stubs.php for the rationale + limits.
+require_once __DIR__ . '/stubs/external-api-stubs.php';
+
 // Composer autoloader (loads moodle-stubs + framework deps)
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
