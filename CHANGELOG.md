@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/middag-io/middag-php-moodle/compare/v1.0.0...v1.0.1) (2026-06-27)
+
+
+### Features
+
+* default Inertia to React module and promote Environment to [@api](https://github.com/api) ([3e1827e](https://github.com/middag-io/middag-php-moodle/commit/3e1827e7b72863c0fbcf85460c9d31a3f2e7b3fb))
+
 ## [1.0.0](https://github.com/middag-io/middag-php-moodle/compare/v0.5.0...v1.0.0) (2026-06-27)
 
 
