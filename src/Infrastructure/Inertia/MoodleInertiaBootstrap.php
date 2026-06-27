@@ -46,7 +46,9 @@ final class MoodleInertiaBootstrap
     {
         // AMD module name is adapter-owned state, captured by the bootstrap
         // closure below (the framework no longer holds it via InertiaManager).
-        $amdModule = ComponentContext::name() . '/inertia_app';
+        // The 1.x convention is one React Inertia bundle per component: each
+        // plugin ships {component}/inertia_app_react as its standard entry point.
+        $amdModule = ComponentContext::name() . '/inertia_app_react';
 
         // Moodle plugin compiled frontend bundle, used for cache-busting Inertia version.
         global $CFG;
