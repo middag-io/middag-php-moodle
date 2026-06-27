@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0](https://github.com/middag-io/middag-php-moodle/compare/v0.5.0...v1.0.0) (2026-06-27)
+
+
+### Bug Fixes
+
+* **deps:** require middag-io/framework ^1.0 ([1830ab6](https://github.com/middag-io/middag-php-moodle/commit/1830ab6b54a3e4bbeeebc642f5242727335683a9))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([a993420](https://github.com/middag-io/middag-php-moodle/commit/a99342012a89264cb68e1650191e9c30fae3d6bf))
+
 ## [0.5.0](https://github.com/middag-io/middag-php-moodle/compare/v0.4.0...v0.5.0) (2026-06-26)
 
 
