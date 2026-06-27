@@ -22,7 +22,11 @@ use Middag\Framework\Shared\Util\Environment as base_environment;
  * inference from `$CFG->debug`. `MOODLE_ENV` env var still recognized for
  * backwards-compat with prior deployments.
  *
- * @internal
+ * Public host-environment accessor: plugins and composition-roots call the
+ * inherited is{Development,Testing,Production}() to branch on the resolved
+ * Moodle environment, so this is supported public surface.
+ *
+ * @api
  */
 final class Environment extends base_environment
 {
