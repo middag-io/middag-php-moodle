@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Infrastructure\Inertia;
 
+use core\component as core_component;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaFactory;
 use Middag\Framework\Http\Inertia\InertiaVersionManager;
@@ -124,7 +125,7 @@ final class MoodleInertiaBootstrap
     private static function componentWebBase(): string
     {
         global $CFG;
-        $dir = \core_component::get_component_directory(ComponentContext::name());
+        $dir = core_component::get_component_directory(ComponentContext::name());
 
         return substr((string) $dir, strlen($CFG->dirroot));
     }
