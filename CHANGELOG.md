@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.2](https://github.com/middag-io/middag-php-moodle/compare/v1.0.1...v1.0.2) (2026-06-30)
+
+
+### ci
+
+* inline release-please workflow + pin next release to 1.0.2 ([72d25e2](https://github.com/middag-io/middag-php-moodle/commit/72d25e2ff8add2df5c40a079a3c6d5f978166eb2))
+
+
+### Features
+
+* **inertia:** Inertia v3 bootstrap, inertia_app entry, component-derived web base ([831f1e9](https://github.com/middag-io/middag-php-moodle/commit/831f1e9343c570a8a6161c75b92f633730f8a698))
+
+
+### Bug Fixes
+
+* **inertia:** use modern core\component class in componentWebBase ([3b4b270](https://github.com/middag-io/middag-php-moodle/commit/3b4b270d22c74b0302b0db8484710e1e21b0c84a))
+
 ## [1.0.1](https://github.com/middag-io/middag-php-moodle/compare/v1.0.0...v1.0.1) (2026-06-27)
 
 
