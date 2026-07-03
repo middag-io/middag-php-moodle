@@ -158,6 +158,13 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 ## Releases
 
 Managed by release-please from Conventional Commits merged to `main` (work
-lands on `develop` first). **Never create git tags manually.** Breaking
-changes use `!`/`BREAKING CHANGE:` footers and are batched into a
-`Release-As` release.
+lands on `develop` first). **Never create git tags manually.** Versioning
+follows the family-wide `1.x` policy (framework
+[`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
+during `1.x` a minor may carry a breaking change, always explicitly marked
+(`feat!` / `BREAKING CHANGE:` footer, surfaced in the CHANGELOG's breaking
+section) and cut deliberately via a `Release-As` footer — never in a patch.
+Strict semver (breaking only in majors) starts at `2.0`. A major release is
+**never cut automatically**: it requires an explicit maintainer decision,
+taken only when the break genuinely impacts Composer consumers; a release PR
+proposing a major bump is not merged without that sign-off.

@@ -65,7 +65,13 @@ must remain consumable on its own.
   `build`, `ci`, `revert`.
 - Keep pull requests focused. Update tests and docs alongside code.
 - Releases are automated by [release-please](https://github.com/googleapis/release-please)
-  from commits merged to `main`.
+  from commits merged to `main`. Versioning follows the family-wide `1.x` policy
+  (see the framework's
+  [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
+  a `1.x` minor may carry an explicitly marked breaking change (`feat!` /
+  `BREAKING CHANGE:` footer) cut deliberately via a `Release-As` footer; a major
+  (`2.0`) is never cut automatically — only by explicit maintainer decision when
+  the break genuinely impacts Composer consumers.
 
 ## Code of conduct
 
