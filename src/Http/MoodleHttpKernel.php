@@ -20,18 +20,19 @@ use ReflectionClass;
 use ReflectionMethod;
 
 /**
- * HTTP Kernel Moodle-flavor.
+ * Moodle-flavored HTTP Kernel.
  *
- * Estende o `HttpKernel` agnóstico do framework para aplicar atributos
- * Moodle-specific (#[Sesskey]) após o framework `Auth` ser processado.
+ * Extends the framework's host-agnostic `HttpKernel` to apply
+ * Moodle-specific attributes (#[Sesskey]) after the framework `Auth`
+ * attribute has been processed.
  *
  * @internal
  */
 final class MoodleHttpKernel extends HttpKernel
 {
     /**
-     * Lê o atributo `#[Sesskey]` (método > classe) e chama
-     * `set_require_sesskey()` no controller quando exigido.
+     * Reads the `#[Sesskey]` attribute (method > class) and calls
+     * `setRequireSesskey()` on the controller when required.
      */
     protected function applyPlatformAuth(ControllerInterface $controller, string $method): void
     {

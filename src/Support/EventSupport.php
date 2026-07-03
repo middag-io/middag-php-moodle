@@ -174,7 +174,7 @@ class EventSupport
                     fn (string $f): string => substr($f, 0, -4),
                     array_filter(scandir($dir), fn ($f): bool => $f !== '.' && $f !== '..')
                 ),
-                fn (string $name): bool => str_ends_with($name, '') // sempre válido
+                fn (string $name): bool => str_ends_with($name, '') // always true
             )
         );
     }

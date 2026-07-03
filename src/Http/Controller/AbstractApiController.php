@@ -36,13 +36,13 @@ use Throwable;
  */
 abstract class AbstractApiController extends AbstractController
 {
-    /** Setado pelo kernel quando a rota tem #[auth(login: false)]. */
+    /** Set by the kernel when the route carries #[auth(login: false)]. */
     private bool $publicRoute = false;
 
     /**
-     * Sinaliza ao controller que esta rota é pública.
-     * Chamado pelo kernel ao detectar #[auth(login: false)].
-     * Não deve ser chamado manualmente nas actions.
+     * Signals to the controller that this route is public.
+     * Called by the kernel when it detects #[auth(login: false)].
+     * Must not be called manually from actions.
      */
     public function disableAuthentication(): void
     {
@@ -50,14 +50,14 @@ abstract class AbstractApiController extends AbstractController
     }
 
     /**
-     * Pre-handle hook: autentica a requisição API e executa o pipeline de auth.
+     * Pre-handle hook: authenticates the API request and runs the auth pipeline.
      *
-     * Chamado automaticamente pelo kernel antes da action. Roda dual auth
-     * (wstoken → session fallback) e em seguida chama handle() para aplicar
-     * require_login, check_capabilities e setup de página.
+     * Called automatically by the kernel before the action. Runs dual auth
+     * (wstoken → session fallback) and then calls handle() to apply
+     * require_login, capability checks, and page setup.
      *
-     * Subclasses que precisam de flags adicionais (set_require_capabilities etc.)
-     * devem sobrescrever, configurar os flags e chamar parent::pre_handle().
+     * Subclasses that need extra flags (setRequireCapabilities() etc.) should
+     * override, configure the flags, and call parent::preHandle().
      */
     public function preHandle(): void
     {
@@ -79,8 +79,8 @@ abstract class AbstractApiController extends AbstractController
     /**
      * Whether this endpoint requires authentication.
      *
-     * Retorna false quando a rota foi marcada com #[auth(login: false)].
-     * Pode ser sobrescrito na subclasse para desabilitar auth em todo o controller.
+     * Returns false when the route was marked with #[auth(login: false)].
+     * Can be overridden in a subclass to disable auth for the whole controller.
      */
     protected function requiresAuthentication(): bool
     {
@@ -326,19 +326,19 @@ abstract class AbstractApiController extends AbstractController
     }
 
     /**
-     * Dispara o pipeline de autenticação/contexto se ainda não executado.
+     * Triggers the authentication/context pipeline if it has not run yet.
      *
-     * Espelha o comportamento de render() no controller base: garante que
-     * pre_handle() rode antes de qualquer resposta ser enviada, mesmo em
-     * endpoints que retornam JSON diretamente sem passar por render().
+     * Mirrors the render() behavior of the base controller: guarantees that
+     * preHandle() runs before any response is sent, even for endpoints that
+     * return JSON directly without going through render().
      */
     private function ensurePreHandled(): void
     {
         if (!$this->handled) {
-            // Chama handle() diretamente (não pre_handle()) para evitar re-executar
-            // authenticate_api_request(). Cobre controllers que sobrescrevem
-            // pre_handle() sem chamar parent, garantindo que os flags configurados
-            // sejam de fato aplicados antes da resposta ser enviada.
+            // Calls handle() directly (not preHandle()) to avoid re-running
+            // authenticateApiRequest(). Covers controllers that override
+            // preHandle() without calling parent, ensuring the configured
+            // flags are actually applied before the response is sent.
             $this->handle();
         }
     }

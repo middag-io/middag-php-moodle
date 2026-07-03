@@ -22,7 +22,7 @@ use Throwable;
  * Configuration utility wrapper for Moodle's config API.
  *
  * This class centralizes access to get_config/set_config/unset_config for the plugin,
- * providing a safe façade that catches exceptions and returns predictable values.
+ * providing a safe facade that catches exceptions and returns predictable values.
  *
  * @internal
  */

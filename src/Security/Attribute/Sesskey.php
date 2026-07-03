@@ -15,14 +15,14 @@ namespace Middag\Moodle\Security\Attribute;
 use Attribute;
 
 /**
- * Exige validação de sesskey (CSRF Moodle) em requisições não-idempotentes.
+ * Requires sesskey validation (Moodle CSRF) on non-idempotent requests.
  *
- * Composição com `Middag\Framework\Http\Attribute\Auth`: o atributo `Auth`
- * declara login + capabilities (agnóstico); `Sesskey` adiciona o requisito
- * Moodle-flavor de CSRF. Aplicado em método ou classe, lido pelo
+ * Composes with `Middag\Framework\Http\Attribute\Auth`: the `Auth` attribute
+ * declares login + capabilities (host-agnostic); `Sesskey` adds the
+ * Moodle-flavored CSRF requirement. Applied on a method or class, read by
  * `MoodleHttpKernel::applyPlatformAuth()`.
  *
- * Exemplos:
+ * Examples:
  *
  *   #[Auth(capabilities: ['local/myplugin:manage'])]
  *   #[Sesskey]
