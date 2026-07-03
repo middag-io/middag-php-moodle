@@ -22,11 +22,14 @@ This adapter builds on the OSS `middag-io/*` packages (`framework`, `ui`) and on
 `michaelmeneses/moodle-stubs` for static analysis. All dependencies are OSS or
 host-provided; no private infrastructure is required.
 
-- **Local development** can resolve the OSS `middag-io/framework` package from a
-  sibling path repository (`../middag-php-framework`, symlinked) declared in
-  `composer.json`. Clone the framework next to this repo if you want to edit both
-  together. This is a development-only convenience and has no effect on published
-  releases.
+- **Local development** against a sibling framework checkout is wired in the
+  consuming project, not here: this package declares no `repositories` entries.
+  To edit the framework and the adapter together, clone `middag-php-framework`
+  next to this repo and declare a path repository
+  (`{"type": "path", "url": "../middag-php-framework", "options": {"symlink": true}}`)
+  in the **consumer/root** `composer.json`. Composer only reads the root
+  package's `repositories` — entries inside a dependency are ignored — so this
+  is a development-only convenience with no effect on published releases.
 - `composer.lock` is **gitignored**. A local lock that references path or dev
   versions of the framework is expected development state — **not** a defect in
   the released package.
@@ -50,7 +53,8 @@ Auto-fix style and Rector findings with:
 composer fix
 ```
 
-`composer check:boundaries` enforces that the adapter never imports any non-OSS
+The adapter isolation guard test (`tests/AdapterPluginIsolationTest.php`, run as
+part of `composer test`) enforces that the adapter never imports any non-OSS
 MIDDAG namespace or package. Keep `src/` free of those imports — the adapter
 must remain consumable on its own.
 
@@ -61,7 +65,19 @@ must remain consumable on its own.
   `build`, `ci`, `revert`.
 - Keep pull requests focused. Update tests and docs alongside code.
 - Releases are automated by [release-please](https://github.com/googleapis/release-please)
-  from commits merged to `main`.
+  from commits merged to `main`. Versioning follows the family-wide `1.x` policy
+  (see the framework's
+  [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
+  a `1.x` minor may carry an explicitly marked breaking change (`feat!` /
+  `BREAKING CHANGE:` footer) cut deliberately via a `Release-As` footer; a major
+  (`2.0`) is never cut automatically — only by explicit maintainer decision when
+  the break genuinely impacts Composer consumers.
+
+> Historical note: `1.1.1` shipped the audit-consolidation breaking changes
+> (the batch-A renames, the framework Translation port replacing the local
+> interface, and the PDFTk adapter removal) as a patch by explicit maintainer
+> decision, closing the OSS audit before external consumers existed. The
+> policy above applies from that release onward.
 
 ## Code of conduct
 

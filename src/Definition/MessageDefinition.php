@@ -13,36 +13,31 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Message\MessagePermission as message_permission;
 
 /**
- * Hook callback definition for db/hooks.php.
- *
- * Hooks were introduced in Moodle 4.3, so min_moodle defaults to '4.3'.
+ * Message provider definition for db/messages.php.
  *
  * @api
  */
-final readonly class Hook implements DefinitionInterface
+final readonly class MessageDefinition implements DefinitionInterface
 {
     public function __construct(
-        public string $hook_class,
-        public array|string $callback,
-        public int $priority = 0,
-        public ?string $min_moodle = '4.3',
+        public string $name,
+        public message_permission $popup = message_permission::PERMITTED,
+        public message_permission $email = message_permission::PERMITTED,
+        public ?string $min_moodle = null,
         public ?string $max_moodle = null,
     ) {}
 
     public function toMoodleArray(string $plugin_name): array
     {
-        $entry = [
-            'hook' => $this->hook_class,
-            'callback' => $this->callback,
+        return [
+            'defaults' => [
+                'popup' => $this->popup->toMoodleValue(),
+                'email' => $this->email->toMoodleValue(),
+            ],
         ];
-
-        if ($this->priority !== 0) {
-            $entry['priority'] = $this->priority;
-        }
-
-        return $entry;
     }
 
     public function isCompatible(string $moodle_version): bool
@@ -60,6 +55,6 @@ final readonly class Hook implements DefinitionInterface
 
     public function getName(): string
     {
-        return $this->hook_class;
+        return $this->name;
     }
 }

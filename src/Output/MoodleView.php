@@ -21,7 +21,7 @@ use navigation_node;
  *
  * @internal
  */
-class View implements view_adapter_interface
+class MoodleView implements view_adapter_interface
 {
     /**
      * {@inheritDoc}

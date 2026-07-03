@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Statics;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Definition\WebService;
+use Middag\Moodle\Definition\WebServiceDefinition;
 use ReflectionClass;
 
 /**
@@ -158,7 +158,7 @@ final readonly class StaticsRenderer
     }
 
     /**
-     * @param list<WebService> $definitions
+     * @param list<WebServiceDefinition> $definitions
      */
     public function renderWebServicesBlock(array $definitions): string
     {

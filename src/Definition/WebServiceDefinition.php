@@ -22,7 +22,7 @@ use Middag\Moodle\Definition\Contract\DefinitionInterface;
  *
  * @api
  */
-final readonly class WebService implements DefinitionInterface
+final readonly class WebServiceDefinition implements DefinitionInterface
 {
     /**
      * @param string   $name             human-readable service name

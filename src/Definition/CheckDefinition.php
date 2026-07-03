@@ -23,7 +23,7 @@ use Middag\Moodle\Domain\Platform\CheckType as check_type;
  *
  * @api
  */
-final readonly class Check implements DefinitionInterface
+final readonly class CheckDefinition implements DefinitionInterface
 {
     /**
      * @param string      $name       check identifier (e.g. 'eav_integrity')

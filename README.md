@@ -25,8 +25,8 @@ role.
 - No product features, business rules, or governed domain capabilities.
 - No dependency on any non-OSS MIDDAG package — the adapter builds only on the
   OSS framework and the host platform. Importing any non-OSS MIDDAG namespace or
-  package is forbidden and enforced by `composer check:boundaries` and the
-  adapter isolation tests.
+  package is forbidden and enforced by the adapter isolation guard test
+  (`tests/AdapterPluginIsolationTest.php`, part of `composer test`).
 - No bundled Moodle plugin. You wire the adapter into your own plugin.
 
 ## Requirements
@@ -58,8 +58,8 @@ composer install
 Run the quality gates and the test suite:
 
 ```bash
-composer check   # boundaries + PHPStan + PHP-CS-Fixer + Rector (dry-run)
-composer test    # PHPUnit
+composer check   # PHP-CS-Fixer (dry-run) + Rector (dry-run) + PHPStan
+composer test    # PHPUnit (includes the isolation and loadability guard tests)
 ```
 
 Git hooks are configured automatically via `post-install-cmd`. The `commit-msg`
@@ -67,20 +67,30 @@ hook enforces [Conventional Commits](https://www.conventionalcommits.org/).
 
 ### Working against a sibling framework checkout
 
-During development the adapter can resolve the OSS `middag-io/framework` package
-from a sibling path repository (`../middag-php-framework`, symlinked) declared in
-`composer.json`. This is a **development-only** convenience for editing the
-framework and the adapter side by side. Published releases resolve the dependency
-through the normal Composer registry — the path repository has no effect on
-consumers.
+This package declares **no** `repositories` entries: `middag-io/framework` (and
+every other dependency) resolves from the default Composer registry. To edit
+the framework and the adapter side by side, declare the path repository in the
+**consuming (root) project's** `composer.json` — Composer only reads the root
+package's `repositories`; entries inside a dependency would be ignored anyway:
+
+```json
+{
+    "repositories": [
+        {"type": "path", "url": "../middag-php-framework", "options": {"symlink": true}}
+    ]
+}
+```
+
+This is a **development-only** convenience in the consumer. Published releases
+of this package always resolve through the normal Composer registry.
 
 ### `composer.lock` is gitignored
 
 Like a typical library, this repo does not commit `composer.lock`; consumers pin
-versions in their own application. Because the development setup may use a path
-repository for the framework, a **local** `composer.lock` can show path or dev
-references. That is expected local development state and **not** a defect in the
-released package.
+versions in their own application. Because local development may resolve the
+framework through a consumer-declared path repository, a **local**
+`composer.lock` can show path or dev references. That is expected local
+development state and **not** a defect in the released package.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contributor setup,
 including the dependency-resolution notes.

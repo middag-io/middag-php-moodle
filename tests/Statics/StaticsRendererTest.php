@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Statics;
 
-use Middag\Moodle\Definition\Service;
+use Middag\Moodle\Definition\ServiceDefinition;
 use Middag\Moodle\Statics\StaticsRenderer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,7 +30,7 @@ final class StaticsRendererTest extends TestCase
         $renderer = new StaticsRenderer();
 
         $output = $renderer->renderServices([
-            new Service(name: 'do_thing', classname: 'local_example\external\do_thing', type: 'write'),
+            new ServiceDefinition(name: 'do_thing', classname: 'local_example\external\do_thing', type: 'write'),
         ], 'local_example');
 
         $this->assertStringContainsString("'local_example_do_thing' => [", $output);
@@ -46,7 +46,7 @@ final class StaticsRendererTest extends TestCase
         $renderer = new StaticsRenderer();
 
         $output = $renderer->renderServices([
-            new Service(
+            new ServiceDefinition(
                 name: 'do_thing',
                 classname: 'local_example\external\do_thing',
                 capabilities: 'local/example:dothing, local/example:view',
@@ -65,7 +65,7 @@ final class StaticsRendererTest extends TestCase
         $renderer = new StaticsRenderer();
 
         $output = $renderer->renderServices([
-            new Service(name: 'do_thing', classname: 'local_example\external\do_thing'),
+            new ServiceDefinition(name: 'do_thing', classname: 'local_example\external\do_thing'),
         ], 'local_example');
 
         $this->assertStringNotContainsString("'capabilities'", $output);
@@ -77,7 +77,7 @@ final class StaticsRendererTest extends TestCase
         $renderer = new StaticsRenderer();
 
         $output = $renderer->renderServices([
-            new Service(
+            new ServiceDefinition(
                 name: 'do_thing',
                 classname: 'local_example\external\do_thing',
                 services: ['s1', 's2'],
@@ -102,7 +102,7 @@ final class StaticsRendererTest extends TestCase
         $renderer = new StaticsRenderer();
 
         $output = $renderer->renderServices([
-            new Service(
+            new ServiceDefinition(
                 name: 'do_thing',
                 classname: 'local_example\external\do_thing',
                 capabilities: "local/o'brien:do",

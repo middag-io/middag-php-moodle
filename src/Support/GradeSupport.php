@@ -54,10 +54,10 @@ class GradeSupport
             }
 
             if ($unique) {
-                // Para $unique = true, garantimos que $fields represente um único campo simples.
+                // For $unique = true, ensure $fields denotes a single plain field.
                 $trimmed = trim($fields);
                 if ($trimmed === '*' || str_contains($trimmed, ',') || str_contains($trimmed, ' ')) {
-                    // Campo inválido para retorno único.
+                    // Invalid field for a single-value return.
                     return null;
                 }
 
@@ -70,7 +70,7 @@ class GradeSupport
                 if ($val === null) {
                     return null;
                 }
-                // Se o campo parecer numérico, converte para float (ou int se inteiro).
+                // If the field looks numeric, convert to float (or int when integral).
                 if (is_numeric($val)) {
                     $f = typing::toFloat($val);
                     $i = typing::toInt($val);
@@ -82,7 +82,7 @@ class GradeSupport
             }
 
             $records = $DB->get_records_sql($sql, $param);
-            // Normaliza campos comuns quando presentes.
+            // Normalize common fields when present.
             foreach ($records as $k => $rec) {
                 $spec = [];
                 if (property_exists($rec, 'itemid')) {

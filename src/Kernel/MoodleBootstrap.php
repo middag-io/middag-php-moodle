@@ -15,12 +15,12 @@ namespace Middag\Moodle\Kernel;
 use core_renderer;
 use Middag\Framework\Bus\Contract\UserContextResolverInterface;
 use Middag\Framework\Kernel\Contract\BootstrapInterface;
+use Middag\Framework\Translation\Contract\TranslatorInterface;
 use Middag\Moodle\Bus\MoodleUserContext;
-use Middag\Moodle\Logging\Logger;
+use Middag\Moodle\Logging\MoodleLogger;
 use Middag\Moodle\Output\Contract\ViewAdapterInterface;
-use Middag\Moodle\Output\View;
-use Middag\Moodle\Translation\Translator;
-use Middag\Moodle\Translation\TranslatorInterface;
+use Middag\Moodle\Output\MoodleView;
+use Middag\Moodle\Translation\MoodleTranslator;
 use moodle_database;
 use moodle_page;
 use Psr\Log\LoggerInterface;
@@ -45,9 +45,9 @@ final class MoodleBootstrap implements BootstrapInterface
         $builder->register('moodle.user', stdClass::class)->setSynthetic(true);
 
         // Platform adapters → framework contracts
-        $builder->register(LoggerInterface::class, Logger::class)->setPublic(true);
-        $builder->register(TranslatorInterface::class, Translator::class)->setPublic(true);
-        $builder->register(ViewAdapterInterface::class, View::class)->setPublic(true);
+        $builder->register(LoggerInterface::class, MoodleLogger::class)->setPublic(true);
+        $builder->register(TranslatorInterface::class, MoodleTranslator::class)->setPublic(true);
+        $builder->register(ViewAdapterInterface::class, MoodleView::class)->setPublic(true);
 
         // Bus adapters → framework contracts
         $builder->register(UserContextResolverInterface::class, MoodleUserContext::class)->setPublic(true);

@@ -12,14 +12,15 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Kernel;
 
+use core\component as core_component;
 use Middag\Framework\Kernel\Contract\KernelInterface as kernel_interface;
 use Middag\Framework\Kernel\HostContext;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Http\Contract\RouterInterface as router_interface;
 use Middag\Moodle\Http\Inertia\InertiaSharedProps as inertia_shared_props;
 use Middag\Moodle\Http\Inertia\MoodleInertiaBootstrap as inertia_bootstrap;
-use Middag\Moodle\Http\Routing\Router;
-use Middag\Moodle\Kernel\MoodleHttpKernel as http_kernel;
+use Middag\Moodle\Http\MoodleHttpKernel as http_kernel;
+use Middag\Moodle\Http\Routing\MoodleRouter;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerExceptionInterface;
@@ -53,8 +54,13 @@ use Throwable;
 class Kernel implements kernel_interface
 {
     /**
-     * Absolute path to the plugin source root (classes directory).
-     * Calculates based on current file location: core/kernel/kernel.php -> classes/.
+     * Absolute path to THIS package's root (src/Kernel/Kernel.php -> package root).
+     *
+     * As a Composer dependency this resolves inside vendor/ — NOT the consumer
+     * plugin's directory — so it must not be used to locate host resources.
+     *
+     * @deprecated use {@see self::hostDirectory()}, which resolves the consumer
+     *             plugin's directory through Moodle's component registry
      *
      * @var string
      */
@@ -69,7 +75,7 @@ class Kernel implements kernel_interface
     /** @var null|http_kernel The handler for the HTTP Request/Response cycle */
     private ?http_kernel $httpKernel = null;
 
-    /** @var null|Router The router service for routing configuration */
+    /** @var null|MoodleRouter The router service for routing configuration */
     private ?router_interface $router = null;
 
     /** @var bool Flag indicating if the kernel has successfully finished booting */
@@ -326,6 +332,38 @@ class Kernel implements kernel_interface
     }
 
     /**
+     * Absolute directory of the host plugin (the consumer component) on this
+     * Moodle installation, resolved through Moodle's component registry.
+     *
+     * This is the supported way to locate host resources (facade/, extensions/,
+     * lib.php, ...) — the package-relative {@see self::PROJECT_ROOT} points
+     * inside vendor/ in the Composer layout and is deprecated.
+     *
+     * Unit tests stub {@see core_component} (tests/bootstrap.php) and drive the
+     * result via {@code $GLOBALS['__middag_test_component_dir']}; that stub is
+     * the only supported non-Moodle resolution path.
+     *
+     * @throws RuntimeException when Moodle cannot resolve the configured
+     *                          component to an existing directory
+     */
+    public static function hostDirectory(): string
+    {
+        $component = ComponentContext::name();
+
+        /** @var null|string $directory moodle-stubs type the return as string, but the real API yields null for an unknown/uninstalled component */
+        $directory = core_component::get_component_directory($component);
+
+        if ($directory === null || $directory === '' || !is_dir($directory)) {
+            throw new RuntimeException(sprintf(
+                'Cannot resolve the host directory for component "%s": Moodle\'s component registry returned no existing directory.',
+                $component,
+            ));
+        }
+
+        return $directory;
+    }
+
+    /**
      * Access the Router to register routes manually or inspect current routes.
      *
      * @return router_interface
@@ -388,7 +426,7 @@ class Kernel implements kernel_interface
             $this->ensureAutoload();
 
             // 1. Initialize core components
-            $this->router = new Router();
+            $this->router = new MoodleRouter();
 
             // 2. Build and compile the container using the dedicated factory
             // We pass $this (Kernel) to inject it into the container itself
@@ -437,34 +475,34 @@ class Kernel implements kernel_interface
     }
 
     /**
-     * Loads the plugin's autoloader if not already present.
-     * Handles both lib.php-based loading (Moodle web) and direct CLI contexts.
+     * Loads the consumer plugin's autoloader if not already registered.
+     *
+     * In web flows Moodle has already included the plugin's lib.php; in CLI or
+     * early-boot contexts it is resolved through the host component directory
+     * ({@see self::hostDirectory()}). The legacy package-relative fallbacks
+     * (__DIR__-based lib.php and externallib/autoload.php) never resolved in
+     * the Composer vendor/ layout and were removed.
      */
     private function ensureAutoload(): void
     {
         $autoload_fn = ComponentContext::autoloadFunction();
 
         if (!function_exists($autoload_fn)) {
-            // The consumer plugin's lib.php sits three levels up only when the
-            // lib lives inside the plugin tree. As a standalone Composer dep it
-            // does not — guard against a fatal require and fall through to the
-            // externallib autoload below (or the already-active autoloader).
-            $consumer_lib = __DIR__ . '/../../../lib.php';
-            if (is_file($consumer_lib)) {
+            try {
+                $consumer_lib = self::hostDirectory() . '/lib.php';
+            } catch (RuntimeException) {
+                // Best-effort: an unresolvable host directory is not fatal here —
+                // the Composer autoloader may already serve the classes.
+                $consumer_lib = null;
+            }
+
+            if ($consumer_lib !== null && is_file($consumer_lib)) {
                 require_once $consumer_lib;
             }
         }
 
         if (function_exists($autoload_fn)) {
             $autoload_fn();
-
-            return;
-        }
-
-        // Fallback for CLI contexts where lib.php hasn't been loaded yet.
-        $autoload = dirname(__DIR__, 3) . '/externallib/autoload.php';
-        if (file_exists($autoload)) {
-            require_once $autoload;
         }
     }
 

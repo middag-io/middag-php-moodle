@@ -9,11 +9,12 @@
     "firebase/php-jwt": "^7.0",
     "middag-io/framework": "^1.0.2",
     "middag-io/ui": "^1.2",
-    "mikehaertl/php-pdftk": "^0.13",
     "nyholm/psr7": "^1.8",
+    "psr/container": "^2.0",
+    "psr/log": "^3.0",
     "psr/simple-cache": "^3.0",
     "symfony/dependency-injection": "^7.0",
-    "symfony/event-dispatcher": "^7.0",
+    "symfony/event-dispatcher-contracts": "^3.0",
     "symfony/http-client": "^7.0",
     "symfony/http-foundation": "^7.0",
     "symfony/routing": "^7.0"
@@ -44,19 +45,26 @@
     "post-install-cmd": "git config core.hooksPath .githooks 2>/dev/null || true",
     "post-update-cmd": "git config core.hooksPath .githooks 2>/dev/null || true",
     "check": [
-      "@check:stan",
       "@check:style",
-      "@check:rector"
+      "@check:rector",
+      "@check:stan"
     ],
-    "check:stan": "phpstan analyse --configuration=.phpstan.neon --memory-limit=512M",
     "check:style": "php-cs-fixer fix --dry-run --verbose --config=.php-cs-fixer.dist.php",
     "check:rector": "rector process --dry-run --config=.php-rector.php",
+    "check:stan": "phpstan analyse --configuration=.phpstan.neon --memory-limit=512M",
     "fix": [
       "@fix:style",
       "@fix:rector"
     ],
+    "fix:all": [
+      "@fix:style",
+      "@fix:rector",
+      "@fix:style"
+    ],
     "fix:style": "php-cs-fixer fix --verbose --show-progress=none --config=.php-cs-fixer.dist.php",
     "fix:rector": "rector process --config=.php-rector.php --no-progress-bar",
-    "test": "phpunit"
+    "test": "phpunit",
+    "test:cov": "XDEBUG_MODE=coverage phpunit --coverage-text",
+    "lint:php82": "bin/lint-php82.sh"
   }
 }

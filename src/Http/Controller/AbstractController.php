@@ -172,17 +172,17 @@ abstract class AbstractController implements controller_interface
     }
 
     /**
-     * Hook de ciclo de vida executado automaticamente pelo kernel antes da action.
+     * Lifecycle hook run automatically by the kernel before the action.
      *
-     * Subclasses devem sobrescrever para configurar auth e contexto de forma
-     * centralizada (flags + $this->handle()). Para controllers de página com
-     * auth lazy (flags configuradas dentro da action), não é necessário sobrescrever:
-     * o handle() continuará sendo disparado por render() no momento certo.
+     * Subclasses should override it to configure auth and context centrally
+     * (flags + $this->handle()). Page controllers using lazy auth (flags
+     * configured inside the action) do not need to override it: handle() is
+     * still triggered by render() at the right moment.
      */
     public function preHandle(): void
     {
-        // Hook vazio por padrão. Não chama handle() para não interferir com o
-        // padrão lazy de controllers de página que configuram auth na action.
+        // Empty hook by default. Does not call handle() so it never interferes
+        // with the lazy pattern of page controllers that configure auth in the action.
     }
 
     // =========================================================================
@@ -668,7 +668,7 @@ abstract class AbstractController implements controller_interface
      */
     protected function inertia(string $component, array $props = []): Response
     {
-        // Garante auth e setup de página em todos os caminhos (inicial e SPA).
+        // Guarantees auth and page setup on all paths (initial visit and SPA).
         $this->handle();
 
         // Generate Inertia response (HTML or JSON)
