@@ -17,7 +17,7 @@ use core\exception\moodle_exception;
 use dml_exception;
 use Exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Dto\GroupMemberDto as group_member_dto;
+use Middag\Moodle\Domain\Group\GroupMemberDto as group_member_dto;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 

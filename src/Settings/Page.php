@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Settings;
 
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 
 /**
  * Settings page grouper (rendered as tab in admin UI).

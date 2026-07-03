@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\EventEdulevel as event_edulevel;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Event\EventEdulevel as event_edulevel;
 
 /**
  * Typed event definition for Moodle event classes.

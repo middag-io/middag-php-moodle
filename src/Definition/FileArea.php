@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\ContextLevel as context_level;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Context\ContextLevel as context_level;
 
 /**
  * Typed file area definition.

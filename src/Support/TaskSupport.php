@@ -15,10 +15,10 @@ namespace Middag\Moodle\Support;
 use core\task\adhoc_task;
 use core\task\manager as core_task_manager;
 use core\task\scheduled_task;
-use Middag\Moodle\Dto\AdhocTaskDto as adhoc_task_dto;
-use Middag\Moodle\Dto\RunningTaskDto as running_task_dto;
-use Middag\Moodle\Dto\ScheduledTaskDto as scheduled_task_dto;
-use Middag\Moodle\Dto\TaskSummaryDto as task_summary_dto;
+use Middag\Moodle\Domain\Task\AdhocTaskDto as adhoc_task_dto;
+use Middag\Moodle\Domain\Task\RunningTaskDto as running_task_dto;
+use Middag\Moodle\Domain\Task\ScheduledTaskDto as scheduled_task_dto;
+use Middag\Moodle\Domain\Task\TaskSummaryDto as task_summary_dto;
 
 /**
  * Utility wrapper for Moodle's Task API (scheduled and adhoc tasks).

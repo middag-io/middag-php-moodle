@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use calendar_event;
-use Middag\Moodle\Dto\CalendarEventDto as calendar_event_dto;
+use Middag\Moodle\Domain\Calendar\CalendarEventDto as calendar_event_dto;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 use Throwable;

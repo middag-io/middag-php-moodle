@@ -15,7 +15,7 @@ namespace Middag\Moodle\Support;
 use core\component as core_component;
 use core\event\base;
 use core\plugin_manager as core_plugin_manager;
-use Middag\Moodle\Dto\EventDto as event_dto;
+use Middag\Moodle\Domain\Event\EventDto as event_dto;
 use Middag\Moodle\Shared\Util\Environment as environment;
 use ReflectionClass;
 use Throwable;

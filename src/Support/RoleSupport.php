@@ -18,7 +18,7 @@ use core\user as core_user;
 use dml_exception;
 use Exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Entity\RoleAssignment as role_assignment;
+use Middag\Moodle\Domain\Role\RoleAssignment as role_assignment;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 use Throwable;

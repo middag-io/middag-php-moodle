@@ -14,8 +14,8 @@ namespace Middag\Moodle\Kernel;
 
 use Middag\Framework\Http\Contract\ControllerInterface;
 use Middag\Framework\Http\HttpKernel;
-use Middag\Moodle\Contract\Attributes\Sesskey;
-use Middag\Moodle\Contract\MoodleControllerInterface;
+use Middag\Moodle\Http\Contract\MoodleControllerInterface;
+use Middag\Moodle\Security\Attribute\Sesskey;
 use ReflectionClass;
 use ReflectionMethod;
 

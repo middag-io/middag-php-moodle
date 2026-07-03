@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Kernel;
 
 use Middag\Framework\Kernel\Contract\ComponentNameResolverInterface;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 
 /**
  * Resolves the native Moodle frankenstyle component (e.g. {@code local_example})

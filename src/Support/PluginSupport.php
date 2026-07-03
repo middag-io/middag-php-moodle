@@ -16,8 +16,8 @@ use core\component as core_component;
 use core\exception\moodle_exception;
 use core\plugin_manager;
 use core\plugin_manager as core_plugin_manager;
-use Middag\Moodle\Dto\PluginDto as plugin_dto;
-use Middag\Moodle\ValueObject\Frankenstyle as frankenstyle;
+use Middag\Moodle\Domain\Platform\Frankenstyle as frankenstyle;
+use Middag\Moodle\Domain\Platform\PluginDto as plugin_dto;
 
 /**
  * Unified wrapper for Moodle plugin APIs.

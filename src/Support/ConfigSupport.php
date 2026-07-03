@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use Middag\Moodle\Dto\SiteInfoDto as site_info_dto;
-use Middag\Moodle\Enum\TextFormat as text_format;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Domain\Platform\SiteInfoDto as site_info_dto;
+use Middag\Moodle\Shared\Enum\TextFormat as text_format;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Throwable;
 

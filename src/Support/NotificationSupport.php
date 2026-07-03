@@ -16,8 +16,8 @@ use core\message\message as core_message;
 use core\user as core_user;
 use core_message\api;
 use message_popup\api as popup_api;
-use Middag\Moodle\Dto\NotificationDto as notification_dto;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Domain\Message\NotificationDto as notification_dto;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Throwable;
 

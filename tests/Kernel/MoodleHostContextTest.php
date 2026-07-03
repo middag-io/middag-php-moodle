@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Kernel;
 
 use Middag\Framework\Kernel\Contract\HostComponentContextInterface;
 use Middag\Framework\Kernel\HostContext;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Kernel\MoodleHostContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

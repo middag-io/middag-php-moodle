@@ -15,8 +15,8 @@ namespace Middag\Moodle\Support;
 use core\context\system as context_system;
 use dml_exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Dto\CohortMemberDto as cohort_member_dto;
-use Middag\Moodle\Entity\Cohort as cohort_entity;
+use Middag\Moodle\Domain\Group\Cohort as cohort_entity;
+use Middag\Moodle\Domain\Group\CohortMemberDto as cohort_member_dto;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 

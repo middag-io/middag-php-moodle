@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+
 /**
  * Web service group definition for the $services array in db/services.php.
  *

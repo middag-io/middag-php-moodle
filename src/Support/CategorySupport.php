@@ -16,7 +16,7 @@ use core\context\coursecat as context_coursecat;
 use core\exception\moodle_exception;
 use core_course_category;
 use dml_exception;
-use Middag\Moodle\Entity\Category as category_entity;
+use Middag\Moodle\Domain\Course\Category as category_entity;
 use Middag\Moodle\Shared\Util\Debug as debug;
 
 /**

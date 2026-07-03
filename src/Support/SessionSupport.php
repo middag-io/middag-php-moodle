@@ -14,8 +14,8 @@ namespace Middag\Moodle\Support;
 
 use core\exception\moodle_exception;
 use core\session\manager;
-use Middag\Moodle\Entity\User as user_entity;
-use Middag\Moodle\ValueObject\Sesskey as sesskey_vo;
+use Middag\Moodle\Domain\User\User as user_entity;
+use Middag\Moodle\Security\ValueObject\Sesskey as sesskey_vo;
 use stdClass;
 
 /**

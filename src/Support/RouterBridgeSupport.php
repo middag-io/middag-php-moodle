@@ -108,9 +108,9 @@ final class RouterBridgeSupport
             // leak directly and conflict with Slim's response pipeline.
             ob_start();
             Kernel::handle('/api/' . ltrim($path, '/'));
-            $output = ob_get_clean();
+            $output = (string) ob_get_clean();
 
-            if ($output !== false && $output !== '') {
+            if ($output !== '') {
                 $response->getBody()->write($output);
             }
 

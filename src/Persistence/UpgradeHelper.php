@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Persistence;
 
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use moodle_database;
 use Throwable;
 

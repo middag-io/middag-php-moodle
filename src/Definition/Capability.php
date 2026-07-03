@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\CapabilityRisk as capability_risk;
-use Middag\Moodle\Enum\CapabilityType as capability_type;
-use Middag\Moodle\Enum\ContextLevel as context_level;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Context\ContextLevel as context_level;
+use Middag\Moodle\Security\Enum\CapabilityRisk as capability_risk;
+use Middag\Moodle\Security\Enum\CapabilityType as capability_type;
 
 /**
  * Capability definition for db/access.php.

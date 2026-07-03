@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use core\lock\lock;
 use core\lock\lock_config;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Throwable;
 

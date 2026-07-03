@@ -15,7 +15,7 @@ namespace Middag\Moodle\Support;
 use core\exception\moodle_exception;
 use core\url as moodle_url;
 use Exception;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Shared\Util\Debug as debug;
 
 /**

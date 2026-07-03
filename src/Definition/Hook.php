@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+
 /**
  * Hook callback definition for db/hooks.php.
  *

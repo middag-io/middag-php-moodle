@@ -19,9 +19,9 @@ use core\url as moodle_url;
 use dml_exception;
 use Exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Entity\Category as category_entity;
-use Middag\Moodle\Entity\Course as course_entity;
-use Middag\Moodle\Entity\CourseModule as course_module;
+use Middag\Moodle\Domain\Course\Category as category_entity;
+use Middag\Moodle\Domain\Course\Course as course_entity;
+use Middag\Moodle\Domain\Course\CourseModule as course_module;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 

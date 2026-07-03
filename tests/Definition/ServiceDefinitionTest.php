@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Definition;
 
-use Middag\Moodle\Definition\DefinitionInterface;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Definition\Service;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

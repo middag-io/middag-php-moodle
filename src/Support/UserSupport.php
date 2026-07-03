@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use core\user as core_user;
-use Middag\Moodle\Entity\User as user_entity;
+use Middag\Moodle\Domain\User\User as user_entity;
 use stdClass;
 
 /**
