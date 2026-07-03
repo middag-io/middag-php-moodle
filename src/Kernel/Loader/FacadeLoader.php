@@ -15,6 +15,7 @@ namespace Middag\Moodle\Kernel\Loader;
 use FilesystemIterator;
 use Middag\Framework\Kernel\Contract\FacadeLoaderInterface as facade_loader_interface;
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Kernel\Kernel;
 use Middag\Moodle\Shared\Util\Environment as environment;
 use Middag\Moodle\Support\CacheSupport as cache_support;
 use RecursiveDirectoryIterator;
@@ -48,10 +49,11 @@ class FacadeLoader implements facade_loader_interface
     /**
      * Constructor.
      *
-     * @param string $projectRoot
+     * @param null|string $projectRoot host plugin directory to scan; null
+     *                                 resolves it through {@see Kernel::hostDirectory()}
      */
     public function __construct(
-        private readonly string $projectRoot
+        private readonly ?string $projectRoot = null
     ) {}
 
     /**
@@ -93,13 +95,13 @@ class FacadeLoader implements facade_loader_interface
         // 1. Core Facades
         foreach (self::CORE_PATHS as [$path, $ns_suffix]) {
             $map += $this->scanDirectory(
-                $this->projectRoot . $path,
+                $this->root() . $path,
                 ComponentContext::name() . '\\' . $ns_suffix
             );
         }
 
         // 2. Extension Facades — legacy subdirectory pattern (extensions/{slug}/facade/)
-        $extensions_dir = $this->projectRoot . '/extensions/';
+        $extensions_dir = $this->root() . '/extensions/';
         if (is_dir($extensions_dir)) {
             foreach (glob($extensions_dir . '*', GLOB_ONLYDIR) as $dir) {
                 $slug = basename($dir);
@@ -116,6 +118,15 @@ class FacadeLoader implements facade_loader_interface
         cache_support::set(self::CACHE_KEY, $map, self::CACHE_AREA);
 
         return $map;
+    }
+
+    /**
+     * The directory to scan: the injected root, or the host plugin directory
+     * resolved through Moodle's component registry.
+     */
+    private function root(): string
+    {
+        return $this->projectRoot ?? Kernel::hostDirectory();
     }
 
     /**
@@ -171,7 +182,7 @@ class FacadeLoader implements facade_loader_interface
             if (!str_ends_with($file->getFilename(), '_facade.php')) {
                 continue;
             }
-            $relative = str_replace($this->projectRoot . '/', '', $file->getPathname());
+            $relative = str_replace($this->root() . '/', '', $file->getPathname());
             $relative = preg_replace('/\.php$/', '', $relative);
             $fqcn = ComponentContext::name() . '\\' . str_replace('/', '\\', $relative);
 
