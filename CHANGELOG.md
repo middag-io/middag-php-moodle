@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.1.1](https://github.com/middag-io/middag-php-moodle/compare/v1.1.0...v1.1.1) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **pdf:** Middag\Moodle\Pdf\PdftkAdapter and the mikehaertl/php-pdftk dependency were removed. Consumers needing PDFTk must use the proprietary core package integration instead.
+* **translation:** the local Middag\Moodle\Translation\TranslatorInterface port was removed. Consumers must depend on Middag\Framework\Translation\Contract\TranslatorInterface, and MoodleTranslator::trans(...) was replaced by get(string $key, string $component = '', array $params = []).
+* **structure:** public class names and namespaces renamed; consumers must update imports (Middag\Moodle\Translation\Translator -> MoodleTranslator, Middag\Moodle\Kernel\MoodleHttpKernel -> Middag\Moodle\Http\MoodleHttpKernel, Definition short names now suffixed with Definition, Security\Service\AuthService -> Security\AuthService).
+
+### Features
+
+* **pdf:** remove the pdftk adapter from the oss surface ([d3260c8](https://github.com/middag-io/middag-php-moodle/commit/d3260c85885e0a03d793f713d3cc0a6de498f093))
+* **translation:** wire the framework translator port ([e6a158c](https://github.com/middag-io/middag-php-moodle/commit/e6a158c529cd2ce0a107c1cfc95a0a5743c26156))
+
+
+### Bug Fixes
+
+* **kernel:** resolve host paths through the component registry ([414c2d7](https://github.com/middag-io/middag-php-moodle/commit/414c2d7c4b4c5381f12d856e256b8a57a1492f6a))
+
+
+### Refactoring
+
+* **structure:** apply oss-audit batch a renames ([1a711c4](https://github.com/middag-io/middag-php-moodle/commit/1a711c49fc3dcfba0f8466679a84a84be8156cbb))
+
+
+### Documentation
+
+* align versioning text with family 1.x policy and major control ([69b59e9](https://github.com/middag-io/middag-php-moodle/commit/69b59e9c5b4dcc048e9ca7f394fdb10afeef20fc))
+* **claude:** rewrite agent guide in English for the post-audit layout ([4599ebe](https://github.com/middag-io/middag-php-moodle/commit/4599ebec99bd72393060a098fe15afe8e59f27b8))
+* **contributing:** record the audit-consolidation patch exception ([46c07f6](https://github.com/middag-io/middag-php-moodle/commit/46c07f61fb2c502d8b3c4a4c62e8153123a75710))
+* point boundary enforcement at the isolation guard test ([1285fc6](https://github.com/middag-io/middag-php-moodle/commit/1285fc6c7875bcfe37262e33d95a22bd5799f242))
+* sibling framework path repo lives in the consumer root ([333f924](https://github.com/middag-io/middag-php-moodle/commit/333f92483ee0596b5888daa2f91333b02adce619))
+* translate remaining Portuguese docblocks and comments to English ([e974e71](https://github.com/middag-io/middag-php-moodle/commit/e974e71b2ca1dc8b24355d3f017a5f6b8ed801dd))
+
+
+### Miscellaneous
+
+* **composer:** align runtime deps with actual src usage ([4ba3037](https://github.com/middag-io/middag-php-moodle/commit/4ba3037b2c8065e38eef8315ca2358fad123fd56))
+* **composer:** align scripts with the canonical baseline ([5ef71b5](https://github.com/middag-io/middag-php-moodle/commit/5ef71b517571a379ae4462e2453e87397d5275bf))
+* **dev:** add php 8.2 parse-level lint script ([aa9cb69](https://github.com/middag-io/middag-php-moodle/commit/aa9cb693a17c5b1f271ec4dd58422557e2339d5d))
+* drop inert pre-major bump flags from release-please config ([f5177f5](https://github.com/middag-io/middag-php-moodle/commit/f5177f52482525a170d19201fac56776f7f9e41b))
+* release 1.1.1 ([5fdb2e1](https://github.com/middag-io/middag-php-moodle/commit/5fdb2e19c3ea6f13785f1e04bf9751008213e447))
+
 ## [1.1.0](https://github.com/middag-io/middag-php-moodle/compare/v1.0.2...v1.1.0) (2026-07-03)
 
 
