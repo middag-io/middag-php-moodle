@@ -22,11 +22,14 @@ This adapter builds on the OSS `middag-io/*` packages (`framework`, `ui`) and on
 `michaelmeneses/moodle-stubs` for static analysis. All dependencies are OSS or
 host-provided; no private infrastructure is required.
 
-- **Local development** can resolve the OSS `middag-io/framework` package from a
-  sibling path repository (`../middag-php-framework`, symlinked) declared in
-  `composer.json`. Clone the framework next to this repo if you want to edit both
-  together. This is a development-only convenience and has no effect on published
-  releases.
+- **Local development** against a sibling framework checkout is wired in the
+  consuming project, not here: this package declares no `repositories` entries.
+  To edit the framework and the adapter together, clone `middag-php-framework`
+  next to this repo and declare a path repository
+  (`{"type": "path", "url": "../middag-php-framework", "options": {"symlink": true}}`)
+  in the **consumer/root** `composer.json`. Composer only reads the root
+  package's `repositories` — entries inside a dependency are ignored — so this
+  is a development-only convenience with no effect on published releases.
 - `composer.lock` is **gitignored**. A local lock that references path or dev
   versions of the framework is expected development state — **not** a defect in
   the released package.
