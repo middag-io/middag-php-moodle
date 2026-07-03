@@ -50,7 +50,8 @@ Auto-fix style and Rector findings with:
 composer fix
 ```
 
-`composer check:boundaries` enforces that the adapter never imports any non-OSS
+The adapter isolation guard test (`tests/AdapterPluginIsolationTest.php`, run as
+part of `composer test`) enforces that the adapter never imports any non-OSS
 MIDDAG namespace or package. Keep `src/` free of those imports — the adapter
 must remain consumable on its own.
 

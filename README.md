@@ -25,8 +25,8 @@ role.
 - No product features, business rules, or governed domain capabilities.
 - No dependency on any non-OSS MIDDAG package — the adapter builds only on the
   OSS framework and the host platform. Importing any non-OSS MIDDAG namespace or
-  package is forbidden and enforced by `composer check:boundaries` and the
-  adapter isolation tests.
+  package is forbidden and enforced by the adapter isolation guard test
+  (`tests/AdapterPluginIsolationTest.php`, part of `composer test`).
 - No bundled Moodle plugin. You wire the adapter into your own plugin.
 
 ## Requirements
@@ -58,8 +58,8 @@ composer install
 Run the quality gates and the test suite:
 
 ```bash
-composer check   # boundaries + PHPStan + PHP-CS-Fixer + Rector (dry-run)
-composer test    # PHPUnit
+composer check   # PHP-CS-Fixer (dry-run) + Rector (dry-run) + PHPStan
+composer test    # PHPUnit (includes the isolation and loadability guard tests)
 ```
 
 Git hooks are configured automatically via `post-install-cmd`. The `commit-msg`
