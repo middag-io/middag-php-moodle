@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.1.0](https://github.com/middag-io/middag-php-moodle/compare/v1.0.2...v1.1.0) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **structure:** most class namespaces moved; Enum\Visibility is now Domain\Course\CourseVisibility. Consumers must update imports.
+
+### Features
+
+* **filesystem:** add MoodledataFilesystem wiring the framework Filesystem port over dataroot ([f92e155](https://github.com/middag-io/middag-php-moodle/commit/f92e15588090c16c208f9d2f73e11a4d9b8a8b4e))
+* **mail:** add MoodleMailer wiring the framework Mail port over email_to_user ([f476eab](https://github.com/middag-io/middag-php-moodle/commit/f476eabe57e5ac0373d9fd27fe7fa2bfac327d55))
+
+
+### Bug Fixes
+
+* **support:** cast ob_get_clean() before emptiness check ([c4ce752](https://github.com/middag-io/middag-php-moodle/commit/c4ce7527492780aeca86c4d9ac6de3d75bbdfde4))
+
+
+### Refactoring
+
+* **structure:** reorganize namespaces to host adapter layout ([5eaba06](https://github.com/middag-io/middag-php-moodle/commit/5eaba06d3cb2261096f4fd334b838ddbd6c68f2a))
+
+
+### Miscellaneous
+
+* **deps:** require middag-io/ui ^1.2 and middag-io/framework ^1.0.2 ([027007f](https://github.com/middag-io/middag-php-moodle/commit/027007f85e9a1d20a111c93abd84986c6db829a2))
+
 ## [1.0.2](https://github.com/middag-io/middag-php-moodle/compare/v1.0.1...v1.0.2) (2026-06-30)
 
 
