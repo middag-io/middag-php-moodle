@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 use Middag\Framework\Bus\Contract\UserContextResolverInterface;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 
 /*
  * PHPUnit bootstrap for middag-io/moodle tests.
@@ -75,6 +75,36 @@ if (!function_exists('get_plugins_with_function')) {
 
         return $registry[$function] ?? [];
     }
+}
+
+// Stub: email_to_user() — records calls in $GLOBALS['__middag_test_emails'];
+// return value controlled via $GLOBALS['__middag_test_email_result'] (default true)
+if (!function_exists('email_to_user')) {
+    function email_to_user(object $user, $from, string $subject, string $messagetext, string $messagehtml = '', $attachment = '', $attachname = '', bool $usetrueaddress = true, $replyto = '', $replytoname = '', int $wordwrapwidth = 79): bool
+    {
+        $GLOBALS['__middag_test_emails'][] = [
+            'to' => $user,
+            'from' => $from,
+            'subject' => $subject,
+            'text' => $messagetext,
+            'html' => $messagehtml,
+            'attachment' => $attachment,
+            'attachname' => $attachname,
+            'replyto' => $replyto,
+            'replytoname' => $replytoname,
+        ];
+
+        return $GLOBALS['__middag_test_email_result'] ?? true;
+    }
+}
+
+// Stub: core\user::get_noreply_user() — deliverable pseudo-user template
+// (Moodle 4.5+ namespaced class; global core_user aliased for legacy callers)
+if (!class_exists('core\user', false)) {
+    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } }');
+}
+if (!class_exists('core_user', false)) {
+    class_alias('core\user', 'core_user');
 }
 
 // Stub: core\url (Moodle's URL class — implements __toString as Stringable)
