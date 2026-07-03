@@ -16,7 +16,7 @@ use core\context\course as context_course;
 use core\exception\moodle_exception;
 use dml_exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Entity\UserEnrolment as user_enrolment;
+use Middag\Moodle\Domain\Enrolment\UserEnrolment as user_enrolment;
 use stdClass;
 
 /**

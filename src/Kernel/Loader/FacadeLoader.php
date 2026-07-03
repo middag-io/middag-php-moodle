@@ -14,7 +14,7 @@ namespace Middag\Moodle\Kernel\Loader;
 
 use FilesystemIterator;
 use Middag\Framework\Kernel\Contract\FacadeLoaderInterface as facade_loader_interface;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Shared\Util\Environment as environment;
 use Middag\Moodle\Support\CacheSupport as cache_support;
 use RecursiveDirectoryIterator;

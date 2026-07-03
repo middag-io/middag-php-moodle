@@ -14,8 +14,8 @@ namespace Middag\Moodle\Support;
 
 use Exception;
 use file_storage;
-use Middag\Moodle\Entity\StoredFile as stored_file_entity;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Domain\File\StoredFile as stored_file_entity;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 use stored_file;

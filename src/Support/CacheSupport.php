@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use core_cache\cache as moodle_cache;
 use Exception;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Shared\Util\Debug as debug;
 
 /**

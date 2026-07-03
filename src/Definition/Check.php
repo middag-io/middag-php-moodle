@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\CheckType as check_type;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Platform\CheckType as check_type;
 
 /**
  * Check definition for Moodle's Check API.

@@ -14,8 +14,8 @@ namespace Middag\Moodle\Support;
 
 use dml_exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Dto\UserProfileFieldDataDto as user_profile_field_data_dto;
-use Middag\Moodle\Entity\UserProfileField as user_profile_field;
+use Middag\Moodle\Domain\User\UserProfileField as user_profile_field;
+use Middag\Moodle\Domain\User\UserProfileFieldDataDto as user_profile_field_data_dto;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use stdClass;
 

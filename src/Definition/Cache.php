@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\CacheMode as cache_mode;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Platform\CacheMode as cache_mode;
 
 /**
  * Cache store definition for db/caches.php.

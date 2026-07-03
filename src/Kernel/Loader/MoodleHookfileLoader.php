@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Kernel\Loader;
 
 use Middag\Framework\Kernel\Loader\HookfileLoader;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Throwable;

@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Definition;
 
-use Middag\Moodle\Enum\MessagePermission as message_permission;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Message\MessagePermission as message_permission;
 
 /**
  * Message provider definition for db/messages.php.

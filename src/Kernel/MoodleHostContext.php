@@ -16,7 +16,7 @@ use core\component as core_component;
 use LogicException;
 use Middag\Framework\Kernel\Contract\HostComponentContextInterface;
 use Middag\Framework\Kernel\HostContext;
-use Middag\Moodle\Kernel\Config\ComponentContext;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Support\ConfigSupport;
 
 /**

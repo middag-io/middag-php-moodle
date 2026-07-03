@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use InvalidArgumentException;
-use Middag\Moodle\ValueObject\MoodleVersion as moodle_version;
+use Middag\Moodle\Domain\Platform\MoodleVersion as moodle_version;
 use RuntimeException;
 use stdClass;
 

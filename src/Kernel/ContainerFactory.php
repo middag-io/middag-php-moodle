@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Kernel;
 
 use Closure;
+use Middag\Moodle\Http\Routing\Router;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

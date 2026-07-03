@@ -14,8 +14,8 @@ namespace Middag\Moodle\Support;
 
 use dml_exception;
 use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Entity\Grade as grade;
-use Middag\Moodle\Entity\GradeItem as grade_item;
+use Middag\Moodle\Domain\Grade\Grade as grade;
+use Middag\Moodle\Domain\Grade\GradeItem as grade_item;
 use Middag\Moodle\Shared\Util\Debug as debug;
 
 /**

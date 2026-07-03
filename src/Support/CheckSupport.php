@@ -15,8 +15,8 @@ namespace Middag\Moodle\Support;
 use core\check\check as core_check;
 use core\check\manager as check_manager;
 use core\check\result;
-use Middag\Moodle\Dto\CheckResultDto as check_result_dto;
-use Middag\Moodle\Enum\CheckResultStatus as check_result_status;
+use Middag\Moodle\Domain\Platform\CheckResultDto as check_result_dto;
+use Middag\Moodle\Domain\Platform\CheckResultStatus as check_result_status;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Throwable;
 

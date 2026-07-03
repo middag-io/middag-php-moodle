@@ -1,316 +1,286 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Class Middag\\Moodle\\Adapter\\Authentication referenced with incorrect case\: Middag\\Moodle\\Adapter\\authentication\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: src/Adapter/Authorizer.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Adapter\\Capability referenced with incorrect case\: Middag\\Moodle\\Adapter\\capability\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: src/Adapter/Authorizer.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Adapter\\Capability\:\:resolveContext\(\) should return core\\context but returns core\\context\\block\|core\\context\\course\|core\\context\\coursecat\|core\\context\\module\|core\\context\\system\|core\\context\\user\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Adapter/Capability.php
-
-		-
-			message: '#^Class core\\exception\\moodle_exception constructor invoked with 6 parameters, 1\-5 required\.$#'
-			identifier: arguments.count
-			count: 2
-			path: src/Adapter/TransactionManager.php
-
-		-
-			message: '#^Access to constant TYPE_CUSTOM on an unknown class navigation_node\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Adapter/View.php
-
-		-
-			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Contract\\MessageServiceInterface\:\:email\(\) is incompatible with type int\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: src/Contract/MessageServiceInterface.php
-
-		-
-			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Contract\\MessageServiceInterface\:\:message\(\) is incompatible with type int\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: src/Contract/MessageServiceInterface.php
-
-		-
-			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Contract\\MessageServiceInterface\:\:notification\(\) is incompatible with type int\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: src/Contract/MessageServiceInterface.php
-
-		-
-			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Contract\\MessageServiceInterface\:\:prepare\(\) is incompatible with type int\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: src/Contract/MessageServiceInterface.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Entity/AbstractMoodleEntity.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Entity/AbstractMoodleEntity.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Entity/AbstractMoodleEntity.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Entity/Completion.php
-
-		-
-			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Entity\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, context given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Entity/Context.php
-
-		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Entity\\Context\:\:fromContext\(\) has invalid type context\.$#'
-			identifier: class.notFound
-			count: 2
-			path: src/Entity/Context.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Entity/CourseCompletion.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Entity/UserProfileField.php
-
-		-
-			message: '#^Parameter \$classname of method Middag\\Moodle\\Service\\AdhocService\:\:create\(\) expects class\-string\<core\\task\\adhoc_task\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Infrastructure/Bus/MoodleAsyncDispatcher.php
-
-		-
-			message: '#^Method HTML_QuickForm\:\:addElement\(\) invoked with 3 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Infrastructure/Form/MformRenderer.php
-
-		-
-			message: '#^Call to method out\(\) on an unknown class core\\output\\moodle_url\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Infrastructure/Inertia/InertiaSharedProps.php
-
-		-
-			message: '#^Parameter \#2 \$context of function has_capability expects context, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Infrastructure/Inertia/InertiaSharedProps.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Infrastructure/Logging/MoodleActorResolver.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Infrastructure/Logging/MoodleOriginResolver.php
-
-		-
 			message: '#^Parameter \#2 \$type of class xmldb_index constructor expects string\|null, bool given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Infrastructure/Schema/XmldbSchemaAdapter.php
+			path: src/Database/Schema/XmldbSchemaAdapter.php
 
 		-
 			message: '#^Parameter \#2 \$type of method xmldb_table\:\:add_index\(\) expects int, bool given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Infrastructure/Schema/XmldbSchemaAdapter.php
+			path: src/Database/Schema/XmldbSchemaAdapter.php
 
 		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getCacheDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getCapabilities\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getEventDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getFileAreaDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getHookDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getMessageDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getServiceDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:getWebServiceDefinitions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Framework\\Contract\\Core\\ExtensionInterface\:\:get_moodle_events\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Infrastructure/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Moodle\\Definition\\DefinitionInterface\:\:get_qualified_name\(\)\.$#'
-			identifier: method.notFound
-			count: 6
-			path: src/Infrastructure/Statics/StaticsRenderer.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Kernel\\Kernel referenced with incorrect case\: Middag\\Moodle\\Kernel\\kernel\.$#'
-			identifier: class.nameCase
-			count: 14
-			path: src/Kernel/ContainerFactory.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Kernel\\Router referenced with incorrect case\: Middag\\Moodle\\Kernel\\router\.$#'
-			identifier: class.nameCase
-			count: 4
-			path: src/Kernel/ContainerFactory.php
-
-		-
-			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
-			identifier: catch.neverThrown
-			count: 1
-			path: src/Kernel/ContainerFactory.php
-
-		-
-			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
+			message: '#^Class core\\exception\\moodle_exception constructor invoked with 6 parameters, 1\-5 required\.$#'
+			identifier: arguments.count
 			count: 2
-			path: src/Kernel/ContainerFactory.php
+			path: src/Database/TransactionManager.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: src/Domain/AbstractMoodleEntity.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Domain/AbstractMoodleEntity.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Domain/AbstractMoodleEntity.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Domain/Completion/Completion.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Domain/Completion/CourseCompletion.php
+
+		-
+			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Domain\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, context given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/Context/Context.php
+
+		-
+			message: '#^Parameter \$context of method Middag\\Moodle\\Domain\\Context\\Context\:\:fromContext\(\) has invalid type context\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Domain/Context/Context.php
+
+		-
+			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Domain\\Message\\Contract\\MessageServiceInterface\:\:email\(\) is incompatible with type int\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: src/Domain/Message/Contract/MessageServiceInterface.php
+
+		-
+			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Domain\\Message\\Contract\\MessageServiceInterface\:\:message\(\) is incompatible with type int\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: src/Domain/Message/Contract/MessageServiceInterface.php
+
+		-
+			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Domain\\Message\\Contract\\MessageServiceInterface\:\:notification\(\) is incompatible with type int\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: src/Domain/Message/Contract/MessageServiceInterface.php
+
+		-
+			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Domain\\Message\\Contract\\MessageServiceInterface\:\:prepare\(\) is incompatible with type int\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: src/Domain/Message/Contract/MessageServiceInterface.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$component\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$contexturl\.$#'
+			identifier: property.private
+			count: 2
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$contexturlname\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$convid\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$courseid\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$fullmessage\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$fullmessageformat\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$fullmessagehtml\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$name\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$notification\.$#'
+			identifier: property.private
+			count: 2
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$smallmessage\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$subject\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$userfrom\.$#'
+			identifier: property.private
+			count: 2
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Access to private property core\\message\\message\:\:\$userto\.$#'
+			identifier: property.private
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Property core\\message\\message\:\:\$fullmessageformat \(int\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Domain/Message/MessageService.php
+
+		-
+			message: '#^Parameter \#2 \$matrix of static method Middag\\Moodle\\Support\\VersionSupport\:\:supports\(\) expects array\<string, array\{since\?\: string, until\?\: string\}\>, array\<string, string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/Platform/PlatformService.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Domain/Task/ScheduledService.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Domain/User/UserProfileField.php
+
+		-
+			message: '#^Method HTML_QuickForm\:\:addElement\(\) invoked with 3 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Form/MformRenderer.php
+
+		-
+			message: '#^Trait Middag\\Moodle\\Http\\Concerns\\InteractsWithAuth is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/Concerns/InteractsWithAuth.php
+
+		-
+			message: '#^Trait Middag\\Moodle\\Http\\Concerns\\InteractsWithForms is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/Concerns/InteractsWithForms.php
+
+		-
+			message: '#^Trait Middag\\Moodle\\Http\\Concerns\\InteractsWithPage is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/Concerns/InteractsWithPage.php
+
+		-
+			message: '#^Trait Middag\\Moodle\\Http\\Concerns\\UrlGenerator is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/Concerns/UrlGenerator.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Http/Controller/AbstractApiController.php
+
+		-
+			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Cannot call method get_data\(\) on object\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\course given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\module given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\system given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Template type T of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:getService\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: src/Http/Controller/AbstractController.php
+
+		-
+			message: '#^Call to method out\(\) on an unknown class core\\output\\moodle_url\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Http/Inertia/InertiaSharedProps.php
+
+		-
+			message: '#^Parameter \#2 \$context of function has_capability expects context, core\\context\\system given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Inertia/InertiaSharedProps.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: src/Kernel/Facade/AbstractFacade.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: src/Kernel/Http/AbstractApiController.php
-
-		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Cannot call method get_data\(\) on object\|string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Kernel\\Http\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\course given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Kernel\\Http\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\module given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Kernel\\Http\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Template type T of method Middag\\Moodle\\Kernel\\Http\\AbstractController\:\:getService\(\) is not referenced in a parameter\.$#'
-			identifier: method.templateTypeNotInParameter
-			count: 1
-			path: src/Kernel/Http/AbstractController.php
-
-		-
-			message: '#^Trait Middag\\Moodle\\Kernel\\Http\\Trait\\InteractsWithAuth is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Kernel/Http/Trait/InteractsWithAuth.php
-
-		-
-			message: '#^Trait Middag\\Moodle\\Kernel\\Http\\Trait\\InteractsWithForms is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Kernel/Http/Trait/InteractsWithForms.php
-
-		-
-			message: '#^Trait Middag\\Moodle\\Kernel\\Http\\Trait\\InteractsWithPage is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Kernel/Http/Trait/InteractsWithPage.php
-
-		-
-			message: '#^Trait Middag\\Moodle\\Kernel\\Http\\Trait\\UrlGenerator is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Kernel/Http/Trait/UrlGenerator.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Kernel\\Router referenced with incorrect case\: Middag\\Moodle\\Kernel\\router\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: src/Kernel/Kernel.php
 
 		-
 			message: '#^PHPDoc tag @return with type object\|T is not subtype of native type object\.$#'
@@ -343,166 +313,100 @@ parameters:
 			path: src/Kernel/MoodleBootstrap.php
 
 		-
-			message: '#^Access to protected property Middag\\Moodle\\Entity\\User\:\:\$id\.$#'
-			identifier: property.protected
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: src/Service/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Service\\AuthService\:\:decrypt\(\) should return stdClass but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Service/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Service\\AuthService\:\:decryptJwtRsa\(\) should return stdClass\|false but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Service/AuthService.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: src/Service/AuthService.php
-
-		-
-			message: '#^Parameter \#3 \$type of function optional_param expects string, null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Service/AuthService.php
+			path: src/Logging/MoodleActorResolver.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: src/Service/AuthService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$component\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$contexturl\.$#'
-			identifier: property.private
-			count: 2
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$contexturlname\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$convid\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$courseid\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$fullmessage\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$fullmessageformat\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$fullmessagehtml\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$name\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$notification\.$#'
-			identifier: property.private
-			count: 2
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$smallmessage\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$subject\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$userfrom\.$#'
-			identifier: property.private
-			count: 2
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Access to private property core\\message\\message\:\:\$userto\.$#'
-			identifier: property.private
-			count: 1
-			path: src/Service/MessageService.php
-
-		-
-			message: '#^Property core\\message\\message\:\:\$fullmessageformat \(int\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Service/MessageService.php
+			path: src/Logging/MoodleOriginResolver.php
 
 		-
 			message: '#^Parameter \#2 \$context of static method Middag\\Moodle\\Support\\CapabilitySupport\:\:has\(\) expects core\\context, core\\context\\system given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Service/NavbarService.php
+			path: src/Output/NavbarService.php
 
 		-
-			message: '#^Parameter \#2 \$matrix of static method Middag\\Moodle\\Support\\VersionSupport\:\:supports\(\) expects array\<string, array\{since\?\: string, until\?\: string\}\>, array\<string, string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Service/PlatformService.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Contract\\PrivacyProviderInterface\:\:deleteDataForAllUsersInContext\(\) expects core\\context, context given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Service/PrivacyProvider.php
-
-		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Service\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type context\.$#'
+			message: '#^Access to constant TYPE_CUSTOM on an unknown class navigation_node\.$#'
 			identifier: class.notFound
 			count: 1
-			path: src/Service/PrivacyProvider.php
+			path: src/Output/View.php
 
 		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Service\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type core_privacy\\local\\request\\context\.$#'
+			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Privacy\\Contract\\PrivacyProviderInterface\:\:deleteDataForAllUsersInContext\(\) expects core\\context, context given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Privacy/PrivacyProvider.php
+
+		-
+			message: '#^Parameter \$context of method Middag\\Moodle\\Privacy\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type context\.$#'
 			identifier: class.notFound
 			count: 1
-			path: src/Service/PrivacyProvider.php
+			path: src/Privacy/PrivacyProvider.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
+			message: '#^Parameter \$context of method Middag\\Moodle\\Privacy\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type core_privacy\\local\\request\\context\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/Service/ScheduledService.php
+			path: src/Privacy/PrivacyProvider.php
+
+		-
+			message: '#^Class Middag\\Moodle\\Security\\Authentication referenced with incorrect case\: Middag\\Moodle\\Security\\authentication\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: src/Security/Authorizer.php
+
+		-
+			message: '#^Class Middag\\Moodle\\Security\\Capability referenced with incorrect case\: Middag\\Moodle\\Security\\capability\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: src/Security/Authorizer.php
+
+		-
+			message: '#^Method Middag\\Moodle\\Security\\Capability\:\:resolveContext\(\) should return core\\context but returns core\\context\\block\|core\\context\\course\|core\\context\\coursecat\|core\\context\\module\|core\\context\\system\|core\\context\\user\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Security/Capability.php
+
+		-
+			message: '#^Access to protected property Middag\\Moodle\\Domain\\User\\User\:\:\$id\.$#'
+			identifier: property.protected
+			count: 1
+			path: src/Security/Service/AuthService.php
+
+		-
+			message: '#^Method Middag\\Moodle\\Security\\Service\\AuthService\:\:decrypt\(\) should return stdClass but returns Firebase\\JWT\\stdClass\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Security/Service/AuthService.php
+
+		-
+			message: '#^Method Middag\\Moodle\\Security\\Service\\AuthService\:\:decryptJwtRsa\(\) should return stdClass\|false but returns Firebase\\JWT\\stdClass\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Security/Service/AuthService.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Security/Service/AuthService.php
+
+		-
+			message: '#^Parameter \#3 \$type of function optional_param expects string, null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Security/Service/AuthService.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: src/Security/Service/AuthService.php
 
 		-
 			message: '#^Class Middag\\Moodle\\Settings\\Page referenced with incorrect case\: Middag\\Moodle\\Settings\\page\.$#'
@@ -523,10 +427,10 @@ parameters:
 			path: src/Settings/Text.php
 
 		-
-			message: '#^Trait Middag\\Moodle\\Shared\\Trait\\HasUrl is used zero times and is not analysed\.$#'
+			message: '#^Trait Middag\\Moodle\\Shared\\Concerns\\HasUrl is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1
-			path: src/Shared/Trait/HasUrl.php
+			path: src/Shared/Concerns/HasUrl.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -541,16 +445,28 @@ parameters:
 			path: src/Shared/Util/Helper.php
 
 		-
+			message: '#^PHPDoc tag @param for parameter \$definitions with type Middag\\Moodle\\Definition\\Contract\\DefinitionInterface is incompatible with native type array\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: src/Statics/StaticsCollector.php
+
+		-
+			message: '#^PHPDoc tag @return with type Middag\\Moodle\\Definition\\Contract\\DefinitionInterface is incompatible with native type array\.$#'
+			identifier: return.phpDocType
+			count: 2
+			path: src/Statics/StaticsCollector.php
+
+		-
+			message: '#^Call to an undefined method Middag\\Moodle\\Definition\\Contract\\DefinitionInterface\:\:get_qualified_name\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: src/Statics/StaticsRenderer.php
+
+		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$displaymessage$#'
 			identifier: parameter.notFound
 			count: 1
 			path: src/Support/AuthSupport.php
-
-		-
-			message: '#^PHPDoc tag @var for constant Middag\\Moodle\\Support\\CacheSupport\:\:PLUGIN_NAME with type string is not subtype of value mixed\.$#'
-			identifier: classConstant.phpDocType
-			count: 1
-			path: src/Support/CacheSupport.php
 
 		-
 			message: '#^Parameter \#1 \$context of function get_user_roles expects context, core\\context given\.$#'
@@ -703,12 +619,6 @@ parameters:
 			path: src/Support/CompletionSupport.php
 
 		-
-			message: '#^PHPDoc tag @var for constant Middag\\Moodle\\Support\\ConfigSupport\:\:PLUGIN_NAME with type string is not subtype of value mixed\.$#'
-			identifier: classConstant.phpDocType
-			count: 1
-			path: src/Support/ConfigSupport.php
-
-		-
 			message: '#^Method Middag\\Moodle\\Support\\ContextSupport\:\:classFor\(\) should return class\-string but returns string\.$#'
 			identifier: return.type
 			count: 2
@@ -757,19 +667,19 @@ parameters:
 			path: src/Support/ContextSupport.php
 
 		-
-			message: '#^Access to protected property Middag\\Moodle\\Entity\\Course\:\:\$category\.$#'
+			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$category\.$#'
 			identifier: property.protected
 			count: 1
 			path: src/Support/CourseSupport.php
 
 		-
-			message: '#^Access to protected property Middag\\Moodle\\Entity\\Course\:\:\$format\.$#'
+			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$format\.$#'
 			identifier: property.protected
 			count: 1
 			path: src/Support/CourseSupport.php
 
 		-
-			message: '#^Access to protected property Middag\\Moodle\\Entity\\Course\:\:\$visible\.$#'
+			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$visible\.$#'
 			identifier: property.protected
 			count: 1
 			path: src/Support/CourseSupport.php
@@ -817,13 +727,13 @@ parameters:
 			path: src/Support/CourseSupport.php
 
 		-
-			message: '#^Property Middag\\Moodle\\Entity\\Course\:\:\$category \(int\) in isset\(\) is not nullable\.$#'
+			message: '#^Property Middag\\Moodle\\Domain\\Course\\Course\:\:\$category \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: src/Support/CourseSupport.php
 
 		-
-			message: '#^Property Middag\\Moodle\\Entity\\Course\:\:\$format \(string\) in isset\(\) is not nullable\.$#'
+			message: '#^Property Middag\\Moodle\\Domain\\Course\\Course\:\:\$format \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: src/Support/CourseSupport.php
@@ -845,12 +755,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Support/EnrolSupport.php
-
-		-
-			message: '#^PHPDoc tag @var for constant Middag\\Moodle\\Support\\FileSupport\:\:COMPONENT with type string is not subtype of value mixed\.$#'
-			identifier: classConstant.phpDocType
-			count: 1
-			path: src/Support/FileSupport.php
 
 		-
 			message: '#^Caught class dml_exception is not an exception\.$#'
@@ -887,12 +791,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Support/LangSupport.php
-
-		-
-			message: '#^PHPDoc tag @var for constant Middag\\Moodle\\Support\\LockSupport\:\:LOCK_TYPE with type string is not subtype of value mixed\.$#'
-			identifier: classConstant.phpDocType
-			count: 1
-			path: src/Support/LockSupport.php
 
 		-
 			message: '#^Access to private property core\\message\\message\:\:\$userfrom\.$#'
@@ -1015,7 +913,7 @@ parameters:
 			path: src/Support/PluginSupport.php
 
 		-
-			message: '#^PHPDoc tag @return with type Middag\\Moodle\\Dto\\PluginDto is incompatible with native type array\.$#'
+			message: '#^PHPDoc tag @return with type Middag\\Moodle\\Domain\\Platform\\PluginDto is incompatible with native type array\.$#'
 			identifier: return.phpDocType
 			count: 1
 			path: src/Support/PluginSupport.php
@@ -1135,7 +1033,7 @@ parameters:
 			path: src/Support/UserFieldSupport.php
 
 		-
-			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Entity\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, core\\stdClass\|true given\.$#'
+			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Domain\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, core\\stdClass\|true given\.$#'
 			identifier: argument.type
 			count: 3
 			path: src/Support/UserSupport.php

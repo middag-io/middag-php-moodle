@@ -14,10 +14,11 @@ namespace Middag\Moodle\Kernel;
 
 use Middag\Framework\Kernel\Contract\KernelInterface as kernel_interface;
 use Middag\Framework\Kernel\HostContext;
-use Middag\Moodle\Infrastructure\Inertia\InertiaSharedProps as inertia_shared_props;
-use Middag\Moodle\Infrastructure\Inertia\MoodleInertiaBootstrap as inertia_bootstrap;
-use Middag\Moodle\Kernel\Config\ComponentContext;
-use Middag\Moodle\Kernel\Http\Contract\RouterInterface as router_interface;
+use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Http\Contract\RouterInterface as router_interface;
+use Middag\Moodle\Http\Inertia\InertiaSharedProps as inertia_shared_props;
+use Middag\Moodle\Http\Inertia\MoodleInertiaBootstrap as inertia_bootstrap;
+use Middag\Moodle\Http\Routing\Router;
 use Middag\Moodle\Kernel\MoodleHttpKernel as http_kernel;
 use Middag\Moodle\Shared\Util\Debug as debug;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -68,7 +69,7 @@ class Kernel implements kernel_interface
     /** @var null|http_kernel The handler for the HTTP Request/Response cycle */
     private ?http_kernel $httpKernel = null;
 
-    /** @var null|router The router service for routing configuration */
+    /** @var null|Router The router service for routing configuration */
     private ?router_interface $router = null;
 
     /** @var bool Flag indicating if the kernel has successfully finished booting */
@@ -387,7 +388,7 @@ class Kernel implements kernel_interface
             $this->ensureAutoload();
 
             // 1. Initialize core components
-            $this->router = new router();
+            $this->router = new Router();
 
             // 2. Build and compile the container using the dedicated factory
             // We pass $this (Kernel) to inject it into the container itself

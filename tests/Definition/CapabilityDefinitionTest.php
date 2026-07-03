@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\Capability;
-use Middag\Moodle\Definition\DefinitionInterface;
-use Middag\Moodle\Enum\CapabilityRisk;
-use Middag\Moodle\Enum\CapabilityType;
-use Middag\Moodle\Enum\ContextLevel;
+use Middag\Moodle\Definition\Contract\DefinitionInterface;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Security\Enum\CapabilityRisk;
+use Middag\Moodle\Security\Enum\CapabilityType;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
