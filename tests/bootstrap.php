@@ -77,6 +77,42 @@ if (!function_exists('get_plugins_with_function')) {
     }
 }
 
+// Stub: get_string() — delegates to $GLOBALS['__middag_test_get_string'] when
+// set (a Closure receiving ($identifier, $component, $a); may throw to emulate
+// Moodle's missing-string coding_exception), else echoes a deterministic
+// "[component/identifier]" marker.
+if (!function_exists('get_string')) {
+    function get_string(string $identifier, string $component = '', mixed $a = null, bool $lazyload = false): string
+    {
+        $handler = $GLOBALS['__middag_test_get_string'] ?? null;
+        if ($handler instanceof Closure) {
+            return $handler($identifier, $component, $a);
+        }
+
+        return sprintf('[%s/%s]', $component, $identifier);
+    }
+}
+
+// Stub: get_string_manager()->string_exists() — delegates to
+// $GLOBALS['__middag_test_string_exists'] when set (a Closure receiving
+// ($identifier, $component); may throw), else reports false.
+if (!function_exists('get_string_manager')) {
+    function get_string_manager(bool $forcereload = false): object
+    {
+        return new class {
+            public function string_exists(string $identifier, string $component): bool
+            {
+                $handler = $GLOBALS['__middag_test_string_exists'] ?? null;
+                if ($handler instanceof Closure) {
+                    return (bool) $handler($identifier, $component);
+                }
+
+                return false;
+            }
+        };
+    }
+}
+
 // Stub: email_to_user() — records calls in $GLOBALS['__middag_test_emails'];
 // return value controlled via $GLOBALS['__middag_test_email_result'] (default true)
 if (!function_exists('email_to_user')) {
