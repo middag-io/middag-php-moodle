@@ -36,7 +36,6 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Logging/` | `MoodleLogger` (PSR-3 `AbstractLogger`), `MoodleActorResolver`, `MoodleOriginResolver` |
 | `Mail/` | `MoodleMailer` (framework `MailerInterface` → `email_to_user`) |
 | `Output/` | `MoodleView` (local `ViewAdapterInterface`), `MoodleRenderer` (extends `plugin_renderer_base`), `AbstractBlock`, `NavbarService`, `Widget` |
-| `Pdf/` | `PdftkAdapter` — **scheduled for removal** (see gotchas) |
 | `Persistence/` | `UpgradeHelper`, `VersionTracker` (framework `VersionTrackerInterface`), `Query/SqlGenerator` |
 | `Privacy/` | `PrivacyProvider` + `Contract/` (Moodle privacy API) |
 | `Security/` | `AuthService`, `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
@@ -95,7 +94,7 @@ PSR ports: `Logging\MoodleLogger` (PSR-3), `Support\CacheSupportPsr16` (PSR-16).
 
 ## Guard tests (run under `composer test`)
 
-- `tests/ClassLoadabilityTest.php` — every PSR-4 symbol under `src/` (229)
+- `tests/ClassLoadabilityTest.php` — every PSR-4 symbol under `src/` (228)
   must autoload **without a Moodle runtime**. 11 documented host-only
   exclusions (classes requiring Moodle files at file scope or extending core
   classes). If you add a class that cannot load standalone, add it to the
@@ -123,9 +122,9 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 3. **`Settings/Storedfile` vs `Domain/File/StoredFile`** differ only by case —
    an accepted divergence: `Settings/` mirrors Moodle's `admin_setting_*`
    naming, `Domain/` is the entity. Case-sensitive Linux CI guards collisions.
-4. **`Pdf/PdftkAdapter` is scheduled to move to a proprietary MIDDAG package**
-   (upcoming breaking change, together with the `mikehaertl/php-pdftk` dep).
-   Do not build new code on it and do not document it as stable surface.
+4. **There is no PDF surface in this adapter.** `Pdf/PdftkAdapter` (and the
+   `mikehaertl/php-pdftk` dependency) moved to the proprietary MIDDAG core
+   package. Do not reintroduce PDF tooling here.
 5. **Translation:** `MoodleTranslator` implements the framework Translation
    port (`get()`/`has()`). Framework `%name%` params map onto Moodle's `$a`
    placeholder object (`'%count%'` → `$a->count`); an empty `$component`

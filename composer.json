@@ -9,7 +9,6 @@
     "firebase/php-jwt": "^7.0",
     "middag-io/framework": "^1.0.2",
     "middag-io/ui": "^1.2",
-    "mikehaertl/php-pdftk": "^0.13",
     "nyholm/psr7": "^1.8",
     "psr/container": "^2.0",
     "psr/log": "^3.0",
