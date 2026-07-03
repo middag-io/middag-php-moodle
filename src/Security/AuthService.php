@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Security\Service;
+namespace Middag\Moodle\Security;
 
 use core\exception\coding_exception;
 use core\exception\moodle_exception;

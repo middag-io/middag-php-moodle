@@ -38,7 +38,7 @@ use Throwable;
  *
  * @internal
  */
-class Logger extends AbstractLogger
+class MoodleLogger extends AbstractLogger
 {
     /**
      * PSR-3 level → Moodle debugging level mapping.

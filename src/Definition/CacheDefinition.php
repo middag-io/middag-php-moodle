@@ -20,7 +20,7 @@ use Middag\Moodle\Domain\Platform\CacheMode as cache_mode;
  *
  * @api
  */
-final readonly class Cache implements DefinitionInterface
+final readonly class CacheDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,

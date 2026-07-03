@@ -24,4 +24,4 @@ use core\output\plugin_renderer_base;
  *
  * @api
  */
-abstract class Renderer extends plugin_renderer_base {}
+abstract class MoodleRenderer extends plugin_renderer_base {}

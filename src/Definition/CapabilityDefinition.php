@@ -22,7 +22,7 @@ use Middag\Moodle\Security\Enum\CapabilityType as capability_type;
  *
  * @api
  */
-final readonly class Capability implements DefinitionInterface
+final readonly class CapabilityDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,

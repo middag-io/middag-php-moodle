@@ -19,7 +19,7 @@ use Middag\Moodle\Definition\Contract\DefinitionInterface;
  *
  * @api
  */
-final readonly class Service implements DefinitionInterface
+final readonly class ServiceDefinition implements DefinitionInterface
 {
     /**
      * @param string[] $services     web service shortnames this function is published in

@@ -23,7 +23,7 @@ namespace Middag\Moodle\Http\Routing;
  * Activation plan (post Moodle 5.1 GA):
  *   - Adopt `use \core\router\route_controller;` once the trait ships in core.
  *   - Declare `#[route(path: ..., method: [...])]` methods delegating into
- *     `Middag\Moodle\Http\Routing\Router` (existing internal router).
+ *     `Middag\Moodle\Http\Routing\MoodleRouter` (existing internal router).
  *   - Wire registration via the plugin shim under
  *     `local_example/classes/route/api/middag_proxy.php` (Moodle scans plugin
  *     `classes/route/api/`, not Composer namespaces directly).

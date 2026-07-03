@@ -38,7 +38,7 @@ use Symfony\Component\Routing\RouteCollection;
  *
  * @see router_interface
  */
-class Router implements router_interface
+class MoodleRouter implements router_interface
 {
     /** @var string The entry point script within Moodle */
     private const ENTRY_POINT = '/local/middag/index.php';

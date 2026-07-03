@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Contract;
 
-use Middag\Moodle\Http\Routing\Router;
+use Middag\Moodle\Http\Routing\MoodleRouter;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\RouteCollection;
  *
  * The framework no longer ships a router contract — URL generation and route
  * resolution are host concerns. This contract pins the surface the Moodle
- * adapter's {@see Router} exposes and that the kernel,
+ * adapter's {@see MoodleRouter} exposes and that the kernel,
  * controllers, settings tree and Inertia bootstrap type against.
  *
  * @internal

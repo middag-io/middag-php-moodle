@@ -24,7 +24,7 @@ use Middag\Moodle\Domain\Context\ContextLevel as context_level;
  *
  * @api
  */
-final readonly class FileArea implements DefinitionInterface
+final readonly class FileAreaDefinition implements DefinitionInterface
 {
     /**
      * @param string        $name             area name without extension prefix (e.g. 'attachments')

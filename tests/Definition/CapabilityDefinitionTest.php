@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Definition;
 
-use Middag\Moodle\Definition\Capability;
+use Middag\Moodle\Definition\CapabilityDefinition;
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Domain\Context\ContextLevel;
 use Middag\Moodle\Security\Enum\CapabilityRisk;
@@ -36,14 +36,14 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function canBeConstructedWithNameOnly(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
         $this->assertSame('manage', $cap->name);
     }
 
     #[Test]
     public function hasCorrectDefaults(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
         $this->assertSame([], $cap->archetypes);
         $this->assertSame(CapabilityType::READ, $cap->type);
         $this->assertSame(ContextLevel::SYSTEM, $cap->context);
@@ -56,7 +56,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function canBeConstructedWithAllArgs(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'manage',
             archetypes: ['manager', 'editingteacher'],
             type: CapabilityType::WRITE,
@@ -80,21 +80,21 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function implementsDefinitionInterface(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
         $this->assertInstanceOf(DefinitionInterface::class, $cap);
     }
 
     #[Test]
     public function getNameReturnsCapabilityName(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
         $this->assertSame('manage', $cap->getName());
     }
 
     #[Test]
     public function toMoodleArrayReturnsBasicStructure(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'view',
             type: CapabilityType::READ,
             context: ContextLevel::SYSTEM,
@@ -112,7 +112,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function toMoodleArrayMapsArchetypesToCapAllow(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'manage',
             archetypes: ['manager', 'editingteacher'],
         );
@@ -128,7 +128,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function toMoodleArrayIncludesCloneFromWhenSet(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'manage',
             clone_from: 'moodle/course:manage',
         );
@@ -142,7 +142,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function toMoodleArrayExcludesCloneFromWhenNull(): void
     {
-        $cap = new Capability(name: 'view');
+        $cap = new CapabilityDefinition(name: 'view');
 
         $result = $cap->toMoodleArray('local_example');
 
@@ -152,7 +152,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function toMoodleArrayUsesWriteCaptype(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'edit',
             type: CapabilityType::WRITE,
         );
@@ -165,7 +165,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function toMoodleArrayUsesModuleContextLevel(): void
     {
-        $cap = new Capability(
+        $cap = new CapabilityDefinition(
             name: 'view',
             context: ContextLevel::MODULE,
         );
@@ -178,7 +178,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function getQualifiedNameWithoutExtension(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
 
         $qualified = $cap->get_qualified_name('local_example');
         $this->assertSame('local/example:manage', $qualified);
@@ -187,7 +187,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function getQualifiedNameWithCoreExtension(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
 
         $qualified = $cap->get_qualified_name('local_example', 'core');
         $this->assertSame('local/example:manage', $qualified);
@@ -196,7 +196,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function getQualifiedNameWithNullExtension(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
 
         $qualified = $cap->get_qualified_name('local_example');
         $this->assertSame('local/example:manage', $qualified);
@@ -205,7 +205,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function getQualifiedNameWithCustomExtension(): void
     {
-        $cap = new Capability(name: 'manage');
+        $cap = new CapabilityDefinition(name: 'manage');
 
         $qualified = $cap->get_qualified_name('local_example', 'myext');
         $this->assertSame('local/example:myext_manage', $qualified);
@@ -214,7 +214,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function getQualifiedNameWithModPlugin(): void
     {
-        $cap = new Capability(name: 'addinstance');
+        $cap = new CapabilityDefinition(name: 'addinstance');
 
         $qualified = $cap->get_qualified_name('mod_forum');
         $this->assertSame('mod/forum:addinstance', $qualified);
@@ -223,7 +223,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function isCompatibleReturnsTrueWithNoVersionConstraints(): void
     {
-        $cap = new Capability(name: 'view');
+        $cap = new CapabilityDefinition(name: 'view');
 
         $this->assertTrue($cap->isCompatible('4.5'));
         $this->assertTrue($cap->isCompatible('3.0'));
@@ -232,7 +232,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function isCompatibleRespectsMinMoodle(): void
     {
-        $cap = new Capability(name: 'view', min_moodle: '4.0');
+        $cap = new CapabilityDefinition(name: 'view', min_moodle: '4.0');
 
         $this->assertTrue($cap->isCompatible('4.0'));
         $this->assertTrue($cap->isCompatible('4.5'));
@@ -242,7 +242,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function isCompatibleRespectsMaxMoodle(): void
     {
-        $cap = new Capability(name: 'view', max_moodle: '4.5');
+        $cap = new CapabilityDefinition(name: 'view', max_moodle: '4.5');
 
         $this->assertTrue($cap->isCompatible('4.5'));
         $this->assertTrue($cap->isCompatible('4.0'));
@@ -252,7 +252,7 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function isCompatibleRespectsMinAndMaxMoodle(): void
     {
-        $cap = new Capability(name: 'view', min_moodle: '4.0', max_moodle: '4.5');
+        $cap = new CapabilityDefinition(name: 'view', min_moodle: '4.0', max_moodle: '4.5');
 
         $this->assertTrue($cap->isCompatible('4.0'));
         $this->assertTrue($cap->isCompatible('4.3'));
@@ -264,14 +264,14 @@ final class CapabilityDefinitionTest extends TestCase
     #[Test]
     public function isReadonly(): void
     {
-        $reflection = new ReflectionClass(Capability::class);
+        $reflection = new ReflectionClass(CapabilityDefinition::class);
         $this->assertTrue($reflection->isReadOnly());
     }
 
     #[Test]
     public function isFinal(): void
     {
-        $reflection = new ReflectionClass(Capability::class);
+        $reflection = new ReflectionClass(CapabilityDefinition::class);
         $this->assertTrue($reflection->isFinal());
     }
 }

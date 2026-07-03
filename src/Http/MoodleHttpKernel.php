@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Kernel;
+namespace Middag\Moodle\Http;
 
 use Middag\Framework\Http\Contract\ControllerInterface;
 use Middag\Framework\Http\HttpKernel;

@@ -325,16 +325,16 @@ parameters:
 			path: src/Logging/MoodleOriginResolver.php
 
 		-
+			message: '#^Access to constant TYPE_CUSTOM on an unknown class navigation_node\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Output/MoodleView.php
+
+		-
 			message: '#^Parameter \#2 \$context of static method Middag\\Moodle\\Support\\CapabilitySupport\:\:has\(\) expects core\\context, core\\context\\system given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Output/NavbarService.php
-
-		-
-			message: '#^Access to constant TYPE_CUSTOM on an unknown class navigation_node\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Output/View.php
 
 		-
 			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Privacy\\Contract\\PrivacyProviderInterface\:\:deleteDataForAllUsersInContext\(\) expects core\\context, context given\.$#'
@@ -355,6 +355,42 @@ parameters:
 			path: src/Privacy/PrivacyProvider.php
 
 		-
+			message: '#^Access to protected property Middag\\Moodle\\Domain\\User\\User\:\:\$id\.$#'
+			identifier: property.protected
+			count: 1
+			path: src/Security/AuthService.php
+
+		-
+			message: '#^Method Middag\\Moodle\\Security\\AuthService\:\:decrypt\(\) should return stdClass but returns Firebase\\JWT\\stdClass\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Security/AuthService.php
+
+		-
+			message: '#^Method Middag\\Moodle\\Security\\AuthService\:\:decryptJwtRsa\(\) should return stdClass\|false but returns Firebase\\JWT\\stdClass\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Security/AuthService.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Security/AuthService.php
+
+		-
+			message: '#^Parameter \#3 \$type of function optional_param expects string, null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Security/AuthService.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: src/Security/AuthService.php
+
+		-
 			message: '#^Class Middag\\Moodle\\Security\\Authentication referenced with incorrect case\: Middag\\Moodle\\Security\\authentication\.$#'
 			identifier: class.nameCase
 			count: 2
@@ -371,42 +407,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: src/Security/Capability.php
-
-		-
-			message: '#^Access to protected property Middag\\Moodle\\Domain\\User\\User\:\:\$id\.$#'
-			identifier: property.protected
-			count: 1
-			path: src/Security/Service/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Security\\Service\\AuthService\:\:decrypt\(\) should return stdClass but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Security/Service/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Security\\Service\\AuthService\:\:decryptJwtRsa\(\) should return stdClass\|false but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Security/Service/AuthService.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: src/Security/Service/AuthService.php
-
-		-
-			message: '#^Parameter \#3 \$type of function optional_param expects string, null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Security/Service/AuthService.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Security/Service/AuthService.php
 
 		-
 			message: '#^Class Middag\\Moodle\\Settings\\Page referenced with incorrect case\: Middag\\Moodle\\Settings\\page\.$#'

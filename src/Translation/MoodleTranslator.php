@@ -21,7 +21,7 @@ use Throwable;
  *
  * @internal
  */
-class Translator implements translator_interface
+class MoodleTranslator implements translator_interface
 {
     /**
      * {@inheritDoc}
