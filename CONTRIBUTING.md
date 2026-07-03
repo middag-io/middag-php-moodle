@@ -73,6 +73,12 @@ must remain consumable on its own.
   (`2.0`) is never cut automatically — only by explicit maintainer decision when
   the break genuinely impacts Composer consumers.
 
+> Historical note: `1.1.1` shipped the audit-consolidation breaking changes
+> (the batch-A renames, the framework Translation port replacing the local
+> interface, and the PDFTk adapter removal) as a patch by explicit maintainer
+> decision, closing the OSS audit before external consumers existed. The
+> policy above applies from that release onward.
+
 ## Code of conduct
 
 This project has a [Code of Conduct](CODE_OF_CONDUCT.md). By participating you
