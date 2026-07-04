@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/middag-io/middag-php-moodle/compare/v1.1.1...v1.2.0) (2026-07-04)
+
+
+### Features
+
+* **kernel:** chain product reset callbacks into the ContainerFactory boot seam ([d0d3568](https://github.com/middag-io/middag-php-moodle/commit/d0d3568782edd06bcba65dd35afa2d4d05fa187c))
+
+
+### Bug Fixes
+
+* **settings:** normalise PascalCase config enums and reject underivable slugs ([f131c0e](https://github.com/middag-io/middag-php-moodle/commit/f131c0e29d7776b4a67e2ec7e21237c89061aadf))
+
+
+### Miscellaneous
+
+* **deps:** allow firebase/php-jwt ^6.11 alongside ^7.0 ([77e20c3](https://github.com/middag-io/middag-php-moodle/commit/77e20c3a145518638bfd2d636eda603d0c80e3e6))
+
 ## [1.1.1](https://github.com/middag-io/middag-php-moodle/compare/v1.1.0...v1.1.1) (2026-07-03)
 
 
