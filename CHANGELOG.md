@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/middag-io/middag-php-moodle/compare/v1.2.0...v1.2.1) (2026-07-04)
+
+
+### Bug Fixes
+
+* **kernel:** run every reset callback before rethrowing the first failure ([29111e4](https://github.com/middag-io/middag-php-moodle/commit/29111e4f2d7318a957172abcc85443369c4fd726))
+
 ## [1.2.0](https://github.com/middag-io/middag-php-moodle/compare/v1.1.1...v1.2.0) (2026-07-04)
 
 
