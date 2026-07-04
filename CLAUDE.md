@@ -118,7 +118,10 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 2. **`Settings/framework_config` is lowercase on purpose.** The enum's short
    name is functional: `SettingsSupport::resolve()` derives the settings slug
    from the `*_config` short name (with a `framework → core` special case).
-   Do not rename it to PascalCase.
+   PascalCase spellings are normalised to snake_case before the slug is
+   derived, and an enum whose name cannot be mapped onto `{slug}_config`
+   is rejected with `InvalidArgumentException` — it never silently resolves
+   a dead key. Keep this enum lowercase anyway.
 3. **`Settings/Storedfile` vs `Domain/File/StoredFile`** differ only by case —
    an accepted divergence: `Settings/` mirrors Moodle's `admin_setting_*`
    naming, `Domain/` is the entity. Case-sensitive Linux CI guards collisions.
