@@ -16,6 +16,7 @@ use Closure;
 use Middag\Moodle\Http\Routing\MoodleRouter;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Throwable;
 
 /**
  * OSS boot seam for the DI container.
@@ -110,14 +111,25 @@ final class ContainerFactory
      *
      * Also fires the product-registered reset hooks so caches held behind the
      * builder closure (e.g. a product ContainerFactory singleton) are dropped
-     * in the same sweep.
+     * in the same sweep. A throwing hook must not leave sibling products with
+     * stale caches, so every hook runs before the first failure is rethrown.
      */
     public static function reset(): void
     {
         self::$container = null;
 
+        $firstFailure = null;
+
         foreach (self::$resetCallbacks as $callback) {
-            $callback();
+            try {
+                $callback();
+            } catch (Throwable $throwable) {
+                $firstFailure ??= $throwable;
+            }
+        }
+
+        if ($firstFailure instanceof Throwable) {
+            throw $firstFailure;
         }
     }
 }

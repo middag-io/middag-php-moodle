@@ -137,6 +137,65 @@ final class ContainerFactoryTest extends TestCase
         self::assertSame(['a', 'b'], $log);
     }
 
+    #[Test]
+    public function aThrowingCallbackDoesNotStopTheSweep(): void
+    {
+        $log = [];
+        ContainerFactory::registerResetCallback('product-a', static function (): never {
+            throw new RuntimeException('product-a reset failed');
+        });
+        ContainerFactory::registerResetCallback('product-b', static function () use (&$log): void {
+            $log[] = 'b';
+        });
+
+        try {
+            ContainerFactory::reset();
+            self::fail('reset() must rethrow the callback failure');
+        } catch (RuntimeException $runtimeException) {
+            self::assertSame('product-a reset failed', $runtimeException->getMessage());
+        }
+
+        self::assertSame(['b'], $log);
+    }
+
+    #[Test]
+    public function theFirstOfMultipleFailuresIsRethrown(): void
+    {
+        ContainerFactory::registerResetCallback('product-a', static function (): never {
+            throw new RuntimeException('first failure');
+        });
+        ContainerFactory::registerResetCallback('product-b', static function (): never {
+            throw new RuntimeException('second failure');
+        });
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('first failure');
+
+        ContainerFactory::reset();
+    }
+
+    #[Test]
+    public function theCachedContainerIsDroppedEvenWhenACallbackThrows(): void
+    {
+        ContainerFactory::setBuilder(static fn (): ContainerBuilder => new ContainerBuilder());
+        $first = ContainerFactory::getInstance($this->kernel(), $this->router());
+
+        ContainerFactory::registerResetCallback('product-a', static function (): never {
+            throw new RuntimeException('boom');
+        });
+
+        try {
+            ContainerFactory::reset();
+        } catch (RuntimeException) {
+            // expected — the sweep still dropped the cache below.
+        }
+
+        ContainerFactory::registerResetCallback('product-a', static function (): void {});
+        $second = ContainerFactory::getInstance($this->kernel(), $this->router());
+
+        self::assertNotSame($first, $second);
+    }
+
     /**
      * The seam holds static state; tests must not leak builder/callbacks/cache
      * into each other (or into other suites), so every boundary wipes all three.
