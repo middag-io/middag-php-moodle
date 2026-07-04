@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/middag-io/middag-php-moodle/compare/v1.2.1...v1.2.2) (2026-07-04)
+
+
+### Bug Fixes
+
+* **deps:** require firebase/php-jwt ^7.0 again ([00fa6ec](https://github.com/middag-io/middag-php-moodle/commit/00fa6ec734ff159d2ade9adbafba79b63bab89f3))
+* **deps:** require firebase/php-jwt ^7.0 again ([f67747a](https://github.com/middag-io/middag-php-moodle/commit/f67747aea75fa0f5e24e33bc67f12e6a72e79d50))
+
 ## [1.2.1](https://github.com/middag-io/middag-php-moodle/compare/v1.2.0...v1.2.1) (2026-07-04)
 
 
