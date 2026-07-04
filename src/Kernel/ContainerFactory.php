@@ -41,6 +41,11 @@ final class ContainerFactory
      */
     private static ?Closure $builder = null;
 
+    /**
+     * @var array<string, Closure(): void> product-registered reset hooks, keyed for idempotent registration
+     */
+    private static array $resetCallbacks = [];
+
     private function __construct() {}
 
     /**
@@ -83,10 +88,36 @@ final class ContainerFactory
     }
 
     /**
+     * Register a reset hook fired whenever {@see self::reset()} runs.
+     *
+     * The product builder registered via {@see self::setBuilder()} usually
+     * delegates to its own caching factory; without chaining that cache into
+     * this seam, Kernel::shutdown() + re-init hands back a stale container
+     * built for a previous kernel/router pair. Hooks are keyed so repeated
+     * registration on every boot is idempotent, and — like the builder —
+     * they survive reset(): they describe product wiring, not built state.
+     *
+     * @param string          $id       registration key (e.g. the product factory FQCN)
+     * @param Closure(): void $callback invoked after the cached container is dropped
+     */
+    public static function registerResetCallback(string $id, Closure $callback): void
+    {
+        self::$resetCallbacks[$id] = $callback;
+    }
+
+    /**
      * Reset the cached container (test isolation / re-boot).
+     *
+     * Also fires the product-registered reset hooks so caches held behind the
+     * builder closure (e.g. a product ContainerFactory singleton) are dropped
+     * in the same sweep.
      */
     public static function reset(): void
     {
         self::$container = null;
+
+        foreach (self::$resetCallbacks as $callback) {
+            $callback();
+        }
     }
 }

@@ -145,6 +145,14 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 9. `symfony/event-dispatcher-contracts` (interfaces only) is the declared
    dependency — do not reintroduce the full `symfony/event-dispatcher`
    implementation.
+10. **Product container caches must chain into the reset seam.** If the
+    builder registered via `ContainerFactory::setBuilder()` delegates to a
+    caching factory of its own, that factory must also call
+    `ContainerFactory::registerResetCallback()` — otherwise
+    `Kernel::shutdown()` + re-init hands back a stale container built for a
+    previous kernel/router pair (symptom: default routes like
+    `route_not_found` missing). Callbacks are keyed (idempotent) and survive
+    `reset()`, like the builder itself.
 
 ## Composer scripts
 
