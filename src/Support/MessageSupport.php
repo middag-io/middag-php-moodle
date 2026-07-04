@@ -67,7 +67,7 @@ class MessageSupport
      *
      * @return bool True on success, false otherwise
      */
-    public static function email($to, $from, $subject, $html, $text, $attachment = '', $name = '')
+    public static function email(object $to, $from, string $subject, string $html, string $text, $attachment = '', $name = ''): bool
     {
         return email_to_user($to, $from, $subject, $text, $html, $attachment, $name);
     }

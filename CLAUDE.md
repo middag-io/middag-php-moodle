@@ -118,7 +118,10 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 2. **`Settings/framework_config` is lowercase on purpose.** The enum's short
    name is functional: `SettingsSupport::resolve()` derives the settings slug
    from the `*_config` short name (with a `framework → core` special case).
-   Do not rename it to PascalCase.
+   PascalCase spellings are normalised to snake_case before the slug is
+   derived, and an enum whose name cannot be mapped onto `{slug}_config`
+   is rejected with `InvalidArgumentException` — it never silently resolves
+   a dead key. Keep this enum lowercase anyway.
 3. **`Settings/Storedfile` vs `Domain/File/StoredFile`** differ only by case —
    an accepted divergence: `Settings/` mirrors Moodle's `admin_setting_*`
    naming, `Domain/` is the entity. Case-sensitive Linux CI guards collisions.
@@ -142,6 +145,14 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 9. `symfony/event-dispatcher-contracts` (interfaces only) is the declared
    dependency — do not reintroduce the full `symfony/event-dispatcher`
    implementation.
+10. **Product container caches must chain into the reset seam.** If the
+    builder registered via `ContainerFactory::setBuilder()` delegates to a
+    caching factory of its own, that factory must also call
+    `ContainerFactory::registerResetCallback()` — otherwise
+    `Kernel::shutdown()` + re-init hands back a stale container built for a
+    previous kernel/router pair (symptom: default routes like
+    `route_not_found` missing). Callbacks are keyed (idempotent) and survive
+    `reset()`, like the builder itself.
 
 ## Composer scripts
 
