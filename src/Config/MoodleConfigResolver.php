@@ -20,6 +20,8 @@ use Middag\Moodle\Support\ConfigSupport;
  *
  * Resolves config values from Moodle's get_config() API.
  * The entitySlug parameter is ignored (Moodle is single-tenant per instance).
+ *
+ * @internal
  */
 final class MoodleConfigResolver implements ConfigResolverInterface
 {

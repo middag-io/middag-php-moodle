@@ -21,6 +21,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * Provides STATIC helper methods to generate URLs via the Kernel.
  * Useful for Facades, Utils, or classes that are not instantiated via Container.
+ *
+ * @internal
  */
 trait UrlGenerator
 {

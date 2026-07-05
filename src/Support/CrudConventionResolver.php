@@ -22,6 +22,8 @@ use ReflectionProperty;
  * and other conventions needed by the CrudBuilder. Moodle-specific: bakes in
  * Moodle column conventions, plugin form-class layout and capability strings,
  * so it lives in the Moodle adapter rather than the platform-agnostic UI lib.
+ *
+ * @internal
  */
 final class CrudConventionResolver
 {

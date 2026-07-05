@@ -32,6 +32,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * Configures the DI container with Moodle-specific synthetic services
  * and platform adapter bindings. Called by ContainerFactory during init.
+ *
+ * @internal
  */
 final class MoodleBootstrap implements BootstrapInterface
 {

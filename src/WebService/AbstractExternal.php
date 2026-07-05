@@ -23,5 +23,7 @@ use core_external\external_api;
  *
  * Usage:
  *   class my_plugin_external extends AbstractExternal { … }
+ *
+ * @api
  */
 abstract class AbstractExternal extends external_api {}

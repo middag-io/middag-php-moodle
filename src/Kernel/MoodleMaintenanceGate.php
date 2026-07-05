@@ -30,6 +30,8 @@ use function function_exists;
  *
  * Replaces the framework's default {@see NullMaintenanceGate}
  * (which always reports "not under maintenance") for the Moodle host.
+ *
+ * @internal
  */
 final class MoodleMaintenanceGate implements MaintenanceGateInterface
 {
