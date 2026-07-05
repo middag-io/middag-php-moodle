@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Enum;
+namespace Middag\Moodle\Tests\Domain\Completion;
 
 use Middag\Moodle\Domain\Completion\CompletionState;
 use PHPUnit\Framework\Attributes\CoversClass;

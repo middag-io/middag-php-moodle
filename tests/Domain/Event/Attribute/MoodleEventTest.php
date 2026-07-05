@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainventAttribute;
+namespace Middag\Moodle\Tests\Domain\Event\Attribute;
 
 use Attribute;
 use Middag\Moodle\Domain\Event\Attribute\MoodleEvent;

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Enum;
+namespace Middag\Moodle\Tests\Domain\Role;
 
 use Middag\Moodle\Domain\Role\RoleArchetype;
 use PHPUnit\Framework\Attributes\CoversClass;

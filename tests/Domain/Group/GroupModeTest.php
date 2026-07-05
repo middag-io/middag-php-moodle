@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Enum;
+namespace Middag\Moodle\Tests\Domain\Group;
 
 use Middag\Moodle\Domain\Group\GroupMode;
 use PHPUnit\Framework\Attributes\CoversClass;

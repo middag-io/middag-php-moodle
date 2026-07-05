@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainPlatform;
+namespace Middag\Moodle\Tests\Domain\Platform;
 
 use Middag\Framework\Exception\MiddagValidationException;
 use Middag\Moodle\Domain\Platform\Frankenstyle;

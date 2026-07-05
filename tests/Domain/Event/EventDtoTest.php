@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainvent;
+namespace Middag\Moodle\Tests\Domain\Event;
 
 use JsonSerializable;
 use Middag\Moodle\Domain\Event\EventDto;

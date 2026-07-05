@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainCourse;
+namespace Middag\Moodle\Tests\Domain\Course;
 
 use Middag\Moodle\Domain\Course\CourseDto;
 use PHPUnit\Framework\Attributes\CoversClass;
