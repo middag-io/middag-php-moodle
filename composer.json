@@ -19,6 +19,9 @@
     "symfony/http-foundation": "^7.0",
     "symfony/routing": "^7.0"
   },
+  "conflict": {
+    "middag-io/core": "<1.2"
+  },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.0",
     "michaelmeneses/moodle-stubs": "5.2.0",
