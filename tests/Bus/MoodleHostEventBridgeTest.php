@@ -14,15 +14,15 @@ namespace Middag\Moodle\Tests\Bus;
 
 use Middag\Framework\Kernel\Manager\HookManager;
 use Middag\Moodle\Bus\MoodleHostEventBridge;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleHostEventBridge::class)]
 final class MoodleHostEventBridgeTest extends TestCase
 {
     private HookManager $hooks;

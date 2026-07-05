@@ -17,6 +17,7 @@ use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Domain\Context\ContextLevel;
 use Middag\Moodle\Security\Enum\CapabilityRisk;
 use Middag\Moodle\Security\Enum\CapabilityType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -28,9 +29,8 @@ if (!defined('CAP_ALLOW')) {
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CapabilityDefinition::class)]
 final class CapabilityDefinitionTest extends TestCase
 {
     #[Test]

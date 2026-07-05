@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,9 +29,8 @@ use RecursiveIteratorIterator;
  * than class loading to avoid pulling in a full Moodle runtime.
  *
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 final class AdapterPluginIsolationTest extends TestCase
 {
     private const SRC_DIR = __DIR__ . '/../src';
@@ -60,9 +61,7 @@ final class AdapterPluginIsolationTest extends TestCase
         "'middag_job'",
     ];
 
-    /**
-     * @dataProvider sourceFileProvider
-     */
+    #[DataProvider('sourceFileProvider')]
     public function testFileDoesNotReferencePluginOrProprietaryNamespaces(string $path): void
     {
         $source = file_get_contents($path);
@@ -77,9 +76,7 @@ final class AdapterPluginIsolationTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider sourceFileProvider
-     */
+    #[DataProvider('sourceFileProvider')]
     public function testFileDoesNotHardcodeGoldTables(string $path): void
     {
         $source = file_get_contents($path);

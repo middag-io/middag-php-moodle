@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Enum;
 
 use Middag\Moodle\Domain\Completion\CompletionState;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CompletionState::class)]
 final class CompletionStateTest extends TestCase
 {
     #[Test]

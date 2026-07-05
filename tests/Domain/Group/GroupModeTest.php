@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Enum;
 
 use Middag\Moodle\Domain\Group\GroupMode;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(GroupMode::class)]
 final class GroupModeTest extends TestCase
 {
     #[Test]

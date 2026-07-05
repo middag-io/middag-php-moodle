@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Enum;
 
 use Middag\Moodle\Domain\Platform\CacheMode;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CacheMode::class)]
 final class CacheModeTest extends TestCase
 {
     #[Test]

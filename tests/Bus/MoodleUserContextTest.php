@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Bus;
 
 use Middag\Moodle\Bus\MoodleUserContext;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleUserContext::class)]
 final class MoodleUserContextTest extends TestCase
 {
     private MoodleUserContext $context;

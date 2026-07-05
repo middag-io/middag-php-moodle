@@ -14,15 +14,15 @@ namespace MiddagMoodleTestsDomainventAttribute;
 
 use Attribute;
 use Middag\Moodle\Domain\Event\Attribute\MoodleEvent;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleEvent::class)]
 final class MoodleEventTest extends TestCase
 {
     #[Test]

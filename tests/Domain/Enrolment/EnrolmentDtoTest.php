@@ -14,15 +14,15 @@ namespace MiddagMoodleTestsDomainnrolment;
 
 use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
 use Middag\Moodle\Domain\Enrolment\EnrolmentStatus;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(EnrolmentDto::class)]
 final class EnrolmentDtoTest extends TestCase
 {
     #[Test]

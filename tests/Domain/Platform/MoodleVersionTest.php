@@ -14,6 +14,7 @@ namespace MiddagMoodleTestsDomainPlatform;
 
 use Middag\Framework\Exception\MiddagValidationException;
 use Middag\Moodle\Domain\Platform\MoodleVersion;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -21,9 +22,8 @@ use Stringable;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleVersion::class)]
 final class MoodleVersionTest extends TestCase
 {
     #[Test]

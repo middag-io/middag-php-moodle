@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Config;
 
 use Middag\Framework\Kernel\Contract\ConfigResolverInterface;
 use Middag\Moodle\Config\MoodleConfigResolver;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -26,9 +27,8 @@ use ReflectionClass;
  * level to control return values.
  *
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleConfigResolver::class)]
 final class MoodleConfigResolverTest extends TestCase
 {
     private MoodleConfigResolver $resolver;

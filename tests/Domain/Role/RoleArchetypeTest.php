@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Enum;
 
 use Middag\Moodle\Domain\Role\RoleArchetype;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(RoleArchetype::class)]
 final class RoleArchetypeTest extends TestCase
 {
     #[Test]

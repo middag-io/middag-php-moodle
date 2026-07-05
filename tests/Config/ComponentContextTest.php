@@ -15,13 +15,13 @@ namespace Middag\Moodle\Tests\Config;
 use InvalidArgumentException;
 use LogicException;
 use Middag\Moodle\Config\ComponentContext;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @covers \Middag\Moodle\Config\ComponentContext
  */
+#[CoversClass(ComponentContext::class)]
 final class ComponentContextTest extends TestCase
 {
     /**

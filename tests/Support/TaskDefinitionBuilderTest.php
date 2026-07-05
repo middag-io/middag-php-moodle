@@ -14,14 +14,14 @@ namespace Middag\Moodle\Tests\Support;
 
 use Middag\Framework\Bus\Attribute\Schedule;
 use Middag\Moodle\Support\TaskDefinitionBuilder;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(TaskDefinitionBuilder::class)]
 final class TaskDefinitionBuilderTest extends TestCase
 {
     #[Test]

@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Security\ValueObject;
 
 use Middag\Framework\Exception\MiddagValidationException;
 use Middag\Moodle\Security\ValueObject\Sesskey;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -21,9 +22,8 @@ use Stringable;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(Sesskey::class)]
 final class SesskeyTest extends TestCase
 {
     #[Test]

@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\User;
 
 use Middag\Moodle\Domain\User\UserDto;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(UserDto::class)]
 final class UserDtoTest extends TestCase
 {
     #[Test]
