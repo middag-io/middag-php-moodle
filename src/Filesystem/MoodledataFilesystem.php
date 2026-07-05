@@ -48,7 +48,21 @@ final readonly class MoodledataFilesystem implements FilesystemInterface
         }
 
         if ($subdirectory !== '') {
-            $root .= '/' . trim($subdirectory, '/');
+            if (str_contains($subdirectory, "\0")) {
+                throw new MiddagInfrastructureException('The dataroot subdirectory must not contain a null byte.');
+            }
+
+            $subdirectory = trim($subdirectory, '/');
+
+            foreach (explode('/', $subdirectory) as $segment) {
+                if ($segment === '..') {
+                    throw new MiddagInfrastructureException(
+                        sprintf('The dataroot subdirectory "%s" must not contain a parent-directory ("..") segment.', $subdirectory)
+                    );
+                }
+            }
+
+            $root .= '/' . $subdirectory;
         }
 
         if (!is_dir($root) && !mkdir($root, 0o755, true) && !is_dir($root)) {

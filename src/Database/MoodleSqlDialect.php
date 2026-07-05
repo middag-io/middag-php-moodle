@@ -30,6 +30,8 @@ use const SQL_PARAMS_NAMED;
  *
  * This is the only Moodle-specific SQL idiom layer; repositories that must emit
  * raw SQL depend on this contract, never on `$DB` directly.
+ *
+ * @internal
  */
 final readonly class MoodleSqlDialect implements SqlDialectInterface
 {

@@ -3,6 +3,22 @@
   "description": "MIDDAG Moodle adapter — platform bindings, ACL layer, and Moodle-specific implementations for middag-framework",
   "type": "library",
   "license": "Apache-2.0",
+  "keywords": [
+    "moodle",
+    "adapter",
+    "host-adapter",
+    "mform",
+    "xmldb",
+    "inertia",
+    "middag",
+    "plugin"
+  ],
+  "homepage": "https://github.com/middag-io/middag-php-moodle",
+  "support": {
+    "issues": "https://github.com/middag-io/middag-php-moodle/issues",
+    "source": "https://github.com/middag-io/middag-php-moodle",
+    "security": "https://github.com/middag-io/middag-php-moodle/security/policy"
+  },
   "require": {
     "php": "^8.2",
     "ext-json": "*",
@@ -18,6 +34,9 @@
     "symfony/http-client": "^7.0",
     "symfony/http-foundation": "^7.0",
     "symfony/routing": "^7.0"
+  },
+  "conflict": {
+    "middag-io/core": "<1.2"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.0",

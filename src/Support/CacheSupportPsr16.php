@@ -58,7 +58,6 @@ final readonly class CacheSupportPsr16 implements CacheInterface
 
     /**
      * @param iterable<string> $keys
-     * @param mixed            $default
      *
      * @return iterable<string, mixed>
      */

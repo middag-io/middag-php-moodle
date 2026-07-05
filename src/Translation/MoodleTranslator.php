@@ -29,6 +29,8 @@ use stdClass;
  * Failures from `get_string()`/`string_exists()` (e.g. a missing string in
  * developer mode) propagate to the caller — the adapter does not swallow
  * host errors.
+ *
+ * @internal
  */
 final readonly class MoodleTranslator implements TranslatorInterface
 {

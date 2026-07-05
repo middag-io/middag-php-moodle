@@ -143,8 +143,6 @@ class User extends AbstractMoodleEntity
      * Set authentication plugin.
      *
      * @param string $auth
-     *
-     * @return $this
      */
     public function withAuth(string $auth): self
     {
@@ -167,8 +165,6 @@ class User extends AbstractMoodleEntity
      * Set confirmation flag.
      *
      * @param int $confirmed
-     *
-     * @return $this
      */
     public function withConfirmed(int $confirmed): self
     {
@@ -191,8 +187,6 @@ class User extends AbstractMoodleEntity
      * Set policy agreement flag.
      *
      * @param int $policyagreed
-     *
-     * @return $this
      */
     public function withPolicyagreed(int $policyagreed): self
     {
@@ -215,8 +209,6 @@ class User extends AbstractMoodleEntity
      * Set deleted flag.
      *
      * @param int $deleted
-     *
-     * @return $this
      */
     public function withDeleted(int $deleted): self
     {
@@ -239,8 +231,6 @@ class User extends AbstractMoodleEntity
      * Set suspended flag.
      *
      * @param int $suspended
-     *
-     * @return $this
      */
     public function withSuspended(int $suspended): self
     {
@@ -263,8 +253,6 @@ class User extends AbstractMoodleEntity
      * Set MNet host identifier.
      *
      * @param int $mnethostid
-     *
-     * @return $this
      */
     public function withMnethostid(int $mnethostid): self
     {
@@ -287,8 +275,6 @@ class User extends AbstractMoodleEntity
      * Set username.
      *
      * @param string $username
-     *
-     * @return $this
      */
     public function withUsername(string $username): self
     {
@@ -311,8 +297,6 @@ class User extends AbstractMoodleEntity
      * Set hashed password.
      *
      * @param string $password
-     *
-     * @return $this
      */
     public function withPassword(string $password): self
     {
@@ -335,8 +319,6 @@ class User extends AbstractMoodleEntity
      * Set idnumber.
      *
      * @param string $idnumber
-     *
-     * @return $this
      */
     public function withIdnumber(string $idnumber): self
     {
@@ -359,8 +341,6 @@ class User extends AbstractMoodleEntity
      * Set first name.
      *
      * @param string $firstname
-     *
-     * @return $this
      */
     public function withFirstname(string $firstname): self
     {
@@ -383,8 +363,6 @@ class User extends AbstractMoodleEntity
      * Set last name.
      *
      * @param string $lastname
-     *
-     * @return $this
      */
     public function withLastname(string $lastname): self
     {
@@ -407,8 +385,6 @@ class User extends AbstractMoodleEntity
      * Set email.
      *
      * @param string $email
-     *
-     * @return $this
      */
     public function withEmail(string $email): self
     {
@@ -431,8 +407,6 @@ class User extends AbstractMoodleEntity
      * Set email stop flag.
      *
      * @param int $emailstop
-     *
-     * @return $this
      */
     public function withEmailstop(int $emailstop): self
     {
@@ -455,8 +429,6 @@ class User extends AbstractMoodleEntity
      * Set primary phone.
      *
      * @param string $phone1
-     *
-     * @return $this
      */
     public function withPhone1(string $phone1): self
     {
@@ -479,8 +451,6 @@ class User extends AbstractMoodleEntity
      * Set secondary phone.
      *
      * @param string $phone2
-     *
-     * @return $this
      */
     public function withPhone2(string $phone2): self
     {
@@ -503,8 +473,6 @@ class User extends AbstractMoodleEntity
      * Set institution.
      *
      * @param string $institution
-     *
-     * @return $this
      */
     public function withInstitution(string $institution): self
     {
@@ -527,8 +495,6 @@ class User extends AbstractMoodleEntity
      * Set department.
      *
      * @param string $department
-     *
-     * @return $this
      */
     public function withDepartment(string $department): self
     {
@@ -551,8 +517,6 @@ class User extends AbstractMoodleEntity
      * Set address.
      *
      * @param string $address
-     *
-     * @return $this
      */
     public function withAddress(string $address): self
     {
@@ -575,8 +539,6 @@ class User extends AbstractMoodleEntity
      * Set city.
      *
      * @param string $city
-     *
-     * @return $this
      */
     public function withCity(string $city): self
     {
@@ -599,8 +561,6 @@ class User extends AbstractMoodleEntity
      * Set country code.
      *
      * @param string $country
-     *
-     * @return $this
      */
     public function withCountry(string $country): self
     {
@@ -623,8 +583,6 @@ class User extends AbstractMoodleEntity
      * Set language.
      *
      * @param string $lang
-     *
-     * @return $this
      */
     public function withLang(string $lang): self
     {
@@ -647,8 +605,6 @@ class User extends AbstractMoodleEntity
      * Set calendar type.
      *
      * @param string $calendartype
-     *
-     * @return $this
      */
     public function withCalendartype(string $calendartype): self
     {
@@ -671,8 +627,6 @@ class User extends AbstractMoodleEntity
      * Set theme.
      *
      * @param string $theme
-     *
-     * @return $this
      */
     public function withTheme(string $theme): self
     {
@@ -695,8 +649,6 @@ class User extends AbstractMoodleEntity
      * Set timezone.
      *
      * @param string $timezone
-     *
-     * @return $this
      */
     public function withTimezone(string $timezone): self
     {
@@ -719,8 +671,6 @@ class User extends AbstractMoodleEntity
      * Set first access timestamp.
      *
      * @param int $firstaccess
-     *
-     * @return $this
      */
     public function withFirstaccess(int $firstaccess): self
     {
@@ -743,8 +693,6 @@ class User extends AbstractMoodleEntity
      * Set last access timestamp.
      *
      * @param int $lastaccess
-     *
-     * @return $this
      */
     public function withLastaccess(int $lastaccess): self
     {
@@ -767,8 +715,6 @@ class User extends AbstractMoodleEntity
      * Set last login timestamp.
      *
      * @param int $lastlogin
-     *
-     * @return $this
      */
     public function withLastlogin(int $lastlogin): self
     {
@@ -791,8 +737,6 @@ class User extends AbstractMoodleEntity
      * Set current login timestamp.
      *
      * @param int $currentlogin
-     *
-     * @return $this
      */
     public function withCurrentlogin(int $currentlogin): self
     {
@@ -815,8 +759,6 @@ class User extends AbstractMoodleEntity
      * Set last IP.
      *
      * @param string $lastip
-     *
-     * @return $this
      */
     public function withLastip(string $lastip): self
     {
@@ -839,8 +781,6 @@ class User extends AbstractMoodleEntity
      * Set secret string.
      *
      * @param string $secret
-     *
-     * @return $this
      */
     public function withSecret(string $secret): self
     {
@@ -863,8 +803,6 @@ class User extends AbstractMoodleEntity
      * Set picture revision.
      *
      * @param int $picture
-     *
-     * @return $this
      */
     public function withPicture(int $picture): self
     {
@@ -875,8 +813,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get description.
-     *
-     * @return null|string
      */
     public function getDescription(): ?string
     {
@@ -887,8 +823,6 @@ class User extends AbstractMoodleEntity
      * Set description.
      *
      * @param null|string $description
-     *
-     * @return $this
      */
     public function withDescription(?string $description): self
     {
@@ -911,8 +845,6 @@ class User extends AbstractMoodleEntity
      * Set description format.
      *
      * @param int $descriptionformat
-     *
-     * @return $this
      */
     public function withDescriptionformat(int $descriptionformat): self
     {
@@ -935,8 +867,6 @@ class User extends AbstractMoodleEntity
      * Set mail format.
      *
      * @param int $mailformat
-     *
-     * @return $this
      */
     public function withMailformat(int $mailformat): self
     {
@@ -959,8 +889,6 @@ class User extends AbstractMoodleEntity
      * Set mail digest mode.
      *
      * @param int $maildigest
-     *
-     * @return $this
      */
     public function withMaildigest(int $maildigest): self
     {
@@ -983,8 +911,6 @@ class User extends AbstractMoodleEntity
      * Set mail display preference.
      *
      * @param int $maildisplay
-     *
-     * @return $this
      */
     public function withMaildisplay(int $maildisplay): self
     {
@@ -1007,8 +933,6 @@ class User extends AbstractMoodleEntity
      * Set autosubscribe preference.
      *
      * @param int $autosubscribe
-     *
-     * @return $this
      */
     public function withAutosubscribe(int $autosubscribe): self
     {
@@ -1031,8 +955,6 @@ class User extends AbstractMoodleEntity
      * Set forums tracking preference.
      *
      * @param int $trackforums
-     *
-     * @return $this
      */
     public function withTrackforums(int $trackforums): self
     {
@@ -1055,8 +977,6 @@ class User extends AbstractMoodleEntity
      * Set trust bitmask.
      *
      * @param int $trustbitmask
-     *
-     * @return $this
      */
     public function withTrustbitmask(int $trustbitmask): self
     {
@@ -1067,8 +987,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get image alt text.
-     *
-     * @return null|string
      */
     public function getImagealt(): ?string
     {
@@ -1079,8 +997,6 @@ class User extends AbstractMoodleEntity
      * Set image alt text.
      *
      * @param null|string $imagealt
-     *
-     * @return $this
      */
     public function withImagealt(?string $imagealt): self
     {
@@ -1091,8 +1007,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get lastname phonetic.
-     *
-     * @return null|string
      */
     public function getLastnamephonetic(): ?string
     {
@@ -1103,8 +1017,6 @@ class User extends AbstractMoodleEntity
      * Set lastname phonetic.
      *
      * @param null|string $lastnamephonetic
-     *
-     * @return $this
      */
     public function withLastnamephonetic(?string $lastnamephonetic): self
     {
@@ -1115,8 +1027,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get firstname phonetic.
-     *
-     * @return null|string
      */
     public function getFirstnamephonetic(): ?string
     {
@@ -1127,8 +1037,6 @@ class User extends AbstractMoodleEntity
      * Set firstname phonetic.
      *
      * @param null|string $firstnamephonetic
-     *
-     * @return $this
      */
     public function withFirstnamephonetic(?string $firstnamephonetic): self
     {
@@ -1139,8 +1047,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get middle name.
-     *
-     * @return null|string
      */
     public function getMiddlename(): ?string
     {
@@ -1151,8 +1057,6 @@ class User extends AbstractMoodleEntity
      * Set middle name.
      *
      * @param null|string $middlename
-     *
-     * @return $this
      */
     public function withMiddlename(?string $middlename): self
     {
@@ -1163,8 +1067,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get alternate name.
-     *
-     * @return null|string
      */
     public function getAlternatename(): ?string
     {
@@ -1175,8 +1077,6 @@ class User extends AbstractMoodleEntity
      * Set alternate name.
      *
      * @param null|string $alternatename
-     *
-     * @return $this
      */
     public function withAlternatename(?string $alternatename): self
     {
@@ -1187,8 +1087,6 @@ class User extends AbstractMoodleEntity
 
     /**
      * Get MoodleNet profile.
-     *
-     * @return null|string
      */
     public function getMoodlenetprofile(): ?string
     {
@@ -1199,8 +1097,6 @@ class User extends AbstractMoodleEntity
      * Set MoodleNet profile.
      *
      * @param null|string $moodlenetprofile
-     *
-     * @return $this
      */
     public function withMoodlenetprofile(?string $moodlenetprofile): self
     {

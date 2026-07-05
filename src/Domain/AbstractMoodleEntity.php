@@ -43,8 +43,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      * Magic getter to allow reading protected properties.
      *
      * @param string $name Property name
-     *
-     * @return mixed
      */
     public function __get(string $name): mixed
     {
@@ -85,8 +83,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      *
      * @param string $name
      * @param array  $arguments
-     *
-     * @return mixed
      */
     public function __call(string $name, array $arguments): mixed
     {
@@ -144,8 +140,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      * since Moodle's database layer often returns numeric values as strings.
      *
      * @param array|stdClass $record
-     *
-     * @return static
      */
     public static function fromRecord(array|stdClass $record): static
     {
@@ -193,8 +187,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
 
     /**
      * Get the entity unique identifier.
-     *
-     * @return null|int
      */
     public function getId(): ?int
     {
@@ -205,8 +197,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      * Set entity identifier.
      *
      * @param null|int $id
-     *
-     * @return $this
      */
     public function withId(?int $id): self
     {
@@ -229,8 +219,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      * Set entity creation timestamp.
      *
      * @param int $timecreated
-     *
-     * @return $this
      */
     public function withTimecreated(int $timecreated): self
     {
@@ -253,8 +241,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      * Set entity modification timestamp.
      *
      * @param int $timemodified
-     *
-     * @return $this
      */
     public function withTimemodified(int $timemodified): self
     {
@@ -278,9 +264,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      *
      * @param object $entity
      * @param string $property
-     * @param mixed  $value
-     *
-     * @return mixed
      */
     private static function castValue(object $entity, string $property, mixed $value): mixed
     {
@@ -333,7 +316,6 @@ abstract class AbstractMoodleEntity implements EntityInterface
      *
      * @param object $entity
      * @param string $property
-     * @param mixed  $value
      */
     private static function writeProperty(object $entity, string $property, mixed $value): void
     {

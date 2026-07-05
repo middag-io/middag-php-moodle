@@ -33,6 +33,8 @@ use Throwable;
  * Table names received by the record helpers are *logical* (unprefixed, unbraced):
  * Moodle's DML applies the table prefix internally, so the record helpers strip the
  * `{...}` braces the dialect emits before handing the name to `$DB`.
+ *
+ * @internal
  */
 final readonly class MoodleConnectionAdapter implements ConnectionAdapterInterface
 {

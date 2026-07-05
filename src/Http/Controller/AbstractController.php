@@ -544,14 +544,11 @@ abstract class AbstractController implements controller_interface
     // =========================================================================
     // Response helpers
     // =========================================================================
-
     /**
      * Return a generic response based on the provided data and status code.
      *
      * @param mixed $data   Data to return
      * @param int   $status HTTP status code (default is 200)
-     *
-     * @return JsonResponse|Response
      */
     protected function response(mixed $data, int $status = Response::HTTP_OK): JsonResponse|Response
     {

@@ -86,8 +86,6 @@ class MoodleRouter implements router_interface
 
     /**
      * Get the current routing context (host, scheme, base path).
-     *
-     * @return null|RequestContext
      */
     public function getContext(): ?RequestContext
     {

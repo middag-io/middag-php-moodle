@@ -89,4 +89,32 @@ final class MoodledataFilesystemTest extends TestCase
 
         $filesystem->read('../outside.txt');
     }
+
+    #[Test]
+    public function rejectsParentDirectoryTraversalInTheSubdirectory(): void
+    {
+        $escapeTarget = \dirname($this->dataroot) . '/middag-escape-' . uniqid();
+        $relativeEscape = '../' . basename($escapeTarget);
+
+        try {
+            new MoodledataFilesystem($relativeEscape);
+            self::fail('A ".." subdirectory segment must be rejected.');
+        } catch (MiddagInfrastructureException $middagInfrastructureException) {
+            self::assertStringContainsString('..', $middagInfrastructureException->getMessage());
+        }
+
+        self::assertDirectoryDoesNotExist(
+            $escapeTarget,
+            'a traversing subdirectory must never create a directory outside dataroot'
+        );
+    }
+
+    #[Test]
+    public function rejectsANullByteInTheSubdirectory(): void
+    {
+        $this->expectException(MiddagInfrastructureException::class);
+        $this->expectExceptionMessage('null byte');
+
+        new MoodledataFilesystem("evil\0dir");
+    }
 }
