@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Group;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 
 /**
  * Cohort membership record.
  *
  * @api
  */
-final class CohortMemberDto extends abstract_dto
+final class CohortMemberDto extends AbstractDto
 {
     public function __construct(
         public int $cohortid = 0,

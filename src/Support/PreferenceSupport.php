@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -44,7 +44,7 @@ class PreferenceSupport
 
             return get_user_preferences($name, $default, $user);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return $default;
         }
@@ -65,7 +65,7 @@ class PreferenceSupport
 
             return is_object($result) ? $result : null;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -88,7 +88,7 @@ class PreferenceSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -110,7 +110,7 @@ class PreferenceSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -131,7 +131,7 @@ class PreferenceSupport
 
             return unset_user_preference($name, $user);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }

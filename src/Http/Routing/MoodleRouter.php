@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Routing;
 
-use Middag\Framework\Http\Contract\RouteLoaderInterface as route_loader_interface;
-use Middag\Moodle\Http\Contract\RouterInterface as router_interface;
-use Middag\Moodle\Http\Routing\PluginAwareUrlGenerator as plugin_aware_url_generator;
-use Middag\Moodle\Http\Routing\RouteLoader as route_loader;
-use Middag\Moodle\Shared\Util\Debug as debug;
-use Middag\Moodle\Support\UrlSupport as url_support;
+use Middag\Framework\Http\Contract\RouteLoaderInterface;
+use Middag\Moodle\Http\Contract\RouterInterface;
+use Middag\Moodle\Shared\Util\Debug;
+use Middag\Moodle\Support\UrlSupport;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,13 +30,13 @@ use Symfony\Component\Routing\RouteCollection;
  * Router.
  *
  * Handles the storage, context resolution, and URL generation for routes.
- * Delegates the discovery (loading) of routes to route_loader_interface.
+ * Delegates the discovery (loading) of routes to RouteLoaderInterface.
  *
  * @internal
  *
- * @see router_interface
+ * @see RouterInterface
  */
-class MoodleRouter implements router_interface
+class MoodleRouter implements RouterInterface
 {
     /** @var string The entry point script within Moodle */
     private const ENTRY_POINT = '/local/middag/index.php';
@@ -53,9 +51,9 @@ class MoodleRouter implements router_interface
     private ?UrlGenerator $generator = null;
 
     /**
-     * @param null|route_loader_interface $loader Optional loader. Defaults to concrete route_loader.
+     * @param null|RouteLoaderInterface $loader Optional loader. Defaults to concrete RouteLoader.
      */
-    public function __construct(private readonly ?route_loader_interface $loader = new route_loader())
+    public function __construct(private readonly ?RouteLoaderInterface $loader = new RouteLoader())
     {
         $this->routes = new RouteCollection();
     }
@@ -159,24 +157,24 @@ class MoodleRouter implements router_interface
 
             /** @var RequestContext $context */
             $context = $this->context;
-            $this->generator = new plugin_aware_url_generator($this->routes, $context, self::ENTRY_POINT);
+            $this->generator = new PluginAwareUrlGenerator($this->routes, $context, self::ENTRY_POINT);
         }
 
         try {
             $path = $this->generator->generate($route, $parameters, $reference_type);
         } catch (RouteNotFoundException) {
             // Fallback to avoid crashing the UI if a link is broken
-            if (class_exists(debug::class)) {
-                debug::trace('Route not found: ' . $route);
+            if (class_exists(Debug::class)) {
+                Debug::trace('Route not found: ' . $route);
             }
             // Fallback to 404 route
             $path = $this->generator->generate('route_not_found', [], $reference_type);
         }
 
         // RouterInterface contracts a string return (platform-agnostic). Normalize
-        // the generated path through url_support (double-slash cleanup, absolute
+        // the generated path through UrlSupport (double-slash cleanup, absolute
         // base) and emit the URL string. Moodle-specific callers that need a
         // moodle_url (e.g. middag::url_generator) re-wrap this string themselves.
-        return url_support::get($path)->out(false);
+        return UrlSupport::get($path)->out(false);
     }
 }

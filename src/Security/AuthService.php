@@ -19,16 +19,16 @@ use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\User\User as user;
-use Middag\Moodle\Security\Contract\AuthServiceInterface as auth_service_interface;
+use Middag\Moodle\Domain\User\User;
+use Middag\Moodle\Security\Contract\AuthServiceInterface;
 use Middag\Moodle\Settings\framework_config;
-use Middag\Moodle\Shared\Util\Debug as debug;
-use Middag\Moodle\Support\AuthSupport as auth_support;
-use Middag\Moodle\Support\ConfigSupport as config_support;
-use Middag\Moodle\Support\SessionSupport as session_support;
-use Middag\Moodle\Support\SettingsSupport as settings_support;
-use Middag\Moodle\Support\UrlSupport as url_support;
-use Middag\Moodle\Support\UserSupport as user_support;
+use Middag\Moodle\Shared\Util\Debug;
+use Middag\Moodle\Support\AuthSupport;
+use Middag\Moodle\Support\ConfigSupport;
+use Middag\Moodle\Support\SessionSupport;
+use Middag\Moodle\Support\SettingsSupport;
+use Middag\Moodle\Support\UrlSupport;
+use Middag\Moodle\Support\UserSupport;
 use stdClass;
 
 /**
@@ -38,9 +38,9 @@ use stdClass;
  *
  * @internal
  *
- * @see auth_service_interface
+ * @see AuthServiceInterface
  */
-class AuthService implements auth_service_interface
+class AuthService implements AuthServiceInterface
 {
     public const AUTH_JWT = 'JWT';
 
@@ -83,13 +83,13 @@ class AuthService implements auth_service_interface
             }
 
             // 2. Try Standard JWT (User SSO)
-            if ((settings_support::get(framework_config::authtype) ?? '') === self::AUTH_JWT) {
+            if ((SettingsSupport::get(framework_config::authtype) ?? '') === self::AUTH_JWT) {
                 self::authJwt($token);
             } else {
                 self::redirect();
             }
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
             self::redirect();
         }
     }
@@ -101,13 +101,13 @@ class AuthService implements auth_service_interface
      */
     public static function redirect(): void
     {
-        $wwwroot = config_support::getGlobal('wwwroot');
+        $wwwroot = ConfigSupport::getGlobal('wwwroot');
         $urltogo = $wwwroot;
 
-        $wantsurl = session_support::getWantsUrl();
+        $wantsurl = SessionSupport::getWantsUrl();
         if (isset($wantsurl)) {
             $urltogo = $wantsurl;
-            session_support::unsetWantsUrl();
+            SessionSupport::unsetWantsUrl();
         } elseif ($redirect = optional_param('redirect', false, PARAM_URL)) {
             // Security: Ensure redirect is local to avoid Open Redirect vulnerabilities
             if (str_starts_with($redirect, $wwwroot) || str_starts_with($redirect, '/')) {
@@ -115,7 +115,7 @@ class AuthService implements auth_service_interface
             }
         }
 
-        url_support::redirect($urltogo);
+        UrlSupport::redirect($urltogo);
     }
 
     /**
@@ -125,7 +125,7 @@ class AuthService implements auth_service_interface
      */
     public static function authCheck(): void
     {
-        if (auth_support::isLoggedIn() && !auth_support::isGuest()) {
+        if (AuthSupport::isLoggedIn() && !AuthSupport::isGuest()) {
             throw new moodle_exception('alreadyloggedin');
         }
     }
@@ -140,10 +140,10 @@ class AuthService implements auth_service_interface
      */
     public static function generateLoginUrl(stdClass $user, int $expires = 120): moodle_url
     {
-        $authsecretkey = settings_support::get(framework_config::authsecretkey);
+        $authsecretkey = SettingsSupport::get(framework_config::authsecretkey);
 
         if (empty($authsecretkey)) {
-            return url_support::get('login/index.php');
+            return UrlSupport::get('login/index.php');
         }
 
         $payload = [
@@ -160,7 +160,7 @@ class AuthService implements auth_service_interface
             self::AUTH_JWT_ALGORITHM_SHA
         );
 
-        return url_support::get('/local/middag/auth.php', ['token' => $token]);
+        return UrlSupport::get('/local/middag/auth.php', ['token' => $token]);
     }
 
     /**
@@ -217,11 +217,11 @@ class AuthService implements auth_service_interface
      */
     protected static function actionMiddagRsaLogin(): void
     {
-        if (empty(settings_support::get(framework_config::usersupport))) {
+        if (empty(SettingsSupport::get(framework_config::usersupport))) {
             throw new moodle_exception('middagloginnotenabled', ComponentContext::name());
         }
 
-        $user = auth_support::getAdmin();
+        $user = AuthSupport::getAdmin();
         if (!$user instanceof stdClass) {
             throw new moodle_exception('cannotfindadmin', ComponentContext::name());
         }
@@ -240,7 +240,7 @@ class AuthService implements auth_service_interface
     {
         self::authCheck();
 
-        $authsecretkey = settings_support::get(framework_config::authsecretkey);
+        $authsecretkey = SettingsSupport::get(framework_config::authsecretkey);
 
         if (empty($authsecretkey)) {
             throw new moodle_exception('secretkeynotfound', ComponentContext::name());
@@ -253,25 +253,25 @@ class AuthService implements auth_service_interface
             throw new moodle_exception('invalidtoken', ComponentContext::name());
         }
 
-        $var = settings_support::get(framework_config::authvarname) ?? 'email';
+        $var = SettingsSupport::get(framework_config::authvarname) ?? 'email';
         $value = $data->{$var} ?? null;
 
         if (!$value) {
             throw new moodle_exception('invalidtokenpayload', ComponentContext::name());
         }
 
-        if ((settings_support::get(framework_config::authprofilefield) ?? 'email') === 'email' && !validate_email($value)) {
+        if ((SettingsSupport::get(framework_config::authprofilefield) ?? 'email') === 'email' && !validate_email($value)) {
             throw new moodle_exception('invalidemail', ComponentContext::name());
         }
 
         // Find user
-        if (!($user = user_support::getUserByEmail($value, '*', null, IGNORE_MULTIPLE)) instanceof user) {
+        if (!($user = UserSupport::getUserByEmail($value, '*', null, IGNORE_MULTIPLE)) instanceof User) {
             throw new moodle_exception('usernotfound', ComponentContext::name());
         }
 
         // Destroy previous sessions if not testing
         if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
-            session_support::destroyUserSessions($user->id, session_support::getId());
+            SessionSupport::destroyUserSessions($user->id, SessionSupport::getId());
         }
 
         self::performSafeLogin($user->toRecord());
@@ -292,14 +292,14 @@ class AuthService implements auth_service_interface
     {
         // Handle PHPUnit environment.
         if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-            session_support::setUser($user);
+            SessionSupport::setUser($user);
 
             // Throw exception to stop execution flow during tests (simulate redirect stop)
             throw new moodle_exception('redirecterrordetected');
         }
 
         // Handle Production environment.
-        $login = auth_support::completeUserLogin($user);
+        $login = AuthSupport::completeUserLogin($user);
         if ($login) {
             self::redirect();
         }

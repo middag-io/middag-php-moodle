@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Grade;
 
 use Middag\Moodle\Domain\AbstractMoodleEntity;
-use Middag\Moodle\Shared\Enum\TextFormat as text_format;
+use Middag\Moodle\Shared\Enum\TextFormat;
 
 /**
  * Grade entity (Moodle native).
@@ -96,14 +96,14 @@ class Grade extends AbstractMoodleEntity
     protected ?string $feedback = null;
 
     /**
-     * Raw feedback format value (mapped to text_format enum via accessor).
+     * Raw feedback format value (mapped to TextFormat enum via accessor).
      */
     protected int $feedbackformat = 0;
 
     protected ?string $information = null;
 
     /**
-     * Raw information format value (mapped to text_format enum via accessor).
+     * Raw information format value (mapped to TextFormat enum via accessor).
      */
     protected int $informationformat = 0;
 
@@ -122,17 +122,17 @@ class Grade extends AbstractMoodleEntity
     /**
      * Get the typed feedback format.
      */
-    public function feedbackFormat(): text_format
+    public function feedbackFormat(): TextFormat
     {
-        return text_format::resolve($this->feedbackformat);
+        return TextFormat::resolve($this->feedbackformat);
     }
 
     /**
      * Get the typed information format.
      */
-    public function infoFormat(): text_format
+    public function infoFormat(): TextFormat
     {
-        return text_format::resolve($this->informationformat);
+        return TextFormat::resolve($this->informationformat);
     }
 
     /**

@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configmulticheckbox;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Multiple checkboxes setting (key-value pairs).
  *
  * @api
  */
-final class Multicheckbox extends setting
+final class Multicheckbox extends Setting
 {
     public function __construct(
         string $name,
@@ -38,8 +37,8 @@ final class Multicheckbox extends setting
     {
         return new admin_setting_configmulticheckbox(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
             $this->choices,
         );

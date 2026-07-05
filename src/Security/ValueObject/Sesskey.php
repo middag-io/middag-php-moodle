@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security\ValueObject;
 
-use Middag\Framework\Exception\MiddagValidationException as middag_validation_exception;
+use Middag\Framework\Exception\MiddagValidationException;
 use Stringable;
 
 /**
@@ -45,20 +45,20 @@ final readonly class Sesskey implements Stringable
     /**
      * Create from a raw string value with validation.
      *
-     * @throws middag_validation_exception if value is empty or too long
+     * @throws MiddagValidationException if value is empty or too long
      */
     public static function from_string(string $value): self
     {
         $value = trim($value);
 
         if ($value === '' || strlen($value) > 40) {
-            throw new middag_validation_exception(
+            throw new MiddagValidationException(
                 sprintf('Invalid sesskey: must be 1-40 characters, got %d.', strlen($value)),
             );
         }
 
         if (!preg_match('/^[a-zA-Z0-9]+$/', $value)) {
-            throw new middag_validation_exception('Invalid sesskey: must be alphanumeric.');
+            throw new MiddagValidationException('Invalid sesskey: must be alphanumeric.');
         }
 
         return new self($value);

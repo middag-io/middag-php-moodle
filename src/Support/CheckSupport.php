@@ -15,9 +15,9 @@ namespace Middag\Moodle\Support;
 use core\check\check as core_check;
 use core\check\manager as check_manager;
 use core\check\result;
-use Middag\Moodle\Domain\Platform\CheckResultDto as check_result_dto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus as check_result_status;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Platform\CheckResultDto;
+use Middag\Moodle\Domain\Platform\CheckResultStatus;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -42,7 +42,7 @@ class CheckSupport
         try {
             return check_manager::get_checks($type);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -71,7 +71,7 @@ class CheckSupport
                 'action_link' => $checkresult->get_action_link()?->out(false),
             ];
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -100,7 +100,7 @@ class CheckSupport
     /**
      * Returns check results as typed DTOs.
      *
-     * @return array<string, check_result_dto> indexed by check ID
+     * @return array<string, CheckResultDto> indexed by check ID
      */
     public static function getCheckResults(string $type = 'status'): array
     {
@@ -109,9 +109,9 @@ class CheckSupport
 
         foreach ($checks as $check) {
             $id = $check['id'] ?? '';
-            $result[$id] = new check_result_dto(
+            $result[$id] = new CheckResultDto(
                 checkId: $id,
-                status: check_result_status::resolve($check['result'] ?? 'unknown'),
+                status: CheckResultStatus::resolve($check['result'] ?? 'unknown'),
                 summary: $check['summary'] ?? '',
                 details: $check['details'] ?? null,
             );

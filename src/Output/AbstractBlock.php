@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Output;
 
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Support\HtmlWriterSupport as html_writer_support;
+use Middag\Moodle\Support\HtmlWriterSupport;
 
 /**
  * Base class for internal UI Blocks/Widgets.
@@ -148,6 +148,6 @@ abstract class AbstractBlock
             return '';
         }
 
-        return html_writer_support::attributes($this->attributes);
+        return HtmlWriterSupport::attributes($this->attributes);
     }
 }

@@ -13,24 +13,23 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Task;
 
 use core\task\adhoc_task;
-use Middag\Moodle\Domain\Task\AdhocTaskDto as adhoc_task_dto;
-use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface as adhoc_service_interface;
-use Middag\Moodle\Support\TaskSupport as task_support;
+use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
+use Middag\Moodle\Support\TaskSupport;
 
 /**
  * High-level service for creating and managing adhoc tasks.
  *
  * @internal
  */
-class AdhocService implements adhoc_service_interface
+class AdhocService implements AdhocServiceInterface
 {
     /**
      * Constructor.
      *
-     * @param task_support $taskSupport
+     * @param TaskSupport $taskSupport
      */
     public function __construct(
-        private readonly task_support $taskSupport
+        private readonly TaskSupport $taskSupport
     ) {}
 
     /**
@@ -78,7 +77,7 @@ class AdhocService implements adhoc_service_interface
     /**
      * Get queued tasks for a class.
      *
-     * @return adhoc_task_dto[]
+     * @return AdhocTaskDto[]
      */
     public function list(string $classname, bool $failedOnly = false): array
     {

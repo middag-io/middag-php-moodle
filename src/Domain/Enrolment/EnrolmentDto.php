@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Enrolment;
 
-use Middag\Moodle\Domain\Enrolment\EnrolmentStatus as enrolment_status;
-
 /**
  * Composed enrolment data — user + course + enrolment state.
  *
@@ -37,7 +35,7 @@ final readonly class EnrolmentDto
         /** Enrolment method (e.g. 'manual', 'self', 'cohort'). */
         public string $enrol_method,
         /** Enrolment status. */
-        public enrolment_status $status,
+        public EnrolmentStatus $status,
         /** Role ID assigned in this enrolment. */
         public int $roleid,
         /** Enrolment start timestamp (0 = no restriction). */

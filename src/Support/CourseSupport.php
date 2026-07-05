@@ -18,11 +18,11 @@ use core\exception\moodle_exception;
 use core\url as moodle_url;
 use dml_exception;
 use Exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Course\Category as category_entity;
-use Middag\Moodle\Domain\Course\Course as course_entity;
-use Middag\Moodle\Domain\Course\CourseModule as course_module;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Course\Category;
+use Middag\Moodle\Domain\Course\Course;
+use Middag\Moodle\Domain\Course\CourseModule;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
 /**
@@ -38,9 +38,9 @@ class CourseSupport
      * @param null|int $courseid   Course ID
      * @param int      $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE, MUST_EXIST)
      *
-     * @return null|course_entity Course entity or null if not found
+     * @return null|Course Course entity or null if not found
      */
-    public static function getCourse(?int $courseid, int $strictness = IGNORE_MISSING): ?course_entity
+    public static function getCourse(?int $courseid, int $strictness = IGNORE_MISSING): ?Course
     {
         global $DB;
 
@@ -51,9 +51,9 @@ class CourseSupport
         try {
             $course = $strictness !== IGNORE_MISSING ? get_course($courseid) : $DB->get_record('course', ['id' => $courseid]);
 
-            return $course ? course_entity::fromRecord($course) : null;
+            return $course ? Course::fromRecord($course) : null;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -81,12 +81,12 @@ class CourseSupport
 
             $records = $DB->get_records_sql($sql, ['visible' => 1]);
             foreach ($records as $record) {
-                $id = typing::toInt($record->id);
-                $options[$id] = 'ID: ' . $id . ' - ' . typing::toString($record->fullname) . ' - '
-                    . LangSupport::getString('category') . ': ' . typing::toString($record->categoryname);
+                $id = Typing::toInt($record->id);
+                $options[$id] = 'ID: ' . $id . ' - ' . Typing::toString($record->fullname) . ' - '
+                    . LangSupport::getString('category') . ': ' . Typing::toString($record->categoryname);
             }
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
         }
 
         return $options;
@@ -104,8 +104,8 @@ class CourseSupport
         unset($courses[1]);
         foreach ($courses as $course) {
             $coursecontext = context_course::instance($course->id);
-            $contextid = typing::toInt($coursecontext->id);
-            $options[$contextid] = 'ID ' . typing::toInt($course->id) . ' - ' . typing::toString($course->fullname);
+            $contextid = Typing::toInt($coursecontext->id);
+            $options[$contextid] = 'ID ' . Typing::toInt($course->id) . ' - ' . Typing::toString($course->fullname);
         }
 
         return $options;
@@ -154,7 +154,7 @@ class CourseSupport
                 }
             }
         } catch (moodle_exception $moodleexception) {
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
 
             return [];
         }
@@ -192,7 +192,7 @@ class CourseSupport
 
             return $DB->get_records_sql($sql, $params);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return [];
         }
@@ -206,9 +206,9 @@ class CourseSupport
      * @param int $contextid  Context ID
      * @param int $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE, MUST_EXIST)
      *
-     * @return null|course_entity Course entity or null on failure
+     * @return null|Course Course entity or null on failure
      */
-    public static function getCourseByContextid(int $contextid, int $strictness = IGNORE_MISSING): ?course_entity
+    public static function getCourseByContextid(int $contextid, int $strictness = IGNORE_MISSING): ?Course
     {
         global $DB;
 
@@ -234,7 +234,7 @@ class CourseSupport
 
             return self::getCourse($courseid, $strictness);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -256,7 +256,7 @@ class CourseSupport
         try {
             return context_course::instance($courseid);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -299,7 +299,7 @@ class CourseSupport
     {
         $course = self::getCourse($courseid);
 
-        if (!$course instanceof course_entity) {
+        if (!$course instanceof Course) {
             return false;
         }
 
@@ -334,7 +334,7 @@ class CourseSupport
 
             return $DB->get_records_sql($sql, $params);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
@@ -386,7 +386,7 @@ class CourseSupport
 
             return $DB->count_records_sql($sql, $params);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return 0;
         }
@@ -397,24 +397,24 @@ class CourseSupport
      *
      * @param int $courseid Course ID
      *
-     * @return null|category_entity Category entity or null on failure
+     * @return null|Category Category entity or null on failure
      */
-    public static function getCourseCategory(int $courseid): ?category_entity
+    public static function getCourseCategory(int $courseid): ?Category
     {
         global $DB;
 
         try {
             $course = self::getCourse($courseid);
 
-            if (!$course instanceof course_entity || !isset($course->category)) {
+            if (!$course instanceof Course || !isset($course->category)) {
                 return null;
             }
 
             $record = $DB->get_record('course_categories', ['id' => $course->category]);
 
-            return $record ? category_entity::fromRecord($record) : null;
+            return $record ? Category::fromRecord($record) : null;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -439,7 +439,7 @@ class CourseSupport
 
             return is_enrolled($context, $userid);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -456,7 +456,7 @@ class CourseSupport
     {
         $course = self::getCourse($courseid);
 
-        if (!$course instanceof course_entity || !isset($course->format)) {
+        if (!$course instanceof Course || !isset($course->format)) {
             return null;
         }
 
@@ -476,7 +476,7 @@ class CourseSupport
     /**
      * Returns course modules as typed entities.
      *
-     * @return array<int, course_module> indexed by cmid
+     * @return array<int, CourseModule> indexed by cmid
      */
     public static function getCourseModulesTyped(int $courseid, ?string $modname = null): array
     {
@@ -499,7 +499,7 @@ class CourseSupport
             $result = [];
 
             foreach ($records as $record) {
-                $result[(int) $record->id] = course_module::fromRecord($record);
+                $result[(int) $record->id] = CourseModule::fromRecord($record);
             }
 
             return $result;

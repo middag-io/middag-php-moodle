@@ -15,15 +15,14 @@ namespace Middag\Moodle\Settings;
 use admin_setting;
 use admin_setting_description;
 use core\output\html_writer;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Quick access link setting.
  *
  * @api
  */
-final class Link extends setting
+final class Link extends Setting
 {
     public function __construct(
         string $name,
@@ -37,8 +36,8 @@ final class Link extends setting
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        $label = lang_support::getString($this->resolveLabel($extension, $plugin), $plugin);
-        $description = lang_support::getString($this->resolveDescription($extension, $plugin), $plugin);
+        $label = LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin);
+        $description = LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin);
         $link_text = $this->linkText !== '' ? $this->linkText : $label;
 
         // Use admin_setting_description to render a clickable link.

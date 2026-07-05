@@ -15,10 +15,10 @@ namespace Middag\Moodle\Support;
 use core\task\adhoc_task;
 use core\task\manager as core_task_manager;
 use core\task\scheduled_task;
-use Middag\Moodle\Domain\Task\AdhocTaskDto as adhoc_task_dto;
-use Middag\Moodle\Domain\Task\RunningTaskDto as running_task_dto;
-use Middag\Moodle\Domain\Task\ScheduledTaskDto as scheduled_task_dto;
-use Middag\Moodle\Domain\Task\TaskSummaryDto as task_summary_dto;
+use Middag\Moodle\Domain\Task\AdhocTaskDto;
+use Middag\Moodle\Domain\Task\RunningTaskDto;
+use Middag\Moodle\Domain\Task\ScheduledTaskDto;
+use Middag\Moodle\Domain\Task\TaskSummaryDto;
 
 /**
  * Utility wrapper for Moodle's Task API (scheduled and adhoc tasks).
@@ -42,9 +42,9 @@ class TaskSupport
      *
      * @param string $classname the task class name
      *
-     * @return null|scheduled_task_dto the task DTO or null if not found
+     * @return null|ScheduledTaskDto the task DTO or null if not found
      */
-    public function getScheduledTask(string $classname): ?scheduled_task_dto
+    public function getScheduledTask(string $classname): ?ScheduledTaskDto
     {
         $task = core_task_manager::get_scheduled_task($classname);
 
@@ -54,14 +54,14 @@ class TaskSupport
     /**
      * Retrieves all scheduled tasks defined in the system.
      *
-     * @return scheduled_task_dto[] list of scheduled task DTOs
+     * @return ScheduledTaskDto[] list of scheduled task DTOs
      */
     public function getScheduledTasks(): array
     {
         $list = core_task_manager::get_all_scheduled_tasks();
 
         return array_map(
-            fn (scheduled_task $task): scheduled_task_dto => $this->mapScheduled($task),
+            fn (scheduled_task $task): ScheduledTaskDto => $this->mapScheduled($task),
             $list
         );
     }
@@ -76,14 +76,14 @@ class TaskSupport
      * @param string $classname  the task class name
      * @param bool   $failedOnly whether to only retrieve failed tasks
      *
-     * @return adhoc_task_dto[] list of adhoc task DTOs
+     * @return AdhocTaskDto[] list of adhoc task DTOs
      */
     public function getAdhocTasks(string $classname, bool $failedOnly = false): array
     {
         $list = core_task_manager::get_adhoc_tasks($classname, $failedOnly);
 
         return array_map(
-            fn (adhoc_task $task): adhoc_task_dto => $this->mapAdhoc($task),
+            fn (adhoc_task $task): AdhocTaskDto => $this->mapAdhoc($task),
             $list
         );
     }
@@ -120,9 +120,9 @@ class TaskSupport
      *
      * @param int $timestamp the reference timestamp
      *
-     * @return null|scheduled_task_dto the next task DTO or null
+     * @return null|ScheduledTaskDto the next task DTO or null
      */
-    public function nextScheduled(int $timestamp): ?scheduled_task_dto
+    public function nextScheduled(int $timestamp): ?ScheduledTaskDto
     {
         $task = core_task_manager::get_next_scheduled_task($timestamp);
 
@@ -136,9 +136,9 @@ class TaskSupport
      * @param null|bool   $checkLimits whether to check concurrency limits
      * @param null|string $classname   optional task class filter
      *
-     * @return null|adhoc_task_dto the next task DTO or null
+     * @return null|AdhocTaskDto the next task DTO or null
      */
-    public function nextAdhoc(int $timestamp, ?bool $checkLimits = true, ?string $classname = null): ?adhoc_task_dto
+    public function nextAdhoc(int $timestamp, ?bool $checkLimits = true, ?string $classname = null): ?AdhocTaskDto
     {
         $task = core_task_manager::get_next_adhoc_task($timestamp, $checkLimits, $classname);
 
@@ -194,7 +194,7 @@ class TaskSupport
     /**
      * Retrieves a summary of all pending adhoc tasks.
      *
-     * @return task_summary_dto[] list of task summary DTOs
+     * @return TaskSummaryDto[] list of task summary DTOs
      */
     public function getAdhocSummary(): array
     {
@@ -204,7 +204,7 @@ class TaskSupport
 
         foreach ($summary as $component => $classes) {
             foreach ($classes as $classname => $info) {
-                $out[] = new task_summary_dto(
+                $out[] = new TaskSummaryDto(
                     component: $component,
                     classname: $classname,
                     count: $info['count'],
@@ -225,14 +225,14 @@ class TaskSupport
      *
      * @param string $sort SQL sort order
      *
-     * @return running_task_dto[] list of running task DTOs
+     * @return RunningTaskDto[] list of running task DTOs
      */
     public function getRunningTasks(string $sort = ''): array
     {
         $items = core_task_manager::get_running_tasks($sort);
 
         return array_map(
-            fn ($record): running_task_dto => new running_task_dto(
+            fn ($record): RunningTaskDto => new RunningTaskDto(
                 id: $record->id,
                 classname: $record->classname,
                 type: $record->type,
@@ -254,13 +254,13 @@ class TaskSupport
      *
      * @param scheduled_task $task the task object
      *
-     * @return scheduled_task_dto the task DTO
+     * @return ScheduledTaskDto the task DTO
      */
-    private function mapScheduled(scheduled_task $task): scheduled_task_dto
+    private function mapScheduled(scheduled_task $task): ScheduledTaskDto
     {
         $lastruntime = $task->get_last_run_time();
 
-        return new scheduled_task_dto(
+        return new ScheduledTaskDto(
             classname: '\\' . $task::class,
             component: $task->get_component(),
             lastruntime: $lastruntime ? (int) $lastruntime : null,
@@ -281,11 +281,11 @@ class TaskSupport
      *
      * @param adhoc_task $task the task object
      *
-     * @return adhoc_task_dto the task DTO
+     * @return AdhocTaskDto the task DTO
      */
-    private function mapAdhoc(adhoc_task $task): adhoc_task_dto
+    private function mapAdhoc(adhoc_task $task): AdhocTaskDto
     {
-        return new adhoc_task_dto(
+        return new AdhocTaskDto(
             classname: '\\' . $task::class,
             component: $task->get_component(),
             userid: $task->get_userid(),

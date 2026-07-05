@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Message\MessagePermission as message_permission;
+use Middag\Moodle\Domain\Message\MessagePermission;
 
 /**
  * Message provider definition for db/messages.php.
@@ -24,8 +24,8 @@ final readonly class MessageDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,
-        public message_permission $popup = message_permission::PERMITTED,
-        public message_permission $email = message_permission::PERMITTED,
+        public MessagePermission $popup = MessagePermission::PERMITTED,
+        public MessagePermission $email = MessagePermission::PERMITTED,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,
     ) {}

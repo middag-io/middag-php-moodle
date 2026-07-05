@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Task;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 
 /**
@@ -22,7 +22,7 @@ use stdClass;
  *
  * @internal
  */
-final class RunningTaskDto extends abstract_dto
+final class RunningTaskDto extends AbstractDto
 {
     public function __construct(
         /** Unique numeric ID of the task record. */

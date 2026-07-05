@@ -13,53 +13,53 @@ declare(strict_types=1);
 namespace Middag\Moodle\Security;
 
 use core\context;
-use Middag\Framework\Exception\MiddagAuthorizationException as middag_authorization_exception;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
-use Middag\Moodle\Security\Contract\CapabilityInterface as capability_interface;
-use Middag\Moodle\Support\CapabilitySupport as capability_support;
-use Middag\Moodle\Support\ContextSupport as context_support;
+use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Security\Contract\CapabilityInterface;
+use Middag\Moodle\Support\CapabilitySupport;
+use Middag\Moodle\Support\ContextSupport;
 
 /**
  * Moodle capability adapter.
  *
  * Delegates permission checks to Moodle via the boundary support layer.
- * Converts the typed `context_level` enum to Moodle's native context objects.
+ * Converts the typed `ContextLevel` enum to Moodle's native context objects.
  *
  * @internal
  */
-class Capability implements capability_interface
+class Capability implements CapabilityInterface
 {
-    public function can(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
+    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
     {
         $context = $this->resolveContext($contextlevel, $instanceid);
 
-        return capability_support::has($capability, $context, $userid) ?? false;
+        return CapabilitySupport::has($capability, $context, $userid) ?? false;
     }
 
     /**
-     * @throws middag_authorization_exception
+     * @throws MiddagAuthorizationException
      */
-    public function authorize(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): void
+    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void
     {
         if (!$this->can($capability, $contextlevel, $instanceid, $userid)) {
-            throw new middag_authorization_exception(
+            throw new MiddagAuthorizationException(
                 sprintf('Missing capability: %s', $capability),
             );
         }
     }
 
     /**
-     * Resolve a context_level enum + instance ID into a Moodle context object.
+     * Resolve a ContextLevel enum + instance ID into a Moodle context object.
      */
-    private function resolveContext(context_level $contextlevel, int $instanceid): context
+    private function resolveContext(ContextLevel $contextlevel, int $instanceid): context
     {
         return match ($contextlevel) {
-            context_level::SYSTEM => context_support::system(),
-            context_level::COURSECAT => context_support::coursecat($instanceid),
-            context_level::COURSE => context_support::course($instanceid),
-            context_level::MODULE => context_support::module($instanceid),
-            context_level::BLOCK => context_support::block($instanceid),
-            context_level::USER => context_support::user($instanceid),
+            ContextLevel::SYSTEM => ContextSupport::system(),
+            ContextLevel::COURSECAT => ContextSupport::coursecat($instanceid),
+            ContextLevel::COURSE => ContextSupport::course($instanceid),
+            ContextLevel::MODULE => ContextSupport::module($instanceid),
+            ContextLevel::BLOCK => ContextSupport::block($instanceid),
+            ContextLevel::USER => ContextSupport::user($instanceid),
         };
     }
 }

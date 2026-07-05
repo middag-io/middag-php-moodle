@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Form;
 
-use Middag\Ui\Form\FieldDefinition as field_definition;
-use Middag\Ui\Shared\Enum\FieldType as field_type;
-use Middag\Ui\Shared\ValueObject\Translatable as translatable;
+use Middag\Ui\Form\FieldDefinition;
+use Middag\Ui\Shared\Enum\FieldType;
+use Middag\Ui\Shared\ValueObject\Translatable;
 
 /**
- * Maps a field_definition to a MformElementSpec ready for MformRenderer.
+ * Maps a FieldDefinition to a MformElementSpec ready for MformRenderer.
  *
  * Does NOT import or depend on moodleform. PARAM_* constants are resolved at
  * call time inside MformRenderer, which runs inside a Moodle bootstrap context.
@@ -35,12 +35,12 @@ final class MformFieldMapper
      * label_html. The MformRenderer is responsible for lang string resolution
      * inside a live Moodle request context.
      */
-    public function map(field_definition $def): MformElementSpec
+    public function map(FieldDefinition $def): MformElementSpec
     {
         $label = $this->resolveLabel($def);
 
         return match ($def->type) {
-            field_type::TEXT => new MformElementSpec(
+            FieldType::TEXT => new MformElementSpec(
                 element: 'text',
                 name: $def->name,
                 label_html: $label,
@@ -48,7 +48,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::TEXTAREA => new MformElementSpec(
+            FieldType::TEXTAREA => new MformElementSpec(
                 element: 'textarea',
                 name: $def->name,
                 label_html: $label,
@@ -56,7 +56,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::PASSWORD => new MformElementSpec(
+            FieldType::PASSWORD => new MformElementSpec(
                 element: 'passwordunmask',
                 name: $def->name,
                 label_html: $label,
@@ -64,7 +64,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::EMAIL => new MformElementSpec(
+            FieldType::EMAIL => new MformElementSpec(
                 element: 'text',
                 name: $def->name,
                 label_html: $label,
@@ -72,7 +72,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::URL => new MformElementSpec(
+            FieldType::URL => new MformElementSpec(
                 element: 'text',
                 name: $def->name,
                 label_html: $label,
@@ -80,7 +80,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::INT => new MformElementSpec(
+            FieldType::INT => new MformElementSpec(
                 element: 'text',
                 name: $def->name,
                 label_html: $label,
@@ -88,7 +88,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::FLOAT => new MformElementSpec(
+            FieldType::FLOAT => new MformElementSpec(
                 element: 'text',
                 name: $def->name,
                 label_html: $label,
@@ -96,7 +96,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::SELECT => new MformElementSpec(
+            FieldType::SELECT => new MformElementSpec(
                 element: 'select',
                 name: $def->name,
                 label_html: $label,
@@ -105,7 +105,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::MULTISELECT => new MformElementSpec(
+            FieldType::MULTISELECT => new MformElementSpec(
                 element: 'autocomplete',
                 name: $def->name,
                 label_html: $label,
@@ -115,7 +115,7 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::RADIO => new MformElementSpec(
+            FieldType::RADIO => new MformElementSpec(
                 element: 'radio',
                 name: $def->name,
                 label_html: $label,
@@ -124,46 +124,46 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::CHECKBOX => new MformElementSpec(
+            FieldType::CHECKBOX => new MformElementSpec(
                 element: 'advcheckbox',
                 name: $def->name,
                 label_html: $label,
                 param_type: PARAM_INT,
                 default: $def->default,
             ),
-            field_type::SWITCH => new MformElementSpec(
+            FieldType::SWITCH => new MformElementSpec(
                 element: 'advcheckbox',
                 name: $def->name,
                 label_html: $label,
                 param_type: PARAM_INT,
                 default: $def->default,
             ),
-            field_type::DATE => new MformElementSpec(
+            FieldType::DATE => new MformElementSpec(
                 element: 'date_selector',
                 name: $def->name,
                 label_html: $label,
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::DATETIME => new MformElementSpec(
+            FieldType::DATETIME => new MformElementSpec(
                 element: 'date_time_selector',
                 name: $def->name,
                 label_html: $label,
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::DURATION => new MformElementSpec(
+            FieldType::DURATION => new MformElementSpec(
                 element: 'duration',
                 name: $def->name,
                 label_html: $label,
                 default: $def->default,
             ),
-            field_type::FILE => new MformElementSpec(
+            FieldType::FILE => new MformElementSpec(
                 element: 'filepicker',
                 name: $def->name,
                 label_html: $label,
             ),
-            field_type::ENTITY_PICKER => new MformElementSpec(
+            FieldType::ENTITY_PICKER => new MformElementSpec(
                 element: 'autocomplete',
                 name: $def->name,
                 label_html: $label,
@@ -173,19 +173,19 @@ final class MformFieldMapper
                 default: $def->default,
                 rule: $def->constraints->required ? ['required'] : null,
             ),
-            field_type::HIDDEN => new MformElementSpec(
+            FieldType::HIDDEN => new MformElementSpec(
                 element: 'hidden',
                 name: $def->name,
                 label_html: '',
                 param_type: PARAM_RAW,
                 default: $def->default,
             ),
-            field_type::STATIC => new MformElementSpec(
+            FieldType::STATIC => new MformElementSpec(
                 element: 'static',
                 name: $def->name,
                 label_html: $label,
             ),
-            field_type::HEADER => new MformElementSpec(
+            FieldType::HEADER => new MformElementSpec(
                 element: 'header',
                 name: $def->name,
                 label_html: $label,
@@ -204,10 +204,10 @@ final class MformFieldMapper
         };
     }
 
-    /** Derive a display label from field_definition, passing the key through. */
-    private function resolveLabel(field_definition $def): string
+    /** Derive a display label from FieldDefinition, passing the key through. */
+    private function resolveLabel(FieldDefinition $def): string
     {
-        if ($def->label instanceof translatable) {
+        if ($def->label instanceof Translatable) {
             return $def->label->key;
         }
 

@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Middag\Moodle\Kernel;
 
 use core\component as core_component;
-use Middag\Framework\Kernel\Contract\KernelInterface as kernel_interface;
+use Middag\Framework\Kernel\Contract\KernelInterface;
 use Middag\Framework\Kernel\HostContext;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Http\Contract\RouterInterface as router_interface;
-use Middag\Moodle\Http\Inertia\InertiaSharedProps as inertia_shared_props;
-use Middag\Moodle\Http\Inertia\MoodleInertiaBootstrap as inertia_bootstrap;
-use Middag\Moodle\Http\MoodleHttpKernel as http_kernel;
+use Middag\Moodle\Http\Contract\RouterInterface;
+use Middag\Moodle\Http\Inertia\InertiaSharedProps;
+use Middag\Moodle\Http\Inertia\MoodleInertiaBootstrap;
+use Middag\Moodle\Http\MoodleHttpKernel;
 use Middag\Moodle\Http\Routing\MoodleRouter;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -49,9 +49,9 @@ use Throwable;
  *
  * @internal
  *
- * @see kernel_interface
+ * @see KernelInterface
  */
-class Kernel implements kernel_interface
+class Kernel implements KernelInterface
 {
     /**
      * Absolute path to THIS package's root (src/Kernel/Kernel.php -> package root).
@@ -72,11 +72,11 @@ class Kernel implements kernel_interface
     /** @var null|ContainerInterface The global dependency injection container */
     private ?ContainerInterface $container = null;
 
-    /** @var null|http_kernel The handler for the HTTP Request/Response cycle */
-    private ?http_kernel $httpKernel = null;
+    /** @var null|MoodleHttpKernel The handler for the HTTP Request/Response cycle */
+    private ?MoodleHttpKernel $httpKernel = null;
 
     /** @var null|MoodleRouter The router service for routing configuration */
-    private ?router_interface $router = null;
+    private ?RouterInterface $router = null;
 
     /** @var bool Flag indicating if the kernel has successfully finished booting */
     private bool $booted = false;
@@ -364,9 +364,9 @@ class Kernel implements kernel_interface
     /**
      * Access the Router to register routes manually or inspect current routes.
      *
-     * @return router_interface
+     * @return RouterInterface
      */
-    public static function routing(): router_interface
+    public static function routing(): RouterInterface
     {
         self::ensureBooted();
 
@@ -433,7 +433,7 @@ class Kernel implements kernel_interface
             // 3. Initialize HTTP Kernel (PSR-15 boundary; HttpFoundation bridged internally).
             $this->router->initializeContext();
             $psr17 = new Psr17Factory();
-            $this->httpKernel = new http_kernel(
+            $this->httpKernel = new MoodleHttpKernel(
                 $this->container,
                 $this->router->getRoutes(),
                 $this->router->getContext() ?? new RequestContext(),
@@ -450,10 +450,10 @@ class Kernel implements kernel_interface
 
             // 5. Wire platform-agnostic Inertia runtime (framework) to Moodle host
             //    (PD-008 C): AMD module, bundle path, URL generator, HTML bootstrap.
-            inertia_bootstrap::registerHooks($this->router);
+            MoodleInertiaBootstrap::registerHooks($this->router);
 
             // 6. Register Inertia shared props (navigation, auth, theme, scope, flash).
-            inertia_shared_props::register();
+            InertiaSharedProps::register();
         } catch (Throwable $throwable) {
             $this->booted = false;
             $this->handleBootError($throwable);
@@ -524,8 +524,8 @@ class Kernel implements kernel_interface
         }
 
         // If the debug class is available, use it for rich tracing
-        if (class_exists(debug::class)) {
-            debug::traceException($throwable);
+        if (class_exists(Debug::class)) {
+            Debug::traceException($throwable);
         } else {
             // Fallback logging when debug class is unavailable.
             debugging('[MIDDAG KERNEL FATAL]: ' . $throwable->getMessage(), DEBUG_DEVELOPER);

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Event\EventEdulevel as event_edulevel;
+use Middag\Moodle\Domain\Event\EventEdulevel;
 
 /**
  * Typed event definition for Moodle event classes.
@@ -27,21 +27,21 @@ use Middag\Moodle\Domain\Event\EventEdulevel as event_edulevel;
 final readonly class EventDefinition implements DefinitionInterface
 {
     /**
-     * @param string         $name        event name without extension prefix (e.g. 'order_created')
-     * @param string         $crud        CRUD operation: 'c', 'r', 'u', 'd'
-     * @param event_edulevel $edulevel    educational level
-     * @param string         $objecttable Moodle DB table associated with the event
-     *                                    (empty when the event is not tied to a table);
-     *                                    the consumer supplies its own table — the adapter
-     *                                    holds no product schema default
-     * @param string         $description human-readable description for Moodle log
-     * @param null|string    $min_moodle  minimum Moodle version (null = no minimum)
-     * @param null|string    $max_moodle  maximum Moodle version (null = no maximum)
+     * @param string        $name        event name without extension prefix (e.g. 'order_created')
+     * @param string        $crud        CRUD operation: 'c', 'r', 'u', 'd'
+     * @param EventEdulevel $edulevel    educational level
+     * @param string        $objecttable Moodle DB table associated with the event
+     *                                   (empty when the event is not tied to a table);
+     *                                   the consumer supplies its own table — the adapter
+     *                                   holds no product schema default
+     * @param string        $description human-readable description for Moodle log
+     * @param null|string   $min_moodle  minimum Moodle version (null = no minimum)
+     * @param null|string   $max_moodle  maximum Moodle version (null = no maximum)
      */
     public function __construct(
         public string $name,
         public string $crud = 'c',
-        public event_edulevel $edulevel = event_edulevel::OTHER,
+        public EventEdulevel $edulevel = EventEdulevel::OTHER,
         public string $objecttable = '',
         public string $description = '',
         public ?string $min_moodle = null,

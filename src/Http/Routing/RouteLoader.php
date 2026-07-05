@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Routing;
 
-use Middag\Framework\Http\Contract\RouteLoaderInterface as route_loader_interface;
-use Middag\Framework\Kernel\Contract\LoaderFailurePolicyInterface as boot_failure_policy;
+use Middag\Framework\Http\Contract\RouteLoaderInterface;
+use Middag\Framework\Kernel\Contract\LoaderFailurePolicyInterface;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Http\Controller\AbstractApiController as abstract_api_controller;
+use Middag\Moodle\Http\Controller\AbstractApiController;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionMethod;
@@ -32,9 +32,9 @@ use Symfony\Component\Routing\RouteCollection;
  *
  * @internal
  *
- * @see route_loader_interface
+ * @see RouteLoaderInterface
  */
-class RouteLoader implements route_loader_interface
+class RouteLoader implements RouteLoaderInterface
 {
     /**
      * Scan a specific class for Route attributes and add them to the collection.
@@ -49,9 +49,9 @@ class RouteLoader implements route_loader_interface
             return;
         }
 
-        if ($container->has(boot_failure_policy::class)) {
-            /** @var boot_failure_policy $policy */
-            $policy = $container->get(boot_failure_policy::class);
+        if ($container->has(LoaderFailurePolicyInterface::class)) {
+            /** @var LoaderFailurePolicyInterface $policy */
+            $policy = $container->get(LoaderFailurePolicyInterface::class);
             if ($policy->shouldSkipClass($class_name)) {
                 return;
             }
@@ -142,7 +142,7 @@ class RouteLoader implements route_loader_interface
         if (count($parts) >= 2 && str_starts_with($parts[0], 'local_')) {
             $plugin_dir = preg_replace('/^local_/', 'local/', $parts[0]);
 
-            $entry_file = is_subclass_of($class, abstract_api_controller::class)
+            $entry_file = is_subclass_of($class, AbstractApiController::class)
                 ? 'ajax.php'
                 : 'index.php';
 

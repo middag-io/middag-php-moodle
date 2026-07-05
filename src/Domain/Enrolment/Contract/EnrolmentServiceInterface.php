@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Enrolment\Contract;
 
-use Middag\Moodle\Domain\Enrolment\EnrolmentDto as enrolment_dto;
+use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
 
 /**
  * Enrolment service contract — typed enrolment operations.
@@ -44,21 +44,21 @@ interface EnrolmentServiceInterface
     /**
      * Get the typed enrolment data for a user in a course.
      *
-     * @return null|enrolment_dto Null if user is not enrolled
+     * @return null|EnrolmentDto Null if user is not enrolled
      */
-    public function getEnrolment(int $userid, int $courseid): ?enrolment_dto;
+    public function getEnrolment(int $userid, int $courseid): ?EnrolmentDto;
 
     /**
      * Get all enrolments for a user across courses.
      *
-     * @return array<int, enrolment_dto> Keyed by course ID
+     * @return array<int, EnrolmentDto> Keyed by course ID
      */
     public function getUserEnrolments(int $userid): array;
 
     /**
      * Get all enrolled users in a course.
      *
-     * @return array<int, enrolment_dto> Keyed by user ID
+     * @return array<int, EnrolmentDto> Keyed by user ID
      */
     public function getCourseEnrolments(int $courseid): array;
 

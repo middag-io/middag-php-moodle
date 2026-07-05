@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Event;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 
 /**
  * Immutable DTO representing a Moodle event class for listing/filtering.
@@ -21,7 +21,7 @@ use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
  *
  * @api
  */
-final class EventDto extends abstract_dto
+final class EventDto extends AbstractDto
 {
     public function __construct(
         public string $fqcn,

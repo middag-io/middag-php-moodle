@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security\ValueObject;
 
-use Middag\Framework\Exception\MiddagDomainException as middag_domain_exception;
+use Middag\Framework\Exception\MiddagDomainException;
 use Stringable;
 
 /**
@@ -32,13 +32,13 @@ final readonly class Capability implements Stringable
     /**
      * @param string $identifier The full capability identifier (e.g. 'local/middag:manage')
      *
-     * @throws middag_domain_exception if the identifier format is invalid
+     * @throws MiddagDomainException if the identifier format is invalid
      */
     public function __construct(
         public string $identifier,
     ) {
         if (!self::is_valid_format($identifier)) {
-            throw new middag_domain_exception(
+            throw new MiddagDomainException(
                 sprintf("Invalid capability format: '%s'. Expected '{type}/{plugin}:{name}'.", $identifier)
             );
         }

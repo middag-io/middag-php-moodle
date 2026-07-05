@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use InvalidArgumentException;
-use Middag\Moodle\Domain\Platform\MoodleVersion as moodle_version;
+use Middag\Moodle\Domain\Platform\MoodleVersion;
 use RuntimeException;
 use stdClass;
 
@@ -61,9 +61,9 @@ final class VersionSupport
     /**
      * Returns the current Moodle version as a typed value object.
      */
-    public static function version(): moodle_version
+    public static function version(): MoodleVersion
     {
-        return moodle_version::from_string(self::versionSemver());
+        return MoodleVersion::from_string(self::versionSemver());
     }
 
     /**
@@ -132,9 +132,9 @@ final class VersionSupport
      * if (moodle_versions::at_least('4.1')) {
      * }
      */
-    public static function atLeast(moodle_version|string $min): bool
+    public static function atLeast(MoodleVersion|string $min): bool
     {
-        if ($min instanceof moodle_version) {
+        if ($min instanceof MoodleVersion) {
             $min = (string) $min;
         }
 
@@ -153,12 +153,12 @@ final class VersionSupport
      * if (moodle_versions::between('4.0', '4.2')) {
      * }
      */
-    public static function between(moodle_version|string $min, moodle_version|string $max): bool
+    public static function between(MoodleVersion|string $min, MoodleVersion|string $max): bool
     {
-        if ($min instanceof moodle_version) {
+        if ($min instanceof MoodleVersion) {
             $min = (string) $min;
         }
-        if ($max instanceof moodle_version) {
+        if ($max instanceof MoodleVersion) {
             $max = (string) $max;
         }
 

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
+use Middag\Moodle\Domain\Context\ContextLevel;
 
 /**
  * Typed file area definition.
@@ -27,17 +27,17 @@ use Middag\Moodle\Domain\Context\ContextLevel as context_level;
 final readonly class FileAreaDefinition implements DefinitionInterface
 {
     /**
-     * @param string        $name             area name without extension prefix (e.g. 'attachments')
-     * @param context_level $context_level    context level for this area
-     * @param null|string   $handler          FQCN of a file_area_handler_interface implementation (null = default handler)
-     * @param bool          $supports_preview whether this area supports file preview/thumbnails
-     * @param string        $description      human-readable description
-     * @param null|string   $min_moodle       minimum Moodle version (null = no minimum)
-     * @param null|string   $max_moodle       maximum Moodle version (null = no maximum)
+     * @param string       $name             area name without extension prefix (e.g. 'attachments')
+     * @param ContextLevel $context_level    context level for this area
+     * @param null|string  $handler          FQCN of a file_area_handler_interface implementation (null = default handler)
+     * @param bool         $supports_preview whether this area supports file preview/thumbnails
+     * @param string       $description      human-readable description
+     * @param null|string  $min_moodle       minimum Moodle version (null = no minimum)
+     * @param null|string  $max_moodle       maximum Moodle version (null = no maximum)
      */
     public function __construct(
         public string $name,
-        public context_level $context_level = context_level::SYSTEM,
+        public ContextLevel $context_level = ContextLevel::SYSTEM,
         public ?string $handler = null,
         public bool $supports_preview = false,
         public string $description = '',

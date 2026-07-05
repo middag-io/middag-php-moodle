@@ -14,8 +14,8 @@ namespace Middag\Moodle\Support;
 
 use core\exception\moodle_exception;
 use core\session\manager;
-use Middag\Moodle\Domain\User\User as user_entity;
-use Middag\Moodle\Security\ValueObject\Sesskey as sesskey_vo;
+use Middag\Moodle\Domain\User\User;
+use Middag\Moodle\Security\ValueObject\Sesskey;
 use stdClass;
 
 /**
@@ -40,7 +40,7 @@ class SessionSupport
     /**
      * Confirms sesskey validity using the typed value object.
      */
-    public static function confirm(sesskey_vo $key): bool
+    public static function confirm(Sesskey $key): bool
     {
         return self::confirmSesskey((string) $key);
     }
@@ -79,11 +79,11 @@ class SessionSupport
     /**
      * Sets the current user in the session.
      *
-     * @param stdClass|user_entity $user User object or entity
+     * @param stdClass|User $user User object or entity
      */
-    public static function setUser(stdClass|user_entity $user): void
+    public static function setUser(stdClass|User $user): void
     {
-        $record = $user instanceof user_entity ? $user->toRecord() : $user;
+        $record = $user instanceof User ? $user->toRecord() : $user;
         manager::set_user($record);
     }
 

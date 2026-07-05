@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Platform\CacheMode as cache_mode;
+use Middag\Moodle\Domain\Platform\CacheMode;
 
 /**
  * Cache store definition for db/caches.php.
@@ -24,7 +24,7 @@ final readonly class CacheDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,
-        public cache_mode $mode = cache_mode::APPLICATION,
+        public CacheMode $mode = CacheMode::APPLICATION,
         public bool $simple_keys = true,
         public bool $simple_data = false,
         public ?string $min_moodle = null,

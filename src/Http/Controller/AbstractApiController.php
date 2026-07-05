@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Middag\Moodle\Http\Controller;
 
 use core\session\manager;
-use Middag\Framework\Exception\MiddagAuthenticationException as middag_authentication_exception;
-use Middag\Framework\Exception\MiddagAuthorizationException as middag_authorization_exception;
+use Middag\Framework\Exception\MiddagAuthenticationException;
+use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Moodle\Settings\framework_config;
-use Middag\Moodle\Support\DbSupport as db_support;
-use Middag\Moodle\Support\LangSupport as lang_support;
-use Middag\Moodle\Support\SettingsSupport as settings_support;
+use Middag\Moodle\Support\DbSupport;
+use Middag\Moodle\Support\LangSupport;
+use Middag\Moodle\Support\SettingsSupport;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,15 +104,15 @@ abstract class AbstractApiController extends AbstractController
      * Override: API controllers check session state and throw typed exceptions
      * instead of letting Moodle redirect or die.
      *
-     * - Not logged in / guest → middag_authentication_exception (401)
-     * - Invalid sesskey       → middag_authorization_exception (403)
+     * - Not logged in / guest → MiddagAuthenticationException (401)
+     * - Invalid sesskey       → MiddagAuthorizationException (403)
      */
     protected function requireLogin(): void
     {
         if ($this->requireLogin) {
             if (!$this->authentication()->isLoggedIn() || $this->authentication()->isGuest()) {
-                throw new middag_authentication_exception(
-                    lang_support::get('api_unauthorized'),
+                throw new MiddagAuthenticationException(
+                    LangSupport::get('api_unauthorized'),
                 );
             }
             $this->requiredLogin = true;
@@ -125,8 +125,8 @@ abstract class AbstractApiController extends AbstractController
                 try {
                     $this->authentication()->requireSesskey();
                 } catch (Throwable) {
-                    throw new middag_authorization_exception(
-                        lang_support::get('invalidsesskey', 'error') ?? 'Invalid session key',
+                    throw new MiddagAuthorizationException(
+                        LangSupport::get('invalidsesskey', 'error') ?? 'Invalid session key',
                     );
                 }
             }
@@ -139,14 +139,14 @@ abstract class AbstractApiController extends AbstractController
      * Dual auth: wstoken (Moodle webservice token) first,
      * then fallback to Moodle session. Also checks api_enabled setting.
      *
-     * @throws middag_authorization_exception  if API is disabled
-     * @throws middag_authentication_exception if auth fails
+     * @throws MiddagAuthorizationException  if API is disabled
+     * @throws MiddagAuthenticationException if auth fails
      */
     protected function authenticateApiRequest(): void
     {
-        if (!settings_support::get(framework_config::api_enabled)) {
-            throw new middag_authorization_exception(
-                lang_support::get('api_disabled'),
+        if (!SettingsSupport::get(framework_config::api_enabled)) {
+            throw new MiddagAuthorizationException(
+                LangSupport::get('api_disabled'),
             );
         }
 
@@ -202,29 +202,29 @@ abstract class AbstractApiController extends AbstractController
     /**
      * Validate wstoken via Moodle webservice API and configure $USER.
      *
-     * @throws middag_authentication_exception if token is invalid, expired, or user is inactive
+     * @throws MiddagAuthenticationException if token is invalid, expired, or user is inactive
      */
     protected function authenticateViaWstoken(string $token): void
     {
-        $tokenrecord = db_support::getRecord('external_tokens', ['token' => $token]);
+        $tokenrecord = DbSupport::getRecord('external_tokens', ['token' => $token]);
 
         if (!$tokenrecord instanceof stdClass) {
-            throw new middag_authentication_exception(
-                lang_support::get('api_unauthorized'),
+            throw new MiddagAuthenticationException(
+                LangSupport::get('api_unauthorized'),
             );
         }
 
         if ($tokenrecord->validuntil > 0 && $tokenrecord->validuntil < time()) {
-            throw new middag_authentication_exception(
-                lang_support::get('api_unauthorized'),
+            throw new MiddagAuthenticationException(
+                LangSupport::get('api_unauthorized'),
             );
         }
 
-        $user = db_support::getRecord('user', ['id' => $tokenrecord->userid]);
+        $user = DbSupport::getRecord('user', ['id' => $tokenrecord->userid]);
 
         if (!$user instanceof stdClass || $user->deleted || $user->suspended) {
-            throw new middag_authentication_exception(
-                lang_support::get('api_unauthorized'),
+            throw new MiddagAuthenticationException(
+                LangSupport::get('api_unauthorized'),
             );
         }
 

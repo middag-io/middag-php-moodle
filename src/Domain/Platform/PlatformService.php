@@ -12,59 +12,58 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Moodle\Domain\Platform\Contract\PlatformServiceInterface as platform_service_interface;
-use Middag\Moodle\Domain\Platform\PluginDto as plugin_dto;
-use Middag\Moodle\Support\CheckSupport as check_support;
-use Middag\Moodle\Support\PluginSupport as plugin_support;
-use Middag\Moodle\Support\VersionSupport as version_support;
+use Middag\Moodle\Domain\Platform\Contract\PlatformServiceInterface;
+use Middag\Moodle\Support\CheckSupport;
+use Middag\Moodle\Support\PluginSupport;
+use Middag\Moodle\Support\VersionSupport;
 
 /**
  * Platform service — centralized Moodle version and feature checks.
  *
- * Moodle-specific service: delegates to version_support + check_support + plugin_support.
+ * Moodle-specific service: delegates to VersionSupport + CheckSupport + PluginSupport.
  * Centralizes version-gated feature decisions that are currently scattered across extensions.
  *
  * @internal
  *
- * @see platform_service_interface
+ * @see PlatformServiceInterface
  */
-class PlatformService implements platform_service_interface
+class PlatformService implements PlatformServiceInterface
 {
     public function __construct(
-        private readonly plugin_support $pluginSupport,
+        private readonly PluginSupport $pluginSupport,
     ) {}
 
     public function version(): string
     {
-        return version_support::versionSemver();
+        return VersionSupport::versionSemver();
     }
 
     public function branch(): int
     {
-        return version_support::branch();
+        return VersionSupport::branch();
     }
 
     public function atLeast(string $min): bool
     {
-        return version_support::atLeast($min);
+        return VersionSupport::atLeast($min);
     }
 
     public function between(string $min, string $max): bool
     {
-        return version_support::between($min, $max);
+        return VersionSupport::between($min, $max);
     }
 
     public function supports(string $feature, array $matrix): bool
     {
-        return version_support::supports($feature, $matrix);
+        return VersionSupport::supports($feature, $matrix);
     }
 
     public function assertMin(string $min, ?string $message = null): void
     {
-        version_support::assertMin($min, $message);
+        VersionSupport::assertMin($min, $message);
     }
 
-    public function getPluginInfo(string $type, string $plugin): ?plugin_dto
+    public function getPluginInfo(string $type, string $plugin): ?PluginDto
     {
         if (!$this->pluginSupport->pluginExists($type, $plugin)) {
             return null;
@@ -80,6 +79,6 @@ class PlatformService implements platform_service_interface
 
     public function runCheck(string $classname): ?array
     {
-        return check_support::runCheck($classname);
+        return CheckSupport::runCheck($classname);
     }
 }

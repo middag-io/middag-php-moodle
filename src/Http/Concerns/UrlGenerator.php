@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Concerns;
 
-use Middag\Moodle\Kernel\Kernel as kernel;
-use Middag\Moodle\Support\UrlSupport as url_support;
+use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Support\UrlSupport;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -37,7 +37,7 @@ trait UrlGenerator
      */
     public static function urlGenerator(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
-        return kernel::routing()->generateUrl($route, $parameters, $referenceType);
+        return Kernel::routing()->generateUrl($route, $parameters, $referenceType);
     }
 
     /**
@@ -55,6 +55,6 @@ trait UrlGenerator
     {
         $url = self::urlGenerator($route, $parameters, $referenceType);
 
-        return url_support::get(str_replace('index.php', 'webhook.php', $url));
+        return UrlSupport::get(str_replace('index.php', 'webhook.php', $url));
     }
 }

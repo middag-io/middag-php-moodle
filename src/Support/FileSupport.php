@@ -15,8 +15,8 @@ namespace Middag\Moodle\Support;
 use Exception;
 use file_storage;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\File\StoredFile as stored_file_entity;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\File\StoredFile;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use stored_file;
 use Throwable;
@@ -91,7 +91,7 @@ class FileSupport
 
             return null;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -126,7 +126,7 @@ class FileSupport
 
             return $files;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return [];
         }
@@ -158,7 +158,7 @@ class FileSupport
 
             return $file ?: null;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -179,7 +179,7 @@ class FileSupport
 
             return $file ?: null;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -225,7 +225,7 @@ class FileSupport
 
             return $fs->create_file_from_storedfile($filerecord, $sourcefile);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -266,7 +266,7 @@ class FileSupport
 
             return $fs->create_file_from_string($filerecord, $content);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -307,7 +307,7 @@ class FileSupport
 
             return $fs->create_file_from_pathname($filerecord, $pathname);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -325,7 +325,7 @@ class FileSupport
         try {
             return $file->delete();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -349,7 +349,7 @@ class FileSupport
 
             return $file->delete();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -374,7 +374,7 @@ class FileSupport
         try {
             return self::getStorage()->delete_area_files($contextid, $component, $filearea, $itemid);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -408,7 +408,7 @@ class FileSupport
 
             return $url->out(false);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             // Fallback to manual URL construction
             global $CFG;
@@ -458,7 +458,7 @@ class FileSupport
 
             return false;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -490,7 +490,7 @@ class FileSupport
 
             return $totalsize;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return 0;
         }
@@ -527,7 +527,7 @@ class FileSupport
         try {
             return $file->is_valid_image();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -545,7 +545,7 @@ class FileSupport
         try {
             return $file->get_content();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -563,7 +563,7 @@ class FileSupport
         try {
             return $file->get_content_file_handle();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -572,9 +572,9 @@ class FileSupport
     /**
      * Retrieves a file as a typed entity.
      *
-     * @return null|stored_file_entity the entity or null if not found
+     * @return null|StoredFile the entity or null if not found
      */
-    public static function getFileEntity(int $contextid, string $component, string $filearea, int $itemid, string $filepath, string $filename): ?stored_file_entity
+    public static function getFileEntity(int $contextid, string $component, string $filearea, int $itemid, string $filepath, string $filename): ?StoredFile
     {
         try {
             $fs = get_file_storage();
@@ -606,7 +606,7 @@ class FileSupport
             $record->timemodified = $file->get_timemodified();
             $record->sortorder = $file->get_sortorder();
 
-            return stored_file_entity::fromRecord($record);
+            return StoredFile::fromRecord($record);
         } catch (Throwable) {
             return null;
         }
@@ -615,7 +615,7 @@ class FileSupport
     /**
      * Retrieves all non-directory files for a file area as typed entities.
      *
-     * @return array<int, stored_file_entity>
+     * @return array<int, StoredFile>
      */
     public static function getAreaFilesTyped(int $contextid, string $component, string $filearea, int $itemid = 0): array
     {
@@ -646,7 +646,7 @@ class FileSupport
                 $record->timemodified = $file->get_timemodified();
                 $record->sortorder = $file->get_sortorder();
 
-                $result[$file->get_id()] = stored_file_entity::fromRecord($record);
+                $result[$file->get_id()] = StoredFile::fromRecord($record);
             }
 
             return $result;

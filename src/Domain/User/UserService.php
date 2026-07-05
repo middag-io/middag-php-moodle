@@ -13,9 +13,8 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\User;
 
 use core\exception\moodle_exception;
-use Middag\Moodle\Domain\User\Contract\UserServiceInterface as user_service_interface;
-use Middag\Moodle\Domain\User\User as user;
-use Middag\Moodle\Support\UserSupport as user_support;
+use Middag\Moodle\Domain\User\Contract\UserServiceInterface;
+use Middag\Moodle\Support\UserSupport;
 use stdClass;
 
 /**
@@ -27,13 +26,13 @@ use stdClass;
  * For simple user lookups (get_user, get_user_by_email, etc.) and profile field
  * operations, use the Support layer directly:
  *
- * @see user_support
+ * @see UserSupport
  *
  * @internal
  *
- * @see user_service_interface
+ * @see UserServiceInterface
  */
-class UserService implements user_service_interface
+class UserService implements UserServiceInterface
 {
     /**
      * Create a new Moodle user with sensible defaults.
@@ -50,7 +49,7 @@ class UserService implements user_service_interface
     public function createUser(stdClass $userobj, bool $updatepassword = false, bool $nologin = false): int
     {
         // Delegate to Moodle Support (Wrapper) which now handles defaults.
-        return user_support::createUser($userobj, $updatepassword, $nologin);
+        return UserSupport::createUser($userobj, $updatepassword, $nologin);
     }
 
     /**
@@ -73,7 +72,7 @@ class UserService implements user_service_interface
         }
 
         // Delegate to Moodle Support (Wrapper)
-        user_support::updateUser($userobj, $updatepassword, $triggerevent);
+        UserSupport::updateUser($userobj, $updatepassword, $triggerevent);
 
         return true;
     }
@@ -89,12 +88,12 @@ class UserService implements user_service_interface
      */
     public function deleteUser(int $userid): bool
     {
-        $user = user_support::getUser($userid);
-        if (!$user instanceof user) {
+        $user = UserSupport::getUser($userid);
+        if (!$user instanceof User) {
             return false;
         }
 
         // Delegate to Moodle Support (Wrapper)
-        return user_support::deleteUser($user->toRecord());
+        return UserSupport::deleteUser($user->toRecord());
     }
 }

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Http\Client;
 
 use core_useragent;
 use JsonException;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -206,7 +206,7 @@ class HttpClientAdapter
 
             return $response;
         } catch (ClientExceptionInterface $clientException) {
-            debug::trace(sprintf('HTTP Connection Error %s %s: ', $method, $uri) . $clientException->getMessage());
+            Debug::trace(sprintf('HTTP Connection Error %s %s: ', $method, $uri) . $clientException->getMessage());
 
             return null;
         }
@@ -219,7 +219,7 @@ class HttpClientAdapter
         try {
             return json_decode($content, false, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            debug::trace(sprintf('HTTP Error %s %s: HTTP %d', $method, $uri, $response->getStatusCode()));
+            Debug::trace(sprintf('HTTP Error %s %s: HTTP %d', $method, $uri, $response->getStatusCode()));
 
             return $response;
         }

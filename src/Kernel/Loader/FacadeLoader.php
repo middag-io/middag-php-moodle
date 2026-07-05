@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Middag\Moodle\Kernel\Loader;
 
 use FilesystemIterator;
-use Middag\Framework\Kernel\Contract\FacadeLoaderInterface as facade_loader_interface;
+use Middag\Framework\Kernel\Contract\FacadeLoaderInterface;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Kernel\Kernel;
-use Middag\Moodle\Shared\Util\Environment as environment;
-use Middag\Moodle\Support\CacheSupport as cache_support;
+use Middag\Moodle\Shared\Util\Environment;
+use Middag\Moodle\Support\CacheSupport;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -31,9 +31,9 @@ use ReflectionClass;
  *
  * @internal
  *
- * @see facade_loader_interface
+ * @see FacadeLoaderInterface
  */
-class FacadeLoader implements facade_loader_interface
+class FacadeLoader implements FacadeLoaderInterface
 {
     private const CACHE_AREA = 'loader';
 
@@ -83,8 +83,8 @@ class FacadeLoader implements facade_loader_interface
      */
     private function discoverFacades(): array
     {
-        if (!environment::isDevelopment()) {
-            $cached = cache_support::get(self::CACHE_KEY, self::CACHE_AREA);
+        if (!Environment::isDevelopment()) {
+            $cached = CacheSupport::get(self::CACHE_KEY, self::CACHE_AREA);
             if ($cached !== false && is_array($cached)) {
                 return $cached;
             }
@@ -115,7 +115,7 @@ class FacadeLoader implements facade_loader_interface
             $map += $this->scanSuffixFacades($extensions_dir);
         }
 
-        cache_support::set(self::CACHE_KEY, $map, self::CACHE_AREA);
+        CacheSupport::set(self::CACHE_KEY, $map, self::CACHE_AREA);
 
         return $map;
     }

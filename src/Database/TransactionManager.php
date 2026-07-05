@@ -14,8 +14,8 @@ namespace Middag\Moodle\Database;
 
 use core\exception\moodle_exception;
 use Exception;
-use Middag\Moodle\Database\Contract\TransactionManagerInterface as transaction_manager_interface;
-use Middag\Moodle\Support\DbSupport as db_support;
+use Middag\Moodle\Database\Contract\TransactionManagerInterface;
+use Middag\Moodle\Support\DbSupport;
 use Throwable;
 
 /**
@@ -26,7 +26,7 @@ use Throwable;
  *
  * @internal
  */
-class TransactionManager implements transaction_manager_interface
+class TransactionManager implements TransactionManagerInterface
 {
     /**
      * {@inheritDoc}
@@ -35,7 +35,7 @@ class TransactionManager implements transaction_manager_interface
     {
         global $DB;
 
-        $transaction = db_support::startDelegatedTransaction();
+        $transaction = DbSupport::startDelegatedTransaction();
 
         try {
             $result = $operation();
@@ -63,7 +63,7 @@ class TransactionManager implements transaction_manager_interface
     {
         global $DB;
 
-        $transaction = db_support::startDelegatedTransaction();
+        $transaction = DbSupport::startDelegatedTransaction();
 
         try {
             $result = $operation();

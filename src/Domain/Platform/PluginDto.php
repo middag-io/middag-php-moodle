@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 use Stringable;
 
@@ -24,7 +24,7 @@ use Stringable;
  *
  * @internal
  */
-final class PluginDto extends abstract_dto implements Stringable
+final class PluginDto extends AbstractDto implements Stringable
 {
     /**
      * @param string                        $type            Plugin type (e.g., "mod", "auth", "local")

@@ -13,16 +13,27 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Platform\SiteInfoDto as site_info_dto;
-use Middag\Moodle\Shared\Enum\TextFormat as text_format;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Platform\SiteInfoDto;
+use Middag\Moodle\Shared\Enum\TextFormat;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
  * Configuration utility wrapper for Moodle's config API.
  *
- * This class centralizes access to get_config/set_config/unset_config for the plugin,
- * providing a safe facade that catches exceptions and returns predictable values.
+ * Centralizes access to get_config/set_config/unset_config for the plugin as a
+ * deliberate SAFE FACADE: every read/write method catches Throwable, routes it
+ * to {@see Debug::traceException()} (emitted only when the runtime debug mode is
+ * enabled) and returns a predictable failure value — `false` for the mixed
+ * getters, `false` for the boolean mutators. By design, config access never
+ * propagates a host exception into caller flow.
+ *
+ * POLICY / trade-off (QG-MDL-06, accepted): because errors collapse into
+ * `false`, the mixed getters do NOT distinguish "key absent" (`null`) from
+ * "read failed" (`false`); a caller needing that distinction must read the host
+ * API directly. In production (debug off) a swallowed exception surfaces only as
+ * the `false` return, not as a log line. Accepted because this facade is
+ * `@internal` and its callers already treat `false` as "unavailable".
  *
  * @internal
  */
@@ -55,7 +66,7 @@ class ConfigSupport
 
             return get_config(self::pluginName(), $name);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -74,7 +85,7 @@ class ConfigSupport
         try {
             return get_config($plugin, $name);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -94,7 +105,7 @@ class ConfigSupport
         try {
             return set_config($name, $value, $plugin ?? self::pluginName());
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -113,7 +124,7 @@ class ConfigSupport
         try {
             return unset_config($name, $plugin ?? self::pluginName());
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -136,16 +147,16 @@ class ConfigSupport
     /**
      * Returns site information as a typed DTO.
      */
-    public static function getSiteInfo(): site_info_dto
+    public static function getSiteInfo(): SiteInfoDto
     {
         global $SITE;
 
-        return new site_info_dto(
+        return new SiteInfoDto(
             id: (int) $SITE->id,
             fullname: (string) ($SITE->fullname ?? ''),
             shortname: (string) ($SITE->shortname ?? ''),
             summary: (string) ($SITE->summary ?? ''),
-            summaryformat: text_format::resolve((int) ($SITE->summaryformat ?? 1)),
+            summaryformat: TextFormat::resolve((int) ($SITE->summaryformat ?? 1)),
             format: (string) ($SITE->format ?? ''),
             lang: (string) ($SITE->lang ?? ''),
             theme: (string) ($SITE->theme ?? ''),

@@ -14,9 +14,9 @@ namespace Middag\Moodle\Kernel\Facade;
 
 use BadMethodCallException;
 use Exception;
-use Middag\Framework\Kernel\Contract\FacadeInterface as facade_interface;
-use Middag\Framework\Kernel\Contract\KernelInterface as kernel_interface;
-use Middag\Moodle\Kernel\Kernel as kernel;
+use Middag\Framework\Kernel\Contract\FacadeInterface;
+use Middag\Framework\Kernel\Contract\KernelInterface;
+use Middag\Moodle\Kernel\Kernel;
 use RuntimeException;
 
 /**
@@ -27,9 +27,9 @@ use RuntimeException;
  *
  * @internal
  *
- * @see facade_interface
+ * @see FacadeInterface
  */
-abstract class AbstractFacade implements facade_interface
+abstract class AbstractFacade implements FacadeInterface
 {
     /**
      * The resolved object instances (cached roots).
@@ -102,7 +102,7 @@ abstract class AbstractFacade implements facade_interface
         static::$resolvedInstances[$name] = $instance;
 
         // Override in Kernel as well
-        kernel::get(kernel_interface::class)->instance($name, $instance);
+        Kernel::get(KernelInterface::class)->instance($name, $instance);
     }
 
     /**
@@ -168,7 +168,7 @@ abstract class AbstractFacade implements facade_interface
         }
 
         try {
-            $instance = kernel::get($name);
+            $instance = Kernel::get($name);
 
             if (static::$cached) {
                 static::$resolvedInstances[$name] = $instance;

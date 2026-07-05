@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Platform\CheckType as check_type;
+use Middag\Moodle\Domain\Platform\CheckType;
 
 /**
  * Check definition for Moodle's Check API.
@@ -28,14 +28,14 @@ final readonly class CheckDefinition implements DefinitionInterface
     /**
      * @param string      $name       check identifier (e.g. 'eav_integrity')
      * @param string      $classname  FQCN of the check class extending \core\check\check
-     * @param check_type  $type       check category
+     * @param CheckType   $type       check category
      * @param null|string $min_moodle minimum Moodle version (null = no minimum)
      * @param null|string $max_moodle maximum Moodle version (null = no maximum)
      */
     public function __construct(
         public string $name,
         public string $classname,
-        public check_type $type = check_type::STATUS,
+        public CheckType $type = CheckType::STATUS,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,
     ) {}

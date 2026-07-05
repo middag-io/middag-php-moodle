@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security;
 
-use Middag\Moodle\Security\Contract\AuthenticationInterface as authentication_interface;
-use Middag\Moodle\Support\AuthSupport as auth_support;
-use Middag\Moodle\Support\SessionSupport as session_support;
+use Middag\Moodle\Security\Contract\AuthenticationInterface;
+use Middag\Moodle\Support\AuthSupport;
+use Middag\Moodle\Support\SessionSupport;
 
 /**
  * Moodle authentication adapter.
@@ -23,25 +23,25 @@ use Middag\Moodle\Support\SessionSupport as session_support;
  *
  * @internal
  */
-class Authentication implements authentication_interface
+class Authentication implements AuthenticationInterface
 {
     public function requireLogin(?int $courseid = null, bool $autologinguest = true): void
     {
-        auth_support::requireLogin($courseid, $autologinguest);
+        AuthSupport::requireLogin($courseid, $autologinguest);
     }
 
     public function isLoggedIn(): bool
     {
-        return auth_support::isLoggedIn();
+        return AuthSupport::isLoggedIn();
     }
 
     public function isGuest(): bool
     {
-        return auth_support::isGuest();
+        return AuthSupport::isGuest();
     }
 
     public function requireSesskey(): void
     {
-        session_support::requireSesskey();
+        SessionSupport::requireSesskey();
     }
 }

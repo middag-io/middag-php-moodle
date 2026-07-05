@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Grade;
 
 use Middag\Moodle\Domain\AbstractMoodleEntity;
-use Middag\Moodle\Domain\Grade\GradeDisplayType as grade_display_type;
-use Middag\Moodle\Domain\Grade\GradeType as grade_type;
 
 /**
  * Grade item entity (Moodle native).
@@ -103,7 +101,7 @@ class GradeItem extends AbstractMoodleEntity
     protected ?string $calculation = null;
 
     /**
-     * Raw grade type value (mapped to grade_type enum via accessor).
+     * Raw grade type value (mapped to GradeType enum via accessor).
      */
     protected int $gradetype = 0;
 
@@ -128,7 +126,7 @@ class GradeItem extends AbstractMoodleEntity
     protected int $sortorder = 0;
 
     /**
-     * Raw display type value (mapped to grade_display_type enum via accessor).
+     * Raw display type value (mapped to GradeDisplayType enum via accessor).
      */
     protected int $display = 0;
 
@@ -155,17 +153,17 @@ class GradeItem extends AbstractMoodleEntity
     /**
      * Get the typed grade type.
      */
-    public function gradeType(): grade_type
+    public function gradeType(): GradeType
     {
-        return grade_type::resolve($this->gradetype);
+        return GradeType::resolve($this->gradetype);
     }
 
     /**
      * Get the typed display type.
      */
-    public function displayType(): grade_display_type
+    public function displayType(): GradeDisplayType
     {
-        return grade_display_type::resolve($this->display);
+        return GradeDisplayType::resolve($this->display);
     }
 
     /**

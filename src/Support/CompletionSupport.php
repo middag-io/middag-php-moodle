@@ -17,13 +17,13 @@ use completion_info;
 use core\exception\moodle_exception;
 use dml_exception;
 use Exception;
-use Middag\Moodle\Domain\Completion\Completion as completion_entity;
-use Middag\Moodle\Domain\Completion\CompletionCriteriaDto as completion_criteria_dto;
-use Middag\Moodle\Domain\Completion\CompletionProgressDto as completion_progress_dto;
-use Middag\Moodle\Domain\Completion\CompletionState as completion_state;
-use Middag\Moodle\Domain\Completion\CompletionTracking as completion_tracking;
-use Middag\Moodle\Domain\Completion\CourseCompletion as course_completion_entity;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Completion\Completion;
+use Middag\Moodle\Domain\Completion\CompletionCriteriaDto;
+use Middag\Moodle\Domain\Completion\CompletionProgressDto;
+use Middag\Moodle\Domain\Completion\CompletionState;
+use Middag\Moodle\Domain\Completion\CompletionTracking;
+use Middag\Moodle\Domain\Completion\CourseCompletion;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use Throwable;
 
@@ -61,7 +61,7 @@ class CompletionSupport
         try {
             return !empty($CFG->enablecompletion);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -89,7 +89,7 @@ class CompletionSupport
         try {
             return (bool) $info->is_enabled();
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -107,7 +107,7 @@ class CompletionSupport
     {
         $tracking = self::getCmTracking($courseid, $cmid);
 
-        return $tracking instanceof completion_tracking && $tracking->isTracked();
+        return $tracking instanceof CompletionTracking && $tracking->isTracked();
     }
 
     /**
@@ -116,9 +116,9 @@ class CompletionSupport
      * @param int $courseid course ID
      * @param int $cmid     course module ID
      *
-     * @return null|completion_tracking tracking mode, or null if the module is not found
+     * @return null|CompletionTracking tracking mode, or null if the module is not found
      */
-    public static function getCmTracking(int $courseid, int $cmid): ?completion_tracking
+    public static function getCmTracking(int $courseid, int $cmid): ?CompletionTracking
     {
         if ($courseid <= 0 || $cmid <= 0) {
             return null;
@@ -134,9 +134,9 @@ class CompletionSupport
             $cm = $modinfo->cms[$cmid];
             $raw = isset($cm->completion) ? (int) $cm->completion : 0;
 
-            return completion_tracking::resolve($raw);
+            return CompletionTracking::resolve($raw);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -165,7 +165,7 @@ class CompletionSupport
         try {
             return (bool) $info->is_course_complete($userid);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -177,9 +177,9 @@ class CompletionSupport
      * @param int $courseid course ID
      * @param int $userid   user ID
      *
-     * @return null|course_completion_entity course completion entity, or null when missing
+     * @return null|CourseCompletion course completion entity, or null when missing
      */
-    public static function getCourseCompletion(int $courseid, int $userid): ?course_completion_entity
+    public static function getCourseCompletion(int $courseid, int $userid): ?CourseCompletion
     {
         if ($courseid <= 0 || $userid <= 0) {
             return null;
@@ -197,9 +197,9 @@ class CompletionSupport
                 return null;
             }
 
-            return course_completion_entity::fromRecord($record);
+            return CourseCompletion::fromRecord($record);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -212,9 +212,9 @@ class CompletionSupport
      * @param int $cmid     course module ID
      * @param int $userid   user ID
      *
-     * @return null|completion_entity activity completion entity, or null if the module is not found
+     * @return null|Completion activity completion entity, or null if the module is not found
      */
-    public static function getCmCompletion(int $courseid, int $cmid, int $userid): ?completion_entity
+    public static function getCmCompletion(int $courseid, int $cmid, int $userid): ?Completion
     {
         if ($courseid <= 0 || $cmid <= 0 || $userid <= 0) {
             return null;
@@ -249,9 +249,9 @@ class CompletionSupport
                 $record->userid = $userid;
             }
 
-            return completion_entity::fromRecord($record);
+            return Completion::fromRecord($record);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -263,9 +263,9 @@ class CompletionSupport
      * @param int $courseid course ID
      * @param int $userid   user ID
      *
-     * @return null|completion_progress_dto progress DTO, or null when the course does not exist or errors out
+     * @return null|CompletionProgressDto progress DTO, or null when the course does not exist or errors out
      */
-    public static function getCourseProgress(int $courseid, int $userid): ?completion_progress_dto
+    public static function getCourseProgress(int $courseid, int $userid): ?CompletionProgressDto
     {
         if ($courseid <= 0 || $userid <= 0) {
             return null;
@@ -274,7 +274,7 @@ class CompletionSupport
         $enabled = self::isEnabledCourse($courseid);
 
         if (!$enabled) {
-            return completion_progress_dto::fromCounts($courseid, $userid, 0, 0, null, false);
+            return CompletionProgressDto::fromCounts($courseid, $userid, 0, 0, null, false);
         }
 
         $info = self::infoForCourse($courseid);
@@ -295,7 +295,7 @@ class CompletionSupport
                     continue;
                 }
 
-                $state = completion_state::resolve((int) ($data->completionstate ?? 0));
+                $state = CompletionState::resolve((int) ($data->completionstate ?? 0));
 
                 if ($state->isComplete()) {
                     ++$completed;
@@ -305,7 +305,7 @@ class CompletionSupport
             $course_completion = self::getCourseCompletion($courseid, $userid);
             $timecompleted = $course_completion?->get_timecompleted();
 
-            return completion_progress_dto::fromCounts(
+            return CompletionProgressDto::fromCounts(
                 $courseid,
                 $userid,
                 $total,
@@ -314,7 +314,7 @@ class CompletionSupport
                 true,
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -326,7 +326,7 @@ class CompletionSupport
      * @param int $courseid course ID
      * @param int $userid   user ID
      *
-     * @return array<int, completion_entity> indexed by course module ID
+     * @return array<int, Completion> indexed by course module ID
      */
     public static function getCourseCmCompletions(int $courseid, int $userid): array
     {
@@ -362,10 +362,10 @@ class CompletionSupport
                     $record->userid = $userid;
                 }
 
-                $completions[$cmid] = completion_entity::fromRecord($record);
+                $completions[$cmid] = Completion::fromRecord($record);
             }
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
         }
 
         return $completions;
@@ -377,10 +377,10 @@ class CompletionSupport
      * Delegates to Moodle's `completion_info::update_state`, which re-evaluates
      * automatic rules when applicable and preserves audit fields.
      *
-     * @param int              $courseid course ID
-     * @param int              $cmid     course module ID
-     * @param int              $userid   user ID
-     * @param completion_state $state    target state (use completion_state enum)
+     * @param int             $courseid course ID
+     * @param int             $cmid     course module ID
+     * @param int             $userid   user ID
+     * @param CompletionState $state    target state (use CompletionState enum)
      *
      * @return bool true on success, false when the course module cannot be resolved or an error occurs
      */
@@ -388,7 +388,7 @@ class CompletionSupport
         int $courseid,
         int $cmid,
         int $userid,
-        completion_state $state,
+        CompletionState $state,
     ): bool {
         if ($courseid <= 0 || $cmid <= 0 || $userid <= 0) {
             return false;
@@ -413,7 +413,7 @@ class CompletionSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -442,7 +442,7 @@ class CompletionSupport
         try {
             return (int) $info->get_num_tracked_users('', [], $groupid ?? 0);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return 0;
         }
@@ -453,7 +453,7 @@ class CompletionSupport
      *
      * @param int $courseid course ID
      *
-     * @return array<int, completion_criteria_dto> criteria indexed by criterion ID
+     * @return array<int, CompletionCriteriaDto> criteria indexed by criterion ID
      */
     public static function getCourseCriteria(int $courseid): array
     {
@@ -466,7 +466,7 @@ class CompletionSupport
         try {
             $records = $DB->get_records('course_completion_criteria', ['course' => $courseid]);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
@@ -476,7 +476,7 @@ class CompletionSupport
         foreach ($records as $record) {
             $id = isset($record->id) ? (int) $record->id : 0;
 
-            $criteria[$id] = new completion_criteria_dto(
+            $criteria[$id] = new CompletionCriteriaDto(
                 id: $id > 0 ? $id : null,
                 courseid: (int) ($record->course ?? $courseid),
                 criteriaType: (string) ($record->criteriatype ?? ''),
@@ -518,7 +518,7 @@ class CompletionSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -547,15 +547,15 @@ class CompletionSupport
 
             return new completion_info($course);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         } catch (moodle_exception $moodleexception) {
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
 
             return null;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }

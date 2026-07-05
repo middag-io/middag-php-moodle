@@ -15,7 +15,7 @@ namespace Middag\Moodle\Support;
 use core\lock\lock;
 use core\lock\lock_config;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -83,7 +83,7 @@ class LockSupport
 
             return $lock !== false ? $lock : null;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -99,7 +99,7 @@ class LockSupport
         try {
             $lock->release();
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
         }
     }
 

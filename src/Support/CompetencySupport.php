@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use core\context\system as context_system;
 use core_competency\api;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -47,7 +47,7 @@ class CompetencySupport
         try {
             return api::is_enabled();
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -76,7 +76,7 @@ class CompetencySupport
                 array_values($frameworks)
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -100,7 +100,7 @@ class CompetencySupport
 
             return self::mapFramework($framework);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -136,7 +136,7 @@ class CompetencySupport
                 array_values($competencies)
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -160,7 +160,7 @@ class CompetencySupport
 
             return self::mapCompetency($competency);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -187,7 +187,7 @@ class CompetencySupport
 
             return self::mapUserCompetency($uc);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -225,7 +225,7 @@ class CompetencySupport
                 array_values($records)
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -275,7 +275,7 @@ class CompetencySupport
 
             return $evidence ? (int) $evidence->get('id') : null;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -306,7 +306,7 @@ class CompetencySupport
                 array_values($records)
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }

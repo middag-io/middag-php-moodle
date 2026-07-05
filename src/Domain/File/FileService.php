@@ -12,37 +12,37 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\File;
 
-use Middag\Moodle\Domain\File\Contract\FileServiceInterface as file_service_interface;
-use Middag\Moodle\Support\FileSupport as file_support;
+use Middag\Moodle\Domain\File\Contract\FileServiceInterface;
+use Middag\Moodle\Support\FileSupport;
 use stored_file;
 
 /**
- * File service — typed file operations composing file_support.
+ * File service — typed file operations composing FileSupport.
  *
- * Moodle-specific service: wraps file_support methods in a DI-injectable,
+ * Moodle-specific service: wraps FileSupport methods in a DI-injectable,
  * interface-driven service for extensions that need file operations.
  *
  * @internal
  *
- * @see file_service_interface
+ * @see FileServiceInterface
  */
-class FileService implements file_service_interface
+class FileService implements FileServiceInterface
 {
     public function getFile(int $contextid, string $component, string $filearea, int $itemid): ?stored_file
     {
-        $file = file_support::getFile($contextid, $component, $filearea, $itemid);
+        $file = FileSupport::getFile($contextid, $component, $filearea, $itemid);
 
         return ($file instanceof stored_file) ? $file : null;
     }
 
     public function getAreaFiles(int $contextid, string $component, string $filearea, int $itemid): array
     {
-        return file_support::getAreaFiles($contextid, $component, $filearea, $itemid);
+        return FileSupport::getAreaFiles($contextid, $component, $filearea, $itemid);
     }
 
     public function getFileById(int $fileid): ?stored_file
     {
-        return file_support::getFileById($fileid);
+        return FileSupport::getFileById($fileid);
     }
 
     public function storeFromString(
@@ -54,7 +54,7 @@ class FileService implements file_service_interface
         string $filename,
         string $content,
     ): ?stored_file {
-        return file_support::createFileFromString($contextid, $component, $filearea, $itemid, $filepath, $filename, $content);
+        return FileSupport::createFileFromString($contextid, $component, $filearea, $itemid, $filepath, $filename, $content);
     }
 
     public function storeFromPath(
@@ -66,36 +66,36 @@ class FileService implements file_service_interface
         string $filename,
         string $pathname,
     ): ?stored_file {
-        return file_support::createFileFromPathname($contextid, $component, $filearea, $itemid, $filepath, $filename, $pathname);
+        return FileSupport::createFileFromPathname($contextid, $component, $filearea, $itemid, $filepath, $filename, $pathname);
     }
 
     public function delete(stored_file $file): bool
     {
-        return file_support::deleteFile($file);
+        return FileSupport::deleteFile($file);
     }
 
     public function deleteArea(int $contextid, string $component, string $filearea, false|int $itemid = false): bool
     {
-        return file_support::deleteAreaFiles($contextid, $component, $filearea, $itemid);
+        return FileSupport::deleteAreaFiles($contextid, $component, $filearea, $itemid);
     }
 
     public function getUrl(stored_file $file, bool $forcedownload = false): string
     {
-        return file_support::getFileUrl($file, $forcedownload);
+        return FileSupport::getFileUrl($file, $forcedownload);
     }
 
     public function hasFiles(int $contextid, string $component, string $filearea, int $itemid): bool
     {
-        return file_support::hasFiles($contextid, $component, $filearea, $itemid);
+        return FileSupport::hasFiles($contextid, $component, $filearea, $itemid);
     }
 
     public function getAreaSize(int $contextid, string $component, string $filearea, int $itemid): int
     {
-        return file_support::getAreaSize($contextid, $component, $filearea, $itemid);
+        return FileSupport::getAreaSize($contextid, $component, $filearea, $itemid);
     }
 
     public function countFiles(int $contextid, string $component, string $filearea, int $itemid): int
     {
-        return file_support::countAreaFiles($contextid, $component, $filearea, $itemid);
+        return FileSupport::countAreaFiles($contextid, $component, $filearea, $itemid);
     }
 }

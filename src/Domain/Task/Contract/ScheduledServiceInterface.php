@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Task\Contract;
 
 use core\exception\moodle_exception;
-use Middag\Moodle\Domain\Task\ScheduledTaskDto as scheduled_task_dto;
+use Middag\Moodle\Domain\Task\ScheduledTaskDto;
 
 /**
  * Contract for the scheduled task service.
@@ -25,7 +25,7 @@ interface ScheduledServiceInterface
     /**
      * List all scheduled tasks in the system.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function list(): array;
 
@@ -34,7 +34,7 @@ interface ScheduledServiceInterface
      *
      * @throws moodle_exception if the task does not exist
      */
-    public function get(string $classname): scheduled_task_dto;
+    public function get(string $classname): ScheduledTaskDto;
 
     /**
      * Check if a task exists.
@@ -49,24 +49,24 @@ interface ScheduledServiceInterface
     /**
      * List all scheduled tasks for a component only.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listByComponent(string $component): array;
 
     /**
      * Get the next scheduled task that will run after a timestamp.
      */
-    public function next(int $timestamp): ?scheduled_task_dto;
+    public function next(int $timestamp): ?ScheduledTaskDto;
 
     /**
      * Determine if a scheduled task is overdue.
      */
-    public function isOverdue(scheduled_task_dto $task, ?int $now = null): bool;
+    public function isOverdue(ScheduledTaskDto $task, ?int $now = null): bool;
 
     /**
      * Determine if a scheduled task is customized/overridden.
      */
-    public function isCustomized(scheduled_task_dto $task): bool;
+    public function isCustomized(ScheduledTaskDto $task): bool;
 
     /**
      * Force run a scheduled task via CLI.
@@ -76,21 +76,21 @@ interface ScheduledServiceInterface
     /**
      * List scheduled tasks that are overdue.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listOverdue(?int $now = null): array;
 
     /**
      * List tasks that are disabled.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listDisabled(): array;
 
     /**
      * List tasks that were modified by config overrides.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listCustomized(): array;
 }

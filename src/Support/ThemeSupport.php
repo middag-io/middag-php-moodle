@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use Middag\Moodle\Settings\SettingsResolver as settings_resolver;
+use Middag\Moodle\Settings\SettingsResolver;
 
 /**
  * Theme Bridge Support.
@@ -53,7 +53,7 @@ class ThemeSupport
     public static function isInheritanceEnabled(): bool
     {
         return (bool) ConfigSupport::get(
-            settings_resolver::resolveConfigKey('inherit_theme_colors', 'core'),
+            SettingsResolver::resolveConfigKey('inherit_theme_colors', 'core'),
         );
     }
 

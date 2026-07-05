@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use Middag\Moodle\Kernel\Kernel;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -120,7 +120,7 @@ final class RouterBridgeSupport
                 ->withHeader('Content-Type', 'application/json')
                 ->withStatus($status);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             $response->getBody()->write(json_encode([
                 'error' => 'Internal framework error',

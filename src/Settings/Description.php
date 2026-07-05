@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_description;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Static description block (no stored value).
  *
  * @api
  */
-final class Description extends setting
+final class Description extends Setting
 {
     public function __construct(
         string $name,
@@ -37,7 +36,7 @@ final class Description extends setting
     {
         return new admin_setting_description(
             $plugin . '/' . $this->name,
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             $this->content,
         );
     }

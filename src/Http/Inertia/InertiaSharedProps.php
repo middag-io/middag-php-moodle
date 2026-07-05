@@ -16,9 +16,9 @@ use core\context\system;
 use core\output\user_picture;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Kernel\Kernel as kernel;
-use Middag\Moodle\Support\ThemeSupport as theme_support;
-use Middag\Ui\Navigation\Contract\NavigationRegistryInterface as navigation_registry_interface;
+use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Support\ThemeSupport;
+use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -77,8 +77,8 @@ class InertiaSharedProps
      */
     public static function buildNavigation(): array
     {
-        /** @var navigation_registry_interface $registry */
-        $registry = kernel::get(navigation_registry_interface::class);
+        /** @var NavigationRegistryInterface $registry */
+        $registry = Kernel::get(NavigationRegistryInterface::class);
 
         return $registry->build(self::resolveCurrentRoute());
     }
@@ -94,7 +94,7 @@ class InertiaSharedProps
     private static function resolveCurrentRoute(): string
     {
         try {
-            $router = kernel::routing();
+            $router = Kernel::routing();
             $routes = $router->getRoutes();
             $context = $router->getContext();
 
@@ -163,13 +163,13 @@ class InertiaSharedProps
     /**
      * Build theme shared prop.
      *
-     * Delegates brand color resolution to theme_support (Theme Bridge, ADR-807 ref-807-06 §3).
+     * Delegates brand color resolution to ThemeSupport (Theme Bridge, ADR-807 ref-807-06 §3).
      *
      * @return array{strings: array, appearance: null|string, brandColor: null|string, inherit: bool}
      */
     private static function buildTheme(): array
     {
-        $theme = theme_support::buildTheme();
+        $theme = ThemeSupport::buildTheme();
 
         return [
             'strings' => [],

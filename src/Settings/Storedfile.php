@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configstoredfile;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * File stored via Moodle file API.
  *
  * @api
  */
-final class Storedfile extends setting
+final class Storedfile extends Setting
 {
     public function __construct(
         string $name,
@@ -39,8 +38,8 @@ final class Storedfile extends setting
     {
         return new admin_setting_configstoredfile(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->name,
             $this->itemid,
             $this->options,

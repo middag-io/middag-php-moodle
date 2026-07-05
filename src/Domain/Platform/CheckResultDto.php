@@ -12,19 +12,18 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus as check_result_status;
+use Middag\Framework\Shared\Dto\AbstractDto;
 
 /**
  * System check result projection.
  *
  * @api
  */
-final class CheckResultDto extends abstract_dto
+final class CheckResultDto extends AbstractDto
 {
     public function __construct(
         public string $checkId = '',
-        public check_result_status $status = check_result_status::UNKNOWN,
+        public CheckResultStatus $status = CheckResultStatus::UNKNOWN,
         public string $summary = '',
         public ?string $details = null,
         public ?int $timecreated = null,

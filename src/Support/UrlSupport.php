@@ -16,7 +16,7 @@ use core\exception\moodle_exception;
 use core\url as moodle_url;
 use Exception;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 
 /**
  * Utility functions for Moodle URLs and redirection.
@@ -60,7 +60,7 @@ class UrlSupport
             }
 
             // Log the error for debugging
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
         }
 
         // Fallback to home page if IGNORE_MISSING
@@ -185,7 +185,7 @@ class UrlSupport
         try {
             return $OUTPUT->image_url($imagename, $component ?? ComponentContext::name());
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             throw $exception;
         }

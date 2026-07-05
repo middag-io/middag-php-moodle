@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use core\user as core_user;
-use Middag\Moodle\Domain\User\User as user_entity;
+use Middag\Moodle\Domain\User\User;
 use stdClass;
 
 /**
@@ -31,13 +31,13 @@ class UserSupport
      * @param null|int $mnethostid MNet host ID
      * @param int      $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE or MUST_EXIST)
      *
-     * @return null|user_entity user entity or null if not found
+     * @return null|User user entity or null if not found
      */
-    public static function getUserByEmail(string $email, string $fields = '*', ?int $mnethostid = null, int $strictness = IGNORE_MISSING): ?user_entity
+    public static function getUserByEmail(string $email, string $fields = '*', ?int $mnethostid = null, int $strictness = IGNORE_MISSING): ?User
     {
         $user = core_user::get_user_by_email($email, $fields, $mnethostid, $strictness);
 
-        return $user ? user_entity::fromRecord($user) : null;
+        return $user ? User::fromRecord($user) : null;
     }
 
     /**
@@ -47,13 +47,13 @@ class UserSupport
      * @param string $fields     comma-separated list of fields to select
      * @param int    $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE, MUST_EXIST)
      *
-     * @return null|user_entity user entity or null if not found
+     * @return null|User user entity or null if not found
      */
-    public static function getUser(int $userid, string $fields = '*', int $strictness = IGNORE_MISSING): ?user_entity
+    public static function getUser(int $userid, string $fields = '*', int $strictness = IGNORE_MISSING): ?User
     {
         $user = core_user::get_user($userid, $fields, $strictness);
 
-        return $user ? user_entity::fromRecord($user) : null;
+        return $user ? User::fromRecord($user) : null;
     }
 
     /**
@@ -63,13 +63,13 @@ class UserSupport
      * @param null|int $mnethostid MNet host ID
      * @param int      $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE, MUST_EXIST)
      *
-     * @return null|user_entity user entity or null if not found
+     * @return null|User user entity or null if not found
      */
-    public static function getUserByUsername(string $username, ?int $mnethostid = null, int $strictness = IGNORE_MISSING): ?user_entity
+    public static function getUserByUsername(string $username, ?int $mnethostid = null, int $strictness = IGNORE_MISSING): ?User
     {
         $user = core_user::get_user_by_username($username, '*', $mnethostid, $strictness);
 
-        return $user ? user_entity::fromRecord($user) : null;
+        return $user ? User::fromRecord($user) : null;
     }
 
     /**
@@ -136,13 +136,13 @@ class UserSupport
     /**
      * Retrieves the full name of a user.
      *
-     * @param stdClass|user_entity $user user object or entity
+     * @param stdClass|User $user user object or entity
      *
      * @return string formatted full name
      */
-    public static function fullname(stdClass|user_entity $user): string
+    public static function fullname(stdClass|User $user): string
     {
-        $userobj = $user instanceof user_entity ? $user->toRecord() : $user;
+        $userobj = $user instanceof User ? $user->toRecord() : $user;
 
         return fullname($userobj);
     }
@@ -162,13 +162,13 @@ class UserSupport
     /**
      * Retrieves the current user entity.
      *
-     * @return null|user_entity current user entity or null if not logged in
+     * @return null|User current user entity or null if not logged in
      */
-    public static function getCurrent(): ?user_entity
+    public static function getCurrent(): ?User
     {
         global $USER;
 
-        return isset($USER->id) ? user_entity::fromRecord($USER) : null;
+        return isset($USER->id) ? User::fromRecord($USER) : null;
     }
 
     /**

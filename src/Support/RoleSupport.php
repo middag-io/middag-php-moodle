@@ -17,9 +17,9 @@ use core\context;
 use core\user as core_user;
 use dml_exception;
 use Exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Role\RoleAssignment as role_assignment;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Role\RoleAssignment;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use Throwable;
 
@@ -66,7 +66,7 @@ class RoleSupport
     {
         global $COURSE;
 
-        $context = ContextSupport::course(typing::toInt($COURSE->id));
+        $context = ContextSupport::course(Typing::toInt($COURSE->id));
         $roles = get_assignable_roles($context, ROLENAME_BOTH);
         $roles[0] = LangSupport::getString('none');
 
@@ -98,7 +98,7 @@ class RoleSupport
         try {
             return $DB->record_exists_sql($sql, ['userid' => $userid]);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return false;
         }
@@ -146,10 +146,10 @@ class RoleSupport
 
         // Load full user record.
         try {
-            return core_user::get_user(typing::toInt($assignment->userid));
+            return core_user::get_user(Typing::toInt($assignment->userid));
         } catch (Throwable $throwable) {
-            $code = typing::toInt($throwable->getCode()) ?? 0;
-            debug::traceException(new Exception($throwable->getMessage(), $code));
+            $code = Typing::toInt($throwable->getCode()) ?? 0;
+            Debug::traceException(new Exception($throwable->getMessage(), $code));
 
             return false;
         }
@@ -158,9 +158,9 @@ class RoleSupport
     /**
      * Returns the primary teacher role assignment for a course.
      *
-     * @return null|role_assignment the teacher assignment or null
+     * @return null|RoleAssignment the teacher assignment or null
      */
-    public static function getTeacherAssignment(int $courseid): ?role_assignment
+    public static function getTeacherAssignment(int $courseid): ?RoleAssignment
     {
         global $DB;
 
@@ -179,7 +179,7 @@ class RoleSupport
 
             $record = $DB->get_record_sql($sql, ['contextid' => $ctx->id], IGNORE_MULTIPLE);
 
-            return $record ? role_assignment::fromRecord($record) : null;
+            return $record ? RoleAssignment::fromRecord($record) : null;
         } catch (Throwable) {
             return null;
         }
@@ -188,7 +188,7 @@ class RoleSupport
     /**
      * Returns all teacher role assignments for a course.
      *
-     * @return array<int, role_assignment> indexed by user ID
+     * @return array<int, RoleAssignment> indexed by user ID
      */
     public static function getTeachers(int $courseid): array
     {
@@ -209,7 +209,7 @@ class RoleSupport
 
             $result = [];
             foreach ($DB->get_records_sql($sql, ['contextid' => $ctx->id]) as $record) {
-                $result[(int) $record->userid] = role_assignment::fromRecord($record);
+                $result[(int) $record->userid] = RoleAssignment::fromRecord($record);
             }
 
             return $result;
