@@ -228,8 +228,6 @@ class Kernel implements kernel_interface
      *
      * @param class-string<T>|string $id the service identifier or class name
      *
-     * @return object|T
-     *
      * @throws RuntimeException if the service cannot be resolved
      */
     public static function get(string $id): object

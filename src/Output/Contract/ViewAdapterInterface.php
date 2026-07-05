@@ -45,7 +45,6 @@ interface ViewAdapterInterface
      * Add a navigation node to the breadcrumbs.
      *
      * @param string $text
-     * @param mixed  $url
      */
     public function addBreadcrumb(string $text, mixed $url = null): void;
 

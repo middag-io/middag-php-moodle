@@ -308,8 +308,6 @@ class AuthService implements auth_service_interface
     /**
      * Wrapper to handle JWT authentication logic.
      *
-     * @param mixed $token
-     *
      * @throws moodle_exception
      */
     protected static function authJwt(mixed $token): void

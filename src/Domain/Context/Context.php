@@ -55,8 +55,6 @@ class Context extends AbstractMoodleEntity
      * Factory method from Moodle context object.
      *
      * @param moodle_context $context
-     *
-     * @return static
      */
     public static function fromContext(moodle_context $context): static
     {

@@ -99,8 +99,8 @@ final class MoodledataFilesystemTest extends TestCase
         try {
             new MoodledataFilesystem($relativeEscape);
             self::fail('A ".." subdirectory segment must be rejected.');
-        } catch (MiddagInfrastructureException $exception) {
-            self::assertStringContainsString('..', $exception->getMessage());
+        } catch (MiddagInfrastructureException $middagInfrastructureException) {
+            self::assertStringContainsString('..', $middagInfrastructureException->getMessage());
         }
 
         self::assertDirectoryDoesNotExist(
