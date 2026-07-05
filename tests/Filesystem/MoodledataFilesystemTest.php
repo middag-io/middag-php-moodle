@@ -108,4 +108,13 @@ final class MoodledataFilesystemTest extends TestCase
             'a traversing subdirectory must never create a directory outside dataroot'
         );
     }
+
+    #[Test]
+    public function rejectsANullByteInTheSubdirectory(): void
+    {
+        $this->expectException(MiddagInfrastructureException::class);
+        $this->expectExceptionMessage('null byte');
+
+        new MoodledataFilesystem("evil\0dir");
+    }
 }

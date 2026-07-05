@@ -48,6 +48,10 @@ final readonly class MoodledataFilesystem implements FilesystemInterface
         }
 
         if ($subdirectory !== '') {
+            if (str_contains($subdirectory, "\0")) {
+                throw new MiddagInfrastructureException('The dataroot subdirectory must not contain a null byte.');
+            }
+
             $subdirectory = trim($subdirectory, '/');
 
             foreach (explode('/', $subdirectory) as $segment) {
