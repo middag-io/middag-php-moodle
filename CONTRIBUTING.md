@@ -66,7 +66,8 @@ must remain consumable on its own.
 - Keep pull requests focused. Update tests and docs alongside code.
 - Releases are automated by [release-please](https://github.com/googleapis/release-please)
   from commits merged to `main`. Versioning follows the family-wide `1.x` policy
-  (see the framework's
+  documented in this package's own [API-STABILITY.md](API-STABILITY.md) (which
+  mirrors the framework's
   [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
   a `1.x` minor may carry an explicitly marked breaking change (`feat!` /
   `BREAKING CHANGE:` footer) cut deliberately via a `Release-As` footer; a major
