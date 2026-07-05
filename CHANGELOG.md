@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.2.3](https://github.com/middag-io/middag-php-moodle/compare/v1.2.2...v1.2.3) (2026-07-05)
+
+
+### Bug Fixes
+
+* **filesystem:** reject ".." traversal in MoodledataFilesystem subdirectory ([207cbb2](https://github.com/middag-io/middag-php-moodle/commit/207cbb20b4aed10fdca3f0f887917e0fd6330250))
+* **filesystem:** reject null byte in MoodledataFilesystem subdirectory ([8c1e99f](https://github.com/middag-io/middag-php-moodle/commit/8c1e99f8b5f6f2ed9015072d7ee174d4f42acedc))
+
+
+### Documentation
+
+* **api:** add API-STABILITY.md and link it from CONTRIBUTING ([4975ab7](https://github.com/middag-io/middag-php-moodle/commit/4975ab7325feb8b746eeab0899bcd0203f742bb1))
+* **api:** tag remaining src types @api/[@internal](https://github.com/internal) ([c63738d](https://github.com/middag-io/middag-php-moodle/commit/c63738dc93627c5bf6a7278728d8e1adfa39317a))
+
+
+### Miscellaneous
+
+* **composer:** add keywords, homepage and support metadata ([ccb6e7a](https://github.com/middag-io/middag-php-moodle/commit/ccb6e7a189b61d7afac5fdc07f924749a7a2f35d))
+* **deps:** declare reciprocal conflict on core &lt;1.2 (BUG7) ([4f1574a](https://github.com/middag-io/middag-php-moodle/commit/4f1574a43c2b6401c4088f2870db8b5c3db37706))
+* **hooks:** accept the breaking-change marker in commit-msg ([21cc17a](https://github.com/middag-io/middag-php-moodle/commit/21cc17a24812e89a3adee28b11180f15255711ca))
+* **phpstan:** drop dangling empty excludePaths key ([bf51166](https://github.com/middag-io/middag-php-moodle/commit/bf5116668c38a791f2cc0fd38fce8eb5b1149bb7))
+
 ## [1.2.2](https://github.com/middag-io/middag-php-moodle/compare/v1.2.1...v1.2.2) (2026-07-04)
 
 
