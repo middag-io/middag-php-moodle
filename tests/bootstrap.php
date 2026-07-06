@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
+use core\exception\moodle_exception;
 use Middag\Framework\Bus\Contract\UserContextResolverInterface;
 use Middag\Moodle\Config\ComponentContext;
 
@@ -105,8 +106,12 @@ if (!interface_exists('core_string_manager', false)) {
 // ($identifier, $component); may throw), else reports false. Implements
 // core_string_manager so the LangSupport instanceof gate passes.
 if (!function_exists('get_string_manager')) {
-    function get_string_manager(bool $forcereload = false): core_string_manager
+    function get_string_manager(bool $forcereload = false): ?core_string_manager
     {
+        if (!empty($GLOBALS['__middag_test_string_manager_invalid'])) {
+            return null;
+        }
+
         return new class implements core_string_manager {
             public function string_exists($identifier, $component): bool
             {
@@ -145,7 +150,7 @@ if (!function_exists('email_to_user')) {
 // Stub: core\user::get_noreply_user() — deliverable pseudo-user template
 // (Moodle 4.5+ namespaced class; global core_user aliased for legacy callers)
 if (!class_exists('core\user', false)) {
-    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } }');
+    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } public static function get_user($userid, $fields = "*", $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_record"] ?? (object) ["id" => (int) $userid]; } }');
 }
 if (!class_exists('core_user', false)) {
     class_alias('core\user', 'core_user');
@@ -339,10 +344,16 @@ if (!class_exists('core\exception\moodle_exception', false)) {
 }
 
 // Stub: has_capability() — controlled via $GLOBALS['__middag_test_has_capability']
-// (default true). CapabilitySupport wraps it for the Output/NavbarService checks.
+// (default true). Throws a moodle_exception when $GLOBALS['__middag_test_throw_has_capability']
+// is set, so CapabilitySupport's catch/trace branch is reachable.
+// CapabilitySupport wraps it for the Output/NavbarService checks.
 if (!function_exists('has_capability')) {
     function has_capability($capability, $context, $user = null, $doanything = true): bool
     {
+        if (!empty($GLOBALS['__middag_test_throw_has_capability'])) {
+            throw new moodle_exception('nopermissions');
+        }
+
         return $GLOBALS['__middag_test_has_capability'] ?? true;
     }
 }
