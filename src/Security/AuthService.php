@@ -253,14 +253,17 @@ class AuthService implements AuthServiceInterface
             throw new moodle_exception('invalidtoken', ComponentContext::name());
         }
 
-        $var = SettingsSupport::get(framework_config::authvarname) ?? 'email';
+        // Default to the 'email' payload field when the setting is unset.
+        // SettingsSupport::get() returns false (not null) for an absent config
+        // key, so `?:` (not `??`) is required for the default to apply.
+        $var = SettingsSupport::get(framework_config::authvarname) ?: 'email';
         $value = $data->{$var} ?? null;
 
         if (!$value) {
             throw new moodle_exception('invalidtokenpayload', ComponentContext::name());
         }
 
-        if ((SettingsSupport::get(framework_config::authprofilefield) ?? 'email') === 'email' && !validate_email($value)) {
+        if ((SettingsSupport::get(framework_config::authprofilefield) ?: 'email') === 'email' && !validate_email($value)) {
             throw new moodle_exception('invalidemail', ComponentContext::name());
         }
 

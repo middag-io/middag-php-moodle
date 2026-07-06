@@ -80,7 +80,7 @@ final class MessageDefinitionCoverageTest extends TestCase
         $definition = new MessageDefinition(name: 'submission');
 
         self::assertSame(
-            ['defaults' => ['popup' => 2, 'email' => 2]],
+            ['defaults' => ['popup' => 8, 'email' => 8]],
             $definition->toMoodleArray('local_example'),
         );
     }
@@ -95,7 +95,7 @@ final class MessageDefinitionCoverageTest extends TestCase
         );
 
         self::assertSame(
-            ['defaults' => ['popup' => 1, 'email' => 0]],
+            ['defaults' => ['popup' => 12, 'email' => 4]],
             $definition->toMoodleArray('mod_forum'),
         );
     }
