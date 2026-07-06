@@ -135,7 +135,7 @@ class RoleSupport
 
         // Retrieve users with the role in the course context.
         $assignments = get_users_from_role_on_context($role, $context);
-        if (empty($assignments)) {
+        if ($assignments === []) {
             return false;
         }
 

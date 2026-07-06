@@ -132,7 +132,7 @@ class CompletionSupport
             }
 
             $cm = $modinfo->cms[$cmid];
-            $raw = isset($cm->completion) ? (int) $cm->completion : 0;
+            $raw = (int) $cm->completion;
 
             return CompletionTracking::resolve($raw);
         } catch (Throwable $throwable) {

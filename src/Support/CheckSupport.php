@@ -68,7 +68,10 @@ class CheckSupport
                 'status' => self::getResultStatusLabel($checkresult->get_status()),
                 'summary' => $checkresult->get_summary(),
                 'details' => $checkresult->get_details(),
-                'action_link' => $checkresult->get_action_link()?->out(false),
+                // The action link lives on the check, not the result: Moodle 5.0's
+                // core\check\result has no get_action_link(); core\check\check does,
+                // returning an \action_link whose ->url is the moodle_url.
+                'action_link' => $check->get_action_link()?->url?->out(false),
             ];
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);

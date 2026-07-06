@@ -31,7 +31,6 @@ final readonly class CheckSupportResultFixture
 {
     public function __construct(
         private string $status,
-        private ?string $actionLink,
     ) {}
 
     public function get_status(): string
@@ -48,11 +47,18 @@ final readonly class CheckSupportResultFixture
     {
         return 'details text';
     }
+}
 
-    public function get_action_link(): ?moodle_url
-    {
-        return $this->actionLink === null ? null : new moodle_url($this->actionLink);
-    }
+/**
+ * A \core\output\action_link-shaped double exposing a public $url (moodle_url),
+ * as the real action_link does. In Moodle 5.0 the action link lives on the
+ * CHECK (core\check\check::get_action_link()), not on the result.
+ *
+ * @internal
+ */
+final class CheckSupportActionLinkFixture
+{
+    public function __construct(public moodle_url $url) {}
 }
 
 /**
@@ -74,7 +80,12 @@ final class CheckSupportOkCheckFixture
 
     public function get_result(): CheckSupportResultFixture
     {
-        return new CheckSupportResultFixture(result::OK, 'https://moodle.test/fix');
+        return new CheckSupportResultFixture(result::OK);
+    }
+
+    public function get_action_link(): CheckSupportActionLinkFixture
+    {
+        return new CheckSupportActionLinkFixture(new moodle_url('https://moodle.test/fix'));
     }
 }
 
@@ -97,7 +108,12 @@ final class CheckSupportNoLinkCheckFixture
 
     public function get_result(): CheckSupportResultFixture
     {
-        return new CheckSupportResultFixture(result::WARNING, null);
+        return new CheckSupportResultFixture(result::WARNING);
+    }
+
+    public function get_action_link(): ?CheckSupportActionLinkFixture
+    {
+        return null;
     }
 }
 

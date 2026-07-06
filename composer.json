@@ -40,7 +40,7 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.0",
-    "michaelmeneses/moodle-stubs": "5.2.0",
+    "michaelmeneses/moodle-stubs": "~5.0.0",
     "phpstan/phpstan": "^2.0",
     "phpunit/phpunit": "^11.0",
     "rector/rector": "^2.0"

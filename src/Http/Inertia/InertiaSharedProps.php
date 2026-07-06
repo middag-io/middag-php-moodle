@@ -58,7 +58,7 @@ class InertiaSharedProps
         InertiaManager::share('flash', fn (): ?array => self::buildFlash());
 
         // Locale + version (static, no closure needed).
-        InertiaManager::share('locale', fn () => current_language());
+        InertiaManager::share('locale', fn (): string => current_language());
         InertiaManager::share('version', ComponentContext::name());
     }
 

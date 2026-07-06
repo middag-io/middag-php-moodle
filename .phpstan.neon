@@ -7,6 +7,11 @@ parameters:
         - src
     scanDirectories:
         - vendor/michaelmeneses/moodle-stubs/stubs
+    scanFiles:
+        # Models the runtime global \action_link alias that moodle-stubs omits
+        # (see the file). Registers the symbol so PHPStan resolves the
+        # ?\action_link return type of core\check\check::get_action_link().
+        - tests/phpstan/moodle-compat.stub.php
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: missingType.iterableValue

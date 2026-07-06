@@ -44,11 +44,6 @@ final readonly class PlatformServiceResultFixture
     {
         return 'nothing to report';
     }
-
-    public function get_action_link(): ?object
-    {
-        return null;
-    }
 }
 
 /**
@@ -71,6 +66,11 @@ final class PlatformServiceCheckFixture
     public function get_result(): PlatformServiceResultFixture
     {
         return new PlatformServiceResultFixture();
+    }
+
+    public function get_action_link(): ?object
+    {
+        return null;
     }
 }
 

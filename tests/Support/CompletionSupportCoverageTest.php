@@ -186,9 +186,11 @@ final class CompletionSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testGetCmTrackingDefaultsToNoneWhenCompletionFieldAbsent(): void
+    public function testGetCmTrackingResolvesNoneForAnUntrackedModule(): void
     {
-        $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) []]];
+        // A real cm_info always carries a completion field; 0 is
+        // COMPLETION_TRACKING_NONE (an untracked module).
+        $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['completion' => 0]]];
 
         self::assertSame(CompletionTracking::NONE, CompletionSupport::getCmTracking(10, 6));
     }
