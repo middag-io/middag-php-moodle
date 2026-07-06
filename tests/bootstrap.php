@@ -439,6 +439,14 @@ if (!class_exists('admin_settingpage', false)) {
     eval('class admin_settingpage { public array $ctor_args; public array $settings = []; public function __construct(...$args) { $this->ctor_args = $args; } public function add($setting) { $this->settings[] = $setting; return true; } }');
 }
 
+// Auto-load per-area Support stubs. Each file guards its definitions with
+// !function_exists / !class_exists so the files are order-independent and
+// purely additive; this keeps parallel coverage work from colliding on a
+// single shared bootstrap edit.
+foreach (glob(__DIR__ . '/stubs/support/*.php') ?: [] as $supportStub) {
+    require_once $supportStub;
+}
+
 // Stub: core_external API (external_api + structure classes). moodle-stubs
 // provide these for PHPStan only; classes extending external_api need a runtime
 // stand-in. See tests/stubs/external-api-stubs.php for the rationale + limits.
