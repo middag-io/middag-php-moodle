@@ -108,12 +108,16 @@ class CheckSupport
         $result = [];
 
         foreach ($checks as $check) {
-            $id = $check['id'] ?? '';
+            // check_manager::get_checks() returns core\check\check OBJECTS, so
+            // read them through their accessors (mirrors runCheck()); array
+            // access here would fatal against a real Moodle check.
+            $checkresult = $check->get_result();
+            $id = $check->get_id();
             $result[$id] = new CheckResultDto(
                 checkId: $id,
-                status: CheckResultStatus::resolve($check['result'] ?? 'unknown'),
-                summary: $check['summary'] ?? '',
-                details: $check['details'] ?? null,
+                status: CheckResultStatus::resolve(self::getResultStatusLabel($checkresult->get_status())),
+                summary: $checkresult->get_summary(),
+                details: $checkresult->get_details(),
             );
         }
 

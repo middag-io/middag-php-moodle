@@ -77,11 +77,11 @@ class UserSupport
      *
      * @param stdClass $userobj        user data object
      * @param bool     $updatepassword whether to update the password
-     * @param bool     $nologin        whether to prevent the user from logging in
+     * @param bool     $triggerevent   whether to trigger the user_created event
      *
      * @return int new User ID
      */
-    public static function createUser(stdClass $userobj, bool $updatepassword = false, bool $nologin = false): int
+    public static function createUser(stdClass $userobj, bool $updatepassword = false, bool $triggerevent = true): int
     {
         global $CFG;
 
@@ -98,7 +98,7 @@ class UserSupport
 
         require_once $CFG->dirroot . '/user/lib.php';
 
-        return user_create_user($userobj, $updatepassword, $nologin);
+        return user_create_user($userobj, $updatepassword, $triggerevent);
     }
 
     /**
