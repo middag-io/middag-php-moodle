@@ -494,6 +494,16 @@ foreach (glob(__DIR__ . '/stubs/support/*.php') ?: [] as $supportStub) {
     require_once $supportStub;
 }
 
+// Auto-load per-area stubs for the non-Support coverage areas (Domain, Http,
+// Kernel, Security, Statics, Shared, Definition, …). Same doctrine as the
+// support stubs above: every definition is guarded with !function_exists /
+// !class_exists, so the files are order-independent, purely additive, and a
+// symbol is defined exactly once (first glob wins). This gives each area a
+// collision-free home for its Moodle stand-ins instead of a shared edit here.
+foreach (glob(__DIR__ . '/stubs/areas/*.php') ?: [] as $areaStub) {
+    require_once $areaStub;
+}
+
 // Stub: core_external API (external_api + structure classes). moodle-stubs
 // provide these for PHPStan only; classes extending external_api need a runtime
 // stand-in. See tests/stubs/external-api-stubs.php for the rationale + limits.
