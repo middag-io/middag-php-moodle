@@ -353,9 +353,10 @@ if (!class_exists('core\context\system', false)) {
     eval('namespace core\context; class system extends \core\context { public static function instance() { return new \core\context(\SITEID); } }');
 }
 
-// Stub: navigation_node (only the TYPE_CUSTOM constant is consumed by MoodleView).
+// Stub: navigation_node. TYPE_CUSTOM is consumed by MoodleView; require_admin_tree()
+// is a no-op admin-nav bootstrap hook driven by PageSupport::adminLoadNavigation().
 if (!class_exists('navigation_node', false)) {
-    eval('class navigation_node { const TYPE_CUSTOM = 50; }');
+    eval('class navigation_node { const TYPE_CUSTOM = 50; public static function require_admin_tree() {} }');
 }
 
 // Stub: core\output rendering surface. moodle-stubs declare these for PHPStan
