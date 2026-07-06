@@ -41,6 +41,7 @@ if (!defined('FORMAT_HTML')) {
 
 if (!class_exists('core\message\message', false)) {
     eval('namespace core\message; class message {
+        public $convid;
         public $courseid;
         public $component;
         public $name;

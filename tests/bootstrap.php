@@ -205,7 +205,11 @@ if (!class_exists('core_table\local\filter\filterset', false)) {
 // is abstract (extends stdClass, IteratorAggregate); tests only need an
 // instantiable stand-in of the right type.
 if (!class_exists('core\context', false)) {
-    eval('namespace core; class context { public function __construct(public int $id = 0) {} }');
+    // Real Moodle: `abstract class core\context extends stdClass`. Extending
+    // stdClass here keeps the stub faithful and lets it satisfy the
+    // array|stdClass contract of AbstractMoodleEntity::fromRecord() (exercised
+    // by Domain\Context\Context::fromContext()).
+    eval('namespace core; class context extends \stdClass { public function __construct(public int $id = 0) {} }');
 }
 
 // Moodle debug + SQL param constants (from lib/setuplib.php / lib/dml). Real
