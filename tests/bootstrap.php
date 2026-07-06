@@ -150,7 +150,7 @@ if (!function_exists('email_to_user')) {
 // Stub: core\user::get_noreply_user() — deliverable pseudo-user template
 // (Moodle 4.5+ namespaced class; global core_user aliased for legacy callers)
 if (!class_exists('core\user', false)) {
-    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } public static function get_user($userid, $fields = "*", $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_record"] ?? (object) ["id" => (int) $userid]; } }');
+    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } public static function get_user($userid, $fields = "*", $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_record"] ?? (object) ["id" => (int) $userid]; } public static function get_user_by_email($email, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_email"] ?? false; } public static function get_user_by_username($username, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_username"] ?? false; } }');
 }
 if (!class_exists('core_user', false)) {
     class_alias('core\user', 'core_user');
@@ -158,7 +158,7 @@ if (!class_exists('core_user', false)) {
 
 // Stub: core\url (Moodle's URL class — implements __toString as Stringable)
 if (!class_exists('core\url', false)) {
-    eval('namespace core; class url implements \Stringable { public array $params; public function __construct(public string $url = "", array $params = [], public ?string $anchor = null) { $this->params = $params; } public function __toString(): string { return $this->url; } public function out(bool $escaped = true): string { return $this->url; } }');
+    eval('namespace core; class url implements \Stringable { public array $params; public function __construct(public string $url = "", array $params = [], public ?string $anchor = null) { $this->params = $params; } public function __toString(): string { return $this->url; } public function out(bool $escaped = true): string { return $this->url; } public function set_anchor(?string $anchor): void { $this->anchor = $anchor; } }');
 }
 if (!class_exists('moodle_url', false)) {
     class_alias('core\url', 'moodle_url');
@@ -169,12 +169,16 @@ if (!class_exists('core\task\adhoc_task', false)) {
     eval('namespace core\task; abstract class adhoc_task { private $customdata = null; private $userid = null; public function set_custom_data($customdata): void { $this->customdata = json_encode($customdata); } public function get_custom_data() { return $this->customdata === null ? null : json_decode($this->customdata); } public function set_userid($userid): void { $this->userid = $userid; } public function get_userid() { return $this->userid; } }');
 }
 
-// Stub: core\component::get_component_directory() — returns the path from
+// Stub: core\component — get_component_directory() returns the path from
 // $GLOBALS['__middag_test_component_dir'] (null when unset, mirroring an
-// unknown/uninstalled component). moodle-stubs provide this for PHPStan only;
-// it is not autoloadable at runtime, so tests need a behavioral stand-in.
+// unknown/uninstalled component). get_plugin_types()/get_plugin_list() drive
+// EventSupport::loadPluginEvents(): they read $GLOBALS['__middag_test_plugin_types']
+// (type => dir map) and $GLOBALS['__middag_test_plugin_list'][$type] (plugin => dir
+// map), both defaulting to [] so loadPluginEvents() is a no-op unless a test
+// registers plugin fixtures. moodle-stubs provide these for PHPStan only; they
+// are not autoloadable at runtime, so tests need a behavioral stand-in.
 if (!class_exists('core\component', false)) {
-    eval('namespace core; class component { public static function get_component_directory($component) { return $GLOBALS["__middag_test_component_dir"] ?? null; } }');
+    eval('namespace core; class component { public static function get_component_directory($component) { return $GLOBALS["__middag_test_component_dir"] ?? null; } public static function get_plugin_types() { return $GLOBALS["__middag_test_plugin_types"] ?? []; } public static function get_plugin_list($type) { return $GLOBALS["__middag_test_plugin_list"][$type] ?? []; } }');
 }
 
 // Stub: core\hook\described_hook — interface implemented by Hook\AbstractExtendExtensions.
@@ -292,6 +296,10 @@ if (!class_exists('moodle_recordset', false)) {
 if (!class_exists('moodle_database', false)) {
     eval('class moodle_database {
         public function count_records($table, ?array $conditions = null) { return 0; }
+        public function count_records_sql($sql, ?array $params = null) { return 0; }
+        public function record_exists($table, array $conditions) { return false; }
+        public function get_field($table, $return, array $conditions, $strictness = 0) { return false; }
+        public function get_records_select($table, $select, ?array $params = null, $sort = "", $fields = "*", $limitfrom = 0, $limitnum = 0) { return []; }
         public function set_field($table, $newfield, $newvalue, ?array $conditions = null) { return true; }
         public function get_in_or_equal($items, $type = SQL_PARAMS_NAMED, $prefix = "param", $equal = true, $onemptyitems = false) { $items = (array) $items; $params = []; $names = []; $i = 0; foreach ($items as $v) { $k = $prefix . (++$i); $params[$k] = $v; $names[] = ":" . $k; } $op = $equal ? "IN" : "NOT IN"; return [$op . " (" . implode(", ", $names) . ")", $params]; }
         public function sql_compare_text($fieldname, $numchars = 32) { return "CAST(" . $fieldname . " AS TEXT)"; }
@@ -386,7 +394,34 @@ if (!interface_exists('core\output\templatable', false)) {
     eval('namespace core\output; interface templatable {}');
 }
 if (!class_exists('core\output\html_writer', false)) {
-    eval('namespace core\output; class html_writer { private static int $idseq = 0; public static function random_id($prefix = "") { return $prefix . "auto" . (++self::$idseq); } public static function attributes(?array $attributes = null) { $out = ""; foreach ((array) $attributes as $k => $v) { $out .= " " . $k . "=\"" . $v . "\""; } return $out; } public static function link($url, $text = "", ?array $attributes = null) { return "<a href=\"" . $url . "\">" . $text . "</a>"; } }');
+    eval('namespace core\output; class html_writer {
+        private static int $idseq = 0;
+        public static function random_id($prefix = "") { return $prefix . "auto" . (++self::$idseq); }
+        public static function attributes(?array $attributes = null) { $out = ""; foreach ((array) $attributes as $k => $v) { $out .= " " . $k . "=\"" . $v . "\""; } return $out; }
+        public static function link($url, $text = "", ?array $attributes = null) { return "<a href=\"" . $url . "\"" . self::attributes($attributes) . ">" . $text . "</a>"; }
+        public static function tag($tagname, $contents, ?array $attributes = null) { return "<" . $tagname . self::attributes($attributes) . ">" . $contents . "</" . $tagname . ">"; }
+        public static function start_tag($tagname, ?array $attributes = null) { return "<" . $tagname . self::attributes($attributes) . ">"; }
+        public static function end_tag($tagname) { return "</" . $tagname . ">"; }
+        public static function empty_tag($tagname, ?array $attributes = null) { return "<" . $tagname . self::attributes($attributes) . " />"; }
+        public static function nonempty_tag($tagname, $contents, ?array $attributes = null) { if ((string) $contents === "") { return ""; } return self::tag($tagname, $contents, $attributes); }
+        public static function attribute($name, $value) { return $name . "=\"" . $value . "\""; }
+        public static function img($src, $alt, ?array $attributes = null) { $attributes = (array) $attributes; $attributes["src"] = $src; $attributes["alt"] = $alt; return self::empty_tag("img", $attributes); }
+        public static function checkbox($name, $value, $checked = true, $label = "", ?array $attributes = null, ?array $labelattributes = null) { return self::empty_tag("input", ["type" => "checkbox", "name" => $name, "value" => $value]) . $label; }
+        public static function select_yes_no($name, $selected = true, ?array $attributes = null) { return self::select(["1" => "Yes", "0" => "No"], $name, $selected ? "1" : "0"); }
+        public static function select(array $options, $name, $selected = "", $nothing = ["" => "choosedots"], ?array $attributes = null, array $disabled = []) { $out = self::start_tag("select", ["name" => $name]); foreach ($options as $v => $label) { $out .= self::tag("option", $label, ["value" => $v]); } return $out . self::end_tag("select"); }
+        public static function select_time($type, $name, $currenttime = 0, $step = 5, ?array $attributes = null, $timezone = 99) { return self::select([], $name); }
+        public static function alist(array $items, ?array $attributes = null, $tag = "ul") { $out = self::start_tag($tag, $attributes); foreach ($items as $item) { $out .= self::tag("li", $item); } return $out . self::end_tag($tag); }
+        public static function input_hidden_params($url, ?array $exclude = null) { return ""; }
+        public static function script($jscode, $url = null) { return self::tag("script", $jscode); }
+        public static function table($table) { return "<table></table>"; }
+        public static function label($text, $for, $colonize = true, array $attributes = []) { $attributes["for"] = $for; return self::tag("label", $text, $attributes); }
+        public static function div($content, $class = "", ?array $attributes = null) { $attributes = (array) $attributes; if ($class !== "") { $attributes["class"] = $class; } return self::tag("div", $content, $attributes); }
+        public static function start_div($class = "", ?array $attributes = null) { $attributes = (array) $attributes; if ($class !== "") { $attributes["class"] = $class; } return self::start_tag("div", $attributes); }
+        public static function end_div() { return self::end_tag("div"); }
+        public static function span($content, $class = "", ?array $attributes = null) { $attributes = (array) $attributes; if ($class !== "") { $attributes["class"] = $class; } return self::tag("span", $content, $attributes); }
+        public static function start_span($class = "", ?array $attributes = null) { $attributes = (array) $attributes; if ($class !== "") { $attributes["class"] = $class; } return self::start_tag("span", $attributes); }
+        public static function end_span() { return self::end_tag("span"); }
+    }');
 }
 
 // XMLDB DDL constants (from lib/xmldb). XmldbSchemaAdapter maps descriptor
