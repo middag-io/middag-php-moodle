@@ -23,7 +23,6 @@ use ReflectionClass;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
-use TypeError;
 
 /**
  * UrlGenerator is a static-helper trait that delegates URL generation to the
@@ -88,30 +87,51 @@ final class UrlGeneratorCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testWebhookUrlGeneratorThrowsTypeErrorReturningAMoodleUrl(): void
+    public function testWebhookUrlGeneratorRewritesIndexToWebhookAndReturnsAString(): void
     {
-        // webhookUrlGenerator() declares a `string` return type under
-        // strict_types, but returns UrlSupport::get(...) — a moodle_url object.
-        // The return coercion is rejected with a TypeError (see sourceBug).
+        // webhookUrlGenerator() delegates to urlGenerator(), swaps the
+        // index.php entry point for webhook.php in the generated path, and
+        // casts the resulting UrlSupport::get() moodle_url to string before
+        // returning it under the `string` return type.
         $router = $this->bootKernelWithRouter(
-            static fn (): string => 'https://moodle.test/local/example/index.php/api/hook',
+            static fn (): string => '/local/example/index.php/api/hook',
         );
         $subject = new class {
             use UrlGenerator;
         };
 
-        try {
-            $subject::webhookUrlGenerator('api_hook');
-            self::fail('Expected a TypeError from the string return type, none thrown.');
-        } catch (TypeError $typeError) {
-            self::assertStringContainsString('must be of type string', $typeError->getMessage());
-        }
+        $result = $subject::webhookUrlGenerator('api_hook');
 
-        // Proves the body executed up to the return: the inner urlGenerator()
-        // delegated to the router (line 56) before the moodle_url produced on
-        // line 58 tripped the string return type.
+        // Observable behaviour: a plain string is returned (no TypeError), and
+        // it is the router URL with index.php rewritten to webhook.php.
+        self::assertIsString($result);
+        self::assertSame('/local/example/webhook.php/api/hook', $result);
+
+        // The inner urlGenerator() delegated to the router with the defaults.
         self::assertSame(
             [['route' => 'api_hook', 'parameters' => [], 'reference_type' => UrlGeneratorInterface::ABSOLUTE_PATH]],
+            $router->calls,
+        );
+    }
+
+    #[Test]
+    public function testWebhookUrlGeneratorForwardsParametersAndReferenceType(): void
+    {
+        // Parameters and the reference type flow through urlGenerator()
+        // untouched; only the index.php → webhook.php rewrite is applied to
+        // the returned path.
+        $router = $this->bootKernelWithRouter(
+            static fn (): string => '/local/example/index.php/course/hook/7',
+        );
+        $subject = new class {
+            use UrlGenerator;
+        };
+
+        $result = $subject::webhookUrlGenerator('course_hook', ['id' => 7], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        self::assertSame('/local/example/webhook.php/course/hook/7', $result);
+        self::assertSame(
+            [['route' => 'course_hook', 'parameters' => ['id' => 7], 'reference_type' => UrlGeneratorInterface::ABSOLUTE_URL]],
             $router->calls,
         );
     }

@@ -302,7 +302,12 @@ final class AbstractApiControllerCoverageTest extends TestCase
         $controller->setRequireLogin();
         $controller->setRequireSesskey();
 
+        // The invalid-sesskey path resolves its message via
+        // LangSupport::getString('invalidsesskey', 'error') — the bootstrap
+        // get_string() stub echoes the deterministic "[component/identifier]"
+        // marker, so the observable message is "[error/invalidsesskey]".
         $this->expectException(MiddagAuthorizationException::class);
+        $this->expectExceptionMessage('[error/invalidsesskey]');
         $controller->exposeRequireLogin();
     }
 

@@ -108,12 +108,12 @@ trait InteractsWithPage
      */
     public function setUrlFromRoute(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): void
     {
-        if (method_exists($this, 'url_generator')) {
+        if (method_exists($this, 'urlGenerator')) {
             try {
-                $url = $this->url_generator($route, $parameters, $referenceType);
-                $this->set_page_url($url);
+                $url = $this->urlGenerator($route, $parameters, $referenceType);
+                $this->setPageUrl($url);
             } catch (Exception) {
-                $this->page_url = null;
+                $this->pageUrl = null;
             }
         }
     }
@@ -173,20 +173,20 @@ trait InteractsWithPage
      */
     protected function getPageUrl(): moodle_url
     {
-        if ($this->pageUrl === null && method_exists($this, 'set_url_from_route')) {
+        if ($this->pageUrl === null && method_exists($this, 'setUrlFromRoute')) {
             try {
-                $this->set_url_from_route('index');
+                $this->setUrlFromRoute('index');
             } catch (Exception) {
                 // Intentionally suppressed: 'index' route may not exist; falls through to other URL resolution.
             }
         }
 
-        if (is_string($this->page_url) && ($this->page_url !== '' && $this->page_url !== '0')) {
-            return UrlSupport::get($this->page_url);
+        if (is_string($this->pageUrl) && ($this->pageUrl !== '' && $this->pageUrl !== '0')) {
+            return UrlSupport::get($this->pageUrl);
         }
 
-        if ($this->page_url instanceof moodle_url) {
-            return $this->page_url;
+        if ($this->pageUrl instanceof moodle_url) {
+            return $this->pageUrl;
         }
 
         return UrlSupport::home();

@@ -28,13 +28,18 @@ use TypeError;
  * Exercises the InteractsWithPage trait end to end via concrete host fixtures
  * that `use` it.
  *
- * Two host shapes are used: a plain host (no optional hooks) and a host that
- * defines the snake_case collaborators the trait probes with method_exists()
- * (`url_generator`, `set_page_url`, `set_url_from_route`). The trait internally
- * reads/writes a `page_url` property that is distinct from its own declared
- * `$pageUrl`; the hosts declare `page_url` so those reads/writes target the
- * property the trait actually references — see the object-level note on the
- * observed source mismatch.
+ * The trait references ONLY the camelCase surface it declares itself
+ * (`$pageUrl`, setPageUrl(), setUrlFromRoute()) plus a single optional
+ * collaborator the host composes, `urlGenerator()`. Three host shapes are used:
+ *
+ * - a plain host with no urlGenerator() — method_exists($this,'urlGenerator')
+ *   resolves to false, so setUrlFromRoute()'s body is skipped;
+ * - a host that provides urlGenerator(string,array,int): string, driven by
+ *   public flags so both the success and the throwing branch are reachable;
+ * - a host that overrides setUrlFromRoute() to throw, which is the only way to
+ *   reach getPageUrl()'s defensive try/catch around the 'index' route probe
+ *   (the trait's own setUrlFromRoute() never throws — it swallows generator
+ *   failures internally — but a consumer may compose a resolver that does).
  *
  * No Moodle runtime is required: contexts come from ContextSupport over the
  * bootstrap/support stubs (system() surfaces a TypeError by design of the
@@ -133,7 +138,7 @@ final class InteractsWithPageCoverageTest extends TestCase
         $host->callAddPageNavbar('Home');
         $host->callAddPageNavbar(['Reports', 'https://moodle.test/reports']);
 
-        self::assertSame('/dashboard', $host->exposePageUrlProp());
+        self::assertSame('/dashboard', $host->exposePageUrl());
         self::assertSame('admin', $host->exposeLayout());
         self::assertSame('My title', $host->exposeTitle());
         self::assertSame('My heading', $host->exposeHeading());
@@ -151,7 +156,7 @@ final class InteractsWithPageCoverageTest extends TestCase
 
         $host->callSetPageUrl($url);
 
-        self::assertSame($url, $host->exposePageUrlProp());
+        self::assertSame($url, $host->exposePageUrl());
     }
 
     // --- setUrlFromRoute ----------------------------------------------------
@@ -159,14 +164,14 @@ final class InteractsWithPageCoverageTest extends TestCase
     #[Test]
     public function testSetUrlFromRouteIsNoopWhenHostHasNoUrlGeneratorHook(): void
     {
-        // The trait probes method_exists($this, 'url_generator'); a plain host
-        // does not provide it, so the whole body is skipped and no state moves.
+        // The trait probes method_exists($this, 'urlGenerator'); a plain host
+        // does not provide it, so the whole body is skipped and $pageUrl stays
+        // untouched (still null).
         $host = new InteractsWithPageHost();
 
         $host->callSetUrlFromRoute('dashboard');
 
-        self::assertNull($host->exposePageUrlProp());
-        self::assertNull($host->exposeSnakePageUrl());
+        self::assertNull($host->exposePageUrl());
     }
 
     #[Test]
@@ -177,12 +182,10 @@ final class InteractsWithPageCoverageTest extends TestCase
 
         $host->callSetUrlFromRoute('dashboard', ['id' => 1]);
 
-        // The trait forwards to the snake_case set_page_url() hook, which the
-        // host records and mirrors onto its page_url property.
-        self::assertSame(['/generated/path'], $host->setPageUrlArgs);
-        self::assertSame('/generated/path', $host->exposeSnakePageUrl());
-        // The trait's own $pageUrl is never touched by this snake_case path.
-        self::assertNull($host->exposePageUrlProp());
+        // urlGenerator() was invoked with the forwarded route + parameters, and
+        // its return was pushed through setPageUrl() onto the trait's $pageUrl.
+        self::assertSame([['dashboard', ['id' => 1]]], $host->urlGeneratorArgs);
+        self::assertSame('/generated/path', $host->exposePageUrl());
     }
 
     #[Test]
@@ -190,14 +193,14 @@ final class InteractsWithPageCoverageTest extends TestCase
     {
         $host = new InteractsWithPageHostWithHooks();
         $host->urlGeneratorThrows = true;
-        $host->setSnakePageUrl('/stale');
+        $host->callSetPageUrl('/stale');
 
         $host->callSetUrlFromRoute('missing');
 
-        // url_generator threw → catch resets the page_url property to null and
-        // set_page_url() was never reached.
-        self::assertNull($host->exposeSnakePageUrl());
-        self::assertSame([], $host->setPageUrlArgs);
+        // urlGenerator() threw → the catch branch resets $pageUrl to null and
+        // setPageUrl() was never reached with a fresh value.
+        self::assertTrue($host->urlGeneratorCalled);
+        self::assertNull($host->exposePageUrl());
     }
 
     // --- resolveContext -----------------------------------------------------
@@ -259,6 +262,8 @@ final class InteractsWithPageCoverageTest extends TestCase
     #[Test]
     public function testGetPageUrlReturnsHomeWhenNothingIsSet(): void
     {
+        // $pageUrl is null and the plain host has no urlGenerator, so the
+        // setUrlFromRoute('index') probe is a no-op and resolution falls to home.
         $host = new InteractsWithPageHost();
 
         $url = $host->callGetPageUrl();
@@ -271,7 +276,7 @@ final class InteractsWithPageCoverageTest extends TestCase
     public function testGetPageUrlBuildsUrlFromStringPageUrl(): void
     {
         $host = new InteractsWithPageHost();
-        $host->setSnakePageUrl('/reports/index.php');
+        $host->callSetPageUrl('/reports/index.php');
 
         $url = $host->callGetPageUrl();
 
@@ -284,7 +289,7 @@ final class InteractsWithPageCoverageTest extends TestCase
     {
         $host = new InteractsWithPageHost();
         $existing = new moodle_url('/existing/page.php');
-        $host->setSnakePageUrl($existing);
+        $host->callSetPageUrl($existing);
 
         self::assertSame($existing, $host->callGetPageUrl());
     }
@@ -295,10 +300,10 @@ final class InteractsWithPageCoverageTest extends TestCase
         // is_string() passes but the '' / '0' guards reject both, so resolution
         // falls through to the home URL.
         $emptyHost = new InteractsWithPageHost();
-        $emptyHost->setSnakePageUrl('');
+        $emptyHost->callSetPageUrl('');
 
         $zeroHost = new InteractsWithPageHost();
-        $zeroHost->setSnakePageUrl('0');
+        $zeroHost->callSetPageUrl('0');
 
         self::assertSame('/', $emptyHost->callGetPageUrl()->out(false));
         self::assertSame('/', $zeroHost->callGetPageUrl()->out(false));
@@ -307,22 +312,40 @@ final class InteractsWithPageCoverageTest extends TestCase
     #[Test]
     public function testGetPageUrlResolvesViaSetUrlFromRouteHook(): void
     {
-        // $pageUrl is null AND the host provides set_url_from_route → the trait
-        // invokes it; the hook writes a string onto page_url, which then wins.
+        // $pageUrl is null → the trait invokes its own setUrlFromRoute('index'),
+        // which routes through urlGenerator() and writes the generated string
+        // onto $pageUrl; that string then wins the resolution.
         $host = new InteractsWithPageHostWithHooks();
-        $host->setUrlFromRouteSets = '/from-index-route';
+        $host->urlGeneratorReturn = '/from-index-route';
 
         $url = $host->callGetPageUrl();
 
-        self::assertTrue($host->setUrlFromRouteCalled);
+        self::assertSame([['index', []]], $host->urlGeneratorArgs);
         self::assertSame('/from-index-route', $url->out(false));
     }
 
     #[Test]
-    public function testGetPageUrlSuppressesSetUrlFromRouteFailureAndFallsBackToHome(): void
+    public function testGetPageUrlSuppressesGeneratorFailureAndFallsBackToHome(): void
     {
+        // urlGenerator() throws inside setUrlFromRoute('index'); its internal
+        // catch nulls $pageUrl, so getPageUrl() then falls through to home.
         $host = new InteractsWithPageHostWithHooks();
-        $host->setUrlFromRouteThrows = true;
+        $host->urlGeneratorThrows = true;
+
+        $url = $host->callGetPageUrl();
+
+        self::assertTrue($host->urlGeneratorCalled);
+        self::assertSame('/', $url->out(false));
+    }
+
+    #[Test]
+    public function testGetPageUrlSuppressesSetUrlFromRouteThrowAndFallsBackToHome(): void
+    {
+        // A host that composes a route resolver whose setUrlFromRoute() throws:
+        // getPageUrl()'s try/catch around the 'index' probe swallows it and
+        // resolution falls through to home. This is the only path that reaches
+        // that defensive catch (the trait's own setUrlFromRoute never throws).
+        $host = new InteractsWithPageHostThrowingRoute();
 
         $url = $host->callGetPageUrl();
 
@@ -333,16 +356,15 @@ final class InteractsWithPageCoverageTest extends TestCase
     #[Test]
     public function testGetPageUrlSkipsRouteResolutionWhenPageUrlIsAlreadySet(): void
     {
-        // Setting the trait's own $pageUrl short-circuits the first guard, so
-        // set_url_from_route() is never called. Because the trait then reads the
-        // separate page_url property (still null), resolution still yields home.
+        // A non-null $pageUrl short-circuits the first guard, so the trait never
+        // calls setUrlFromRoute()/urlGenerator(); the already-set string wins.
         $host = new InteractsWithPageHostWithHooks();
         $host->callSetPageUrl('/already/set');
 
         $url = $host->callGetPageUrl();
 
-        self::assertFalse($host->setUrlFromRouteCalled);
-        self::assertSame('/', $url->out(false));
+        self::assertFalse($host->urlGeneratorCalled);
+        self::assertSame('/already/set', $url->out(false));
     }
 
     // --- setupMoodlePage ----------------------------------------------------
@@ -473,10 +495,9 @@ final class InteractsWithPageCoverageTest extends TestCase
 /**
  * Concrete host composing the trait and exposing its protected surface.
  *
- * Declares the snake_case `page_url` property the trait actually reads/writes
- * (distinct from the trait's own `$pageUrl`), plus `$course`/`$cm` referenced
- * by resolveContext(). Provides NO optional hooks, so method_exists() probes
- * for url_generator/set_url_from_route resolve to false here.
+ * Declares only `$course`/`$cm` (referenced by resolveContext()); the page URL
+ * lives in the trait's own `$pageUrl`. Provides NO urlGenerator() hook, so the
+ * method_exists() probe in setUrlFromRoute() resolves to false here.
  *
  * @internal
  */
@@ -487,8 +508,6 @@ class InteractsWithPageHost
     public mixed $course = null;
 
     public mixed $cm = null;
-
-    public mixed $page_url = null;
 
     public function callSetContext(?context $context = null): void
     {
@@ -550,14 +569,9 @@ class InteractsWithPageHost
         return $this->context;
     }
 
-    public function exposePageUrlProp(): moodle_url|string|null
+    public function exposePageUrl(): moodle_url|string|null
     {
         return $this->pageUrl;
-    }
-
-    public function exposeSnakePageUrl(): mixed
-    {
-        return $this->page_url;
     }
 
     public function exposeLayout(): string
@@ -580,11 +594,6 @@ class InteractsWithPageHost
         return $this->pageNavbar;
     }
 
-    public function setSnakePageUrl(mixed $value): void
-    {
-        $this->page_url = $value;
-    }
-
     public function setCourseProp(mixed $course): void
     {
         $this->course = $course;
@@ -602,9 +611,10 @@ class InteractsWithPageHost
 }
 
 /**
- * Host variant that defines the snake_case collaborators the trait probes with
- * method_exists(): url_generator(), set_page_url() and set_url_from_route().
- * Behaviour is driven by public flags so each branch can be exercised.
+ * Host variant that composes the optional urlGenerator() collaborator the trait
+ * probes with method_exists(). Behaviour is driven by public flags so both the
+ * success and the throwing branch of setUrlFromRoute() are reachable, and the
+ * captured call log lets tests assert route resolution ran (or was skipped).
  *
  * @internal
  */
@@ -614,41 +624,41 @@ class InteractsWithPageHostWithHooks extends InteractsWithPageHost
 
     public string $urlGeneratorReturn = '/generated';
 
-    /** @var array<int, mixed> */
-    public array $setPageUrlArgs = [];
+    public bool $urlGeneratorCalled = false;
 
-    public bool $setUrlFromRouteCalled = false;
+    /** @var array<int, array{0: string, 1: array}> */
+    public array $urlGeneratorArgs = [];
 
-    public bool $setUrlFromRouteThrows = false;
-
-    public mixed $setUrlFromRouteSets = null;
-
-    public function url_generator(string $route, array $parameters = [], int $referenceType = 0): string
+    public function urlGenerator(string $route, array $parameters = [], int $referenceType = 0): string
     {
+        $this->urlGeneratorCalled = true;
+        $this->urlGeneratorArgs[] = [$route, $parameters];
+
         if ($this->urlGeneratorThrows) {
             throw new RuntimeException('route not found');
         }
 
         return $this->urlGeneratorReturn;
     }
+}
 
-    public function set_page_url(mixed $url): void
-    {
-        $this->setPageUrlArgs[] = $url;
-        $this->page_url = $url;
-    }
+/**
+ * Host variant whose composed route resolver throws. Overriding the trait's
+ * setUrlFromRoute() is the only way to reach getPageUrl()'s defensive try/catch
+ * around the 'index' probe — the trait's own implementation swallows generator
+ * failures internally and never propagates.
+ *
+ * @internal
+ */
+class InteractsWithPageHostThrowingRoute extends InteractsWithPageHost
+{
+    public bool $setUrlFromRouteCalled = false;
 
-    public function set_url_from_route(string $route): void
+    public function setUrlFromRoute(string $route, array $parameters = [], int $referenceType = 0): void
     {
         $this->setUrlFromRouteCalled = true;
 
-        if ($this->setUrlFromRouteThrows) {
-            throw new RuntimeException('index route not found');
-        }
-
-        if ($this->setUrlFromRouteSets !== null) {
-            $this->page_url = $this->setUrlFromRouteSets;
-        }
+        throw new RuntimeException('route resolver unavailable');
     }
 }
 

@@ -35,12 +35,11 @@ use Throwable;
  * $request). Two recording doubles capture the delegated calls so every branch
  * is asserted against observable behaviour without a Moodle runtime.
  *
- * NOTE: the trait invokes `require_login()` / `require_sesskey()` (snake_case)
- * on the object returned by authentication(), whereas AuthenticationInterface
- * declares `requireLogin()` / `requireSesskey()` (camelCase). The recording
- * authentication double therefore exposes BOTH spellings so the trait's actual
- * code path runs; the mismatch is reported as a suspected source bug rather
- * than papered over.
+ * The trait invokes `requireLogin()` / `requireSesskey()` (camelCase) on the
+ * object returned by authentication(), matching the methods declared by
+ * AuthenticationInterface. The recording authentication double implements those
+ * two methods and records each invocation (identifier + args) so the delegated
+ * calls are asserted against observable behaviour.
  *
  * @internal
  */
@@ -63,7 +62,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->setRequireLogin($course, (object) ['id' => 7]);
         $controller->runRequireLogin();
 
-        self::assertContains(['require_login', 42, true], $auth->calls);
+        self::assertContains(['requireLogin', 42, true], $auth->calls);
         self::assertTrue($controller->loginWasRequired());
     }
 
@@ -77,7 +76,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->setRequireLogin(null, null);
         $controller->runRequireLogin();
 
-        self::assertContains(['require_login', null, true], $auth->calls);
+        self::assertContains(['requireLogin', null, true], $auth->calls);
         self::assertTrue($controller->loginWasRequired());
     }
 
@@ -104,7 +103,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->request = Request::create('/submit', 'POST');
         $controller->runRequireLogin();
 
-        self::assertContains(['require_sesskey'], $auth->calls);
+        self::assertContains(['requireSesskey'], $auth->calls);
     }
 
     #[Test]
@@ -117,7 +116,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->request = Request::create('/view', 'GET');
         $controller->runRequireLogin();
 
-        self::assertNotContains(['require_sesskey'], $auth->calls);
+        self::assertNotContains(['requireSesskey'], $auth->calls);
     }
 
     #[Test]
@@ -190,8 +189,9 @@ final class InteractsWithAuthCoverageTest extends TestCase
 
     /**
      * Recording authentication double. Implements AuthenticationInterface so it
-     * satisfies authentication()'s return type, and additionally exposes the
-     * snake_case methods the trait actually calls (see class docblock).
+     * satisfies authentication()'s return type, and records each requireLogin()
+     * / requireSesskey() invocation (the methods the trait delegates to) with
+     * its arguments so the delegated calls can be asserted.
      */
     private function makeAuth(): object
     {
@@ -217,16 +217,6 @@ final class InteractsWithAuthCoverageTest extends TestCase
             public function requireSesskey(): void
             {
                 $this->calls[] = ['requireSesskey'];
-            }
-
-            public function require_login(?int $courseid = null, bool $autologinguest = true): void
-            {
-                $this->calls[] = ['require_login', $courseid, $autologinguest];
-            }
-
-            public function require_sesskey(): void
-            {
-                $this->calls[] = ['require_sesskey'];
             }
         };
     }

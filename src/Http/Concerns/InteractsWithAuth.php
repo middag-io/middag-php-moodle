@@ -84,7 +84,7 @@ trait InteractsWithAuth
     protected function requireLogin(): void
     {
         if ($this->requireLogin) {
-            $this->authentication()->require_login(
+            $this->authentication()->requireLogin(
                 $this->course?->get_id(),
                 true,
             );
@@ -95,7 +95,7 @@ trait InteractsWithAuth
         if ($this->requireSesskey && isset($this->request)) {
             $method = strtoupper($this->request->getMethod());
             if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
-                $this->authentication()->require_sesskey();
+                $this->authentication()->requireSesskey();
             }
         }
     }

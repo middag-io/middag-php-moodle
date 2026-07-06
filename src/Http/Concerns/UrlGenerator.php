@@ -55,6 +55,6 @@ trait UrlGenerator
     {
         $url = self::urlGenerator($route, $parameters, $referenceType);
 
-        return UrlSupport::get(str_replace('index.php', 'webhook.php', $url));
+        return (string) UrlSupport::get(str_replace('index.php', 'webhook.php', $url));
     }
 }

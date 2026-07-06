@@ -179,14 +179,18 @@ final class AbstractControllerCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testPreHandleIsANoopHook(): void
+    public function testPreHandleDefaultHookIsNoopObservedThroughSetForm(): void
     {
+        // The default preHandle() is an empty hook. setForm() always runs it
+        // (see setForm()), so on a controller that does not override preHandle()
+        // the form is stored without any further lifecycle side effect: handle()
+        // is not triggered and the handled flag stays false.
         $controller = new CoverageController();
 
-        $controller->preHandle();
+        $controller->setForm(new ControllerFormDouble());
 
-        // No exception, no state change: the default hook does nothing.
-        $this->addToAssertionCount(1);
+        self::assertInstanceOf(ControllerFormDouble::class, $controller->exposeForm());
+        self::assertFalse($controller->exposeHandled());
     }
 
     // =========================================================================
@@ -345,16 +349,17 @@ final class AbstractControllerCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testSetFormInvokesPreHandleHookWhenHostDefinesSnakeCaseMethod(): void
+    public function testSetFormAlwaysInvokesPreHandleHook(): void
     {
-        // method_exists($this, 'pre_handle') is only true for a subclass that
-        // declares the snake_case hook; that subclass reaches the preHandle()
-        // call inside setForm().
+        // setForm() unconditionally runs the preHandle() lifecycle hook before
+        // building the form. A subclass overriding preHandle() observes the call.
         $controller = new PreHandleCoverageController();
+        self::assertFalse($controller->preHandleRan);
 
         $controller->setForm(new ControllerFormDouble());
 
         self::assertTrue($controller->preHandleRan);
+        self::assertInstanceOf(ControllerFormDouble::class, $controller->exposeForm());
     }
 
     #[Test]
@@ -1579,22 +1584,22 @@ class CoverageController extends AbstractController
     {
         return $this->pageUrl;
     }
+
+    public function exposeHandled(): bool
+    {
+        return $this->handled;
+    }
 }
 
 /**
- * Variant that declares the snake_case pre_handle hook so setForm() reaches the
- * preHandle() call guarded by method_exists($this, 'pre_handle').
+ * Variant overriding the preHandle() lifecycle hook to record that setForm()
+ * invoked it (setForm() now always calls preHandle() before building the form).
  *
  * @internal
  */
 class PreHandleCoverageController extends CoverageController
 {
     public bool $preHandleRan = false;
-
-    public function pre_handle(): void
-    {
-        // presence of this method is what setForm() probes for.
-    }
 
     public function preHandle(): void
     {

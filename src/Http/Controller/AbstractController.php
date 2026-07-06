@@ -247,9 +247,11 @@ abstract class AbstractController implements MoodleControllerInterface
             throw new coding_exception('Invalid form provided. Must be an object or a class string.');
         }
 
-        if (method_exists($this, 'pre_handle')) {
-            $this->preHandle();
-        }
+        // Run the pre-handle lifecycle hook (default no-op; subclasses override
+        // it to configure auth/context) before the form is built. The previous
+        // method_exists('pre_handle') guard probed a snake_case name that no
+        // longer exists, so preHandle() was never reached from here.
+        $this->preHandle();
 
         $this->form = is_object($form) ? $form : new $form(null, $formparams);
         $this->formparams = $formparams;

@@ -126,7 +126,7 @@ abstract class AbstractApiController extends AbstractController
                     $this->authentication()->requireSesskey();
                 } catch (Throwable) {
                     throw new MiddagAuthorizationException(
-                        LangSupport::get('invalidsesskey', 'error') ?? 'Invalid session key',
+                        LangSupport::getString('invalidsesskey', 'error'),
                     );
                 }
             }
