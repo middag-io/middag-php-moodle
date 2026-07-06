@@ -12,9 +12,9 @@ contracts.
 
 `middag-io/moodle` is the Moodle host adapter for the MIDDAG framework. It
 provides the Moodle-side implementations of the framework's adapter contracts —
-bootstrap, config resolution, signal dispatch, command bus, outbox, user
-context — plus Moodle API wrappers (`Support/`), entities, DTOs, settings types,
-and PDF / HTTP / Inertia infrastructure.
+bootstrap, config resolution, signal dispatch, command bus, user context — plus
+Moodle API wrappers (`Support/`), entities, DTOs, settings types, and HTTP /
+Inertia infrastructure.
 
 It binds the framework to a Moodle site. A Moodle plugin provides the
 composition root that wires it in; any `local_*` or `mod_*` plugin can play that
