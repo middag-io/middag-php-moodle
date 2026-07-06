@@ -6,10 +6,11 @@ exist yet. Anything doable in the flow is done, not parked here. Mirrors the
 WordPress lib doctrine; relocated from the monorepo quality-gate tracker
 (QG-MDL-03) so the tracker can be retired for coverage items.
 
-Suite is green (2110 tests). The 9 QG-MDL-03 adapter concerns (Database, Form,
-Hook, Logging, Output, Persistence, Privacy, Settings, Table) and all 45
-`Support/` wrappers are now at **≥80% lines, most 100%**. The only uncovered
-lines are the unreachable/dead defensive guards below.
+Suite is green (3016 tests). Coverage passes across the whole `src/` tree took
+line coverage to **98.62%** (5846/5928): every area — Support, Definition,
+Shared, Security, Statics, Kernel, Http, Domain — is at 100% of its *reachable*
+lines. The only uncovered lines are the unreachable/dead defensive guards
+catalogued below.
 
 ---
 
@@ -68,3 +69,44 @@ runtime (or is dead-by-construction):
 
 Unblocking these would need source refactors (remove the guards) or a
 Moodle-runtime harness — out of scope for a coverage pass.
+
+## Blocked: unreachable guard lines in Kernel / Http / Domain
+
+Coverage pass (2026-07-06) took Kernel, Http and Domain to 100% of reachable
+lines. The residual uncovered lines below are dead-by-design guards or paths
+that cannot execute under a coverage-collecting harness:
+
+- **`Kernel/Kernel`** (112/117) — five lines: the `boot()` reentrancy `return`
+  (boot() only runs on a freshly constructed instance with `booted=false`, so
+  the guard is always false); the `handleBootError()` CLI arm (`fwrite` ×2 +
+  `exit(1)` — `exit` terminates the process before Xdebug flushes coverage and
+  breaks PHPUnit result serialization, so it cannot be covered honestly); and
+  the `class_exists(Debug::class)` `else` (Debug is always autoloadable in this
+  package, so the fallback is dead).
+- **`Http/Controller/AbstractController`** (164/166) — the `!is_object($form)`
+  `throw` in `setForm()` (unreachable given the `object|string` parameter type)
+  and the outer `catch (Exception)` in `getPageUrl()` (its only try-body call,
+  `setUrlFromRoute()`, already swallows every Exception internally and never
+  rethrows).
+- **`Http/Concerns/InteractsWithForms`** (22/23) — one defensive branch; the
+  concern is vestigial (superseded by the inlined AbstractController logic).
+- **`Domain/AbstractMoodleEntity`** (84/85) — the `if ($value === null && …)`
+  arm inside `castValue()`: the method's first statement already returns for a
+  null `$value`, so the second null check is dead.
+- **Kernel loaders/factories** (`ContainerFactory`, `MoodleHostContext`,
+  `Facade/AbstractFacade`, `Loader/MoodleHookfileLoader`) — one defensive line
+  each (host-absence / already-registered / missing-file guards) that the
+  stubbed harness cannot drive to the false side.
+- **`Security/AuthService`** (78/80) — the RSA-success arm of `init()`, only
+  reachable with a token signed by the private key matching the hardcoded
+  `PUBLIC_KEY` (absent in the OSS environment; the dispatched RSA logic is
+  covered directly via reflection).
+
+## Pre-existing baseline guards (Config, Filesystem, Form, Security VO, Persistence)
+
+At 98.62% these files each keep a single unreachable line, unchanged from the
+session-29 baseline (host-absence / exhaustive-switch / type-forbidden guards):
+`Config/ComponentContext`, `Filesystem/MoodledataFilesystem`,
+`Form/MformRenderer`, `Security/ValueObject/Sesskey`,
+`Persistence/Query/SqlGenerator`, plus the two `Output` guards already listed
+above. None is a missing assertion; each is dead-by-design defensive code.
