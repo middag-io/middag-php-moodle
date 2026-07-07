@@ -514,25 +514,32 @@ class Kernel implements KernelInterface
      */
     private function handleBootError(Throwable $throwable): void
     {
-        // In CLI context, print the error and exit immediately.
-        // Rethrowing can cause segfaults during object teardown with Symfony DI.
+        // In CLI context, print the error to STDERR and terminate immediately.
+        $this->reportCliFatalIfNeeded($throwable);
+
+        // Trace through the adapter's Debug util (always present in this package).
+        Debug::traceException($throwable);
+
+        // Always rethrow so the caller sees the real boot error instead of
+        // a misleading "container is null" from subsequent facade/service lookups.
+        throw $throwable;
+    }
+
+    /**
+     * In a CLI context, print the fatal boot error to STDERR and terminate the
+     * process. Rethrowing there can segfault during Symfony DI teardown.
+     *
+     * @codeCoverageIgnore CLI-only path terminating via exit(); not exercisable under PHPUnit.
+     *
+     * @noinspection ForgottenDebugOutputInspection
+     */
+    private function reportCliFatalIfNeeded(Throwable $throwable): void
+    {
         if (defined('CLI_SCRIPT') && CLI_SCRIPT) {
             fwrite(STDERR, '[MIDDAG KERNEL FATAL]: ' . $throwable->getMessage() . PHP_EOL);
             fwrite(STDERR, $throwable->getTraceAsString() . PHP_EOL);
 
             exit(1);
         }
-
-        // If the debug class is available, use it for rich tracing
-        if (class_exists(Debug::class)) {
-            Debug::traceException($throwable);
-        } else {
-            // Fallback logging when debug class is unavailable.
-            debugging('[MIDDAG KERNEL FATAL]: ' . $throwable->getMessage(), DEBUG_DEVELOPER);
-        }
-
-        // Always rethrow so the caller sees the real boot error instead of
-        // a misleading "container is null" from subsequent facade/service lookups.
-        throw $throwable;
     }
 }
