@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Support;
 
 use InvalidArgumentException;
-use Middag\Moodle\Settings\framework_config;
 use Middag\Moodle\Support\SettingsSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -92,14 +91,6 @@ final class SettingsSupportTest extends TestCase
         $GLOBALS['__middag_test_config']['mdg_core_debugmode'] = '2';
 
         self::assertSame('2', SettingsSupport::get(FrameworkConfig::debugmode));
-    }
-
-    #[Test]
-    public function testAdapterFrameworkConfigEnumResolvesCoreSlug(): void
-    {
-        $GLOBALS['__middag_test_config']['mdg_core_authtype'] = 'jwt';
-
-        self::assertSame('jwt', SettingsSupport::get(framework_config::authtype));
     }
 
     #[Test]

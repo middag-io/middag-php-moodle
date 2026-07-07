@@ -16,8 +16,6 @@ use Middag\Framework\Exception\MiddagAuthenticationException;
 use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Moodle\Http\Controller\AbstractApiController;
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
-use Middag\Moodle\Settings\framework_config;
-use Middag\Moodle\Support\SettingsSupport;
 use moodle_database;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -91,7 +89,6 @@ final class AbstractApiControllerCoverageTest extends TestCase
     #[Test]
     public function testPreHandleRunsAuthPipelineWhenAuthenticationRequired(): void
     {
-        SettingsSupport::set(framework_config::api_enabled, true);
         $auth = $this->makeAuth();
         $auth->loggedIn = true; // short-circuits authenticateApiRequest
 
@@ -316,22 +313,8 @@ final class AbstractApiControllerCoverageTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function testAuthenticateApiRequestThrowsWhenApiDisabled(): void
-    {
-        SettingsSupport::set(framework_config::api_enabled, false);
-        $controller = $this->makeController(
-            $this->request(),
-            $this->makeContainer([AuthenticationInterface::class => $this->makeAuth()]),
-        );
-
-        $this->expectException(MiddagAuthorizationException::class);
-        $controller->exposeAuthenticateApiRequest();
-    }
-
-    #[Test]
     public function testAuthenticateApiRequestReturnsEarlyWhenAlreadyLoggedIn(): void
     {
-        SettingsSupport::set(framework_config::api_enabled, true);
         $auth = $this->makeAuth();
         $auth->loggedIn = true;
 
@@ -348,7 +331,6 @@ final class AbstractApiControllerCoverageTest extends TestCase
     #[Test]
     public function testAuthenticateApiRequestUsesWstokenWhenPresent(): void
     {
-        SettingsSupport::set(framework_config::api_enabled, true);
         $this->installDb([
             'external_tokens' => (object) ['token' => 'tok', 'validuntil' => 0, 'userid' => 7],
             'user' => (object) ['id' => 7, 'deleted' => 0, 'suspended' => 0],
@@ -368,7 +350,6 @@ final class AbstractApiControllerCoverageTest extends TestCase
     #[Test]
     public function testAuthenticateApiRequestFallsBackToSessionOnGet(): void
     {
-        SettingsSupport::set(framework_config::api_enabled, true);
         $controller = $this->makeController(
             $this->request(['REQUEST_METHOD' => 'GET']),
             $this->makeContainer([AuthenticationInterface::class => $this->makeAuth()]),
@@ -383,7 +364,6 @@ final class AbstractApiControllerCoverageTest extends TestCase
     #[Test]
     public function testAuthenticateApiRequestFallsBackToSessionWithSesskeyOnPost(): void
     {
-        SettingsSupport::set(framework_config::api_enabled, true);
         $controller = $this->makeController(
             $this->request(['REQUEST_METHOD' => 'POST']),
             $this->makeContainer([AuthenticationInterface::class => $this->makeAuth()]),

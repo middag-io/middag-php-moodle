@@ -15,10 +15,8 @@ namespace Middag\Moodle\Http\Controller;
 use core\session\manager;
 use Middag\Framework\Exception\MiddagAuthenticationException;
 use Middag\Framework\Exception\MiddagAuthorizationException;
-use Middag\Moodle\Settings\framework_config;
 use Middag\Moodle\Support\DbSupport;
 use Middag\Moodle\Support\LangSupport;
-use Middag\Moodle\Support\SettingsSupport;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,19 +135,16 @@ abstract class AbstractApiController extends AbstractController
      * Authenticate the API request.
      *
      * Dual auth: wstoken (Moodle webservice token) first,
-     * then fallback to Moodle session. Also checks api_enabled setting.
+     * then fallback to Moodle session.
      *
-     * @throws MiddagAuthorizationException  if API is disabled
+     * A product-level "API enabled" policy gate is NOT enforced here: that is
+     * host-product vocabulary and belongs to the consumer's own API controller
+     * or middleware, not this generic adapter base class.
+     *
      * @throws MiddagAuthenticationException if auth fails
      */
     protected function authenticateApiRequest(): void
     {
-        if (!SettingsSupport::get(framework_config::api_enabled)) {
-            throw new MiddagAuthorizationException(
-                LangSupport::get('api_disabled'),
-            );
-        }
-
         if ($this->authentication()->isLoggedIn()) {
             return;
         }

@@ -223,12 +223,6 @@ parameters:
 			path: src/Http/Concerns/UrlGenerator.php
 
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: src/Http/Controller/AbstractApiController.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -283,12 +277,6 @@ parameters:
 			path: src/Kernel/Facade/AbstractFacade.php
 
 		-
-			message: '#^PHPDoc tag @return with type object\|T is not subtype of native type object\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/Kernel/Kernel.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -325,12 +313,6 @@ parameters:
 			path: src/Logging/MoodleOriginResolver.php
 
 		-
-			message: '#^Access to constant TYPE_CUSTOM on an unknown class navigation_node\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Output/MoodleView.php
-
-		-
 			message: '#^Parameter \#2 \$context of static method Middag\\Moodle\\Support\\CapabilitySupport\:\:has\(\) expects core\\context, core\\context\\system given\.$#'
 			identifier: argument.type
 			count: 1
@@ -353,42 +335,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: src/Privacy/PrivacyProvider.php
-
-		-
-			message: '#^Access to protected property Middag\\Moodle\\Domain\\User\\User\:\:\$id\.$#'
-			identifier: property.protected
-			count: 1
-			path: src/Security/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Security\\AuthService\:\:decrypt\(\) should return stdClass but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Security/AuthService.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Security\\AuthService\:\:decryptJwtRsa\(\) should return stdClass\|false but returns Firebase\\JWT\\stdClass\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Security/AuthService.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: src/Security/AuthService.php
-
-		-
-			message: '#^Parameter \#3 \$type of function optional_param expects string, null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Security/AuthService.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Security/AuthService.php
 
 		-
 			message: '#^Class Middag\\Moodle\\Security\\Authentication referenced with incorrect case\: Middag\\Moodle\\Security\\authentication\.$#'
@@ -505,12 +451,6 @@ parameters:
 			path: src/Support/CategorySupport.php
 
 		-
-			message: '#^Call to method out\(\) on an unknown class core\\check\\action_link\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CheckSupport.php
-
-		-
 			message: '#^Access to an undefined property core\\context\\system\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -581,18 +521,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: src/Support/CompetencySupport.php
-
-		-
-			message: '#^Access to property \$cms on an unknown class modinfo\.$#'
-			identifier: class.notFound
-			count: 6
-			path: src/Support/CompletionSupport.php
-
-		-
-			message: '#^Access to property \$id on an unknown class cm_info\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CompletionSupport.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<cm_info\> will always evaluate to true\.$#'
@@ -712,12 +640,6 @@ parameters:
 			message: '#^Caught class dml_exception is not an exception\.$#'
 			identifier: catch.notThrowable
 			count: 7
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Support\\CourseSupport\:\:getCmsBySection\(\) has invalid return type cm_info\.$#'
-			identifier: class.notFound
-			count: 1
 			path: src/Support/CourseSupport.php
 
 		-
@@ -899,12 +821,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: src/Support/NotificationSupport.php
-
-		-
-			message: '#^Call to static method require_admin_tree\(\) on an unknown class navigation_node\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/PageSupport.php
 
 		-
 			message: '#^Call to function method_exists\(\) with core\\plugininfo\\base and ''get_status'' will always evaluate to true\.$#'
