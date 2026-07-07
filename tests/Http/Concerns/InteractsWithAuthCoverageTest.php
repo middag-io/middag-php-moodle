@@ -159,18 +159,34 @@ final class InteractsWithAuthCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testCheckCapabilitiesDefaultsToSystemContextForNonContextLevelValues(): void
+    public function testCheckCapabilitiesDefaultsToSystemContextForUnknownContextNames(): void
     {
         $capability = $this->makeCapability();
         $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
 
-        // A non-ContextLevel value is normalised to null by the setter, so the
+        // An UNKNOWN name resolves to null via ContextLevel::fromString(), so the
         // check falls back to the SYSTEM context level.
         $controller->setRequireCapabilities(['mod/x:view'], 'not-a-context-level', 0);
         $controller->runCheckCapabilities();
 
         self::assertSame([
             ['authorize', 'mod/x:view', ContextLevel::SYSTEM, 0],
+        ], $capability->calls);
+    }
+
+    #[Test]
+    public function testCheckCapabilitiesResolvesKnownContextNameInsteadOfDegradingToSystem(): void
+    {
+        $capability = $this->makeCapability();
+        $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
+
+        // A KNOWN name string (as #[Auth(context: 'course')] passes) is resolved to
+        // the matching ContextLevel — it must NOT silently degrade to SYSTEM.
+        $controller->setRequireCapabilities(['mod/x:view'], 'course', 55);
+        $controller->runCheckCapabilities();
+
+        self::assertSame([
+            ['authorize', 'mod/x:view', ContextLevel::COURSE, 55],
         ], $capability->calls);
     }
 

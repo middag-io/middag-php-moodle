@@ -65,16 +65,22 @@ trait InteractsWithAuth
     /**
      * Define the capabilities that the user must have.
      *
-     * @param array<string>     $capabilities required capability names
-     * @param null|ContextLevel $context      Moodle context level when relevant; widened
-     *                                        to `mixed` to satisfy the framework contract
-     *                                        which is platform-agnostic. Non-ContextLevel
-     *                                        values are stored as null.
+     * @param array<string>            $capabilities required capability names
+     * @param null|ContextLevel|string $context      Moodle context level when relevant. A
+     *                                               {@see ContextLevel} is kept as-is; a name string
+     *                                               (the framework's platform-agnostic `context`) is
+     *                                               resolved via {@see ContextLevel::fromString()} so
+     *                                               `#[Auth(context: 'course')]` reaches the check
+     *                                               instead of degrading to SYSTEM. Unknown name → null.
      */
     public function setRequireCapabilities(array $capabilities, mixed $context = null, int $instanceid = 0): void
     {
         $this->capabilities = $capabilities;
-        $this->capabilityContextLevel = $context instanceof ContextLevel ? $context : null;
+        $this->capabilityContextLevel = match (true) {
+            $context instanceof ContextLevel => $context,
+            is_string($context) => ContextLevel::fromString($context),
+            default => null,
+        };
         $this->capabilityInstanceId = $instanceid;
     }
 

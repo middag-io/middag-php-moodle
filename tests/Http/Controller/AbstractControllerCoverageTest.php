@@ -222,17 +222,32 @@ final class AbstractControllerCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testSetRequireCapabilitiesStoresNullForNonContextLevel(): void
+    public function testSetRequireCapabilitiesStoresNullForUnknownContextName(): void
     {
         $cap = $this->makeCapability();
         $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
 
-        // A plain string context is not a ContextLevel, so it falls back to SYSTEM.
+        // An unknown context name resolves to null, so it falls back to SYSTEM.
         $controller->setRequireCapabilities(['cap/y'], 'not-a-level', 0);
 
         $controller->callCheckCapabilities();
 
         self::assertSame([['cap/y', ContextLevel::SYSTEM, 0]], $cap->authorized);
+    }
+
+    #[Test]
+    public function testSetRequireCapabilitiesResolvesKnownContextName(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // A known context name string (as #[Auth(context: 'course')] passes) resolves
+        // to the ContextLevel instead of degrading to SYSTEM.
+        $controller->setRequireCapabilities(['cap/z'], 'course', 7);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['cap/z', ContextLevel::COURSE, 7]], $cap->authorized);
     }
 
     // =========================================================================

@@ -91,4 +91,35 @@ final class ContextLevelTest extends TestCase
         $this->assertNull(ContextLevel::tryFrom(0));
         $this->assertNull(ContextLevel::tryFrom(99));
     }
+
+    #[Test]
+    public function fromStringResolvesShortNames(): void
+    {
+        $this->assertSame(ContextLevel::SYSTEM, ContextLevel::fromString('system'));
+        $this->assertSame(ContextLevel::USER, ContextLevel::fromString('user'));
+        $this->assertSame(ContextLevel::COURSECAT, ContextLevel::fromString('coursecat'));
+        $this->assertSame(ContextLevel::COURSECAT, ContextLevel::fromString('category'));
+        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('course'));
+        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('module'));
+        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('coursemodule'));
+        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('cm'));
+        $this->assertSame(ContextLevel::BLOCK, ContextLevel::fromString('block'));
+    }
+
+    #[Test]
+    public function fromStringIsCaseInsensitiveAndAcceptsMoodleConstantSpelling(): void
+    {
+        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('COURSE'));
+        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('  Course  '));
+        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('CONTEXT_COURSE'));
+        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('context_module'));
+    }
+
+    #[Test]
+    public function fromStringReturnsNullForUnknownOrNull(): void
+    {
+        $this->assertNull(ContextLevel::fromString('not-a-context'));
+        $this->assertNull(ContextLevel::fromString(''));
+        $this->assertNull(ContextLevel::fromString(null));
+    }
 }

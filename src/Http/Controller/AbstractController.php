@@ -211,16 +211,23 @@ abstract class AbstractController implements MoodleControllerInterface
      * Define the capabilities that the user must have.
      *
      * @param array<string>            $capabilities required capability names
-     * @param null|ContextLevel|string $context      Moodle context level when relevant; widens
-     *                                               the framework contract's `string $context`
-     *                                               (platform-agnostic) to also accept a
-     *                                               {@see ContextLevel}. Non-ContextLevel
-     *                                               values are stored as null.
+     * @param null|ContextLevel|string $context      Moodle context level when relevant. Widens the
+     *                                               framework contract's platform-agnostic
+     *                                               `string $context`: a {@see ContextLevel} is kept
+     *                                               as-is and a name string is resolved via
+     *                                               {@see ContextLevel::fromString()} (so
+     *                                               `#[Auth(context: 'course')]` reaches the check
+     *                                               instead of silently degrading to SYSTEM). An
+     *                                               unknown name resolves to null → SYSTEM default.
      */
     public function setRequireCapabilities(array $capabilities, mixed $context = null, int $instanceid = 0): void
     {
         $this->capabilities = $capabilities;
-        $this->capabilityContextLevel = $context instanceof ContextLevel ? $context : null;
+        $this->capabilityContextLevel = match (true) {
+            $context instanceof ContextLevel => $context,
+            is_string($context) => ContextLevel::fromString($context),
+            default => null,
+        };
         $this->capabilityInstanceId = $instanceid;
     }
 
