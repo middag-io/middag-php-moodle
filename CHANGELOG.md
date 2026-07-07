@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.3.0](https://github.com/middag-io/middag-php-moodle/compare/v1.2.3...v1.3.0) (2026-07-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* **security:** `Middag\Moodle\Security\AuthService`, `Middag\Moodle\Security\Contract\AuthServiceInterface` and `Middag\Moodle\Settings\framework_config` are removed, and `AbstractApiController` no longer gates requests on an `api_enabled` setting. Consumers that relied on the adapter's JWT auto-login / support-login must migrate to the product auth (core + licensing SSO) and enforce any "API enabled" policy in their own controllers.
+* **config:** Capability::middag() and Capability::is_middag() are removed. Use Capability::forHostComponent() and Capability::isHostComponent() instead; both derive the capability component from the configured ComponentContext, so the running host plugin must call ComponentContext::configure() during bootstrap (already a hard requirement of the adapter).
+
+### Bug Fixes
+
+* correct two bugs surfaced by coverage (AuthService default, MessagePermission bits) ([87fcabd](https://github.com/middag-io/middag-php-moodle/commit/87fcabdf4c5297f7d38d17921e2176620374c33b))
+* **http:** repair vestigial concern traits and two active controller bugs ([8b5bcc0](https://github.com/middag-io/middag-php-moodle/commit/8b5bcc0f10bbc156a67fa786b6bd496e489a6c88))
+* **support:** correct three Moodle API delegation bugs surfaced by coverage ([8a5d787](https://github.com/middag-io/middag-php-moodle/commit/8a5d787b0b29f9304ee1c7db53b6b3aa946936b9))
+* **support:** repair Moodle 5.0 check action-link and completion reads ([457ca27](https://github.com/middag-io/middag-php-moodle/commit/457ca27cd29dd75f48a310509b9f5e9ea196ed1a))
+
+
+### Refactoring
+
+* **config:** derive host component paths and capabilities from ComponentContext ([b48bdcb](https://github.com/middag-io/middag-php-moodle/commit/b48bdcb2cfa92a7b602d8ef6b056f5c06fc9fb51))
+* **kernel:** isolate the CLI fatal-boot path in a dedicated method ([1e4dbbe](https://github.com/middag-io/middag-php-moodle/commit/1e4dbbecb4d8d2eb1802d01b2d1019daa2b31d05))
+* **persistence:** compile SQL conditions with an exhaustive match ([fca1013](https://github.com/middag-io/middag-php-moodle/commit/fca10133a63839a2b63af1e3a0ba869678c68e81))
+* **security:** drop product auth and framework-config from the OSS adapter ([27db9c2](https://github.com/middag-io/middag-php-moodle/commit/27db9c281a444c6dbf23c33276f4e2c3f6e582fc))
+* use PascalCase internal imports across the adapter ([487d6c4](https://github.com/middag-io/middag-php-moodle/commit/487d6c4689a5564a0ca4af046d813203280fd461))
+
+
+### Documentation
+
+* **backlog:** catalog residual unreachable guards after 98.62% coverage ([bf25282](https://github.com/middag-io/middag-php-moodle/commit/bf252824061b87a19d88be6cb64dba4aee72f3f6))
+* **backlog:** record QG-MDL-03 unreachable guard lines as blocked ([4fde2c6](https://github.com/middag-io/middag-php-moodle/commit/4fde2c67e51e1fb76667e22c1eaaec143e35ad46))
+* **readme:** drop removed PDF and outbox from the adapter surface ([a537e02](https://github.com/middag-io/middag-php-moodle/commit/a537e02ccde26ff8850f198d06567281f1f853aa))
+
+
+### Miscellaneous
+
+* **ci:** refresh stale registry and reusable-workflow comments ([f1e7f5f](https://github.com/middag-io/middag-php-moodle/commit/f1e7f5f6e386d60077c1083ca48aa598b91c68a4))
+* **coverage:** exclude genuinely uncoverable artifacts from reports ([6b86e43](https://github.com/middag-io/middag-php-moodle/commit/6b86e4339d85eb2e0c90644fea8c9a0a606536a8))
+* **dist:** export-ignore /bin from the distribution tarball ([d5756a0](https://github.com/middag-io/middag-php-moodle/commit/d5756a0ba0d04c7dbbcdd413506cd91d8b292696))
+* promote develop to main (release 1.3.0) ([14bba1e](https://github.com/middag-io/middag-php-moodle/commit/14bba1e65cbbab33cbbd429b7fee93a30d0bb212))
+* release 1.3.0 ([61a38db](https://github.com/middag-io/middag-php-moodle/commit/61a38dba26aa12eb40b993eb925b66039302ad67))
+
 ## [1.2.3](https://github.com/middag-io/middag-php-moodle/compare/v1.2.2...v1.2.3) (2026-07-05)
 
 
