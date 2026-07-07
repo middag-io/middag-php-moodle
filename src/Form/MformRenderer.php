@@ -13,9 +13,12 @@ declare(strict_types=1);
 namespace Middag\Moodle\Form;
 
 // THIS file and ONLY this file in the form subsystem may reference moodleform.
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->libdir . '/formslib.php';
+// @codeCoverageIgnoreEnd
 
 use Middag\Ui\Block\Contract\LayoutElementInterface;
 use Middag\Ui\Form\Contract\FieldInterface;

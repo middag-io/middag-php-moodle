@@ -19,9 +19,12 @@ use Middag\Moodle\Domain\User\UserProfileFieldDataDto;
 use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/user/profile/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Encapsulates Moodle's User Profile Fields API.

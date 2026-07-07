@@ -39,6 +39,7 @@ final class ComponentContext
     /** @var null|string The plugin autoload function name (e.g. {@code local_example_autoload}). */
     private static ?string $autoloadFunction = null;
 
+    /** @codeCoverageIgnore Static-only class; the private constructor exists solely to bar instantiation. */
     private function __construct() {}
 
     /**

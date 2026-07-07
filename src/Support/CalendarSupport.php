@@ -18,9 +18,12 @@ use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use Throwable;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/calendar/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Utility wrapper for Moodle's Calendar API.

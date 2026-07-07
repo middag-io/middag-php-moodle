@@ -65,7 +65,7 @@ return (new Config())
         'phpdoc_no_package' => false,
         'yoda_style' => false,
 
-        'comment_to_phpdoc' => ['ignored_tags' => ['var']],
+        'comment_to_phpdoc' => ['ignored_tags' => ['var', 'codeCoverageIgnore', 'codeCoverageIgnoreStart', 'codeCoverageIgnoreEnd']],
         'no_superfluous_phpdoc_tags' => false,
     ])
     ->setFinder($finder);

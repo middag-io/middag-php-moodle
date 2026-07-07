@@ -20,9 +20,12 @@ use Middag\Moodle\Domain\Group\CohortMemberDto;
 use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/cohort/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Utility functions for Moodle cohorts.
