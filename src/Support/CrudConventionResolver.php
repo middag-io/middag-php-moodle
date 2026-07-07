@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use Middag\Moodle\Config\ComponentContext;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -108,11 +109,12 @@ final class CrudConventionResolver
     /**
      * Resolve capability name by convention.
      *
-     * Convention: local/middag:manage_{singular}
+     * Convention: {host}:manage_{singular}, where {host} is the running host
+     * component's capability prefix (e.g. local/middag for local_middag).
      */
     public static function capability(string $entity_class): string
     {
-        return 'local/middag:manage_' . rtrim(self::slug($entity_class), 's');
+        return ComponentContext::capabilityComponent() . ':manage_' . rtrim(self::slug($entity_class), 's');
     }
 
     /**

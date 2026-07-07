@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\User;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 
 /**
@@ -24,7 +24,7 @@ use stdClass;
  *
  * @api
  */
-final class UserProfileFieldDataDto extends abstract_dto
+final class UserProfileFieldDataDto extends AbstractDto
 {
     public function __construct(
         public ?int $id = null,

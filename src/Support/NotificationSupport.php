@@ -17,8 +17,8 @@ use core\user as core_user;
 use core_message\api;
 use message_popup\api as popup_api;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Message\NotificationDto as notification_dto;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Message\NotificationDto;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -37,11 +37,11 @@ class NotificationSupport
      * Creates a core message object with `notification = 1`, resolves sender
      * and recipient user records, and dispatches via `message_send()`.
      *
-     * @param notification_dto $notification the notification data
+     * @param NotificationDto $notification the notification data
      *
      * @return null|int message ID on success, null on failure
      */
-    public static function send(notification_dto $notification): ?int
+    public static function send(NotificationDto $notification): ?int
     {
         try {
             $msg = new core_message();
@@ -74,7 +74,7 @@ class NotificationSupport
 
             return $result !== false ? (int) $result : null;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -83,7 +83,7 @@ class NotificationSupport
     /**
      * Sends a simple system notification with minimal configuration.
      *
-     * Convenience method that creates a {@see notification_dto} internally
+     * Convenience method that creates a {@see NotificationDto} internally
      * using `local_example` as component and `system_notification` as name.
      *
      * @param int         $userid_to    recipient user ID
@@ -99,7 +99,7 @@ class NotificationSupport
         string $message_html,
         ?string $context_url = null,
     ): ?int {
-        $notification = new notification_dto(
+        $notification = new NotificationDto(
             component: ComponentContext::name(),
             name: 'system_notification',
             useridTo: $userid_to,
@@ -124,7 +124,7 @@ class NotificationSupport
         try {
             return popup_api::count_unread_popup_notifications($userid);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return 0;
         }
@@ -153,7 +153,7 @@ class NotificationSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }

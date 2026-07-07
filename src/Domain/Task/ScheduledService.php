@@ -14,9 +14,8 @@ namespace Middag\Moodle\Domain\Task;
 
 use core\exception\moodle_exception;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Task\Contract\ScheduledServiceInterface as scheduled_service_interface;
-use Middag\Moodle\Domain\Task\ScheduledTaskDto as scheduled_task_dto;
-use Middag\Moodle\Support\TaskSupport as task_support;
+use Middag\Moodle\Domain\Task\Contract\ScheduledServiceInterface;
+use Middag\Moodle\Support\TaskSupport;
 
 /**
  * High-level service for managing scheduled tasks.
@@ -26,15 +25,15 @@ use Middag\Moodle\Support\TaskSupport as task_support;
  *
  * @internal
  */
-final readonly class ScheduledService implements scheduled_service_interface
+final readonly class ScheduledService implements ScheduledServiceInterface
 {
     /**
      * Constructor.
      *
-     * @param task_support $task_wrapper
+     * @param TaskSupport $task_wrapper
      */
     public function __construct(
-        private task_support $task_wrapper
+        private TaskSupport $task_wrapper
     ) {}
 
     /* ============================================================================
@@ -44,7 +43,7 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * List all scheduled tasks in the system.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function list(): array
     {
@@ -56,11 +55,11 @@ final readonly class ScheduledService implements scheduled_service_interface
      *
      * @throws moodle_exception if the task does not exist
      */
-    public function get(string $classname): scheduled_task_dto
+    public function get(string $classname): ScheduledTaskDto
     {
         $task = $this->task_wrapper->getScheduledTask($classname);
 
-        if (!$task instanceof scheduled_task_dto) {
+        if (!$task instanceof ScheduledTaskDto) {
             throw new moodle_exception('scheduled_task_not_found', ComponentContext::name(), '', $classname);
         }
 
@@ -72,7 +71,7 @@ final readonly class ScheduledService implements scheduled_service_interface
      */
     public function exists(string $classname): bool
     {
-        return $this->task_wrapper->getScheduledTask($classname) instanceof scheduled_task_dto;
+        return $this->task_wrapper->getScheduledTask($classname) instanceof ScheduledTaskDto;
     }
 
     /* ============================================================================
@@ -92,13 +91,13 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * List all scheduled tasks for a component only.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listByComponent(string $component): array
     {
         return array_filter(
             $this->list(),
-            fn (scheduled_task_dto $task): bool => $task->component === $component
+            fn (ScheduledTaskDto $task): bool => $task->component === $component
         );
     }
 
@@ -109,7 +108,7 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * Get the next scheduled task that will run after a timestamp.
      */
-    public function next(int $timestamp): ?scheduled_task_dto
+    public function next(int $timestamp): ?ScheduledTaskDto
     {
         return $this->task_wrapper->nextScheduled($timestamp);
     }
@@ -117,7 +116,7 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * Determine if a scheduled task is overdue.
      */
-    public function isOverdue(scheduled_task_dto $task, ?int $now = null): bool
+    public function isOverdue(ScheduledTaskDto $task, ?int $now = null): bool
     {
         $now ??= time();
 
@@ -127,7 +126,7 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * Determine if a scheduled task is customized/overridden.
      */
-    public function isCustomized(scheduled_task_dto $task): bool
+    public function isCustomized(ScheduledTaskDto $task): bool
     {
         return $task->customised;
     }
@@ -156,7 +155,7 @@ final readonly class ScheduledService implements scheduled_service_interface
     /**
      * List scheduled tasks that are overdue.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listOverdue(?int $now = null): array
     {
@@ -164,33 +163,33 @@ final readonly class ScheduledService implements scheduled_service_interface
 
         return array_filter(
             $this->list(),
-            fn (scheduled_task_dto $task): bool => $this->isOverdue($task, $now)
+            fn (ScheduledTaskDto $task): bool => $this->isOverdue($task, $now)
         );
     }
 
     /**
      * List tasks that are disabled.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listDisabled(): array
     {
         return array_filter(
             $this->list(),
-            fn (scheduled_task_dto $task): bool => $task->disabled
+            fn (ScheduledTaskDto $task): bool => $task->disabled
         );
     }
 
     /**
      * List tasks that were modified by config overrides.
      *
-     * @return scheduled_task_dto[]
+     * @return ScheduledTaskDto[]
      */
     public function listCustomized(): array
     {
         return array_filter(
             $this->list(),
-            fn (scheduled_task_dto $task): bool => $task->customised
+            fn (ScheduledTaskDto $task): bool => $task->customised
         );
     }
 }

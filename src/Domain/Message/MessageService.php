@@ -16,14 +16,14 @@ use core\exception\moodle_exception;
 use core\message\message;
 use core\url as moodle_url;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Message\Contract\MessageServiceInterface as message_service_interface;
-use Middag\Moodle\Support\ConfigSupport as config_support;
-use Middag\Moodle\Support\CourseSupport as course_support;
-use Middag\Moodle\Support\HtmlWriterSupport as html_writer_support;
-use Middag\Moodle\Support\LangSupport as lang_support;
-use Middag\Moodle\Support\MessageSupport as message_support;
-use Middag\Moodle\Support\UrlSupport as url_support;
-use Middag\Moodle\Support\UserSupport as user_support;
+use Middag\Moodle\Domain\Message\Contract\MessageServiceInterface;
+use Middag\Moodle\Support\ConfigSupport;
+use Middag\Moodle\Support\CourseSupport;
+use Middag\Moodle\Support\HtmlWriterSupport;
+use Middag\Moodle\Support\LangSupport;
+use Middag\Moodle\Support\MessageSupport;
+use Middag\Moodle\Support\UrlSupport;
+use Middag\Moodle\Support\UserSupport;
 use stored_file;
 
 /**
@@ -33,9 +33,9 @@ use stored_file;
  *
  * @internal
  *
- * @see message_service_interface
+ * @see MessageServiceInterface
  */
-class MessageService implements message_service_interface
+class MessageService implements MessageServiceInterface
 {
     public const NAME = 'middagsender';
 
@@ -65,10 +65,10 @@ class MessageService implements message_service_interface
     public function email(mixed $from, mixed $to, string $subject, string $text, int $courseid = 0, ?array $attachments = null): void
     {
         if ($courseid === 0) {
-            $courseid = config_support::getSiteId();
+            $courseid = ConfigSupport::getSiteId();
         }
 
-        $course = course_support::getCourse($courseid);
+        $course = CourseSupport::getCourse($courseid);
 
         $data = $this->prepareText($course, $to);
 
@@ -84,11 +84,11 @@ class MessageService implements message_service_interface
             $file = array_shift($attachments);
             // Ensure temp directory is within request lifespan
             if ($file instanceof stored_file) {
-                [$attachment, $attachname] = message_support::createTempAttachment($file);
+                [$attachment, $attachname] = MessageSupport::createTempAttachment($file);
             }
         }
 
-        message_support::email($to, $from, $subject, $text, html_writer_support::htmlToText($text), $attachment, $attachname);
+        MessageSupport::email($to, $from, $subject, $text, HtmlWriterSupport::htmlToText($text), $attachment, $attachname);
     }
 
     /**
@@ -107,10 +107,10 @@ class MessageService implements message_service_interface
     public function message(mixed $from, mixed $to, string $subject, string $text, int $courseid = 0): mixed
     {
         if ($courseid === 0) {
-            $courseid = config_support::getSiteId();
+            $courseid = ConfigSupport::getSiteId();
         }
 
-        $course = course_support::getCourse($courseid);
+        $course = CourseSupport::getCourse($courseid);
 
         $data = $this->prepareText($course, $to);
 
@@ -119,10 +119,10 @@ class MessageService implements message_service_interface
             $subject = str_replace($key, (string) $value, $subject);
         }
 
-        $message = $this->prepare($from, $to, $subject, html_writer_support::tag('h5', $subject) . $text);
+        $message = $this->prepare($from, $to, $subject, HtmlWriterSupport::tag('h5', $subject) . $text);
         $message->notification = 0;
 
-        return message_support::send($message);
+        return MessageSupport::send($message);
     }
 
     /**
@@ -143,10 +143,10 @@ class MessageService implements message_service_interface
     public function notification(mixed $from, mixed $to, string $subject, string $text, int $courseid = 0, mixed $url = null, ?string $urlname = null): mixed
     {
         if ($courseid === 0) {
-            $courseid = config_support::getSiteId();
+            $courseid = ConfigSupport::getSiteId();
         }
 
-        $course = course_support::getCourse($courseid);
+        $course = CourseSupport::getCourse($courseid);
 
         $data = $this->prepareText($course?->asStdClass(), $to);
 
@@ -156,7 +156,7 @@ class MessageService implements message_service_interface
         }
 
         $message = $this->prepare($from, $to, $subject, $text, $course?->getId());
-        $message->userfrom = message_support::getNoreplyUser();
+        $message->userfrom = MessageSupport::getNoreplyUser();
         $message->notification = 1;
 
         if ($url instanceof moodle_url) {
@@ -169,7 +169,7 @@ class MessageService implements message_service_interface
             $message->contexturlname = $urlname;
         }
 
-        return message_support::send($message);
+        return MessageSupport::send($message);
     }
 
     /**
@@ -186,12 +186,12 @@ class MessageService implements message_service_interface
     public function prepare(mixed $from, mixed $to, string $subject, string $text, int $courseid = 0): message
     {
         if ($courseid === 0) {
-            $courseid = config_support::getSiteId();
+            $courseid = ConfigSupport::getSiteId();
         }
 
         $class = static::class;
 
-        $message = message_support::createMessage();
+        $message = MessageSupport::createMessage();
         $message->component = $class::component();
         $message->name = $class::NAME;
         $message->userfrom = $from;
@@ -203,7 +203,7 @@ class MessageService implements message_service_interface
         $message->fullmessageformat = FORMAT_HTML;
         $message->courseid = $courseid;
 
-        $message->convid = message_support::getConversationId($message);
+        $message->convid = MessageSupport::getConversationId($message);
 
         return $message;
     }
@@ -213,7 +213,7 @@ class MessageService implements message_service_interface
      */
     public function getConversationId(mixed $message): int
     {
-        return message_support::getConversationId($message);
+        return MessageSupport::getConversationId($message);
     }
 
     /**
@@ -228,31 +228,31 @@ class MessageService implements message_service_interface
      */
     public function prepareText(mixed $course, mixed $user): array
     {
-        $site_info = config_support::getSiteInfo();
+        $site_info = ConfigSupport::getSiteInfo();
 
         if (!$course) {
             $course = get_site();
         }
 
-        $forgotpasswordurl = config_support::getGlobal('forgottenpasswordurl');
+        $forgotpasswordurl = ConfigSupport::getGlobal('forgottenpasswordurl');
         if (empty($forgotpasswordurl)) {
-            $forgotpasswordurl = url_support::get('/login/forgot_password.php');
+            $forgotpasswordurl = UrlSupport::get('/login/forgot_password.php');
         }
 
-        $supportemail = config_support::getGlobal('supportemail');
-        $mailto = url_support::get('mailto:' . $supportemail);
+        $supportemail = ConfigSupport::getGlobal('supportemail');
+        $mailto = UrlSupport::get('mailto:' . $supportemail);
 
         return [
             '[[username]]' => $user->username,
             '[[firstname]]' => $user->firstname,
             '[[lastname]]' => $user->lastname,
-            '[[fullname]]' => user_support::fullname($user),
+            '[[fullname]]' => UserSupport::fullname($user),
             '[[coursename]]' => $course->fullname,
-            '[[courselink]]' => html_writer_support::link(url_support::get('/course/view.php', ['id' => $course->id]), $course->fullname),
-            '[[courseurl]]' => url_support::get('/course/view.php', ['id' => $course->id])->out(false),
+            '[[courselink]]' => HtmlWriterSupport::link(UrlSupport::get('/course/view.php', ['id' => $course->id]), $course->fullname),
+            '[[courseurl]]' => UrlSupport::get('/course/view.php', ['id' => $course->id])->out(false),
             '[[sitename]]' => $site_info->fullname,
-            '[[sitelink]]' => html_writer_support::link(url_support::get('/'), $site_info->fullname),
-            '[[forgotpasswordlink]]' => html_writer_support::link($forgotpasswordurl, lang_support::get('forgotpassword', ComponentContext::name())),
+            '[[sitelink]]' => HtmlWriterSupport::link(UrlSupport::get('/'), $site_info->fullname),
+            '[[forgotpasswordlink]]' => HtmlWriterSupport::link($forgotpasswordurl, LangSupport::get('forgotpassword', ComponentContext::name())),
             '[[forgotpasswordurl]]' => $forgotpasswordurl instanceof moodle_url ? $forgotpasswordurl->out() : $forgotpasswordurl,
             '[[supportemail]]' => $supportemail,
             '[[supportemailmailto]]' => $mailto->out(),

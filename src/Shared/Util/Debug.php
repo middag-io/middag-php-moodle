@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Shared\Util;
 
 use JsonException;
-use Middag\Framework\Shared\Util\Debug as base_debug;
+use Middag\Framework\Shared\Util\Debug as BaseDebug;
 use Throwable;
 
 /**
@@ -29,7 +29,7 @@ use Throwable;
  *
  * @api
  */
-class Debug extends base_debug
+class Debug extends BaseDebug
 {
     /**
      * Emit via Moodle `mtrace()` so cron tasks surface the message in

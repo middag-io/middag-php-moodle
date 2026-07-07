@@ -10,19 +10,19 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainnrolment;
+namespace Middag\Moodle\Tests\Domain\Enrolment;
 
 use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
 use Middag\Moodle\Domain\Enrolment\EnrolmentStatus;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(EnrolmentDto::class)]
 final class EnrolmentDtoTest extends TestCase
 {
     #[Test]

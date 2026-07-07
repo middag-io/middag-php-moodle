@@ -15,8 +15,8 @@ namespace Middag\Moodle\Support;
 use core\component as core_component;
 use core\event\base;
 use core\plugin_manager as core_plugin_manager;
-use Middag\Moodle\Domain\Event\EventDto as event_dto;
-use Middag\Moodle\Shared\Util\Environment as environment;
+use Middag\Moodle\Domain\Event\EventDto;
+use Middag\Moodle\Shared\Util\Environment;
 use ReflectionClass;
 use Throwable;
 
@@ -31,13 +31,13 @@ class EventSupport
 
     private const CACHE_KEY = 'events';
 
-    /** @var null|event_dto[] Request-level cache for events. */
+    /** @var null|EventDto[] Request-level cache for events. */
     private ?array $cachedEvents = null;
 
     /**
      * Retrieves all Moodle events (core + plugins) converted to DTOs.
      *
-     * @return event_dto[] list of event DTOs
+     * @return EventDto[] list of event DTOs
      */
     public function getAllEvents(): array
     {
@@ -47,7 +47,7 @@ class EventSupport
         }
 
         // Bypass persistent cache in development mode
-        if (!environment::isDevelopment()) {
+        if (!Environment::isDevelopment()) {
             $events = CacheSupport::get(self::CACHE_KEY, self::CACHE_AREA);
 
             if ($events !== false && is_array($events)) {
@@ -72,20 +72,20 @@ class EventSupport
      *
      * @param int $level the education level constant
      *
-     * @return event_dto[] list of filtered event DTOs
+     * @return EventDto[] list of filtered event DTOs
      */
     public function getEventsByLevel(int $level = base::LEVEL_PARTICIPATING): array
     {
         return array_filter(
             $this->getAllEvents(),
-            fn (event_dto $e): bool => $e->edulevel === $level
+            fn (EventDto $e): bool => $e->edulevel === $level
         );
     }
 
     /**
      * Loads all events defined by plugins.
      *
-     * @return event_dto[]
+     * @return EventDto[]
      */
     private function loadPluginEvents(): array
     {
@@ -106,7 +106,7 @@ class EventSupport
 
                     $info = $this->getStaticInfoSafe($fqcn);
 
-                    $out[] = new event_dto(
+                    $out[] = new EventDto(
                         fqcn: $fqcn,
                         displayname: $fqcn::get_name(),
                         edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,
@@ -124,7 +124,7 @@ class EventSupport
     /**
      * Loads all events defined by Moodle core.
      *
-     * @return event_dto[]
+     * @return EventDto[]
      */
     private function loadCoreEvents(): array
     {
@@ -144,7 +144,7 @@ class EventSupport
             $info = $this->getStaticInfoSafe($fqcn);
 
             if ($info && method_exists($fqcn, 'get_name')) {
-                $out[] = new event_dto(
+                $out[] = new EventDto(
                     fqcn: $fqcn,
                     displayname: $fqcn::get_name(),
                     edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,

@@ -38,8 +38,8 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Output/` | `MoodleView` (local `ViewAdapterInterface`), `MoodleRenderer` (extends `plugin_renderer_base`), `AbstractBlock`, `NavbarService`, `Widget` |
 | `Persistence/` | `UpgradeHelper`, `VersionTracker` (framework `VersionTrackerInterface`), `Query/SqlGenerator` |
 | `Privacy/` | `PrivacyProvider` + `Contract/` (Moodle privacy API) |
-| `Security/` | `AuthService`, `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
-| `Settings/` | Settings-as-code family mirroring Moodle's `admin_setting_*` types + `SettingsResolver` + `framework_config` enum |
+| `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
+| `Settings/` | Settings-as-code family mirroring Moodle's `admin_setting_*` types + `SettingsResolver` |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
 | `Statics/` | `StaticsCollector`, `StaticsRenderer`, `StaticsWriter` (frontend assets) |
 | `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
@@ -88,7 +88,7 @@ PSR ports: `Logging\MoodleLogger` (PSR-3), `Support\CacheSupportPsr16` (PSR-16).
 - **No prefix** for names faithful to a Moodle API surface (`Mform*`,
   `Xmldb*`, `UsersTable`) and for low-ambiguity adapters (`RouteLoader`,
   `HttpClientAdapter`, `TransactionManager`, `VersionTracker`,
-  `PrivacyProvider`, `AuthService`).
+  `PrivacyProvider`).
 - `Definition/` classes are suffixed `*Definition`; `Support/` wrappers are
   suffixed `*Support`; local interfaces live in `Contract/` subdirectories.
 
@@ -115,13 +115,14 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    (`core_component::get_component_directory()`). `Kernel::PROJECT_ROOT` is
    `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
    the consumer plugin. There are no package-relative monolith fallbacks.
-2. **`Settings/framework_config` is lowercase on purpose.** The enum's short
-   name is functional: `SettingsSupport::resolve()` derives the settings slug
-   from the `*_config` short name (with a `framework → core` special case).
-   PascalCase spellings are normalised to snake_case before the slug is
-   derived, and an enum whose name cannot be mapped onto `{slug}_config`
-   is rejected with `InvalidArgumentException` — it never silently resolves
-   a dead key. Keep this enum lowercase anyway.
+2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
+   short name** (with a `framework → core` special case → `mdg_core_*` keys).
+   PascalCase spellings are normalised to snake_case first, and an enum whose
+   name cannot be mapped onto `{slug}_config` is rejected with
+   `InvalidArgumentException` — it never silently resolves a dead key. The
+   adapter no longer ships a `framework_config` enum: those framework-tier keys
+   are owned by the consumer product (e.g. `Middag\Core\Config\FrameworkConfig`);
+   this lib only provides the generic resolution mechanism.
 3. **`Settings/Storedfile` vs `Domain/File/StoredFile`** differ only by case —
    an accepted divergence: `Settings/` mirrors Moodle's `admin_setting_*`
    naming, `Domain/` is the entity. Case-sensitive Linux CI guards collisions.

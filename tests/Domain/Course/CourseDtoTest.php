@@ -10,18 +10,18 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainCourse;
+namespace Middag\Moodle\Tests\Domain\Course;
 
 use Middag\Moodle\Domain\Course\CourseDto;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CourseDto::class)]
 final class CourseDtoTest extends TestCase
 {
     #[Test]

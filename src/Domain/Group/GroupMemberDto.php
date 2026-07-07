@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Group;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 
 /**
  * Group membership record.
  *
  * @api
  */
-final class GroupMemberDto extends abstract_dto
+final class GroupMemberDto extends AbstractDto
 {
     public function __construct(
         public int $groupid = 0,

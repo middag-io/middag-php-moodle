@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Concerns;
 
-use Middag\Framework\Exception\MiddagAuthorizationException as middag_authorization_exception;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
-use Middag\Moodle\Security\Contract\AuthenticationInterface as authentication_interface;
-use Middag\Moodle\Security\Contract\CapabilityInterface as capability_interface;
+use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Security\Contract\AuthenticationInterface;
+use Middag\Moodle\Security\Contract\CapabilityInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Trait handling authentication and authorization logic for controllers.
  *
- * Uses `authentication_interface` and `capability_interface` via DI
+ * Uses `AuthenticationInterface` and `CapabilityInterface` via DI
  * instead of calling support facades directly.
  *
  * @property Request $request
@@ -40,7 +40,7 @@ trait InteractsWithAuth
 
     protected array $capabilities = [];
 
-    protected ?context_level $capabilityContextLevel = null;
+    protected ?ContextLevel $capabilityContextLevel = null;
 
     protected int $capabilityInstanceId = 0;
 
@@ -65,16 +65,16 @@ trait InteractsWithAuth
     /**
      * Define the capabilities that the user must have.
      *
-     * @param array<string>      $capabilities required capability names
-     * @param null|context_level $context      Moodle context level when relevant; widened
-     *                                         to `mixed` to satisfy the framework contract
-     *                                         which is platform-agnostic. Non-ContextLevel
-     *                                         values are stored as null.
+     * @param array<string>     $capabilities required capability names
+     * @param null|ContextLevel $context      Moodle context level when relevant; widened
+     *                                        to `mixed` to satisfy the framework contract
+     *                                        which is platform-agnostic. Non-ContextLevel
+     *                                        values are stored as null.
      */
     public function setRequireCapabilities(array $capabilities, mixed $context = null, int $instanceid = 0): void
     {
         $this->capabilities = $capabilities;
-        $this->capabilityContextLevel = $context instanceof context_level ? $context : null;
+        $this->capabilityContextLevel = $context instanceof ContextLevel ? $context : null;
         $this->capabilityInstanceId = $instanceid;
     }
 
@@ -84,7 +84,7 @@ trait InteractsWithAuth
     protected function requireLogin(): void
     {
         if ($this->requireLogin) {
-            $this->authentication()->require_login(
+            $this->authentication()->requireLogin(
                 $this->course?->get_id(),
                 true,
             );
@@ -95,7 +95,7 @@ trait InteractsWithAuth
         if ($this->requireSesskey && isset($this->request)) {
             $method = strtoupper($this->request->getMethod());
             if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
-                $this->authentication()->require_sesskey();
+                $this->authentication()->requireSesskey();
             }
         }
     }
@@ -103,11 +103,11 @@ trait InteractsWithAuth
     /**
      * Check if the user has the required capabilities.
      *
-     * @throws middag_authorization_exception
+     * @throws MiddagAuthorizationException
      */
     protected function checkCapabilities(): void
     {
-        $contextlevel = $this->capabilityContextLevel ?? context_level::SYSTEM;
+        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
@@ -117,16 +117,16 @@ trait InteractsWithAuth
     /**
      * Resolve the authentication adapter from the container.
      */
-    private function authentication(): authentication_interface
+    private function authentication(): AuthenticationInterface
     {
-        return $this->container->get(authentication_interface::class);
+        return $this->container->get(AuthenticationInterface::class);
     }
 
     /**
      * Resolve the capability adapter from the container.
      */
-    private function capability(): capability_interface
+    private function capability(): CapabilityInterface
     {
-        return $this->container->get(capability_interface::class);
+        return $this->container->get(CapabilityInterface::class);
     }
 }

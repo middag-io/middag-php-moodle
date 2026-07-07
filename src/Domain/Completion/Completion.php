@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Completion;
 
 use Middag\Moodle\Domain\AbstractMoodleEntity;
-use Middag\Moodle\Domain\Completion\CompletionState as completion_state;
 use stdClass;
 
 /**
@@ -40,7 +39,7 @@ class Completion extends AbstractMoodleEntity
     protected int $userid = 0;
 
     /**
-     * Raw completion state (mapped to completion_state enum via accessor).
+     * Raw completion state (mapped to CompletionState enum via accessor).
      */
     protected int $completionstate = 0;
 
@@ -59,15 +58,15 @@ class Completion extends AbstractMoodleEntity
     /**
      * Get the typed completion state.
      */
-    public function getState(): completion_state
+    public function getState(): CompletionState
     {
-        return completion_state::resolve($this->completionstate);
+        return CompletionState::resolve($this->completionstate);
     }
 
     /**
      * Set the completion state from the typed enum.
      */
-    public function withState(completion_state $state): self
+    public function withState(CompletionState $state): self
     {
         $this->completionstate = $state->value;
 

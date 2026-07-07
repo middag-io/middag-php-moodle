@@ -17,7 +17,7 @@ use core\context\system as context_system;
 use core\exception\coding_exception;
 use core\output\renderer_base;
 use core\url as moodle_url;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use navigation_node;
 
 use function admin_externalpage_setup;
@@ -185,7 +185,7 @@ class PageSupport
         try {
             $PAGE->set_url($url);
         } catch (coding_exception $codingexception) {
-            debug::traceException($codingexception);
+            Debug::traceException($codingexception);
         }
         $PAGE->set_title($title);
 

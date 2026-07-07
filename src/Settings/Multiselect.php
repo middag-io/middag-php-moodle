@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configmultiselect;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Multiple select setting (multi-value).
  *
  * @api
  */
-final class Multiselect extends setting
+final class Multiselect extends Setting
 {
     public function __construct(
         string $name,
@@ -38,8 +37,8 @@ final class Multiselect extends setting
     {
         return new admin_setting_configmultiselect(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
             $this->choices,
         );

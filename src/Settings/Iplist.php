@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configiplist;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * IP address list setting.
  *
  * @api
  */
-final class Iplist extends setting
+final class Iplist extends Setting
 {
     public function __construct(
         string $name,
@@ -39,8 +38,8 @@ final class Iplist extends setting
     {
         return new admin_setting_configiplist(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
             PARAM_RAW,
             $this->cols . '',

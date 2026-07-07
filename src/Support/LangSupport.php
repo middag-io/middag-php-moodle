@@ -16,7 +16,7 @@ use core\lang_string;
 use core_string_manager;
 use Exception;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 
 /**
  * Utility functions for Moodle language strings.
@@ -46,7 +46,7 @@ class LangSupport
 
             return get_string($identifier, $component, $a, $lazyload);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return sprintf('[[%s]]', $identifier);
         }
@@ -67,7 +67,7 @@ class LangSupport
         try {
             return self::get($identifier, $a, $lazyload, $component);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return sprintf('[[%s]]', $identifier);
         }
@@ -92,7 +92,7 @@ class LangSupport
 
             return $identifier;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return $identifier;
         }
@@ -119,7 +119,7 @@ class LangSupport
 
             return $stringmanager->string_exists($identifier, $component);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -135,7 +135,7 @@ class LangSupport
         try {
             return current_language();
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return 'en';
         }

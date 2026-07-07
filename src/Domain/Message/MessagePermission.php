@@ -29,10 +29,13 @@ enum MessagePermission: string
 
     public function toMoodleValue(): int
     {
+        // Moodle's message permission bitmask constants (lib/messagelib.php):
+        // MESSAGE_DISALLOWED = 0x4, MESSAGE_PERMITTED = 0x8, MESSAGE_FORCED = 0xc.
+        // (The old 1/2/0 mapping collided with MESSAGE_DEFAULT_LOGGEDIN/LOGGEDOFF.)
         return match ($this) {
-            self::FORCED => 1, // MESSAGE_FORCED
-            self::PERMITTED => 2, // MESSAGE_PERMITTED
-            self::DISALLOWED => 0, // MESSAGE_DISALLOWED
+            self::FORCED => 0xC, // MESSAGE_FORCED
+            self::PERMITTED => 0x8, // MESSAGE_PERMITTED
+            self::DISALLOWED => 0x4, // MESSAGE_DISALLOWED
         };
     }
 }

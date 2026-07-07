@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform\Contract;
 
-use Middag\Framework\Exception\MiddagInfrastructureException as middag_infrastructure_exception;
-use Middag\Moodle\Domain\Platform\PluginDto as plugin_dto;
+use Middag\Framework\Exception\MiddagInfrastructureException;
+use Middag\Moodle\Domain\Platform\PluginDto;
 
 /**
  * Platform service contract — centralized Moodle version and feature checks.
@@ -59,7 +59,7 @@ interface PlatformServiceInterface
     /**
      * Assert that Moodle meets a minimum version, or throw.
      *
-     * @throws middag_infrastructure_exception
+     * @throws MiddagInfrastructureException
      */
     public function assertMin(string $min, ?string $message = null): void;
 
@@ -69,7 +69,7 @@ interface PlatformServiceInterface
      * @param string $type   Plugin type (e.g. 'local', 'mod')
      * @param string $plugin Plugin name (e.g. 'middag', 'forum')
      */
-    public function getPluginInfo(string $type, string $plugin): ?plugin_dto;
+    public function getPluginInfo(string $type, string $plugin): ?PluginDto;
 
     /**
      * Whether a plugin is installed and enabled.

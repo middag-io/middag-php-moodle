@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\User;
 
-use Middag\Moodle\Domain\User\User as user;
-
 /**
  * Lightweight user projection for API responses and transport.
  *
@@ -48,7 +46,7 @@ final readonly class UserDto
     /**
      * Create from a full user entity.
      */
-    public static function fromEntity(user $user): self
+    public static function fromEntity(User $user): self
     {
         return new self(
             id: $user->getId(),

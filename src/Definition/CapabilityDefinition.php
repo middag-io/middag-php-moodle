@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
-use Middag\Moodle\Security\Enum\CapabilityRisk as capability_risk;
-use Middag\Moodle\Security\Enum\CapabilityType as capability_type;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Security\Enum\CapabilityRisk;
+use Middag\Moodle\Security\Enum\CapabilityType;
 
 /**
  * Capability definition for db/access.php.
@@ -27,9 +27,9 @@ final readonly class CapabilityDefinition implements DefinitionInterface
     public function __construct(
         public string $name,
         public array $archetypes = [],
-        public capability_type $type = capability_type::READ,
-        public context_level $context = context_level::SYSTEM,
-        public capability_risk $risk = capability_risk::SPAM,
+        public CapabilityType $type = CapabilityType::READ,
+        public ContextLevel $context = ContextLevel::SYSTEM,
+        public CapabilityRisk $risk = CapabilityRisk::SPAM,
         public ?string $clone_from = null,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,

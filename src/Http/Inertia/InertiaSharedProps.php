@@ -16,9 +16,9 @@ use core\context\system;
 use core\output\user_picture;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Kernel\Kernel as kernel;
-use Middag\Moodle\Support\ThemeSupport as theme_support;
-use Middag\Ui\Navigation\Contract\NavigationRegistryInterface as navigation_registry_interface;
+use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Support\ThemeSupport;
+use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -58,7 +58,7 @@ class InertiaSharedProps
         InertiaManager::share('flash', fn (): ?array => self::buildFlash());
 
         // Locale + version (static, no closure needed).
-        InertiaManager::share('locale', fn () => current_language());
+        InertiaManager::share('locale', fn (): string => current_language());
         InertiaManager::share('version', ComponentContext::name());
     }
 
@@ -77,8 +77,8 @@ class InertiaSharedProps
      */
     public static function buildNavigation(): array
     {
-        /** @var navigation_registry_interface $registry */
-        $registry = kernel::get(navigation_registry_interface::class);
+        /** @var NavigationRegistryInterface $registry */
+        $registry = Kernel::get(NavigationRegistryInterface::class);
 
         return $registry->build(self::resolveCurrentRoute());
     }
@@ -94,7 +94,7 @@ class InertiaSharedProps
     private static function resolveCurrentRoute(): string
     {
         try {
-            $router = kernel::routing();
+            $router = Kernel::routing();
             $routes = $router->getRoutes();
             $context = $router->getContext();
 
@@ -127,15 +127,18 @@ class InertiaSharedProps
 
         $capabilities = [];
 
-        // Check MIDDAG-specific capabilities in the system context.
+        // Check the running host plugin's conventional capabilities in the
+        // system context, deriving the component prefix (e.g. local/middag)
+        // from ComponentContext so the adapter stays product-agnostic.
         $context = system::instance();
-        $middag_caps = [
-            'local/middag:manage',
-            'local/middag:moderate',
-            'local/middag:view',
+        $host = ComponentContext::capabilityComponent();
+        $host_caps = [
+            $host . ':manage',
+            $host . ':moderate',
+            $host . ':view',
         ];
 
-        foreach ($middag_caps as $cap) {
+        foreach ($host_caps as $cap) {
             if (has_capability($cap, $context)) {
                 $capabilities[] = $cap;
             }
@@ -163,13 +166,13 @@ class InertiaSharedProps
     /**
      * Build theme shared prop.
      *
-     * Delegates brand color resolution to theme_support (Theme Bridge, ADR-807 ref-807-06 §3).
+     * Delegates brand color resolution to ThemeSupport (Theme Bridge, ADR-807 ref-807-06 §3).
      *
      * @return array{strings: array, appearance: null|string, brandColor: null|string, inherit: bool}
      */
     private static function buildTheme(): array
     {
-        $theme = theme_support::buildTheme();
+        $theme = ThemeSupport::buildTheme();
 
         return [
             'strings' => [],

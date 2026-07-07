@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Task\Contract;
 
 use core\task\adhoc_task;
-use Middag\Moodle\Domain\Task\AdhocTaskDto as adhoc_task_dto;
+use Middag\Moodle\Domain\Task\AdhocTaskDto;
 
 /**
  * Contract for the adhoc task service.
@@ -53,7 +53,7 @@ interface AdhocServiceInterface
     /**
      * Get queued tasks for a class.
      *
-     * @return adhoc_task_dto[]
+     * @return AdhocTaskDto[]
      */
     public function list(string $classname, bool $failedOnly = false): array;
 }

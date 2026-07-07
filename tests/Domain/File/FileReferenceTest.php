@@ -10,9 +10,10 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainile;
+namespace Middag\Moodle\Tests\Domain\File;
 
 use Middag\Moodle\Domain\File\FileReference;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -20,9 +21,8 @@ use Stringable;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(FileReference::class)]
 final class FileReferenceTest extends TestCase
 {
     #[Test]

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Completion;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 
 /**
@@ -29,7 +29,7 @@ use stdClass;
  *
  * @api
  */
-final class CompletionCriteriaDto extends abstract_dto
+final class CompletionCriteriaDto extends AbstractDto
 {
     public function __construct(
         /** Criterion row ID (null for new). */

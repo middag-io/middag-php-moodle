@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Output;
 
 use core\url as moodle_url;
-use Middag\Moodle\Output\Contract\ViewAdapterInterface as view_adapter_interface;
+use Middag\Moodle\Output\Contract\ViewAdapterInterface;
 use navigation_node;
 
 /**
@@ -21,7 +21,7 @@ use navigation_node;
  *
  * @internal
  */
-class MoodleView implements view_adapter_interface
+class MoodleView implements ViewAdapterInterface
 {
     /**
      * {@inheritDoc}

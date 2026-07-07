@@ -13,15 +13,18 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use dml_exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\User\UserProfileField as user_profile_field;
-use Middag\Moodle\Domain\User\UserProfileFieldDataDto as user_profile_field_data_dto;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\User\UserProfileField;
+use Middag\Moodle\Domain\User\UserProfileFieldDataDto;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/user/profile/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Encapsulates Moodle's User Profile Fields API.
@@ -46,9 +49,9 @@ class UserFieldSupport
      *
      * @param int|string $fieldidorshortname numeric field ID or shortname string
      *
-     * @return null|user_profile_field field entity or null if not found
+     * @return null|UserProfileField field entity or null if not found
      */
-    public static function getField(int|string $fieldidorshortname): ?user_profile_field
+    public static function getField(int|string $fieldidorshortname): ?UserProfileField
     {
         global $DB;
 
@@ -63,9 +66,9 @@ class UserFieldSupport
                 return null;
             }
 
-            return user_profile_field::fromRecord($record);
+            return UserProfileField::fromRecord($record);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -74,7 +77,7 @@ class UserFieldSupport
     /**
      * Returns all profile field definitions indexed by shortname, ordered by sortorder.
      *
-     * @return array<string, user_profile_field>
+     * @return array<string, UserProfileField>
      */
     public static function getAllFields(): array
     {
@@ -83,14 +86,14 @@ class UserFieldSupport
         try {
             $records = $DB->get_records('user_info_field', [], 'sortorder ASC');
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
 
         $fields = [];
         foreach ($records as $record) {
-            $entity = user_profile_field::fromRecord($record);
+            $entity = UserProfileField::fromRecord($record);
             $fields[$entity->get_shortname()] = $entity;
         }
 
@@ -143,9 +146,9 @@ class UserFieldSupport
      * @param int $userid  the user ID
      * @param int $fieldid the profile field ID
      *
-     * @return null|user_profile_field_data_dto DTO with field data or null if not found
+     * @return null|UserProfileFieldDataDto DTO with field data or null if not found
      */
-    public static function getUserData(int $userid, int $fieldid): ?user_profile_field_data_dto
+    public static function getUserData(int $userid, int $fieldid): ?UserProfileFieldDataDto
     {
         global $DB;
 
@@ -163,7 +166,7 @@ class UserFieldSupport
 
             return self::buildDtoFromRecord($record);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -175,9 +178,9 @@ class UserFieldSupport
      * @param int    $userid    the user ID
      * @param string $shortname the profile field shortname
      *
-     * @return null|user_profile_field_data_dto DTO with field data or null if not found
+     * @return null|UserProfileFieldDataDto DTO with field data or null if not found
      */
-    public static function getUserDataByShortname(int $userid, string $shortname): ?user_profile_field_data_dto
+    public static function getUserDataByShortname(int $userid, string $shortname): ?UserProfileFieldDataDto
     {
         global $DB;
 
@@ -195,7 +198,7 @@ class UserFieldSupport
 
             return self::buildDtoFromRecord($record);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -251,7 +254,7 @@ class UserFieldSupport
 
             return true;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return false;
         }
@@ -287,12 +290,12 @@ class UserFieldSupport
      *
      * @param stdClass $record database record with id, userid, fieldid, shortname, data, dataformat
      *
-     * @return user_profile_field_data_dto
+     * @return UserProfileFieldDataDto
      */
-    private static function buildDtoFromRecord(stdClass $record): user_profile_field_data_dto
+    private static function buildDtoFromRecord(stdClass $record): UserProfileFieldDataDto
     {
-        return new user_profile_field_data_dto(
-            id: typing::toInt($record->id),
+        return new UserProfileFieldDataDto(
+            id: Typing::toInt($record->id),
             userid: (int) $record->userid,
             fieldid: (int) $record->fieldid,
             shortname: (string) $record->shortname,

@@ -16,10 +16,10 @@ use Closure;
 use core\context\system as context_system;
 use core\exception\moodle_exception;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Support\CapabilitySupport as capability_support;
-use Middag\Moodle\Support\LangSupport as lang_support;
-use Middag\Moodle\Support\UrlSupport as url_support;
-use Middag\Moodle\Support\VersionSupport as version_support;
+use Middag\Moodle\Support\CapabilitySupport;
+use Middag\Moodle\Support\LangSupport;
+use Middag\Moodle\Support\UrlSupport;
+use Middag\Moodle\Support\VersionSupport;
 
 /**
  * Renders the MIDDAG dropdown in the Moodle user navigation bar.
@@ -55,7 +55,7 @@ final class NavbarService
     {
         global $OUTPUT;
 
-        if (!capability_support::has('moodle/site:config', context_system::instance())) {
+        if (!CapabilitySupport::has('moodle/site:config', context_system::instance())) {
             return '';
         }
 
@@ -69,7 +69,7 @@ final class NavbarService
         }
 
         // Compatibility: Moodle < 5.0 (BS4) vs >= 5.0 (BS5).
-        $is50plus = version_support::atLeast('5.0');
+        $is50plus = VersionSupport::atLeast('5.0');
 
         $templatecontext = [
             'hasitems' => count($items),
@@ -107,45 +107,45 @@ final class NavbarService
      */
     private static function defaultItems(?Closure $url_generator = null): array
     {
-        $url = $url_generator ?? static fn (string $route): string => url_support::get('/local/middag/index.php/' . $route)->out();
+        $url = $url_generator ?? static fn (string $route): string => UrlSupport::get(ComponentContext::baseUrlPath() . '/index.php/' . $route)->out();
 
         return [
             [
                 'url' => $url('admin_home'),
-                'name' => lang_support::get('overview'),
+                'name' => LangSupport::get('overview'),
                 'icon' => 'home',
             ],
             ['separator' => true],
             [
                 'url' => $url('segments_create'),
-                'name' => lang_support::getStringOrIdentifier('new_segment', ComponentContext::name()),
+                'name' => LangSupport::getStringOrIdentifier('new_segment', ComponentContext::name()),
                 'icon' => 'plus',
             ],
             [
                 'url' => $url('admin_connectors_create'),
-                'name' => lang_support::getStringOrIdentifier('new_connector', ComponentContext::name()),
+                'name' => LangSupport::getStringOrIdentifier('new_connector', ComponentContext::name()),
                 'icon' => 'plus',
             ],
             [
                 'url' => $url('workflow_create'),
-                'name' => lang_support::getStringOrIdentifier('new_action', ComponentContext::name()),
+                'name' => LangSupport::getStringOrIdentifier('new_action', ComponentContext::name()),
                 'icon' => 'plus',
             ],
             ['separator' => true],
             [
                 'url' => $url('admin_system_status'),
-                'name' => lang_support::get('systemstatus'),
+                'name' => LangSupport::get('systemstatus'),
                 'icon' => 'heartbeat',
             ],
             [
                 'url' => $url('admin_tools'),
-                'name' => lang_support::getStringOrIdentifier('maintenance', ComponentContext::name()),
+                'name' => LangSupport::getStringOrIdentifier('maintenance', ComponentContext::name()),
                 'icon' => 'wrench',
             ],
             ['separator' => true],
             [
-                'url' => url_support::get('/admin/settings.php', ['section' => 'middagtabcore'])->out(),
-                'name' => lang_support::get('settings'),
+                'url' => UrlSupport::get('/admin/settings.php', ['section' => 'middagtabcore'])->out(),
+                'name' => LangSupport::get('settings'),
                 'icon' => 'cog',
             ],
         ];

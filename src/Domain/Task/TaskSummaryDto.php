@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Task;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 
 /**
@@ -20,7 +20,7 @@ use stdClass;
  *
  * @internal
  */
-final class TaskSummaryDto extends abstract_dto
+final class TaskSummaryDto extends AbstractDto
 {
     public function __construct(
         /** Frankenstyle component name (e.g. 'core_course'). */

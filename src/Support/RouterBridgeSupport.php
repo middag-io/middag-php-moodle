@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Kernel\Kernel;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -120,7 +121,7 @@ final class RouterBridgeSupport
                 ->withHeader('Content-Type', 'application/json')
                 ->withStatus($status);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             $response->getBody()->write(json_encode([
                 'error' => 'Internal framework error',
@@ -141,7 +142,7 @@ final class RouterBridgeSupport
     {
         global $CFG;
 
-        return $CFG->wwwroot . '/local/middag/index.php/api/openapi.json';
+        return $CFG->wwwroot . ComponentContext::baseUrlPath() . '/index.php/api/openapi.json';
     }
 
     /**
@@ -151,6 +152,6 @@ final class RouterBridgeSupport
     {
         global $CFG;
 
-        return $CFG->wwwroot . '/local/middag/index.php/api/openapi.yaml';
+        return $CFG->wwwroot . ComponentContext::baseUrlPath() . '/index.php/api/openapi.yaml';
     }
 }

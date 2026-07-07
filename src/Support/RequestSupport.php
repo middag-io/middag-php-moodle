@@ -28,7 +28,7 @@ class RequestSupport
      *
      * @return mixed the parameter value
      */
-    public static function optionalParam(string $parname, $default, string $type)
+    public static function optionalParam(string $parname, $default, string $type): mixed
     {
         return optional_param($parname, $default, $type);
     }
@@ -41,7 +41,7 @@ class RequestSupport
      *
      * @return mixed the parameter value
      */
-    public static function requiredParam(string $parname, string $type)
+    public static function requiredParam(string $parname, string $type): mixed
     {
         return required_param($parname, $type);
     }

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Completion;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 use stdClass;
 
 /**
@@ -24,7 +24,7 @@ use stdClass;
  *
  * @api
  */
-final class CompletionProgressDto extends abstract_dto
+final class CompletionProgressDto extends AbstractDto
 {
     public function __construct(
         /** Course ID being reported on. */

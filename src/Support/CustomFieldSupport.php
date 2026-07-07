@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use core_customfield\handler;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -44,7 +44,7 @@ class CustomFieldSupport
 
             return (array) $data;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -95,7 +95,7 @@ class CustomFieldSupport
 
             return $result;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -127,7 +127,7 @@ class CustomFieldSupport
 
             return $definitions;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -162,7 +162,7 @@ class CustomFieldSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -185,7 +185,7 @@ class CustomFieldSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }

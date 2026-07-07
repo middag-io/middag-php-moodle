@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Http\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,9 +25,8 @@ use PHPUnit\Framework\TestCase;
  * downstream Moodle dependencies during the test run.
  *
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 final class AbstractApiControllerIsolationTest extends TestCase
 {
     private const SOURCE_PATH = __DIR__ . '/../../../src/Http/Controller/AbstractApiController.php';

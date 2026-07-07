@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use BackedEnum;
 use InvalidArgumentException;
-use Middag\Moodle\Settings\SettingsResolver as settings_resolver;
+use Middag\Moodle\Settings\SettingsResolver;
 use ReflectionEnum;
 
 /**
@@ -22,7 +22,7 @@ use ReflectionEnum;
  *
  * Accepts a string-backed enum whose class name follows the convention
  * `{slug}_config` — the slug is extracted automatically to resolve the
- * canonical key via `settings_resolver::resolve_config_key()`. PascalCase
+ * canonical key via `SettingsResolver::resolve_config_key()`. PascalCase
  * spellings (e.g. `FrameworkConfig`) are normalised to snake_case before
  * the slug is derived; an enum whose name cannot be mapped onto
  * `{slug}_config` is rejected instead of silently resolving a dead key.
@@ -48,7 +48,7 @@ class SettingsSupport
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::get(
-            settings_resolver::resolveConfigKey($name, $extension),
+            SettingsResolver::resolveConfigKey($name, $extension),
         );
     }
 
@@ -65,7 +65,7 @@ class SettingsSupport
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::setConfig(
-            settings_resolver::resolveConfigKey($name, $extension),
+            SettingsResolver::resolveConfigKey($name, $extension),
             $value,
         );
     }
@@ -82,7 +82,7 @@ class SettingsSupport
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::unsetConfig(
-            settings_resolver::resolveConfigKey($name, $extension),
+            SettingsResolver::resolveConfigKey($name, $extension),
         );
     }
 

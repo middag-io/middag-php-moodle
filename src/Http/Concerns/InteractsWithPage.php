@@ -17,9 +17,9 @@ use core\exception\coding_exception;
 use core\exception\moodle_exception;
 use core\url as moodle_url;
 use Exception;
-use Middag\Moodle\Support\ContextSupport as context_support;
-use Middag\Moodle\Support\PageSupport as page_support;
-use Middag\Moodle\Support\UrlSupport as url_support;
+use Middag\Moodle\Support\ContextSupport;
+use Middag\Moodle\Support\PageSupport;
+use Middag\Moodle\Support\UrlSupport;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -52,7 +52,7 @@ trait InteractsWithPage
      */
     public function setContext(?context $context = null): void
     {
-        $this->context = $context ?? context_support::system();
+        $this->context = $context ?? ContextSupport::system();
     }
 
     /**
@@ -60,7 +60,7 @@ trait InteractsWithPage
      */
     public function getContext(): context
     {
-        return $this->context ?? context_support::system();
+        return $this->context ?? ContextSupport::system();
     }
 
     /**
@@ -108,12 +108,12 @@ trait InteractsWithPage
      */
     public function setUrlFromRoute(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): void
     {
-        if (method_exists($this, 'url_generator')) {
+        if (method_exists($this, 'urlGenerator')) {
             try {
-                $url = $this->url_generator($route, $parameters, $referenceType);
-                $this->set_page_url($url);
+                $url = $this->urlGenerator($route, $parameters, $referenceType);
+                $this->setPageUrl($url);
             } catch (Exception) {
-                $this->page_url = null;
+                $this->pageUrl = null;
             }
         }
     }
@@ -125,11 +125,11 @@ trait InteractsWithPage
     {
         if (is_null($this->context)) {
             if (!empty($this->cm)) {
-                $this->setContext(context_support::module((int) $this->cm->id));
+                $this->setContext(ContextSupport::module((int) $this->cm->id));
             } elseif (!empty($this->course)) {
-                $this->setContext(context_support::course($this->course->get_id()));
+                $this->setContext(ContextSupport::course($this->course->get_id()));
             } else {
-                $this->setContext(context_support::system());
+                $this->setContext(ContextSupport::system());
             }
         }
     }
@@ -144,25 +144,25 @@ trait InteractsWithPage
         $this->resolveContext();
 
         if ($this->adminSection !== '' && $this->adminSection !== '0') {
-            page_support::adminExternalpageSetup($this->adminSection);
+            PageSupport::adminExternalpageSetup($this->adminSection);
         }
 
-        page_support::setContext($this->getContext());
-        page_support::setPagelayout($this->pageLayout);
-        page_support::setTitle($this->pageTitle);
-        page_support::setHeading($this->pageHeading);
-        page_support::setUrl($this->getPageUrl());
+        PageSupport::setContext($this->getContext());
+        PageSupport::setPagelayout($this->pageLayout);
+        PageSupport::setTitle($this->pageTitle);
+        PageSupport::setHeading($this->pageHeading);
+        PageSupport::setUrl($this->getPageUrl());
 
         foreach ($this->pageNavbar as $item) {
             if (is_array($item)) {
-                page_support::navbarAdd($item[0] ?? '', $item[1] ?? null);
+                PageSupport::navbarAdd($item[0] ?? '', $item[1] ?? null);
             } else {
-                page_support::navbarAdd($item);
+                PageSupport::navbarAdd($item);
             }
         }
 
         if ($this->adminSection !== '' && $this->adminSection !== '0') {
-            page_support::adminLoadNavigation($this->adminSection);
+            PageSupport::adminLoadNavigation($this->adminSection);
         }
     }
 
@@ -173,22 +173,22 @@ trait InteractsWithPage
      */
     protected function getPageUrl(): moodle_url
     {
-        if ($this->pageUrl === null && method_exists($this, 'set_url_from_route')) {
+        if ($this->pageUrl === null && method_exists($this, 'setUrlFromRoute')) {
             try {
-                $this->set_url_from_route('index');
+                $this->setUrlFromRoute('index');
             } catch (Exception) {
                 // Intentionally suppressed: 'index' route may not exist; falls through to other URL resolution.
             }
         }
 
-        if (is_string($this->page_url) && ($this->page_url !== '' && $this->page_url !== '0')) {
-            return url_support::get($this->page_url);
+        if (is_string($this->pageUrl) && ($this->pageUrl !== '' && $this->pageUrl !== '0')) {
+            return UrlSupport::get($this->pageUrl);
         }
 
-        if ($this->page_url instanceof moodle_url) {
-            return $this->page_url;
+        if ($this->pageUrl instanceof moodle_url) {
+            return $this->pageUrl;
         }
 
-        return url_support::home();
+        return UrlSupport::home();
     }
 }

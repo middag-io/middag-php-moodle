@@ -60,6 +60,8 @@ return RectorConfig::configure()
         PHPUnitSetList::PHPUNIT_120,
     ])
     ->withSkip([
+        // PHPStan symbol stubs (scanFiles) are not real code — leave them as-is.
+        __DIR__ . '/tests/phpstan',
         ArrayToFirstClassCallableRector::class,
         ArrowFunctionDelegatingCallToFirstClassCallableRector::class,
         FunctionFirstClassCallableRector::class,

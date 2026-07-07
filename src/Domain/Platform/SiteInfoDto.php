@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
-use Middag\Moodle\Shared\Enum\TextFormat as text_format;
+use Middag\Framework\Shared\Dto\AbstractDto;
+use Middag\Moodle\Shared\Enum\TextFormat;
 
 /**
  * Site-level information projection (course id=1).
@@ -22,14 +22,14 @@ use Middag\Moodle\Shared\Enum\TextFormat as text_format;
  *
  * @api
  */
-final class SiteInfoDto extends abstract_dto
+final class SiteInfoDto extends AbstractDto
 {
     public function __construct(
         public int $id = 1,
         public string $fullname = '',
         public string $shortname = '',
         public string $summary = '',
-        public text_format $summaryformat = text_format::HTML,
+        public TextFormat $summaryformat = TextFormat::HTML,
         public string $format = '',
         public string $lang = '',
         public string $theme = '',

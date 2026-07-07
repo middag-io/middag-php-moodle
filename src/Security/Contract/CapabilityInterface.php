@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security\Contract;
 
-use Middag\Framework\Exception\MiddagAuthorizationException as middag_authorization_exception;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
+use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Moodle\Domain\Context\ContextLevel;
 
 /**
  * Capability contract — permission checking.
@@ -29,22 +29,22 @@ interface CapabilityInterface
     /**
      * Check if a user has a capability.
      *
-     * @param string        $capability   capability identifier (e.g. 'moodle/course:view')
-     * @param context_level $contextlevel context level
-     * @param int           $instanceid   instance ID for the context (e.g. course ID)
-     * @param null|int      $userid       user ID, or null for current user
+     * @param string       $capability   capability identifier (e.g. 'moodle/course:view')
+     * @param ContextLevel $contextlevel context level
+     * @param int          $instanceid   instance ID for the context (e.g. course ID)
+     * @param null|int     $userid       user ID, or null for current user
      */
-    public function can(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): bool;
+    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool;
 
     /**
      * Require a capability, throwing an exception if not met.
      *
-     * @param string        $capability   capability identifier
-     * @param context_level $contextlevel context level
-     * @param int           $instanceid   instance ID for the context
-     * @param null|int      $userid       user ID, or null for current user
+     * @param string       $capability   capability identifier
+     * @param ContextLevel $contextlevel context level
+     * @param int          $instanceid   instance ID for the context
+     * @param null|int     $userid       user ID, or null for current user
      *
-     * @throws middag_authorization_exception
+     * @throws MiddagAuthorizationException
      */
-    public function authorize(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): void;
+    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void;
 }

@@ -68,9 +68,35 @@ final class CrudConventionResolverTest extends TestCase
     }
 
     #[Test]
-    public function testCapabilityFollowsLocalMiddagConvention(): void
+    public function testFormClassResolvesConventionalFormClassWhenItExists(): void
     {
-        self::assertSame('local/middag:manage_invoice', CrudConventionResolver::capability('App\Entity\Invoice'));
+        // Entity under an `extensions` segment: the resolver assembles the
+        // {Extension}\forms\{Basename}_form candidate and returns it when present.
+        $candidate = 'local_example\extensions\invoicing\forms\Invoice_form';
+        if (!class_exists($candidate, false)) {
+            class_alias(CrudConventionResolverFormStub::class, $candidate);
+        }
+
+        self::assertSame(
+            $candidate,
+            CrudConventionResolver::formClass('local_example\extensions\invoicing\Invoice'),
+        );
+    }
+
+    #[Test]
+    public function testFormClassReturnsNullWhenConventionalFormClassMissing(): void
+    {
+        // `extensions` segment present, so the candidate is assembled, but no such
+        // form class exists → the class_exists ternary yields null.
+        self::assertNull(
+            CrudConventionResolver::formClass('local_example\extensions\billing\Ghost'),
+        );
+    }
+
+    #[Test]
+    public function testCapabilityFollowsHostComponentConvention(): void
+    {
+        self::assertSame('local/example:manage_invoice', CrudConventionResolver::capability('App\Entity\Invoice'));
     }
 
     #[Test]
@@ -97,3 +123,9 @@ final class CrudConventionResolverTestEntity
 
     public int $usermodified = 0;
 }
+
+/**
+ * Synthetic form class aliased onto the conventional form FQCN so
+ * formClass()'s class_exists() lookup resolves to it.
+ */
+final class CrudConventionResolverFormStub {}

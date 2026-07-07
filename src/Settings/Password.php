@@ -14,22 +14,21 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configpasswordunmask;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Password input setting (unmasked).
  *
  * @api
  */
-final class Password extends setting
+final class Password extends Setting
 {
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
         return new admin_setting_configpasswordunmask(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
         );
     }

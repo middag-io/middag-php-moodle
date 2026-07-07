@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use calendar_event;
-use Middag\Moodle\Domain\Calendar\CalendarEventDto as calendar_event_dto;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Calendar\CalendarEventDto;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use Throwable;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/calendar/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Utility wrapper for Moodle's Calendar API.
@@ -35,11 +38,11 @@ class CalendarSupport
     /**
      * Creates a new calendar event from a DTO.
      *
-     * @param calendar_event_dto $dto the event data
+     * @param CalendarEventDto $dto the event data
      *
-     * @return null|calendar_event_dto the created event DTO with id populated, or null on failure
+     * @return null|CalendarEventDto the created event DTO with id populated, or null on failure
      */
-    public static function create(calendar_event_dto $dto): ?calendar_event_dto
+    public static function create(CalendarEventDto $dto): ?CalendarEventDto
     {
         try {
             $data = new stdClass();
@@ -58,7 +61,7 @@ class CalendarSupport
 
             $event = calendar_event::create($data);
 
-            return new calendar_event_dto(
+            return new CalendarEventDto(
                 id: (int) $event->id,
                 name: $dto->name,
                 description: $dto->description,
@@ -74,7 +77,7 @@ class CalendarSupport
                 repeats: $dto->repeats,
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -83,11 +86,11 @@ class CalendarSupport
     /**
      * Updates an existing calendar event from a DTO.
      *
-     * @param calendar_event_dto $dto the event data (id must be set)
+     * @param CalendarEventDto $dto the event data (id must be set)
      *
      * @return bool true on success, false on failure
      */
-    public static function update(calendar_event_dto $dto): bool
+    public static function update(CalendarEventDto $dto): bool
     {
         try {
             if ($dto->id === null) {
@@ -114,7 +117,7 @@ class CalendarSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -136,7 +139,7 @@ class CalendarSupport
 
             return true;
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return false;
         }
@@ -147,16 +150,16 @@ class CalendarSupport
      *
      * @param int $id the event ID
      *
-     * @return null|calendar_event_dto the event DTO or null if not found
+     * @return null|CalendarEventDto the event DTO or null if not found
      */
-    public static function get(int $id): ?calendar_event_dto
+    public static function get(int $id): ?CalendarEventDto
     {
         try {
             $event = calendar_event::load($id);
 
             return self::mapFromRecord($event->properties());
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -169,7 +172,7 @@ class CalendarSupport
      * @param null|int $timestart optional start timestamp filter
      * @param null|int $timeend   optional end timestamp filter
      *
-     * @return calendar_event_dto[] list of event DTOs
+     * @return CalendarEventDto[] list of event DTOs
      */
     public static function getByCourse(int $courseid, ?int $timestart = null, ?int $timeend = null): array
     {
@@ -193,26 +196,26 @@ class CalendarSupport
             $records = $DB->get_records_select('event', $select, $params, 'timestart ASC');
 
             return array_map(
-                fn (object $record): calendar_event_dto => self::mapFromRecord($record),
+                fn (object $record): CalendarEventDto => self::mapFromRecord($record),
                 array_values($records)
             );
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
     }
 
     /**
-     * Maps a Moodle event record (stdClass) to a calendar_event_dto.
+     * Maps a Moodle event record (stdClass) to a CalendarEventDto.
      *
      * @param object $record the Moodle event record
      *
-     * @return calendar_event_dto the mapped DTO
+     * @return CalendarEventDto the mapped DTO
      */
-    private static function mapFromRecord(object $record): calendar_event_dto
+    private static function mapFromRecord(object $record): CalendarEventDto
     {
-        return new calendar_event_dto(
+        return new CalendarEventDto(
             id: isset($record->id) ? (int) $record->id : null,
             name: (string) ($record->name ?? ''),
             description: (string) ($record->description ?? ''),

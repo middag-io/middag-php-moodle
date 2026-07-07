@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\Course;
 
 use Middag\Moodle\Domain\Course\CourseVisibility;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CourseVisibility::class)]
 final class CourseVisibilityTest extends TestCase
 {
     #[Test]

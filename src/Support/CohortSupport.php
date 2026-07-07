@@ -14,15 +14,18 @@ namespace Middag\Moodle\Support;
 
 use core\context\system as context_system;
 use dml_exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Group\Cohort as cohort_entity;
-use Middag\Moodle\Domain\Group\CohortMemberDto as cohort_member_dto;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Group\Cohort;
+use Middag\Moodle\Domain\Group\CohortMemberDto;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/cohort/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Utility functions for Moodle cohorts.
@@ -57,7 +60,7 @@ class CohortSupport
      * @param int    $perpage   items per page
      * @param string $search    optional search term
      *
-     * @return array{items: array<int, cohort_entity>, total: int} normalized items and total count
+     * @return array{items: array<int, Cohort>, total: int} normalized items and total count
      */
     public static function getCohortsWithTotal(int $contextid, int $page = 0, int $perpage = 25, string $search = ''): array
     {
@@ -67,7 +70,7 @@ class CohortSupport
         if (is_array($raw)) {
             if (array_key_exists('cohorts', $raw) && array_key_exists('totalcohorts', $raw)) {
                 $items = $raw['cohorts'] ?? [];
-                $total = typing::toInt($raw['totalcohorts'] ?? count($items));
+                $total = Typing::toInt($raw['totalcohorts'] ?? count($items));
             } else {
                 $items = $raw;
                 $total = count($items);
@@ -81,13 +84,13 @@ class CohortSupport
         $normalized = [];
         foreach ($items as $it) {
             if (is_object($it)) {
-                $normalized[] = cohort_entity::fromRecord((object) $it);
+                $normalized[] = Cohort::fromRecord((object) $it);
             }
         }
 
         return [
             'items' => $normalized,
-            'total' => typing::toInt($total),
+            'total' => Typing::toInt($total),
         ];
     }
 
@@ -103,12 +106,12 @@ class CohortSupport
         try {
             $cohorts = $DB->get_records('cohort', ['visible' => 1]);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
             $cohorts = [];
         }
         $options = [];
         foreach ($cohorts as $cohort) {
-            $options[typing::toInt($cohort->id)] = typing::toString($cohort->name);
+            $options[Typing::toInt($cohort->id)] = Typing::toString($cohort->name);
         }
 
         return $options;
@@ -137,7 +140,7 @@ class CohortSupport
     /**
      * Returns cohort members as typed DTOs.
      *
-     * @return array<int, cohort_member_dto> indexed by user ID
+     * @return array<int, CohortMemberDto> indexed by user ID
      */
     public static function getMembers(int $cohortid): array
     {
@@ -148,7 +151,7 @@ class CohortSupport
             $result = [];
 
             foreach ($records as $record) {
-                $result[(int) $record->userid] = new cohort_member_dto(
+                $result[(int) $record->userid] = new CohortMemberDto(
                     cohortid: (int) $record->cohortid,
                     userid: (int) $record->userid,
                     timeadded: (int) $record->timeadded,

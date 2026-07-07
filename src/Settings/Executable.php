@@ -14,22 +14,21 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_configexecutable;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Executable path on server.
  *
  * @api
  */
-final class Executable extends setting
+final class Executable extends Setting
 {
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
         return new admin_setting_configexecutable(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
         );
     }

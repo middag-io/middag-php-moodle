@@ -632,18 +632,23 @@ class DbSupport
     }
 
     /**
-     * Build a SQL POSIX regex comparison clause.
+     * Return the SQL regex match operator for the active DML driver.
      *
-     * @param string $posix   POSIX regex pattern
-     * @param bool   $negated whether to negate
+     * Delegates to the driver's regex operator (e.g. "REGEXP"/"NOT REGEXP" on
+     * MySQL, "~"/"!~" on PostgreSQL). Build the full clause as
+     * `"$field " . DbSupport::sqlRegex() . " :param"`.
      *
-     * @return string SQL fragment
+     * @param bool $negated whether to negate the match (NOT REGEXP)
+     *
+     * @return string SQL regex operator fragment
      */
-    public static function sqlRegex(string $posix = '', bool $negated = false): string
+    public static function sqlRegex(bool $negated = false): string
     {
         global $DB;
 
-        return $DB->sql_regex($negated);
+        // Moodle's sql_regex($positivematch) expects the POSITIVE flag, so the
+        // adapter's $negated must be inverted before delegating.
+        return $DB->sql_regex(!$negated);
     }
 
     /**

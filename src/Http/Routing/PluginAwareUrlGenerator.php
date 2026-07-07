@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Routing;
 
+use Middag\Moodle\Config\ComponentContext;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -25,17 +26,23 @@ use Symfony\Component\Routing\RouteCollection;
  * then restores it. Routes without `_plugin_base` use the default MIDDAG base URL.
  *
  * This allows plugins like `local_yourplugin` to have their routes generate URLs
- * under their own entry point instead of `/local/middag/index.php`.
+ * under their own entry point instead of the running host plugin's default.
  *
  * @internal
  */
 class PluginAwareUrlGenerator extends UrlGenerator
 {
+    /** @var string Default entry point for routes that declare no `_plugin_base`. */
+    protected readonly string $defaultBaseUrl;
+
     public function __construct(
         RouteCollection $routes,
         RequestContext $context,
-        protected readonly string $defaultBaseUrl = '/local/middag/index.php',
+        ?string $defaultBaseUrl = null,
     ) {
+        // Derive from the running host component (e.g. local_middag →
+        // /local/middag/index.php) when the caller doesn't pin an entry point.
+        $this->defaultBaseUrl = $defaultBaseUrl ?? ComponentContext::baseUrlPath() . '/index.php';
         parent::__construct($routes, $context);
     }
 

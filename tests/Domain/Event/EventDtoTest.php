@@ -10,19 +10,19 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainvent;
+namespace Middag\Moodle\Tests\Domain\Event;
 
 use JsonSerializable;
 use Middag\Moodle\Domain\Event\EventDto;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(EventDto::class)]
 final class EventDtoTest extends TestCase
 {
     #[Test]

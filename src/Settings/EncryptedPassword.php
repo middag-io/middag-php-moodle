@@ -14,15 +14,14 @@ namespace Middag\Moodle\Settings;
 
 use admin_setting;
 use admin_setting_encryptedpassword;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Encrypted password setting (stored encrypted at rest).
  *
  * @api
  */
-final class EncryptedPassword extends setting
+final class EncryptedPassword extends Setting
 {
     public function __construct(
         string $name,
@@ -36,8 +35,8 @@ final class EncryptedPassword extends setting
     {
         return new admin_setting_encryptedpassword(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
         );
     }
 }

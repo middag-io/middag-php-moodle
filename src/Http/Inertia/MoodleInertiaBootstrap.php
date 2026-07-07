@@ -17,7 +17,7 @@ use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaFactory;
 use Middag\Framework\Http\Inertia\InertiaVersionManager;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Http\Contract\RouterInterface as router_interface;
+use Middag\Moodle\Http\Contract\RouterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -43,7 +43,7 @@ final class MoodleInertiaBootstrap
     /**
      * Register every host hook the framework Inertia runtime expects.
      */
-    public static function registerHooks(router_interface $router): void
+    public static function registerHooks(RouterInterface $router): void
     {
         // AMD module name is adapter-owned state, captured by the bootstrap
         // closure below (the framework no longer holds it via InertiaManager).

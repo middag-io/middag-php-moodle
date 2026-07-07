@@ -15,9 +15,9 @@ namespace Middag\Moodle\Support;
 use core\check\check as core_check;
 use core\check\manager as check_manager;
 use core\check\result;
-use Middag\Moodle\Domain\Platform\CheckResultDto as check_result_dto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus as check_result_status;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Platform\CheckResultDto;
+use Middag\Moodle\Domain\Platform\CheckResultStatus;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -42,7 +42,7 @@ class CheckSupport
         try {
             return check_manager::get_checks($type);
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return [];
         }
@@ -68,10 +68,13 @@ class CheckSupport
                 'status' => self::getResultStatusLabel($checkresult->get_status()),
                 'summary' => $checkresult->get_summary(),
                 'details' => $checkresult->get_details(),
-                'action_link' => $checkresult->get_action_link()?->out(false),
+                // The action link lives on the check, not the result: Moodle 5.0's
+                // core\check\result has no get_action_link(); core\check\check does,
+                // returning an \action_link whose ->url is the moodle_url.
+                'action_link' => $check->get_action_link()?->url?->out(false),
             ];
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
 
             return null;
         }
@@ -100,7 +103,7 @@ class CheckSupport
     /**
      * Returns check results as typed DTOs.
      *
-     * @return array<string, check_result_dto> indexed by check ID
+     * @return array<string, CheckResultDto> indexed by check ID
      */
     public static function getCheckResults(string $type = 'status'): array
     {
@@ -108,12 +111,16 @@ class CheckSupport
         $result = [];
 
         foreach ($checks as $check) {
-            $id = $check['id'] ?? '';
-            $result[$id] = new check_result_dto(
+            // check_manager::get_checks() returns core\check\check OBJECTS, so
+            // read them through their accessors (mirrors runCheck()); array
+            // access here would fatal against a real Moodle check.
+            $checkresult = $check->get_result();
+            $id = $check->get_id();
+            $result[$id] = new CheckResultDto(
                 checkId: $id,
-                status: check_result_status::resolve($check['result'] ?? 'unknown'),
-                summary: $check['summary'] ?? '',
-                details: $check['details'] ?? null,
+                status: CheckResultStatus::resolve(self::getResultStatusLabel($checkresult->get_status())),
+                summary: $checkresult->get_summary(),
+                details: $checkresult->get_details(),
             );
         }
 

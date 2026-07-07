@@ -15,7 +15,7 @@ namespace Middag\Moodle\Support;
 use core_cache\cache as moodle_cache;
 use Exception;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 
 /**
  * Cache utility wrapper for Moodle's Cache API.
@@ -55,7 +55,7 @@ class CacheSupport
         try {
             return moodle_cache::make($component ?? self::pluginName(), $area ?? self::DEFAULT_CACHE);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return null;
         }
@@ -96,7 +96,7 @@ class CacheSupport
 
             return $value;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -120,7 +120,7 @@ class CacheSupport
 
             return $cache->get($key);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -145,7 +145,7 @@ class CacheSupport
 
             return $cache->set($key, $value);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -169,7 +169,7 @@ class CacheSupport
 
             return $cache->has($key);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -193,7 +193,7 @@ class CacheSupport
 
             return $cache->delete($key);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -218,7 +218,7 @@ class CacheSupport
 
             return true;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -242,7 +242,7 @@ class CacheSupport
 
             return $cache->get_many($keys);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -267,7 +267,7 @@ class CacheSupport
 
             return true;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -291,7 +291,7 @@ class CacheSupport
 
             return true;
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }

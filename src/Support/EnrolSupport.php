@@ -15,8 +15,8 @@ namespace Middag\Moodle\Support;
 use core\context\course as context_course;
 use core\exception\moodle_exception;
 use dml_exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Enrolment\UserEnrolment as user_enrolment;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Enrolment\UserEnrolment;
 use stdClass;
 
 /**
@@ -32,11 +32,11 @@ class EnrolSupport
      * @param int $courseid Course ID
      * @param int $userid   User ID
      *
-     * @return null|user_enrolment the user enrolment entity or null if not found
+     * @return null|UserEnrolment the user enrolment entity or null if not found
      *
      * @throws dml_exception if a database error occurs
      */
-    public static function getEnrol(int $courseid, int $userid): ?user_enrolment
+    public static function getEnrol(int $courseid, int $userid): ?UserEnrolment
     {
         global $DB;
 
@@ -47,7 +47,7 @@ class EnrolSupport
 
         $record = $DB->get_record_sql($sql, ['courseid' => $courseid, 'userid' => $userid], IGNORE_MULTIPLE);
 
-        return $record ? user_enrolment::fromRecord($record) : null;
+        return $record ? UserEnrolment::fromRecord($record) : null;
     }
 
     /**
@@ -74,7 +74,7 @@ class EnrolSupport
         $records = $DB->get_records_sql($sql, ['courseid' => $courseid, 'userid' => $userid]);
 
         foreach ($records as $key => $rec) {
-            $records[$key] = typing::normalizeRecord($rec, ['id' => 'int']);
+            $records[$key] = Typing::normalizeRecord($rec, ['id' => 'int']);
         }
 
         return $records;
@@ -90,7 +90,7 @@ class EnrolSupport
      */
     public static function userIsEnrolled(int $courseid, int $userid): bool
     {
-        return self::getEnrol($courseid, $userid) instanceof user_enrolment;
+        return self::getEnrol($courseid, $userid) instanceof UserEnrolment;
     }
 
     /**

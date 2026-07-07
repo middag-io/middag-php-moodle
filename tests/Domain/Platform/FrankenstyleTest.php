@@ -10,10 +10,11 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainPlatform;
+namespace Middag\Moodle\Tests\Domain\Platform;
 
 use Middag\Framework\Exception\MiddagValidationException;
 use Middag\Moodle\Domain\Platform\Frankenstyle;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -21,9 +22,8 @@ use Stringable;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(Frankenstyle::class)]
 final class FrankenstyleTest extends TestCase
 {
     #[Test]

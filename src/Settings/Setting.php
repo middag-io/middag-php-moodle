@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Settings;
 
 use admin_setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Base class for all admin settings.
@@ -59,7 +59,7 @@ abstract class Setting
 
         $candidate = $this->resolveLabel($extension, $plugin) . '_desc';
 
-        if (lang_support::stringExists($candidate, $plugin)) {
+        if (LangSupport::stringExists($candidate, $plugin)) {
             return $candidate;
         }
 

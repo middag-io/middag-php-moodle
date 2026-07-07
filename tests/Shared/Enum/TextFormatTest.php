@@ -10,17 +10,17 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Enum;
+namespace Middag\Moodle\Tests\Shared\Enum;
 
 use Middag\Moodle\Shared\Enum\TextFormat;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(TextFormat::class)]
 final class TextFormatTest extends TestCase
 {
     #[Test]

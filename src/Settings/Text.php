@@ -15,15 +15,14 @@ namespace Middag\Moodle\Settings;
 use admin_setting;
 use admin_setting_configtext;
 use Closure;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Text input setting.
  *
  * @api
  */
-final class Text extends setting
+final class Text extends Setting
 {
     public function __construct(
         string $name,
@@ -41,8 +40,8 @@ final class Text extends setting
     {
         $setting = new admin_setting_configtext(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
             $this->param,
             $this->size,

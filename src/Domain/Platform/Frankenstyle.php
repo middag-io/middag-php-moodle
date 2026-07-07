@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Framework\Exception\MiddagValidationException as middag_validation_exception;
+use Middag\Framework\Exception\MiddagValidationException;
 use Stringable;
 
 /**
@@ -37,14 +37,14 @@ final readonly class Frankenstyle implements Stringable
     /**
      * Parse from component string (e.g. 'mod_assign').
      *
-     * @throws middag_validation_exception if format is invalid
+     * @throws MiddagValidationException if format is invalid
      */
     public static function from_string(string $component): self
     {
         $component = trim($component);
 
         if ($component === '' || !str_contains($component, '_')) {
-            throw new middag_validation_exception(
+            throw new MiddagValidationException(
                 sprintf("Invalid Frankenstyle component: '%s'. Expected 'type_name' format.", $component),
             );
         }
@@ -54,13 +54,13 @@ final readonly class Frankenstyle implements Stringable
         $name = substr($component, $pos + 1);
 
         if (!preg_match('/^[a-z][a-z0-9]*$/', $name)) {
-            throw new middag_validation_exception(
+            throw new MiddagValidationException(
                 sprintf("Invalid Frankenstyle name: '%s'. Must match /^[a-z][a-z0-9]*$/.", $name),
             );
         }
 
         if (!preg_match('/^[a-z]+$/', $type)) {
-            throw new middag_validation_exception(
+            throw new MiddagValidationException(
                 sprintf("Invalid Frankenstyle type: '%s'. Must be lowercase letters only.", $type),
             );
         }

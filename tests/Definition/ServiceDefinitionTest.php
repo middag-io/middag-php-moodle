@@ -14,15 +14,15 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Definition\ServiceDefinition;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(ServiceDefinition::class)]
 final class ServiceDefinitionTest extends TestCase
 {
     #[Test]

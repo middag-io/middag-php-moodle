@@ -19,7 +19,10 @@ $finder = Finder::create()
     ->in([
         __DIR__ . '/src',
         __DIR__ . '/tests',
-    ]);
+    ])
+    // PHPStan symbol stubs (scanFiles) are not real code; keep the fixer's
+    // header/import rules off them.
+    ->exclude('phpstan');
 
 $cacheDir = __DIR__ . '/.cache';
 if (!is_dir($cacheDir) && (!mkdir($cacheDir, 0755, true) && !is_dir($cacheDir))) {
@@ -62,7 +65,7 @@ return (new Config())
         'phpdoc_no_package' => false,
         'yoda_style' => false,
 
-        'comment_to_phpdoc' => ['ignored_tags' => ['var']],
+        'comment_to_phpdoc' => ['ignored_tags' => ['var', 'codeCoverageIgnore', 'codeCoverageIgnoreStart', 'codeCoverageIgnoreEnd']],
         'no_superfluous_phpdoc_tags' => false,
     ])
     ->setFinder($finder);

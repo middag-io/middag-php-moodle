@@ -16,8 +16,8 @@ use core\context\coursecat as context_coursecat;
 use core\exception\moodle_exception;
 use core_course_category;
 use dml_exception;
-use Middag\Moodle\Domain\Course\Category as category_entity;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Domain\Course\Category;
+use Middag\Moodle\Shared\Util\Debug;
 
 /**
  * Utility functions for Moodle course categories.
@@ -31,18 +31,18 @@ class CategorySupport
      *
      * @param int $categoryid Category ID
      *
-     * @return null|category_entity Category entity or null if not found
+     * @return null|Category Category entity or null if not found
      */
-    public static function getCategory(int $categoryid): ?category_entity
+    public static function getCategory(int $categoryid): ?Category
     {
         global $DB;
 
         try {
             $record = $DB->get_record('course_categories', ['id' => $categoryid]);
 
-            return $record ? category_entity::fromRecord($record) : null;
+            return $record ? Category::fromRecord($record) : null;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -64,7 +64,7 @@ class CategorySupport
         try {
             $categories = $DB->get_records('course_categories', ['visible' => $visible]);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
             $categories = [];
         }
 

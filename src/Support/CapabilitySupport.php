@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use core\context;
 use core\exception\moodle_exception;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
 /**
@@ -39,7 +39,7 @@ class CapabilitySupport
         try {
             return has_capability($capability, $context, $user, $doanything);
         } catch (moodle_exception $moodleexception) {
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
         }
 
         return null;
@@ -95,7 +95,7 @@ class CapabilitySupport
 
             return get_user_roles($context, $uid, $checkparent);
         } catch (moodle_exception $moodleexception) {
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
 
             return [];
         }

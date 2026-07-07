@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use core\di;
 use core\hook\di_configuration;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
 /**
@@ -83,7 +83,7 @@ class DiBridgeSupport
                 $hook->add_definition($id, $factory);
             }
         } catch (Throwable $throwable) {
-            debug::traceException($throwable);
+            Debug::traceException($throwable);
         }
     }
 

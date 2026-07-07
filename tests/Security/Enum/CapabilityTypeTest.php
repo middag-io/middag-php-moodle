@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Security\Enum;
 
 use Middag\Moodle\Security\Enum\CapabilityType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CapabilityType::class)]
 final class CapabilityTypeTest extends TestCase
 {
     #[Test]

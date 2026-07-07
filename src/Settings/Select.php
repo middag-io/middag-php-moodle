@@ -15,15 +15,14 @@ namespace Middag\Moodle\Settings;
 use admin_setting;
 use admin_setting_configselect;
 use Closure;
-use Middag\Moodle\Settings\Setting as setting;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Dropdown select setting.
  *
  * @api
  */
-final class Select extends setting
+final class Select extends Setting
 {
     public function __construct(
         string $name,
@@ -40,8 +39,8 @@ final class Select extends setting
     {
         $setting = new admin_setting_configselect(
             $plugin . '/' . $this->resolveConfigName($extension),
-            lang_support::getString($this->resolveLabel($extension, $plugin), $plugin),
-            lang_support::getString($this->resolveDescription($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
+            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
             $this->resolveOptions($extension, $plugin),
         );

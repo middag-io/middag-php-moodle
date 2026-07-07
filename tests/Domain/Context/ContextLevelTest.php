@@ -10,17 +10,17 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Enum;
+namespace Middag\Moodle\Tests\Domain\Context;
 
 use Middag\Moodle\Domain\Context\ContextLevel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(ContextLevel::class)]
 final class ContextLevelTest extends TestCase
 {
     #[Test]

@@ -13,16 +13,19 @@ declare(strict_types=1);
 namespace Middag\Moodle\Form;
 
 // THIS file and ONLY this file in the form subsystem may reference moodleform.
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->libdir . '/formslib.php';
+// @codeCoverageIgnoreEnd
 
-use Middag\Ui\Block\Contract\LayoutElementInterface as layout_element_interface;
-use Middag\Ui\Form\Contract\FieldInterface as field_interface;
-use Middag\Ui\Form\Contract\FormInterface as form_interface;
-use Middag\Ui\Form\Contract\FormRendererInterface as form_renderer_interface;
-use Middag\Ui\Shared\Enum\RenderTarget as render_target;
-use Middag\Ui\Shared\ValueObject\RendererOutput as renderer_output;
+use Middag\Ui\Block\Contract\LayoutElementInterface;
+use Middag\Ui\Form\Contract\FieldInterface;
+use Middag\Ui\Form\Contract\FormInterface;
+use Middag\Ui\Form\Contract\FormRendererInterface;
+use Middag\Ui\Shared\Enum\RenderTarget;
+use Middag\Ui\Shared\ValueObject\RendererOutput;
 use moodleform;
 
 /**
@@ -30,22 +33,22 @@ use moodleform;
  *
  * Iterates the form schema, delegates field mapping to MformFieldMapper,
  * builds an anonymous moodleform subclass, captures its HTML output and
- * returns a renderer_output::html().
+ * returns a RendererOutput::html().
  *
  * @internal
  */
-final readonly class MformRenderer implements form_renderer_interface
+final readonly class MformRenderer implements FormRendererInterface
 {
     public function __construct(private MformFieldMapper $mapper) {}
 
     /** {@inheritdoc} */
-    public static function target(): render_target
+    public static function target(): RenderTarget
     {
-        return render_target::HTML;
+        return RenderTarget::HTML;
     }
 
     /** {@inheritdoc} */
-    public function render(form_interface $form): renderer_output
+    public function render(FormInterface $form): RendererOutput
     {
         $state = $form->state();
         $mapper = $this->mapper;
@@ -53,10 +56,10 @@ final readonly class MformRenderer implements form_renderer_interface
         // Collect mform_element_specs from the schema in document order.
         $specs = [];
         foreach ($this->walk($form->schema()) as $item) {
-            if ($item instanceof field_interface) {
+            if ($item instanceof FieldInterface) {
                 $specs[] = $mapper->map($item->toDefinition());
             }
-            // layout_element_interface nodes (section / group) do not produce
+            // LayoutElementInterface nodes (section / group) do not produce
             // separate mform calls here; walk() recurses into their children.
         }
 
@@ -111,24 +114,24 @@ final readonly class MformRenderer implements form_renderer_interface
         $mform_instance->display();
         $html = ob_get_clean() ?: '';
 
-        return renderer_output::html(render_target::HTML, $html);
+        return RendererOutput::html(RenderTarget::HTML, $html);
     }
 
     /**
      * Depth-first traversal of a schema array.
      *
-     * Yields every field_interface and layout_element_interface node,
+     * Yields every FieldInterface and LayoutElementInterface node,
      * recursing into children of layout elements.
      *
-     * @param array<int, field_interface|layout_element_interface> $schema
+     * @param array<int, FieldInterface|LayoutElementInterface> $schema
      *
-     * @return iterable<field_interface|layout_element_interface>
+     * @return iterable<FieldInterface|LayoutElementInterface>
      */
     private function walk(array $schema): iterable
     {
         foreach ($schema as $item) {
             yield $item;
-            if ($item instanceof layout_element_interface) {
+            if ($item instanceof LayoutElementInterface) {
                 yield from $this->walk($item->children());
             }
         }

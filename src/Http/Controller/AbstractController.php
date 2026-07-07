@@ -18,24 +18,24 @@ use core\exception\moodle_exception;
 use core\output\renderable;
 use core\url as moodle_url;
 use Exception;
-use Middag\Framework\Exception\MiddagAuthorizationException as middag_authorization_exception;
-use Middag\Framework\Form\Renderer\RendererRegistry as renderer_registry;
-use Middag\Framework\Http\Inertia\InertiaAdapter as inertia_adapter;
+use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Framework\Form\Renderer\RendererRegistry;
+use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
-use Middag\Moodle\Http\Contract\MoodleControllerInterface as controller_interface;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Http\Contract\MoodleControllerInterface;
 use Middag\Moodle\Kernel\Kernel;
 use Middag\Moodle\Output\Widget;
-use Middag\Moodle\Security\Contract\AuthenticationInterface as authentication_interface;
-use Middag\Moodle\Security\Contract\CapabilityInterface as capability_interface;
-use Middag\Moodle\Shared\Util\Debug as debug;
-use Middag\Moodle\Support\ContextSupport as context_support;
-use Middag\Moodle\Support\LangSupport as lang_support;
-use Middag\Moodle\Support\OutputSupport as output_support;
-use Middag\Moodle\Support\PageSupport as page_support;
-use Middag\Moodle\Support\UrlSupport as url_support;
-use Middag\Ui\Form\Contract\FormInterface as form_interface;
-use Middag\Ui\Shared\Enum\RenderTarget as render_target;
+use Middag\Moodle\Security\Contract\AuthenticationInterface;
+use Middag\Moodle\Security\Contract\CapabilityInterface;
+use Middag\Moodle\Shared\Util\Debug;
+use Middag\Moodle\Support\ContextSupport;
+use Middag\Moodle\Support\LangSupport;
+use Middag\Moodle\Support\OutputSupport;
+use Middag\Moodle\Support\PageSupport;
+use Middag\Moodle\Support\UrlSupport;
+use Middag\Ui\Form\Contract\FormInterface;
+use Middag\Ui\Shared\Enum\RenderTarget;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,9 +55,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @internal
  *
- * @see controller_interface
+ * @see MoodleControllerInterface
  */
-abstract class AbstractController implements controller_interface
+abstract class AbstractController implements MoodleControllerInterface
 {
     // =========================================================================
     // Properties
@@ -89,7 +89,7 @@ abstract class AbstractController implements controller_interface
 
     protected array $capabilities = [];
 
-    protected ?context_level $capabilityContextLevel = null;
+    protected ?ContextLevel $capabilityContextLevel = null;
 
     protected int $capabilityInstanceId = 0;
 
@@ -210,17 +210,17 @@ abstract class AbstractController implements controller_interface
     /**
      * Define the capabilities that the user must have.
      *
-     * @param array<string>             $capabilities required capability names
-     * @param null|context_level|string $context      Moodle context level when relevant; widens
-     *                                                the framework contract's `string $context`
-     *                                                (platform-agnostic) to also accept a
-     *                                                {@see context_level}. Non-ContextLevel
-     *                                                values are stored as null.
+     * @param array<string>            $capabilities required capability names
+     * @param null|ContextLevel|string $context      Moodle context level when relevant; widens
+     *                                               the framework contract's `string $context`
+     *                                               (platform-agnostic) to also accept a
+     *                                               {@see ContextLevel}. Non-ContextLevel
+     *                                               values are stored as null.
      */
     public function setRequireCapabilities(array $capabilities, mixed $context = null, int $instanceid = 0): void
     {
         $this->capabilities = $capabilities;
-        $this->capabilityContextLevel = $context instanceof context_level ? $context : null;
+        $this->capabilityContextLevel = $context instanceof ContextLevel ? $context : null;
         $this->capabilityInstanceId = $instanceid;
     }
 
@@ -247,9 +247,11 @@ abstract class AbstractController implements controller_interface
             throw new coding_exception('Invalid form provided. Must be an object or a class string.');
         }
 
-        if (method_exists($this, 'pre_handle')) {
-            $this->preHandle();
-        }
+        // Run the pre-handle lifecycle hook (default no-op; subclasses override
+        // it to configure auth/context) before the form is built. The previous
+        // method_exists('pre_handle') guard probed a snake_case name that no
+        // longer exists, so preHandle() was never reached from here.
+        $this->preHandle();
 
         $this->form = is_object($form) ? $form : new $form(null, $formparams);
         $this->formparams = $formparams;
@@ -264,7 +266,7 @@ abstract class AbstractController implements controller_interface
      */
     public function setContext(?context $context = null): void
     {
-        $this->context = $context ?? context_support::system();
+        $this->context = $context ?? ContextSupport::system();
     }
 
     /**
@@ -272,7 +274,7 @@ abstract class AbstractController implements controller_interface
      */
     public function getContext(): context
     {
-        return $this->context ?? context_support::system();
+        return $this->context ?? ContextSupport::system();
     }
 
     /**
@@ -352,11 +354,11 @@ abstract class AbstractController implements controller_interface
     /**
      * Check if the user has the required capabilities.
      *
-     * @throws middag_authorization_exception
+     * @throws MiddagAuthorizationException
      */
     protected function checkCapabilities(): void
     {
-        $contextlevel = $this->capabilityContextLevel ?? context_level::SYSTEM;
+        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
@@ -421,35 +423,35 @@ abstract class AbstractController implements controller_interface
     }
 
     /**
-     * Render a form_interface instance using the appropriate renderer adapter.
+     * Render a FormInterface instance using the appropriate renderer adapter.
      *
-     * Selects the renderer via renderer_registry based on the given render_target
+     * Selects the renderer via RendererRegistry based on the given RenderTarget
      * (defaults to the controller's default target, which is HTML).
      * For the PROPS target, delegates to inertia() to produce a proper SPA response.
      * For the HTML target, wraps the rendered HTML in the standard Moodle page layout.
      *
-     * @param form_interface     $form   the hydrated (and optionally validated) form
-     * @param null|render_target $target override the default render target
+     * @param FormInterface     $form   the hydrated (and optionally validated) form
+     * @param null|RenderTarget $target override the default render target
      *
      * @return Response
      *
      * @throws moodle_exception
      */
-    protected function renderForm(form_interface $form, ?render_target $target = null): Response
+    protected function renderForm(FormInterface $form, ?RenderTarget $target = null): Response
     {
         $target ??= $this->defaultRenderTarget();
 
-        /** @var null|renderer_registry $registry */
-        $registry = $this->getService(renderer_registry::class);
+        /** @var null|RendererRegistry $registry */
+        $registry = $this->getService(RendererRegistry::class);
 
         if ($registry === null) {
-            // Graceful degradation: renderer_registry not registered in container.
+            // Graceful degradation: RendererRegistry not registered in container.
             return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $output = $registry->get($target)->render($form);
 
-        if ($target === render_target::PROPS) {
+        if ($target === RenderTarget::PROPS) {
             return $this->inertia('FormPage', $output->props);
         }
 
@@ -462,9 +464,9 @@ abstract class AbstractController implements controller_interface
      *
      * Subclasses may override this to change the default (e.g. PROPS for SPA controllers).
      */
-    protected function defaultRenderTarget(): render_target
+    protected function defaultRenderTarget(): RenderTarget
     {
-        return render_target::HTML;
+        return RenderTarget::HTML;
     }
 
     /**
@@ -474,11 +476,11 @@ abstract class AbstractController implements controller_interface
     {
         if (is_null($this->context)) {
             if (!empty($this->cm)) {
-                $this->setContext(context_support::module((int) $this->cm->id));
+                $this->setContext(ContextSupport::module((int) $this->cm->id));
             } elseif (!empty($this->course)) {
-                $this->setContext(context_support::course($this->course->get_id()));
+                $this->setContext(ContextSupport::course($this->course->get_id()));
             } else {
-                $this->setContext(context_support::system());
+                $this->setContext(ContextSupport::system());
             }
         }
     }
@@ -493,25 +495,25 @@ abstract class AbstractController implements controller_interface
         $this->resolveContext();
 
         if ($this->adminSection !== '' && $this->adminSection !== '0') {
-            page_support::adminExternalpageSetup($this->adminSection);
+            PageSupport::adminExternalpageSetup($this->adminSection);
         }
 
-        page_support::setContext($this->getContext());
-        page_support::setPagelayout($this->pageLayout);
-        page_support::setTitle($this->pageTitle);
-        page_support::setHeading($this->pageHeading);
-        page_support::setUrl($this->getPageUrl());
+        PageSupport::setContext($this->getContext());
+        PageSupport::setPagelayout($this->pageLayout);
+        PageSupport::setTitle($this->pageTitle);
+        PageSupport::setHeading($this->pageHeading);
+        PageSupport::setUrl($this->getPageUrl());
 
         foreach ($this->pageNavbar as $item) {
             if (is_array($item)) {
-                page_support::navbarAdd($item[0] ?? '', $item[1] ?? null);
+                PageSupport::navbarAdd($item[0] ?? '', $item[1] ?? null);
             } else {
-                page_support::navbarAdd($item);
+                PageSupport::navbarAdd($item);
             }
         }
 
         if ($this->adminSection !== '' && $this->adminSection !== '0') {
-            page_support::adminLoadNavigation($this->adminSection);
+            PageSupport::adminLoadNavigation($this->adminSection);
         }
     }
 
@@ -531,14 +533,14 @@ abstract class AbstractController implements controller_interface
         }
 
         if (is_string($this->pageUrl) && ($this->pageUrl !== '' && $this->pageUrl !== '0')) {
-            return url_support::get($this->pageUrl);
+            return UrlSupport::get($this->pageUrl);
         }
 
         if ($this->pageUrl instanceof moodle_url) {
             return $this->pageUrl;
         }
 
-        return url_support::home();
+        return UrlSupport::home();
     }
 
     // =========================================================================
@@ -616,10 +618,10 @@ abstract class AbstractController implements controller_interface
         $this->handle(); // Process login, permissions, and set the page context
 
         // Output Moodle's page header and content.
-        $output = output_support::header(true);
+        $output = OutputSupport::header(true);
 
         if ($content instanceof renderable && $component !== null) {
-            $renderer = page_support::getRenderer($component);
+            $renderer = PageSupport::getRenderer($component);
             $output .= $renderer->render($content);
         } elseif ($content instanceof Response) {
             $output .= $content->getContent();
@@ -630,7 +632,7 @@ abstract class AbstractController implements controller_interface
         // Append any forms managed by the trait
         $output .= $this->renderFormHtml();
 
-        $output .= output_support::footer(true);
+        $output .= OutputSupport::footer(true);
 
         return new Response($output);
     }
@@ -669,7 +671,7 @@ abstract class AbstractController implements controller_interface
         $this->handle();
 
         // Generate Inertia response (HTML or JSON)
-        $response = inertia_adapter::render($component, $props);
+        $response = InertiaAdapter::render($component, $props);
 
         // If Inertia SPA request: return JSON directly
         if ($response instanceof JsonResponse) {
@@ -694,7 +696,7 @@ abstract class AbstractController implements controller_interface
      */
     protected function inertiaLocation(string $route, array $params = []): RedirectResponse|Response
     {
-        return inertia_adapter::location($route, $params);
+        return InertiaAdapter::location($route, $params);
     }
 
     /**
@@ -710,7 +712,7 @@ abstract class AbstractController implements controller_interface
      */
     protected function inertiaRedirect(string $route, array $params = []): RedirectResponse
     {
-        return inertia_adapter::redirect($route, $params);
+        return InertiaAdapter::redirect($route, $params);
     }
 
     /**
@@ -740,7 +742,7 @@ abstract class AbstractController implements controller_interface
      */
     protected function renderFromTemplate(string $templatename, array $templatecontext = []): Response
     {
-        return $this->render(output_support::renderFromTemplate($templatename, $templatecontext));
+        return $this->render(OutputSupport::renderFromTemplate($templatename, $templatecontext));
     }
 
     /**
@@ -755,20 +757,20 @@ abstract class AbstractController implements controller_interface
      */
     protected function errorPage(string $message, int $status = Response::HTTP_BAD_REQUEST): Response
     {
-        $this->setPageTitle(lang_support::getString('error', 'error'));
-        $this->setPageHeading(lang_support::getString('error', 'error'));
+        $this->setPageTitle(LangSupport::getString('error', 'error'));
+        $this->setPageHeading(LangSupport::getString('error', 'error'));
 
         $this->handle(); // Process login, permissions, and set the page context
 
         // Render Moodle's standard error page.
-        $content = output_support::header();
-        $content .= output_support::notification($message, 'notifyproblem');
+        $content = OutputSupport::header();
+        $content .= OutputSupport::notification($message, 'notifyproblem');
 
         if ($this->request && $debug_output = $this->request->get('debug_output')) {
             $content .= '<pre>' . s($debug_output) . '</pre>';
         }
 
-        $content .= output_support::footer();
+        $content .= OutputSupport::footer();
 
         return new Response($content, $status);
     }
@@ -832,8 +834,9 @@ abstract class AbstractController implements controller_interface
             }
         }
 
-        // Ultimate fallback if even 'error' route is missing
-        return $this->redirect('/local/middag/index.php', $status);
+        // Ultimate fallback if even 'error' route is missing — derive the host
+        // plugin's entry point (e.g. /local/middag/index.php) from ComponentContext.
+        return $this->redirect(ComponentContext::baseUrlPath() . '/index.php', $status);
     }
 
     // =========================================================================
@@ -856,8 +859,8 @@ abstract class AbstractController implements controller_interface
                 return $this->container->get($service_name);
             }
         } catch (ContainerExceptionInterface $containerException) {
-            if (class_exists(debug::class)) {
-                debug::traceException($containerException);
+            if (class_exists(Debug::class)) {
+                Debug::traceException($containerException);
             }
         }
 
@@ -871,17 +874,17 @@ abstract class AbstractController implements controller_interface
     /**
      * Resolve the authentication adapter from the container.
      */
-    protected function authentication(): authentication_interface
+    protected function authentication(): AuthenticationInterface
     {
-        return $this->container->get(authentication_interface::class);
+        return $this->container->get(AuthenticationInterface::class);
     }
 
     /**
      * Resolve the capability adapter from the container.
      */
-    private function capability(): capability_interface
+    private function capability(): CapabilityInterface
     {
-        return $this->container->get(capability_interface::class);
+        return $this->container->get(CapabilityInterface::class);
     }
 
     /**

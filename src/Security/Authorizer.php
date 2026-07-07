@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security;
 
-use Middag\Moodle\Domain\Context\ContextLevel as context_level;
-use Middag\Moodle\Security\Contract\AuthorizerInterface as authorizer_interface;
+use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Security\Contract\AuthorizerInterface;
 
 /**
  * Composed Moodle authorizer — delegates to dedicated adapters.
  *
- * Implements the composed `authorizer_interface` by delegating to
+ * Implements the composed `AuthorizerInterface` by delegating to
  * `authentication` and `capability` adapters.
  *
  * @internal
  */
-class Authorizer implements authorizer_interface
+class Authorizer implements AuthorizerInterface
 {
     private readonly authentication $authentication;
 
@@ -55,12 +55,12 @@ class Authorizer implements authorizer_interface
         $this->authentication->requireSesskey();
     }
 
-    public function can(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
+    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
     {
         return $this->capability->can($capability, $contextlevel, $instanceid, $userid);
     }
 
-    public function authorize(string $capability, context_level $contextlevel = context_level::SYSTEM, int $instanceid = 0, ?int $userid = null): void
+    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void
     {
         $this->capability->authorize($capability, $contextlevel, $instanceid, $userid);
     }

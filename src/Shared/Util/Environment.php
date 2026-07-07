@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Shared\Util;
 
-use Middag\Framework\Shared\Util\Environment as base_environment;
+use Middag\Framework\Shared\Util\Environment as BaseEnvironment;
 
 /**
  * Environment detection (Moodle-flavor).
@@ -28,7 +28,7 @@ use Middag\Framework\Shared\Util\Environment as base_environment;
  *
  * @api
  */
-final class Environment extends base_environment
+final class Environment extends BaseEnvironment
 {
     /**
      * Read Moodle-native environment signals.

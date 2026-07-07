@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Security\ValueObject;
 
 use Middag\Framework\Exception\MiddagValidationException;
 use Middag\Moodle\Security\ValueObject\Sesskey;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -21,11 +22,25 @@ use Stringable;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(Sesskey::class)]
 final class SesskeyTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['__middag_test_sesskey']);
+    }
+
+    #[Test]
+    public function fromCurrentReadsTheCurrentMoodleSessionKey(): void
+    {
+        // from_current() wraps Moodle's sesskey(); the bootstrap stub returns
+        // whatever the driving global holds.
+        $GLOBALS['__middag_test_sesskey'] = 'abc123';
+
+        self::assertSame('abc123', Sesskey::from_current()->value);
+    }
+
     #[Test]
     public function canBeConstructedWithValue(): void
     {

@@ -10,19 +10,19 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace MiddagMoodleTestsDomainventAttribute;
+namespace Middag\Moodle\Tests\Domain\Event\Attribute;
 
 use Attribute;
 use Middag\Moodle\Domain\Event\Attribute\MoodleEvent;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(MoodleEvent::class)]
 final class MoodleEventTest extends TestCase
 {
     #[Test]

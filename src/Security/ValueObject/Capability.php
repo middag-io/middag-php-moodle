@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security\ValueObject;
 
-use Middag\Framework\Exception\MiddagDomainException as middag_domain_exception;
+use LogicException;
+use Middag\Framework\Exception\MiddagDomainException;
+use Middag\Moodle\Config\ComponentContext;
 use Stringable;
 
 /**
@@ -32,13 +34,13 @@ final readonly class Capability implements Stringable
     /**
      * @param string $identifier The full capability identifier (e.g. 'local/middag:manage')
      *
-     * @throws middag_domain_exception if the identifier format is invalid
+     * @throws MiddagDomainException if the identifier format is invalid
      */
     public function __construct(
         public string $identifier,
     ) {
         if (!self::is_valid_format($identifier)) {
-            throw new middag_domain_exception(
+            throw new MiddagDomainException(
                 sprintf("Invalid capability format: '%s'. Expected '{type}/{plugin}:{name}'.", $identifier)
             );
         }
@@ -69,11 +71,15 @@ final readonly class Capability implements Stringable
     }
 
     /**
-     * Whether this capability belongs to the MIDDAG plugin.
+     * Whether this capability belongs to the running host plugin — the
+     * component configured via {@see ComponentContext} (e.g. 'local/middag:*'
+     * when the host is 'local_middag').
+     *
+     * @throws LogicException when the adapter component is not configured
      */
-    public function is_middag(): bool
+    public function isHostComponent(): bool
     {
-        return str_starts_with($this->identifier, 'local/middag:');
+        return str_starts_with($this->identifier, ComponentContext::capabilityComponent() . ':');
     }
 
     /**
@@ -92,12 +98,16 @@ final readonly class Capability implements Stringable
     }
 
     /**
-     * Factory method — creates a MIDDAG-scoped capability.
+     * Factory — create a capability scoped to the running host plugin, deriving
+     * the component from {@see ComponentContext} (e.g. 'local/middag:manage'
+     * when the host is 'local_middag').
      *
      * @param string $name e.g. 'manage', 'view', 'configure'
+     *
+     * @throws LogicException when the adapter component is not configured
      */
-    public static function middag(string $name): self
+    public static function forHostComponent(string $name): self
     {
-        return new self('local/middag:' . $name);
+        return new self(ComponentContext::capabilityComponent() . ':' . $name);
     }
 }

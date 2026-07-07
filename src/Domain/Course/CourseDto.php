@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Course;
 
-use Middag\Moodle\Domain\Course\Course as course;
-
 /**
  * Lightweight course projection for API responses and transport.
  *
@@ -55,7 +53,7 @@ final readonly class CourseDto
     /**
      * Create from a full course entity.
      */
-    public static function fromEntity(course $course): self
+    public static function fromEntity(Course $course): self
     {
         return new self(
             id: $course->getId(),

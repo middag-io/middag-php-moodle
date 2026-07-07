@@ -47,6 +47,7 @@ final class ContainerFactory
      */
     private static array $resetCallbacks = [];
 
+    /** @codeCoverageIgnore Static-only factory; the private constructor exists solely to bar instantiation. */
     private function __construct() {}
 
     /**

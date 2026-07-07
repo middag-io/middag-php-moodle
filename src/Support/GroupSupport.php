@@ -16,14 +16,17 @@ use core\context;
 use core\exception\moodle_exception;
 use dml_exception;
 use Exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Group\GroupMemberDto as group_member_dto;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Group\GroupMemberDto;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
+// File-scope host-library include: runs at autoload, before any test's coverage window.
+// @codeCoverageIgnoreStart
 global $CFG;
 
 require_once $CFG->dirroot . '/group/lib.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Utility functions for Moodle groups.
@@ -52,7 +55,7 @@ class GroupSupport
 
             return $DB->get_records_sql($sql, ['courseid' => $courseid, 'userid' => $userid]);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
@@ -81,7 +84,7 @@ class GroupSupport
             $sql = sprintf('SELECT MIN(id) as id, name FROM {groups} %s GROUP BY name ORDER BY name', $where);
             $records = $DB->get_records_sql($sql, $params);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
             $records = [];
         }
 
@@ -120,7 +123,7 @@ class GroupSupport
         try {
             return groups_add_member($groupid, $userid);
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
 
             return false;
         }
@@ -147,7 +150,7 @@ class GroupSupport
 
         $groupid = groups_create_group($group);
 
-        return typing::normalizeId($groupid);
+        return Typing::normalizeId($groupid);
     }
 
     /**
@@ -162,7 +165,7 @@ class GroupSupport
     {
         $id = groups_get_group_by_name($courseid, $groupname);
 
-        return typing::normalizeIdOrZero($id);
+        return Typing::normalizeIdOrZero($id);
     }
 
     /**
@@ -193,7 +196,7 @@ class GroupSupport
 
             return self::addMember($groupid, $userid);
         } catch (moodle_exception $moodleexception) {
-            debug::traceException($moodleexception);
+            Debug::traceException($moodleexception);
 
             return false;
         }
@@ -202,7 +205,7 @@ class GroupSupport
     /**
      * Returns group members as typed DTOs.
      *
-     * @return array<int, group_member_dto> indexed by user ID
+     * @return array<int, GroupMemberDto> indexed by user ID
      */
     public static function getMembers(int $groupid): array
     {
@@ -213,7 +216,7 @@ class GroupSupport
             $result = [];
 
             foreach ($records as $record) {
-                $result[(int) $record->userid] = new group_member_dto(
+                $result[(int) $record->userid] = new GroupMemberDto(
                     groupid: (int) $record->groupid,
                     userid: (int) $record->userid,
                     timeadded: (int) $record->timeadded,

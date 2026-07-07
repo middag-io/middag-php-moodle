@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Platform;
 
-use Middag\Framework\Exception\MiddagValidationException as middag_validation_exception;
+use Middag\Framework\Exception\MiddagValidationException;
 use Stringable;
 
 /**
@@ -45,7 +45,7 @@ final readonly class MoodleVersion implements Stringable
     /**
      * Parse from version string (e.g. '4.5.0', '4.5', '4.5.0+').
      *
-     * @throws middag_validation_exception if format is invalid
+     * @throws MiddagValidationException if format is invalid
      */
     public static function from_string(string $version): self
     {
@@ -61,7 +61,7 @@ final readonly class MoodleVersion implements Stringable
         $parts = explode('.', $version);
 
         if (count($parts) < 2 || count($parts) > 3) {
-            throw new middag_validation_exception(
+            throw new MiddagValidationException(
                 sprintf("Invalid Moodle version format: '%s'. Expected 'major.minor' or 'major.minor.patch'.", $version),
             );
         }

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Settings;
 
 use admin_settingpage;
-use Middag\Moodle\Support\LangSupport as lang_support;
+use Middag\Moodle\Support\LangSupport;
 
 /**
  * Translates framework settings to Moodle admin_setting instances.
@@ -69,7 +69,7 @@ class SettingsResolver
             if ($item instanceof page) {
                 $admin_page = new admin_settingpage(
                     $item->resolve_id($extension_name, $plugin_name),
-                    lang_support::getString($item->resolve_label($extension_name), $plugin_name),
+                    LangSupport::getString($item->resolve_label($extension_name), $plugin_name),
                 );
 
                 foreach ($item->settings as $child) {

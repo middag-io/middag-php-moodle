@@ -16,8 +16,8 @@ use core\component as core_component;
 use core\exception\moodle_exception;
 use core\plugin_manager;
 use core\plugin_manager as core_plugin_manager;
-use Middag\Moodle\Domain\Platform\Frankenstyle as frankenstyle;
-use Middag\Moodle\Domain\Platform\PluginDto as plugin_dto;
+use Middag\Moodle\Domain\Platform\Frankenstyle;
+use Middag\Moodle\Domain\Platform\PluginDto;
 
 /**
  * Unified wrapper for Moodle plugin APIs.
@@ -124,11 +124,11 @@ class PluginSupport
      * @param string $type   Plugin type
      * @param string $plugin Plugin name
      *
-     * @return plugin_dto the plugin metadata DTO
+     * @return PluginDto the plugin metadata DTO
      *
      * @throws moodle_exception if plugin info cannot be retrieved
      */
-    public function getPluginInfo(string $type, string $plugin): plugin_dto
+    public function getPluginInfo(string $type, string $plugin): PluginDto
     {
         $component = sprintf('%s_%s', $type, $plugin);
         $info = $this->manager->get_plugin_info($component);
@@ -150,7 +150,7 @@ class PluginSupport
         $incompatible = $info->incompatible ?? null;
         $status = method_exists($info, 'get_status') ? $info->get_status() : null;
 
-        return new plugin_dto(
+        return new PluginDto(
             type: $type,
             name: $plugin,
             component: $component,
@@ -172,7 +172,7 @@ class PluginSupport
     /**
      * Retrieves all plugins as DTOs, grouped by type.
      *
-     * @return plugin_dto grouped list of plugin DTOs
+     * @return PluginDto grouped list of plugin DTOs
      */
     public function getAllPlugins(): array
     {
@@ -192,7 +192,7 @@ class PluginSupport
     /**
      * Retrieves all enabled plugins as DTOs.
      *
-     * @return plugin_dto[] list of enabled plugin DTOs
+     * @return PluginDto[] list of enabled plugin DTOs
      */
     public function getEnabledPlugins(): array
     {
@@ -229,7 +229,7 @@ class PluginSupport
     /**
      * Check if a plugin exists by Frankenstyle component name.
      */
-    public function pluginExistsByComponent(frankenstyle $component): bool
+    public function pluginExistsByComponent(Frankenstyle $component): bool
     {
         return $this->pluginExists($component->type, $component->name);
     }
@@ -237,7 +237,7 @@ class PluginSupport
     /**
      * Get plugin info by Frankenstyle component name.
      */
-    public function getPluginInfoByComponent(frankenstyle $component): plugin_dto
+    public function getPluginInfoByComponent(Frankenstyle $component): PluginDto
     {
         return $this->getPluginInfo($component->type, $component->name);
     }
@@ -245,7 +245,7 @@ class PluginSupport
     /**
      * Check if a plugin is enabled by Frankenstyle component name.
      */
-    public function isEnabledByComponent(frankenstyle $component): bool
+    public function isEnabledByComponent(Frankenstyle $component): bool
     {
         return $this->isEnabled($component->type, $component->name);
     }

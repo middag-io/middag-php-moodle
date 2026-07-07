@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Grade;
 
-use Middag\Framework\Shared\Dto\AbstractDto as abstract_dto;
+use Middag\Framework\Shared\Dto\AbstractDto;
 
 /**
  * Grade projection for a user in a course.
  *
  * @api
  */
-final class GradeDto extends abstract_dto
+final class GradeDto extends AbstractDto
 {
     public function __construct(
         public int $userid = 0,

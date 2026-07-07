@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use dml_exception;
-use Middag\Framework\Shared\Util\Typing as typing;
-use Middag\Moodle\Domain\Grade\Grade as grade;
-use Middag\Moodle\Domain\Grade\GradeItem as grade_item;
-use Middag\Moodle\Shared\Util\Debug as debug;
+use Middag\Framework\Shared\Util\Typing;
+use Middag\Moodle\Domain\Grade\Grade;
+use Middag\Moodle\Domain\Grade\GradeItem;
+use Middag\Moodle\Shared\Util\Debug;
 
 /**
  * Utility functions for Moodle grades.
@@ -72,8 +72,8 @@ class GradeSupport
                 }
                 // If the field looks numeric, convert to float (or int when integral).
                 if (is_numeric($val)) {
-                    $f = typing::toFloat($val);
-                    $i = typing::toInt($val);
+                    $f = Typing::toFloat($val);
+                    $i = Typing::toInt($val);
 
                     return ((float) $i === $f) ? $i : $f;
                 }
@@ -92,13 +92,13 @@ class GradeSupport
                     $spec['userid'] = 'int';
                 }
                 if ($spec !== []) {
-                    $records[$k] = typing::normalizeRecord($rec, $spec);
+                    $records[$k] = Typing::normalizeRecord($rec, $spec);
                 }
             }
 
             return $records;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
@@ -107,18 +107,18 @@ class GradeSupport
     /**
      * Retrieves a grade item by ID.
      *
-     * @return null|grade_item the grade item entity or null
+     * @return null|GradeItem the grade item entity or null
      */
-    public static function getItem(int $itemid): ?grade_item
+    public static function getItem(int $itemid): ?GradeItem
     {
         global $DB;
 
         try {
             $record = $DB->get_record('grade_items', ['id' => $itemid]);
 
-            return $record ? grade_item::fromRecord($record) : null;
+            return $record ? GradeItem::fromRecord($record) : null;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return null;
         }
@@ -127,7 +127,7 @@ class GradeSupport
     /**
      * Retrieves all grades for a user in a course, indexed by item ID.
      *
-     * @return array<int, grade>
+     * @return array<int, Grade>
      */
     public static function getUserGradesForCourse(int $courseid, int $userid): array
     {
@@ -143,13 +143,13 @@ class GradeSupport
             $result = [];
 
             foreach ($records as $record) {
-                $entity = grade::fromRecord($record);
+                $entity = Grade::fromRecord($record);
                 $result[(int) $record->itemid] = $entity;
             }
 
             return $result;
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return [];
         }
@@ -165,7 +165,7 @@ class GradeSupport
         try {
             return $DB->record_exists('grade_items', ['courseid' => $courseid, 'itemtype' => 'mod']);
         } catch (dml_exception $dmlexception) {
-            debug::traceException($dmlexception);
+            Debug::traceException($dmlexception);
 
             return false;
         }
