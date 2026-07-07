@@ -160,7 +160,7 @@ class AuthService implements AuthServiceInterface
             self::AUTH_JWT_ALGORITHM_SHA
         );
 
-        return UrlSupport::get('/local/middag/auth.php', ['token' => $token]);
+        return UrlSupport::get(ComponentContext::baseUrlPath() . '/auth.php', ['token' => $token]);
     }
 
     /**

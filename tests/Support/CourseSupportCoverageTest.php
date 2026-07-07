@@ -530,12 +530,6 @@ final class CourseSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testCourseGroupViewurlPointsAtTheTrilhaTool(): void
-    {
-        self::assertSame('/local/middag/tool/trilha/view.php', (string) CourseSupport::courseGroupViewurl());
-    }
-
-    #[Test]
     public function testGetCourseModulesTypedReturnsEmptyWhenModuleNameUnknown(): void
     {
         $GLOBALS['__middag_test_records'] = ['modules' => false];

@@ -127,15 +127,18 @@ class InertiaSharedProps
 
         $capabilities = [];
 
-        // Check MIDDAG-specific capabilities in the system context.
+        // Check the running host plugin's conventional capabilities in the
+        // system context, deriving the component prefix (e.g. local/middag)
+        // from ComponentContext so the adapter stays product-agnostic.
         $context = system::instance();
-        $middag_caps = [
-            'local/middag:manage',
-            'local/middag:moderate',
-            'local/middag:view',
+        $host = ComponentContext::capabilityComponent();
+        $host_caps = [
+            $host . ':manage',
+            $host . ':moderate',
+            $host . ':view',
         ];
 
-        foreach ($middag_caps as $cap) {
+        foreach ($host_caps as $cap) {
             if (has_capability($cap, $context)) {
                 $capabilities[] = $cap;
             }

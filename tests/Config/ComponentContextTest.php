@@ -79,4 +79,51 @@ final class ComponentContextTest extends TestCase
 
         self::assertFalse(ComponentContext::isConfigured());
     }
+
+    public function testCapabilityComponentRewritesFirstUnderscoreForLocalPlugin(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_middag');
+
+        self::assertSame('local/middag', ComponentContext::capabilityComponent());
+    }
+
+    public function testCapabilityComponentRewritesFirstUnderscoreForModPlugin(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('mod_unidade');
+
+        self::assertSame('mod/unidade', ComponentContext::capabilityComponent());
+    }
+
+    public function testBaseUrlPathDerivesFromComponent(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_middag');
+
+        self::assertSame('/local/middag', ComponentContext::baseUrlPath());
+
+        ComponentContext::reset();
+        ComponentContext::configure('mod_unidade');
+
+        self::assertSame('/mod/unidade', ComponentContext::baseUrlPath());
+    }
+
+    public function testCapabilityComponentThrowsWhenUnconfigured(): void
+    {
+        ComponentContext::reset();
+
+        $this->expectException(LogicException::class);
+
+        ComponentContext::capabilityComponent();
+    }
+
+    public function testBaseUrlPathThrowsWhenUnconfigured(): void
+    {
+        ComponentContext::reset();
+
+        $this->expectException(LogicException::class);
+
+        ComponentContext::baseUrlPath();
+    }
 }

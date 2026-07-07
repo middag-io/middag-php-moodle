@@ -39,7 +39,7 @@ use Symfony\Component\Routing\RouteCollection;
 #[CoversClass(MoodleRouter::class)]
 final class MoodleRouterCoverageTest extends TestCase
 {
-    private const ENTRY_POINT = '/local/middag/index.php';
+    private const ENTRY_POINT = '/local/example/index.php';
 
     /** @var array<string, mixed> */
     private array $prevServer = [];

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Http\Routing;
 
 use Middag\Framework\Http\Contract\RouteLoaderInterface;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Shared\Util\Debug;
 use Middag\Moodle\Support\UrlSupport;
@@ -38,9 +39,6 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class MoodleRouter implements RouterInterface
 {
-    /** @var string The entry point script within Moodle */
-    private const ENTRY_POINT = '/local/middag/index.php';
-
     /** @var RouteCollection Collection of all registered routes */
     private readonly RouteCollection $routes;
 
@@ -67,9 +65,9 @@ class MoodleRouter implements RouterInterface
         $request = Request::createFromGlobals();
         $this->context = (new RequestContext())->fromRequest($request);
 
-        // Hardcoded entry point for the plugin within Moodle
-        // NOTE: If the entry point file changes, update the ENTRY_POINT constant.
-        $this->context->setBaseUrl(self::ENTRY_POINT);
+        // Entry point derived from the running host component (e.g. local_middag
+        // → /local/middag/index.php), so the generic adapter never pins a product.
+        $this->context->setBaseUrl($this->entryPoint());
     }
 
     /**
@@ -157,7 +155,7 @@ class MoodleRouter implements RouterInterface
 
             /** @var RequestContext $context */
             $context = $this->context;
-            $this->generator = new PluginAwareUrlGenerator($this->routes, $context, self::ENTRY_POINT);
+            $this->generator = new PluginAwareUrlGenerator($this->routes, $context, $this->entryPoint());
         }
 
         try {
@@ -176,5 +174,14 @@ class MoodleRouter implements RouterInterface
         // base) and emit the URL string. Moodle-specific callers that need a
         // moodle_url (e.g. middag::url_generator) re-wrap this string themselves.
         return UrlSupport::get($path)->out(false);
+    }
+
+    /**
+     * The plugin's web entry-point script, derived from the running host
+     * component via {@see ComponentContext} (e.g. /local/middag/index.php).
+     */
+    private function entryPoint(): string
+    {
+        return ComponentContext::baseUrlPath() . '/index.php';
     }
 }

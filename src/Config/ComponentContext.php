@@ -77,6 +77,35 @@ final class ComponentContext
     }
 
     /**
+     * Derive the capability component from the frankenstyle name.
+     *
+     * Moodle capability strings are {@code {type}/{plugin}:{name}} while the
+     * component is {@code {type}_{plugin}}; the two differ only in the type
+     * separator. For {@code local_middag} this yields {@code local/middag},
+     * for {@code mod_unidade} it yields {@code mod/unidade}. Only the first
+     * underscore (the plugin-type separator) is rewritten, matching the
+     * {@code local_*}/{@code mod_*} plugin convention this adapter targets.
+     *
+     * @throws LogicException when the product composition root has not configured the adapter
+     */
+    public static function capabilityComponent(): string
+    {
+        return preg_replace('/_/', '/', self::name(), 1) ?? self::name();
+    }
+
+    /**
+     * Derive the plugin's web entry-point base path from the frankenstyle name,
+     * e.g. {@code local_middag} → {@code /local/middag}. Used to build router
+     * base URLs and redirect targets without hard-coding a product component.
+     *
+     * @throws LogicException when the product composition root has not configured the adapter
+     */
+    public static function baseUrlPath(): string
+    {
+        return '/' . self::capabilityComponent();
+    }
+
+    /**
      * Resolve the plugin autoload function name.
      *
      * @throws LogicException when the product composition root has not configured the adapter

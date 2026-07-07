@@ -68,9 +68,9 @@ final class CrudConventionResolverTest extends TestCase
     }
 
     #[Test]
-    public function testCapabilityFollowsLocalMiddagConvention(): void
+    public function testCapabilityFollowsHostComponentConvention(): void
     {
-        self::assertSame('local/middag:manage_invoice', CrudConventionResolver::capability('App\Entity\Invoice'));
+        self::assertSame('local/example:manage_invoice', CrudConventionResolver::capability('App\Entity\Invoice'));
     }
 
     #[Test]

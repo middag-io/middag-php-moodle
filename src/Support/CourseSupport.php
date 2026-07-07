@@ -464,16 +464,6 @@ class CourseSupport
     }
 
     /**
-     * Retrieves the URL for the course group view tool.
-     *
-     * @return moodle_url the group view tool URL
-     */
-    public static function courseGroupViewurl(): moodle_url
-    {
-        return new moodle_url('/local/middag/tool/trilha/view.php');
-    }
-
-    /**
      * Returns course modules as typed entities.
      *
      * @return array<int, CourseModule> indexed by cmid

@@ -221,7 +221,7 @@ final class AuthServiceCoverageTest extends TestCase
 
         $url = AuthService::generateLoginUrl((object) ['email' => 'user@ex.com', 'id' => 42], 300);
 
-        self::assertSame('/local/middag/auth.php', (string) $url);
+        self::assertSame('/local/example/auth.php', (string) $url);
 
         $token = $url->params['token'] ?? null;
         self::assertIsString($token);

@@ -38,7 +38,7 @@ use Symfony\Component\Routing\RouteCollection;
 #[CoversClass(PluginAwareUrlGenerator::class)]
 final class PluginAwareUrlGeneratorCoverageTest extends TestCase
 {
-    private const DEFAULT_BASE = '/local/middag/index.php';
+    private const DEFAULT_BASE = '/local/example/index.php';
 
     #[Test]
     public function testRouteWithoutPluginBaseSwapsToDefaultBaseThenRestores(): void
@@ -54,7 +54,7 @@ final class PluginAwareUrlGeneratorCoverageTest extends TestCase
 
         $url = $generator->generate('plain');
 
-        self::assertSame('/local/middag/index.php/plain', $url);
+        self::assertSame('/local/example/index.php/plain', $url);
         self::assertSame('/some/other/base', $context->getBaseUrl(), 'original base must be restored');
         self::assertSame([self::DEFAULT_BASE, '/some/other/base'], $context->setCalls, 'swap then restore');
     }
@@ -107,7 +107,7 @@ final class PluginAwareUrlGeneratorCoverageTest extends TestCase
 
         $url = $generator->generate('plain');
 
-        self::assertSame('/local/middag/index.php/plain', $url);
+        self::assertSame('/local/example/index.php/plain', $url);
         self::assertSame([], $context->setCalls, 'no swap when default already equals current base');
     }
 

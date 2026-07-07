@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Security\ValueObject;
 
 use Middag\Framework\Exception\MiddagDomainException;
+use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Security\ValueObject\Capability;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,6 +27,30 @@ use Stringable;
 #[CoversClass(Capability::class)]
 final class CapabilityTest extends TestCase
 {
+    /**
+     * Pin a deterministic host component so the host-scoped factory/predicate
+     * derive a known capability prefix (local/middag).
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        ComponentContext::reset();
+        ComponentContext::configure('local_middag');
+    }
+
+    /**
+     * Restore the bootstrap-configured default so global static state stays
+     * deterministic for the rest of the suite regardless of test order.
+     */
+    protected function tearDown(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_example', 'local_example_autoload');
+
+        parent::tearDown();
+    }
+
     #[Test]
     public function canBeConstructedWithValidIdentifier(): void
     {
@@ -98,20 +123,20 @@ final class CapabilityTest extends TestCase
     }
 
     #[Test]
-    public function isMiddagReturnsTrueForMiddagCapabilities(): void
+    public function isHostComponentReturnsTrueForHostCapabilities(): void
     {
         $cap = new Capability('local/middag:manage');
-        $this->assertTrue($cap->is_middag());
+        $this->assertTrue($cap->isHostComponent());
     }
 
     #[Test]
-    public function isMiddagReturnsFalseForNonMiddagCapabilities(): void
+    public function isHostComponentReturnsFalseForNonHostCapabilities(): void
     {
         $cap = new Capability('moodle/course:view');
-        $this->assertFalse($cap->is_middag());
+        $this->assertFalse($cap->isHostComponent());
 
         $cap2 = new Capability('mod/forum:addinstance');
-        $this->assertFalse($cap2->is_middag());
+        $this->assertFalse($cap2->isHostComponent());
     }
 
     #[Test]
@@ -133,20 +158,20 @@ final class CapabilityTest extends TestCase
     }
 
     #[Test]
-    public function middagFactoryCreatesMiddagScopedCapability(): void
+    public function forHostComponentFactoryCreatesHostScopedCapability(): void
     {
-        $cap = Capability::middag('manage');
+        $cap = Capability::forHostComponent('manage');
         $this->assertSame('local/middag:manage', $cap->identifier);
-        $this->assertTrue($cap->is_middag());
+        $this->assertTrue($cap->isHostComponent());
     }
 
     #[Test]
-    public function middagFactoryWithDifferentNames(): void
+    public function forHostComponentFactoryWithDifferentNames(): void
     {
-        $view = Capability::middag('view');
+        $view = Capability::forHostComponent('view');
         $this->assertSame('local/middag:view', $view->identifier);
 
-        $configure = Capability::middag('configure');
+        $configure = Capability::forHostComponent('configure');
         $this->assertSame('local/middag:configure', $configure->identifier);
     }
 

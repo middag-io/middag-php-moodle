@@ -232,7 +232,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         self::assertSame('user@moodle.test', $auth['email']);
         self::assertSame('https://moodle.test/u/ada.png', $auth['avatarUrl']);
         self::assertSame(
-            ['local/middag:manage', 'local/middag:moderate', 'local/middag:view'],
+            ['local/example:manage', 'local/example:moderate', 'local/example:view'],
             $auth['capabilities'],
         );
     }

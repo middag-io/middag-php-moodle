@@ -162,7 +162,7 @@ final class RouterBridgeSupportCoverageTest extends TestCase
     public function testGetOpenapiJsonUrlUsesWwwroot(): void
     {
         self::assertSame(
-            'https://moodle.test/local/middag/index.php/api/openapi.json',
+            'https://moodle.test/local/example/index.php/api/openapi.json',
             RouterBridgeSupport::getOpenapiJsonUrl(),
         );
     }
@@ -171,7 +171,7 @@ final class RouterBridgeSupportCoverageTest extends TestCase
     public function testGetOpenapiYamlUrlUsesWwwroot(): void
     {
         self::assertSame(
-            'https://moodle.test/local/middag/index.php/api/openapi.yaml',
+            'https://moodle.test/local/example/index.php/api/openapi.yaml',
             RouterBridgeSupport::getOpenapiYamlUrl(),
         );
     }

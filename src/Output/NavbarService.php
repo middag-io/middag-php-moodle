@@ -107,7 +107,7 @@ final class NavbarService
      */
     private static function defaultItems(?Closure $url_generator = null): array
     {
-        $url = $url_generator ?? static fn (string $route): string => UrlSupport::get('/local/middag/index.php/' . $route)->out();
+        $url = $url_generator ?? static fn (string $route): string => UrlSupport::get(ComponentContext::baseUrlPath() . '/index.php/' . $route)->out();
 
         return [
             [

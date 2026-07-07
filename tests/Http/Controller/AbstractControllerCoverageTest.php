@@ -1022,12 +1022,13 @@ final class AbstractControllerCoverageTest extends TestCase
     #[Test]
     public function testRedirectToRouteFallsBackWhenAllRoutesFail(): void
     {
-        // No booted kernel → every urlGenerator() throws → ultimate hardcoded fallback.
+        // No booted kernel → every urlGenerator() throws → ultimate fallback,
+        // derived from the running host component via ComponentContext.
         $controller = new CoverageController();
 
         $response = $controller->callRedirectToRoute('nope');
 
-        self::assertSame('/local/middag/index.php', $response->getTargetUrl());
+        self::assertSame('/local/example/index.php', $response->getTargetUrl());
     }
 
     // =========================================================================

@@ -834,8 +834,9 @@ abstract class AbstractController implements MoodleControllerInterface
             }
         }
 
-        // Ultimate fallback if even 'error' route is missing
-        return $this->redirect('/local/middag/index.php', $status);
+        // Ultimate fallback if even 'error' route is missing — derive the host
+        // plugin's entry point (e.g. /local/middag/index.php) from ComponentContext.
+        return $this->redirect(ComponentContext::baseUrlPath() . '/index.php', $status);
     }
 
     // =========================================================================
