@@ -551,6 +551,22 @@ final class KernelCoverageTest extends TestCase
         self::assertFalse(function_exists('local_klnolib_autoload'));
     }
 
+    #[Test]
+    public function bootReturnsImmediatelyWhenAlreadyBooted(): void
+    {
+        // Reentrant-boot guard: a detached kernel already flagged booted must
+        // return from the private boot() before constructing any collaborator,
+        // so the container stays null (no router/httpKernel wiring happens).
+        $reflection = new ReflectionClass(Kernel::class);
+        $kernel = $reflection->newInstanceWithoutConstructor();
+        $reflection->getProperty('booted')->setValue($kernel, true);
+
+        (new ReflectionMethod(Kernel::class, 'boot'))->invoke($kernel);
+
+        self::assertTrue($reflection->getProperty('booted')->getValue($kernel));
+        self::assertNull($reflection->getProperty('container')->getValue($kernel));
+    }
+
     // --------------------------------------------------------------------- //
     // Helpers                                                               //
     // --------------------------------------------------------------------- //

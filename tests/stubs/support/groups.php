@@ -12,14 +12,6 @@ declare(strict_types=1);
 
 use core\exception\moodle_exception;
 
-/**
- * middag-io/moodle — MIDDAG Moodle adapter.
- *
- * @author      Michael Meneses <michael@middag.io>
- * @copyright   2026 MIDDAG (https://middag.io)
- * @license     Apache-2.0
- */
-
 /*
  * Moodle function/class stubs for the cohort / enrol / group / custom-field /
  * user-profile-field Support wrappers. Guarded with !function_exists /

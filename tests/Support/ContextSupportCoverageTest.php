@@ -22,6 +22,7 @@ use Middag\Moodle\Support\ContextSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use TypeError;
 
 /**
@@ -75,5 +76,16 @@ final class ContextSupportCoverageTest extends TestCase
     public function testInstanceByIdPrefersTheNamespacedBaseApi(): void
     {
         self::assertInstanceOf(context_base::class, ContextSupport::instanceById(11));
+    }
+
+    #[Test]
+    public function testClassForFallsBackToSystemForAnUnmappedType(): void
+    {
+        // classFor() is private; every public wrapper feeds it a mapped type, so
+        // the conservative fallback for an unknown type is only reachable via
+        // reflection. An unmapped type returns the legacy global 'context_system'.
+        $classFor = new ReflectionMethod(ContextSupport::class, 'classFor');
+
+        self::assertSame('context_system', $classFor->invoke(null, 'nonexistent'));
     }
 }

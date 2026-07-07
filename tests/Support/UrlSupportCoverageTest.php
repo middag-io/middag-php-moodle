@@ -15,6 +15,7 @@ namespace Middag\Moodle\Tests\Support;
 use core\url as moodle_url;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Support\UrlSupport;
+use moodle_exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -60,6 +61,36 @@ final class UrlSupportCoverageTest extends TestCase
         self::assertSame('/admin/settings.php', $url->out());
         self::assertSame(1, $url->params['a']);
         self::assertSame('section', $url->anchor);
+    }
+
+    #[Test]
+    public function testGetRethrowsWhenStrictnessIsMustExist(): void
+    {
+        $GLOBALS['__middag_test_throw_moodle_url'] = true;
+
+        $this->expectException(moodle_exception::class);
+
+        try {
+            UrlSupport::get('/x', null, null, MUST_EXIST);
+        } finally {
+            unset($GLOBALS['__middag_test_throw_moodle_url']);
+        }
+    }
+
+    #[Test]
+    public function testGetFallsBackToHomeWhenStrictnessIsIgnoreMissing(): void
+    {
+        // One-shot: the requested URL throws, the home() fallback URL does not.
+        $GLOBALS['__middag_test_throw_moodle_url'] = 1;
+
+        try {
+            $result = UrlSupport::get('/x', null, null, IGNORE_MISSING);
+        } finally {
+            unset($GLOBALS['__middag_test_throw_moodle_url']);
+        }
+
+        // The failed URL was suppressed and get() degraded to the site home URL.
+        self::assertInstanceOf(moodle_url::class, $result);
     }
 
     #[Test]

@@ -12,14 +12,6 @@ declare(strict_types=1);
 
 use core\task\scheduled_task;
 
-/**
- * middag-io/moodle — MIDDAG Moodle adapter.
- *
- * @author      Michael Meneses <michael@middag.io>
- * @copyright   2026 MIDDAG (https://middag.io)
- * @license     Apache-2.0
- */
-
 /*
  * Domain/Task coverage fixtures.
  *

@@ -370,6 +370,31 @@ final class CompletionSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetCourseProgressReturnsNullWhenInfoUnavailableAfterEnablement(): void
+    {
+        // isEnabledCourse() resolves completion_info once (first get_record yields a
+        // course → completion enabled), then getCourseProgress() re-resolves
+        // infoForCourse(): a second get_record that returns no course makes the
+        // re-resolution null, exercising the `!$info instanceof completion_info`
+        // guard (return null) *after* the enablement check has already passed.
+        $db = $this->createMock(moodle_database::class);
+        $calls = 0;
+        $db->method('get_record')->willReturnCallback(
+            static function (string $table) use (&$calls): mixed {
+                if ($table !== 'course') {
+                    return false;
+                }
+                ++$calls;
+
+                return $calls === 1 ? (object) ['id' => 10] : false;
+            },
+        );
+        $GLOBALS['DB'] = $db;
+
+        self::assertNull(CompletionSupport::getCourseProgress(10, 7));
+    }
+
+    #[Test]
     public function testGetCourseCmCompletionsBuildsEntriesIndexedByCmid(): void
     {
         $GLOBALS['__middag_test_completion_activities'] = [

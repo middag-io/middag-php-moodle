@@ -13,14 +13,6 @@ declare(strict_types=1);
 use core\task\adhoc_task;
 
 /*
- * middag-io/moodle — MIDDAG Moodle adapter.
- *
- * @author      Michael Meneses <michael@middag.io>
- * @copyright   2026 MIDDAG (https://middag.io)
- * @license     Apache-2.0
- */
-
-/*
  * Moodle function/class stubs for the messaging / notification / task / file /
  * calendar / event / di-bridge / router-bridge Support wrappers (batch "msg-file").
  *

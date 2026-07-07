@@ -117,4 +117,28 @@ final class MoodledataFilesystemTest extends TestCase
 
         new MoodledataFilesystem("evil\0dir");
     }
+
+    #[Test]
+    public function throwsWhenTheDatarootDirectoryCannotBeCreated(): void
+    {
+        // A regular file sits where a path component must be a directory, so
+        // mkdir() cannot create $root and is_dir() stays false afterwards —
+        // driving the "Cannot create dataroot directory" throw. mkdir() emits an
+        // E_WARNING on failure; a scoped handler swallows it so failOnWarning is
+        // not tripped while the branch is still exercised.
+        $blocker = sys_get_temp_dir() . '/middag-mdf-blocker-' . uniqid();
+        file_put_contents($blocker, 'x');
+
+        $this->expectException(MiddagInfrastructureException::class);
+        $this->expectExceptionMessage('Cannot create dataroot directory');
+
+        set_error_handler(static fn (): bool => true);
+
+        try {
+            new MoodledataFilesystem('sub', $blocker);
+        } finally {
+            restore_error_handler();
+            unlink($blocker);
+        }
+    }
 }

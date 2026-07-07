@@ -26,6 +26,21 @@ use Stringable;
 #[CoversClass(Sesskey::class)]
 final class SesskeyTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['__middag_test_sesskey']);
+    }
+
+    #[Test]
+    public function fromCurrentReadsTheCurrentMoodleSessionKey(): void
+    {
+        // from_current() wraps Moodle's sesskey(); the bootstrap stub returns
+        // whatever the driving global holds.
+        $GLOBALS['__middag_test_sesskey'] = 'abc123';
+
+        self::assertSame('abc123', Sesskey::from_current()->value);
+    }
+
     #[Test]
     public function canBeConstructedWithValue(): void
     {

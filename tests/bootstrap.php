@@ -156,9 +156,11 @@ if (!class_exists('core_user', false)) {
     class_alias('core\user', 'core_user');
 }
 
-// Stub: core\url (Moodle's URL class — implements __toString as Stringable)
+// Stub: core\url (Moodle's URL class — implements __toString as Stringable).
+// Throws moodle_exception on construction when $GLOBALS['__middag_test_throw_moodle_url']
+// is set, so UrlSupport's MUST_EXIST rethrow / IGNORE_MISSING fallback branches are reachable.
 if (!class_exists('core\url', false)) {
-    eval('namespace core; class url implements \Stringable { public array $params; public function __construct(public string $url = "", array $params = [], public ?string $anchor = null) { $this->params = $params; } public function __toString(): string { return $this->url; } public function out(bool $escaped = true): string { return $this->url; } public function set_anchor(?string $anchor): void { $this->anchor = $anchor; } }');
+    eval('namespace core; class url implements \Stringable { public array $params; public function __construct(public string $url = "", array $params = [], public ?string $anchor = null) { if (!empty($GLOBALS["__middag_test_throw_moodle_url"])) { $GLOBALS["__middag_test_throw_moodle_url"] = ((int) $GLOBALS["__middag_test_throw_moodle_url"]) - 1; throw new \core\exception\moodle_exception("invalidurl"); } $this->params = $params; } public function __toString(): string { return $this->url; } public function out(bool $escaped = true): string { return $this->url; } public function set_anchor(?string $anchor): void { $this->anchor = $anchor; } }');
 }
 if (!class_exists('moodle_url', false)) {
     class_alias('core\url', 'moodle_url');
@@ -261,6 +263,15 @@ if (!function_exists('getremoteaddr')) {
     function getremoteaddr(string $default = '', bool $skipvalidation = false): string
     {
         return $GLOBALS['__middag_test_remoteaddr'] ?? $default;
+    }
+}
+
+// Stub: sesskey() — returns $GLOBALS['__middag_test_sesskey'] (default 'sesskeytest'),
+// so Sesskey::from_current() can be exercised without a Moodle session.
+if (!function_exists('sesskey')) {
+    function sesskey(): string
+    {
+        return $GLOBALS['__middag_test_sesskey'] ?? 'sesskeytest';
     }
 }
 

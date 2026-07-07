@@ -50,6 +50,7 @@ final class CourseSupportCoverageTest extends TestCase
         '__middag_test_course_format',
         '__middag_test_categories',
         '__middag_test_get_course_throw',
+        '__middag_test_throw_context_instance',
     ];
 
     private mixed $prevDb;
@@ -85,6 +86,14 @@ final class CourseSupportCoverageTest extends TestCase
     {
         self::assertNull(CourseSupport::getCourse(0));
         self::assertNull(CourseSupport::getCourse(null));
+    }
+
+    #[Test]
+    public function testGetCourseContextReturnsNullWhenContextInstantiationThrows(): void
+    {
+        $GLOBALS['__middag_test_throw_context_instance'] = true;
+
+        self::assertNull(CourseSupport::getCourseContext(10));
     }
 
     #[Test]
@@ -448,6 +457,20 @@ final class CourseSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetEnrolledUsersCountReturnsZeroWhenTheCountThrows(): void
+    {
+        if (!method_exists(moodle_database::class, 'count_records_sql')) {
+            self::markTestSkipped('central moodle_database stub lacks count_records_sql() — see centralStubNeeds');
+        }
+
+        $db = $this->createMock(moodle_database::class);
+        $db->method('count_records_sql')->willThrowException(new dml_exception('countfailed'));
+        $GLOBALS['DB'] = $db;
+
+        self::assertSame(0, CourseSupport::getEnrolledUsersCount(10));
+    }
+
+    #[Test]
     public function testGetCourseCategoryMapsTheCategoryRecord(): void
     {
         $GLOBALS['__middag_test_records'] = [
@@ -559,6 +582,23 @@ final class CourseSupportCoverageTest extends TestCase
         $modules = CourseSupport::getCourseModulesTyped(10);
 
         self::assertArrayHasKey(44, $modules);
+    }
+
+    #[Test]
+    public function testGetCourseModulesTypedFiltersByResolvedModule(): void
+    {
+        if (!method_exists(moodle_database::class, 'get_records_select')) {
+            self::markTestSkipped('central moodle_database stub lacks get_records_select() — see centralStubNeeds');
+        }
+
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_record')->willReturn((object) ['id' => 5]);
+        $db->method('get_records_select')->willReturn([(object) ['id' => 88, 'course' => 10]]);
+        $GLOBALS['DB'] = $db;
+
+        $modules = CourseSupport::getCourseModulesTyped(10, 'forum');
+
+        self::assertArrayHasKey(88, $modules);
     }
 
     private function installFormat(
