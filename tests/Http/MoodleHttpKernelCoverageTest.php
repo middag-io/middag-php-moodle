@@ -157,6 +157,8 @@ trait HttpKernelMoodleControllerStub
 
     public function setRequireCapabilities(array $capabilities, mixed $context = null, int $instanceId = 0): void {}
 
+    public function setRequireCapabilityRequirements(array $requirements): void {}
+
     public function setRequireSesskey(bool $require = true): void
     {
         $this->sesskeyRequired = $require;

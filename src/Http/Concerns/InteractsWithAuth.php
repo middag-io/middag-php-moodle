@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Http\Concerns;
 
 use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Moodle\Domain\Context\ContextLevel;
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
 use Middag\Moodle\Security\Contract\CapabilityInterface;
@@ -43,6 +44,9 @@ trait InteractsWithAuth
     protected ?ContextLevel $capabilityContextLevel = null;
 
     protected int $capabilityInstanceId = 0;
+
+    /** @var list<CapabilityRequirement> Rich requirements from #[Auth], resolved per-requirement */
+    protected array $capabilityRequirements = [];
 
     /**
      * Set if login is required and set related options.
@@ -85,6 +89,20 @@ trait InteractsWithAuth
     }
 
     /**
+     * Receive the rich #[Auth] requirements forwarded by the kernel.
+     *
+     * Each requirement can carry its own context level and instance ID (via its
+     * `options`), resolved per-requirement in {@see self::checkCapabilities()}.
+     * The legacy call still sets the class-wide fallback these default to.
+     *
+     * @param list<CapabilityRequirement> $requirements
+     */
+    public function setRequireCapabilityRequirements(array $requirements): void
+    {
+        $this->capabilityRequirements = $requirements;
+    }
+
+    /**
      * Ensure the user is logged in if required.
      */
     protected function requireLogin(): void
@@ -109,14 +127,55 @@ trait InteractsWithAuth
     /**
      * Check if the user has the required capabilities.
      *
+     * Prefers the rich requirements (each resolved with its own context level
+     * and instance ID) when the kernel forwarded them; otherwise falls back to
+     * the legacy flat list under the single class-wide context.
+     *
      * @throws MiddagAuthorizationException
      */
     protected function checkCapabilities(): void
     {
+        if ($this->capabilityRequirements !== []) {
+            $this->checkCapabilityRequirements();
+
+            return;
+        }
+
         $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
+        }
+    }
+
+    /**
+     * Authorize each rich requirement under its own context.
+     *
+     * Context level and instance ID come from the requirement's `options`
+     * (`contextlevel`/`instanceid`), falling back to the class-wide values and
+     * finally to SYSTEM. Requirements with no resolvable capability key
+     * (definition-class-only, resolved by the host once LB-2-05 lands) are skipped.
+     *
+     * @throws MiddagAuthorizationException
+     */
+    private function checkCapabilityRequirements(): void
+    {
+        foreach ($this->capabilityRequirements as $requirement) {
+            $capability = $requirement->key() ?? $requirement->definition?->capabilityReference()->key;
+
+            if ($capability === null) {
+                continue;
+            }
+
+            $options = $requirement->options;
+
+            $contextlevel = ContextLevel::fromString(
+                isset($options['contextlevel']) ? (string) $options['contextlevel'] : null,
+            ) ?? $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+
+            $instanceid = isset($options['instanceid']) ? (int) $options['instanceid'] : $this->capabilityInstanceId;
+
+            $this->capability()->authorize($capability, $contextlevel, $instanceid);
         }
     }
 

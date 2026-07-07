@@ -20,6 +20,7 @@ use core\url as moodle_url;
 use Exception;
 use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Framework\Form\Renderer\RendererRegistry;
+use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Domain\Context\ContextLevel;
@@ -92,6 +93,9 @@ abstract class AbstractController implements MoodleControllerInterface
     protected ?ContextLevel $capabilityContextLevel = null;
 
     protected int $capabilityInstanceId = 0;
+
+    /** @var list<CapabilityRequirement> Rich requirements from #[Auth], resolved per-requirement */
+    protected array $capabilityRequirements = [];
 
     // --- Forms (from former interacts_with_forms) ---
 
@@ -231,6 +235,22 @@ abstract class AbstractController implements MoodleControllerInterface
         $this->capabilityInstanceId = $instanceid;
     }
 
+    /**
+     * Receive the rich #[Auth] requirements forwarded by the kernel.
+     *
+     * Each requirement can carry its own context level and instance ID (via its
+     * `options`), so authorization is resolved per-requirement instead of with
+     * the single class-wide context of {@see self::setRequireCapabilities()}.
+     * The legacy call still runs and sets the class-wide fallback these
+     * requirements default to when they carry no `contextlevel`/`instanceid`.
+     *
+     * @param list<CapabilityRequirement> $requirements
+     */
+    public function setRequireCapabilityRequirements(array $requirements): void
+    {
+        $this->capabilityRequirements = $requirements;
+    }
+
     // =========================================================================
     // Forms (inlined from former interacts_with_forms)
     // =========================================================================
@@ -361,10 +381,20 @@ abstract class AbstractController implements MoodleControllerInterface
     /**
      * Check if the user has the required capabilities.
      *
+     * Prefers the rich requirements (each resolved with its own context level
+     * and instance ID) when the kernel forwarded them; otherwise falls back to
+     * the legacy flat list under the single class-wide context.
+     *
      * @throws MiddagAuthorizationException
      */
     protected function checkCapabilities(): void
     {
+        if ($this->capabilityRequirements !== []) {
+            $this->checkCapabilityRequirements();
+
+            return;
+        }
+
         $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
 
         foreach ($this->capabilities as $capability) {
@@ -884,6 +914,38 @@ abstract class AbstractController implements MoodleControllerInterface
     protected function authentication(): AuthenticationInterface
     {
         return $this->container->get(AuthenticationInterface::class);
+    }
+
+    /**
+     * Authorize each rich requirement under its own context.
+     *
+     * Context level and instance ID come from the requirement's `options`
+     * (`contextlevel`/`instanceid`), falling back to the class-wide values set
+     * by {@see self::setRequireCapabilities()} and finally to SYSTEM. Requirements
+     * that carry no resolvable capability key (definition-class-only, resolved by
+     * the host once LB-2-05 lands) are skipped rather than guessed.
+     *
+     * @throws MiddagAuthorizationException
+     */
+    private function checkCapabilityRequirements(): void
+    {
+        foreach ($this->capabilityRequirements as $requirement) {
+            $capability = $requirement->key() ?? $requirement->definition?->capabilityReference()->key;
+
+            if ($capability === null) {
+                continue;
+            }
+
+            $options = $requirement->options;
+
+            $contextlevel = ContextLevel::fromString(
+                isset($options['contextlevel']) ? (string) $options['contextlevel'] : null,
+            ) ?? $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+
+            $instanceid = isset($options['instanceid']) ? (int) $options['instanceid'] : $this->capabilityInstanceId;
+
+            $this->capability()->authorize($capability, $contextlevel, $instanceid);
+        }
     }
 
     /**

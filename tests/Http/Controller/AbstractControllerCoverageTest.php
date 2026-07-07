@@ -20,6 +20,9 @@ use core\output\renderable;
 use core\output\renderer_base;
 use core\url as moodle_url;
 use Middag\Framework\Form\Renderer\RendererRegistry;
+use Middag\Framework\Http\Auth\CapabilityReference;
+use Middag\Framework\Http\Auth\CapabilityRequirement;
+use Middag\Framework\Http\Contract\CapabilityDefinitionInterface;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Moodle\Domain\Context\ContextLevel;
@@ -248,6 +251,103 @@ final class AbstractControllerCoverageTest extends TestCase
         $controller->callCheckCapabilities();
 
         self::assertSame([['cap/z', ContextLevel::COURSE, 7]], $cap->authorized);
+    }
+
+    // =========================================================================
+    // setRequireCapabilityRequirements() / rich per-requirement authorization
+    // =========================================================================
+
+    #[Test]
+    public function testRichRequirementsResolveContextPerRequirement(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // Each requirement carries its own context level and instance ID via
+        // options — the whole point of the follow-up: no single flattened context.
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(reference: new CapabilityReference('cap/a'), options: ['contextlevel' => 'course', 'instanceid' => 5]),
+            new CapabilityRequirement(reference: new CapabilityReference('cap/b'), options: ['contextlevel' => 'module', 'instanceid' => 9]),
+        ]);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([
+            ['cap/a', ContextLevel::COURSE, 5],
+            ['cap/b', ContextLevel::MODULE, 9],
+        ], $cap->authorized);
+    }
+
+    #[Test]
+    public function testRichRequirementFallsBackToClassWideContext(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // The kernel still calls the legacy setter, setting the class-wide context.
+        $controller->setRequireCapabilities(['cap/a'], 'course', 7);
+        // A requirement without its own contextlevel/instanceid inherits it.
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(reference: new CapabilityReference('cap/a')),
+        ]);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['cap/a', ContextLevel::COURSE, 7]], $cap->authorized);
+    }
+
+    #[Test]
+    public function testRichRequirementsTakePrecedenceOverLegacyList(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // Both surfaces populated (as the kernel does): the rich list wins and
+        // the flat legacy list is not double-enforced.
+        $controller->setRequireCapabilities(['legacy/only'], 'system', 0);
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(reference: new CapabilityReference('rich/a'), options: ['contextlevel' => 'course']),
+        ]);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['rich/a', ContextLevel::COURSE, 0]], $cap->authorized);
+    }
+
+    #[Test]
+    public function testDefinitionClassOnlyRequirementIsSkipped(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // A definition-class-only requirement carries no resolvable key yet
+        // (host resolution lands in LB-2-05); it is skipped, not guessed.
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(definitionClass: FakeCapabilityDefinition::class),
+            new CapabilityRequirement(reference: new CapabilityReference('cap/real')),
+        ]);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['cap/real', ContextLevel::SYSTEM, 0]], $cap->authorized);
+    }
+
+    #[Test]
+    public function testRequirementResolvesKeyAndOptionsFromDefinitionObject(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        $definition = new FakeCapabilityDefinition();
+        // reference null, definition set: the key is resolved from the definition
+        // and the context comes from its options.
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(definition: $definition, options: $definition->capabilityOptions()),
+        ]);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['def/cap', ContextLevel::MODULE, 0]], $cap->authorized);
     }
 
     // =========================================================================
@@ -1429,6 +1529,24 @@ final class AbstractControllerCoverageTest extends TestCase
  *
  * @internal
  */
+/**
+ * Rich capability definition double for the per-requirement authorization tests.
+ *
+ * @internal
+ */
+final class FakeCapabilityDefinition implements CapabilityDefinitionInterface
+{
+    public function capabilityReference(): CapabilityReference
+    {
+        return new CapabilityReference('def/cap', host: 'moodle');
+    }
+
+    public function capabilityOptions(): array
+    {
+        return ['contextlevel' => 'module'];
+    }
+}
+
 class CoverageController extends AbstractController
 {
     public function callRequireLogin(): void

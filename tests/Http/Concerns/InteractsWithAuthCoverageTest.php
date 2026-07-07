@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Http\Concerns;
 
 use Middag\Framework\Exception\MiddagAuthorizationException;
+use Middag\Framework\Http\Auth\CapabilityReference;
+use Middag\Framework\Http\Auth\CapabilityRequirement;
+use Middag\Framework\Http\Contract\CapabilityDefinitionInterface;
 use Middag\Moodle\Domain\Context\ContextLevel;
 use Middag\Moodle\Http\Concerns\InteractsWithAuth;
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
@@ -203,6 +206,60 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
     }
 
+    #[Test]
+    public function testCheckCapabilitiesResolvesContextPerRichRequirement(): void
+    {
+        $capability = $this->makeCapability();
+        $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
+
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(reference: new CapabilityReference('mod/x:view'), options: ['contextlevel' => 'course', 'instanceid' => 55]),
+            new CapabilityRequirement(reference: new CapabilityReference('mod/x:edit'), options: ['contextlevel' => 'module', 'instanceid' => 9]),
+        ]);
+        $controller->runCheckCapabilities();
+
+        self::assertSame([
+            ['authorize', 'mod/x:view', ContextLevel::COURSE, 55],
+            ['authorize', 'mod/x:edit', ContextLevel::MODULE, 9],
+        ], $capability->calls);
+    }
+
+    #[Test]
+    public function testRichRequirementFallsBackToClassWideContextAndWinsOverLegacyList(): void
+    {
+        $capability = $this->makeCapability();
+        $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
+
+        // Class-wide context set by the legacy call the kernel also makes; the
+        // rich list wins and inherits that context when a requirement omits it.
+        $controller->setRequireCapabilities(['legacy/only'], 'course', 7);
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(reference: new CapabilityReference('rich/a')),
+        ]);
+        $controller->runCheckCapabilities();
+
+        self::assertSame([
+            ['authorize', 'rich/a', ContextLevel::COURSE, 7],
+        ], $capability->calls);
+    }
+
+    #[Test]
+    public function testDefinitionClassOnlyRequirementIsSkipped(): void
+    {
+        $capability = $this->makeCapability();
+        $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
+
+        $controller->setRequireCapabilityRequirements([
+            new CapabilityRequirement(definitionClass: InteractsWithAuthFakeDefinition::class),
+            new CapabilityRequirement(reference: new CapabilityReference('mod/x:real')),
+        ]);
+        $controller->runCheckCapabilities();
+
+        self::assertSame([
+            ['authorize', 'mod/x:real', ContextLevel::SYSTEM, 0],
+        ], $capability->calls);
+    }
+
     /**
      * Recording authentication double. Implements AuthenticationInterface so it
      * satisfies authentication()'s return type, and records each requireLogin()
@@ -323,5 +380,23 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->container = $container;
 
         return $controller;
+    }
+}
+
+/**
+ * Rich capability definition double for the definition-class-only skip path.
+ *
+ * @internal
+ */
+final class InteractsWithAuthFakeDefinition implements CapabilityDefinitionInterface
+{
+    public function capabilityReference(): CapabilityReference
+    {
+        return new CapabilityReference('def/cap', host: 'moodle');
+    }
+
+    public function capabilityOptions(): array
+    {
+        return ['contextlevel' => 'module'];
     }
 }

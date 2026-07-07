@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Contract;
 
+use Middag\Framework\Http\Contract\CapabilityRequirementAwareInterface;
 use Middag\Framework\Http\Contract\ControllerInterface;
 use Middag\Moodle\Domain\Context\ContextLevel;
 
@@ -26,9 +27,14 @@ use Middag\Moodle\Domain\Context\ContextLevel;
  * concrete controller can accept a {@see ContextLevel} (LSP-safe widening on a
  * parameter); non-ContextLevel values fall back to SYSTEM.
  *
+ * It also opts in to {@see CapabilityRequirementAwareInterface}: the adapter
+ * honours a distinct context level (and instance ID) per requirement, resolved
+ * from each requirement's `options` — the legacy single-context path stays as a
+ * fallback for capabilities wired without rich requirements.
+ *
  * @api
  */
-interface MoodleControllerInterface extends ControllerInterface
+interface MoodleControllerInterface extends CapabilityRequirementAwareInterface, ControllerInterface
 {
     /**
      * Define the requirement of sesskey validation for non-idempotent
