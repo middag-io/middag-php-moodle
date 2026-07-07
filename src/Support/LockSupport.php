@@ -29,7 +29,7 @@ use Throwable;
  * Manual acquire()/release() is available for advanced scenarios where
  * the lock must span multiple operations.
  *
- * @internal
+ * @api
  */
 class LockSupport
 {

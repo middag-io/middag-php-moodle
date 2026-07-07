@@ -28,7 +28,7 @@ use stdClass;
 /**
  * Utility functions for Moodle courses.
  *
- * @internal
+ * @api
  */
 class CourseSupport
 {

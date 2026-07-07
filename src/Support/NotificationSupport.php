@@ -27,7 +27,7 @@ use Throwable;
  * Handles notifications where `notification = 1` on the Moodle message object.
  * Complements {@see MessageSupport} which handles inter-user messaging and email.
  *
- * @internal
+ * @api
  */
 class NotificationSupport
 {

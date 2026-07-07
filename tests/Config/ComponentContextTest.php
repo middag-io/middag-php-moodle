@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Config;
 
-use InvalidArgumentException;
 use LogicException;
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -68,7 +68,7 @@ final class ComponentContextTest extends TestCase
     {
         ComponentContext::reset();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(MoodleConfigurationException::class);
 
         ComponentContext::configure('');
     }

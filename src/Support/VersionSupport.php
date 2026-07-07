@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use InvalidArgumentException;
 use Middag\Moodle\Domain\Platform\MoodleVersion;
-use RuntimeException;
+use Middag\Moodle\Exception\MoodleAdapterException;
+use Middag\Moodle\Exception\MoodleVersionException;
 use stdClass;
 
 /**
@@ -24,7 +24,7 @@ use stdClass;
  * and exposes convenient comparators (>=, ranges, feature gate via declarative matrix).
  * Values are cached in memory after the first read from {@see bootstrap()}.
  *
- * @internal
+ * @api
  */
 final class VersionSupport
 {
@@ -105,7 +105,7 @@ final class VersionSupport
      *
      * @return bool true if the comparison is satisfied
      *
-     * @throws InvalidArgumentException if the constraint has an invalid format
+     * @throws MoodleVersionException if the constraint has an invalid format
      *
      * @example
      * moodle_versions::compare('>=', '4.2');   // true/false
@@ -174,10 +174,10 @@ final class VersionSupport
      * @param string      $min Required minimum version ("x.y" or "x.y.z").
      * @param null|string $msg Custom message (already translated), optional
      *
-     * @throws RuntimeException if the current version is less than the minimum
+     * @throws MoodleAdapterException if the current version is less than the minimum
      *
      * @example
-     * moodle_versions::assert_min('4.0'); // throws RuntimeException if < 4.0
+     * moodle_versions::assert_min('4.0'); // throws MoodleAdapterException if < 4.0
      */
     public static function assertMin(string $min, ?string $msg = null): void
     {
@@ -185,7 +185,7 @@ final class VersionSupport
             $cur = self::versionSemver();
             $msg ??= self::str('requiresmoodlemin', (object) ['min' => $min, 'current' => $cur]);
 
-            throw new RuntimeException($msg);
+            throw new MoodleAdapterException($msg);
         }
     }
 
@@ -273,7 +273,7 @@ final class VersionSupport
      *
      * @return string localized string
      *
-     * @internal internal use to centralize calls to {@see get_string()}
+     * Internal use to centralize calls to {@see get_string()}
      */
     private static function str(string $id, stdClass|string|null $a = null): string
     {
@@ -352,13 +352,13 @@ final class VersionSupport
      *
      * @return string Normalized version in x.y.z format.
      *
-     * @throws InvalidArgumentException If the format does not match x.y(.z).
+     * @throws MoodleVersionException If the format does not match x.y(.z).
      */
     private static function normalizeVersionString(string $version, string $errorstringid = 'invalidversion'): string
     {
         // Optimized regex check logic
         if (!preg_match('~^\d+\.\d+(\.\d+)?$~', $version)) {
-            throw new InvalidArgumentException(self::str($errorstringid, $version));
+            throw new MoodleVersionException(self::str($errorstringid, $version));
         }
 
         if (substr_count($version, '.') === 1) {

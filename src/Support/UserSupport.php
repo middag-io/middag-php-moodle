@@ -19,7 +19,7 @@ use stdClass;
 /**
  * Utility functions for Moodle users and custom profile fields.
  *
- * @internal
+ * @api
  */
 class UserSupport
 {

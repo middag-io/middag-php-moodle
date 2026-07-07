@@ -22,7 +22,7 @@ use stored_file;
 /**
  * Utility functions for Moodle messaging and emails.
  *
- * @internal
+ * @api
  */
 class MessageSupport
 {

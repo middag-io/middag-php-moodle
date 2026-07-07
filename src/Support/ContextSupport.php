@@ -34,7 +34,7 @@ use core\context\user as context_user;
  * - Exposes utility methods to obtain context instances;
  * - Avoids direct type hints for classes that may not exist in 4.1.
  *
- * @internal
+ * @api
  */
 class ContextSupport
 {

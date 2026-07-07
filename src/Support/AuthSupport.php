@@ -18,7 +18,7 @@ use stdClass;
 /**
  * Authentication support wrapper for Moodle's authentication functions.
  *
- * @internal
+ * @api
  */
 class AuthSupport
 {

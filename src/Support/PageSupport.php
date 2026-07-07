@@ -25,7 +25,7 @@ use function admin_externalpage_setup;
 /**
  * Utility functions for admin pages, navigation, and system setup.
  *
- * @internal
+ * @api
  */
 class PageSupport
 {

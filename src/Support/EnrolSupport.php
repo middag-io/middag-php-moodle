@@ -22,7 +22,7 @@ use stdClass;
 /**
  * Utility functions for Moodle course enrolments.
  *
- * @internal
+ * @api
  */
 class EnrolSupport
 {

@@ -32,7 +32,7 @@ use ReflectionEnum;
  *   settings_support::set(core_config::debugmode, '2')     // write
  *   settings_support::get(ecommerce_config::sendfromwoo)   // cross-extension
  *
- * @internal
+ * @api
  */
 class SettingsSupport
 {

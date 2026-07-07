@@ -24,7 +24,7 @@ use Throwable;
  * competencies, user competency progress and evidence recording, converting
  * Moodle persistent objects into plain arrays at the boundary.
  *
- * @internal
+ * @api
  */
 class CompetencySupport
 {

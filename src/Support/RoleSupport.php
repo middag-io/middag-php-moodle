@@ -26,7 +26,7 @@ use Throwable;
 /**
  * Utility functions for Moodle roles and assignments.
  *
- * @internal
+ * @api
  */
 class RoleSupport
 {

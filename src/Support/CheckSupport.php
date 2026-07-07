@@ -26,7 +26,7 @@ use Throwable;
  * Encapsulates access to \core\check\manager and \core\check\result,
  * providing a stable internal API for the framework.
  *
- * @internal
+ * @api
  */
 class CheckSupport
 {

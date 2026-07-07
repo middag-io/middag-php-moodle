@@ -24,7 +24,7 @@ use Middag\Moodle\Shared\Util\Debug;
  * future architectural changes. All interactions with cache should go through
  * this class to provide a stable, safe API layer.
  *
- * @internal
+ * @api
  */
 class CacheSupport
 {

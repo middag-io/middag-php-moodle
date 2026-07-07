@@ -30,7 +30,7 @@ require_once $CFG->dirroot . '/cohort/lib.php';
 /**
  * Utility functions for Moodle cohorts.
  *
- * @internal
+ * @api
  */
 class CohortSupport
 {

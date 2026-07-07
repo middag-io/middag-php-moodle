@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Tests\Table;
+namespace Middag\Moodle\Tests\Output\Table;
 
 use core\context;
 use core_table\sql_table;
-use Middag\Moodle\Table\UsersTable;
+use Middag\Moodle\Output\Table\UsersTable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

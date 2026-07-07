@@ -25,7 +25,7 @@ use Psr\SimpleCache\CacheInterface;
  * TTL parameters are accepted for interface compatibility but ignored — Moodle's
  * cache API does not expose per-item TTL at this layer (see CacheSupport docs).
  *
- * @internal
+ * @api
  */
 final readonly class CacheSupportPsr16 implements CacheInterface
 {

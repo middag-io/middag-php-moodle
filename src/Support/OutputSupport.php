@@ -17,7 +17,7 @@ use core\output\renderable;
 /**
  * Output support wrapper for Moodle's $OUTPUT global.
  *
- * @internal
+ * @api
  */
 class OutputSupport
 {

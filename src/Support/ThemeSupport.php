@@ -20,7 +20,7 @@ use Middag\Moodle\Settings\SettingsResolver;
  * Bridges Moodle theme settings (brand color, etc.) into the MIDDAG design system.
  * Enables the framework to inherit the active Moodle theme's visual identity.
  *
- * @internal
+ * @api
  */
 class ThemeSupport
 {

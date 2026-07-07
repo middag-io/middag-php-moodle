@@ -21,7 +21,7 @@ use stdClass;
 /**
  * Session support wrapper for Moodle's session management.
  *
- * @internal
+ * @api
  */
 class SessionSupport
 {

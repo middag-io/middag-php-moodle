@@ -32,10 +32,11 @@ use Throwable;
  * `false`, the mixed getters do NOT distinguish "key absent" (`null`) from
  * "read failed" (`false`); a caller needing that distinction must read the host
  * API directly. In production (debug off) a swallowed exception surfaces only as
- * the `false` return, not as a log line. Accepted because this facade is
- * `@internal` and its callers already treat `false` as "unavailable".
+ * the `false` return, not as a log line. Consumers should treat `false` as
+ * "unavailable" and use the native Moodle config API directly when they need
+ * to distinguish absent values from host read failures.
  *
- * @internal
+ * @api
  */
 class ConfigSupport
 {

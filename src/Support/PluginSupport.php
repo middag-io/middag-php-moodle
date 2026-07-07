@@ -30,7 +30,7 @@ use Middag\Moodle\Domain\Platform\PluginDto;
  * Returns DTOs instead of core plugininfo objects to ensure stability
  * and avoid exposing Moodle internals directly.
  *
- * @internal
+ * @api
  */
 class PluginSupport
 {

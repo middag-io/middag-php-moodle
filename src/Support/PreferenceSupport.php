@@ -24,7 +24,7 @@ use Throwable;
  * Preferences are per-user key-value pairs stored in the database for authenticated
  * users and in the session for guests.
  *
- * @internal
+ * @api
  */
 class PreferenceSupport
 {

@@ -21,7 +21,7 @@ use Middag\Moodle\Shared\Util\Debug;
 /**
  * Utility functions for Moodle language strings.
  *
- * @internal
+ * @api
  */
 class LangSupport
 {

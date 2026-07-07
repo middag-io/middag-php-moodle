@@ -23,7 +23,7 @@ use Throwable;
  * data, converting Moodle handler/controller objects into plain arrays and
  * primitives so that extensions never depend on core_customfield types.
  *
- * @internal
+ * @api
  */
 class CustomFieldSupport
 {

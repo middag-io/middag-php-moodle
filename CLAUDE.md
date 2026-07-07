@@ -28,6 +28,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Database/` | `MoodleConnectionAdapter`, `MoodleSqlDialect`, `TransactionManager` (+ local `Contract/`), `Schema/XmldbSchemaAdapter` |
 | `Definition/` | Declarative plugin definitions, all suffixed `*Definition` (Cache, Capability, Check, Event, FileArea, Hook, Message, Service, WebService) + `Contract/DefinitionInterface` |
 | `Domain/` | 16 host capability areas (Backup, Calendar, Completion, Context, Course, CustomField, Enrolment, Event, File, Grade, Group, Message, Platform, Role, Task, User): entities, DTOs, enums, services. Services implement local `*/Contract/` interfaces (host domain, not framework ports). `AbstractMoodleEntity` implements the framework `EntityInterface` |
+| `Exception/` | Adapter-specific exception hierarchy for configuration, transport, version and host failures |
 | `Filesystem/` | `MoodledataFilesystem` (framework `FilesystemInterface` → dataroot) |
 | `Form/` | `MformRenderer` (ui `FormRendererInterface` → mforms), `MformFieldMapper`, `MformElementSpec` |
 | `Hook/` | `AbstractExtendExtensions` (Moodle hook API base) |
@@ -35,15 +36,13 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Kernel/` | `Kernel` (singleton, framework `KernelInterface`), `ContainerFactory`, `MoodleBootstrap`, `MoodleHostContext`, `MoodleComponentNameResolver`, `MoodleMaintenanceGate`, `Facade/AbstractFacade`, `Loader/{FacadeLoader,MoodleHookfileLoader}` |
 | `Logging/` | `MoodleLogger` (PSR-3 `AbstractLogger`), `MoodleActorResolver`, `MoodleOriginResolver` |
 | `Mail/` | `MoodleMailer` (framework `MailerInterface` → `email_to_user`) |
-| `Output/` | `MoodleView` (local `ViewAdapterInterface`), `MoodleRenderer` (extends `plugin_renderer_base`), `AbstractBlock`, `NavbarService`, `Widget` |
+| `Output/` | `MoodleView` (local `ViewAdapterInterface`), `MoodleRenderer` (extends `plugin_renderer_base`), `AbstractBlock`, `NavbarService`, `Widget`, `Table/UsersTable`, `Table/UsersFilterset` |
 | `Persistence/` | `UpgradeHelper`, `VersionTracker` (framework `VersionTrackerInterface`), `Query/SqlGenerator` |
 | `Privacy/` | `PrivacyProvider` + `Contract/` (Moodle privacy API) |
 | `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
 | `Settings/` | Settings-as-code family mirroring Moodle's `admin_setting_*` types + `SettingsResolver` |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
-| `Statics/` | `StaticsCollector`, `StaticsRenderer`, `StaticsWriter` (frontend assets) |
 | `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
-| `Table/` | `UsersTable`, `UsersFilterset` (Moodle table API) |
 | `Translation/` | `MoodleTranslator` (framework `TranslatorInterface` → `get_string`) |
 | `WebService/` | `AbstractExternal` (Moodle external API base) |
 

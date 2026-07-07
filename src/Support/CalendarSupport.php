@@ -31,7 +31,7 @@ require_once $CFG->dirroot . '/calendar/lib.php';
  * Provides a stable, static interface for creating, updating, deleting
  * and querying calendar events, converting Moodle records into framework DTOs.
  *
- * @internal
+ * @api
  */
 class CalendarSupport
 {

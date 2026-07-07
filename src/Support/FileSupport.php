@@ -30,7 +30,7 @@ use Throwable;
  * All file operations should go through this class to ensure proper handling
  * of Moodle's file storage architecture and to maintain consistency.
  *
- * @internal
+ * @api
  */
 class FileSupport
 {

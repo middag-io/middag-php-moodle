@@ -32,7 +32,7 @@ require_once $CFG->dirroot . '/user/profile/lib.php';
  * Wraps `mdl_user_info_field` (definitions) and `mdl_user_info_data` (values).
  * The rest of the framework MUST NOT access these tables directly.
  *
- * @internal
+ * @api
  *
  * @see ADR-201 Moodle boundary consolidation
  * @see ADR-203 Support layer pattern

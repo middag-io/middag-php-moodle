@@ -15,7 +15,7 @@ namespace Middag\Moodle\Support;
 /**
  * Request support wrapper for Moodle's parameter handling.
  *
- * @internal
+ * @api
  */
 class RequestSupport
 {

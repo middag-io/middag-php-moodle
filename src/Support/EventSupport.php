@@ -23,7 +23,7 @@ use Throwable;
 /**
  * Utility functions for Moodle events.
  *
- * @internal
+ * @api
  */
 class EventSupport
 {

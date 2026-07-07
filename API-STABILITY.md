@@ -31,7 +31,8 @@ consumer-facing API — the `Domain\*` entities, DTOs and enums; the domain
 `Contract/` service interfaces; the `Settings\*` and `Definition\*` builders; the
 `Security` value objects and `Contract/` interfaces; the `Privacy` provider
 contracts; `Http\Contract\MoodleControllerInterface`; the `Support\Moodle`
-façade; the `Table` and `Statics` helpers; and the `WebService\AbstractExternal`
+façade and the public `Support\*` Moodle API wrappers; the adapter-specific
+`Exception\*` types; the `Output\Table` helpers; and the `WebService\AbstractExternal`
 extension base a plugin's external classes subclass. The concrete
 implementations of the framework's host-bridge contracts
 (`MoodleConnectionAdapter`, `MoodleSqlDialect`, `MoodleTranslator`,
@@ -39,6 +40,11 @@ implementations of the framework's host-bridge contracts
 `MoodleBootstrap`) and the internal HTTP / kernel / support wiring are
 `@internal`: consumers depend on the **framework** contract these fulfil, not on
 the Moodle concrete.
+
+`Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder`,
+`Support\DiBridgeSupport`, and `Support\RouterBridgeSupport` remain internal
+wiring/convention helpers. `Middag\DevTools\Moodle\Statics` owns static
+`db/*.php` generation; it is not runtime API of this adapter.
 
 ## How releases are cut
 

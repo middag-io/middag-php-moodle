@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Config;
 
-use InvalidArgumentException;
-use LogicException;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Middag\Moodle\Kernel\ContainerFactory;
 
 /**
@@ -50,12 +49,12 @@ final class ComponentContext
      * @param null|string $autoloadFunction Plugin autoload function; defaults to
      *                                      {@code {componentName}_autoload} when null
      *
-     * @throws InvalidArgumentException when $componentName is empty
+     * @throws MoodleConfigurationException when $componentName is empty
      */
     public static function configure(string $componentName, ?string $autoloadFunction = null): void
     {
         if ($componentName === '') {
-            throw new InvalidArgumentException('Moodle adapter component name must not be empty.');
+            throw new MoodleConfigurationException('Moodle adapter component name must not be empty.');
         }
 
         self::$componentName = $componentName;
@@ -67,11 +66,11 @@ final class ComponentContext
     /**
      * Resolve the configured component name.
      *
-     * @throws LogicException when the product composition root has not configured the adapter
+     * @throws MoodleConfigurationException when the product composition root has not configured the adapter
      */
     public static function name(): string
     {
-        return self::$componentName ?? throw new LogicException(
+        return self::$componentName ?? throw new MoodleConfigurationException(
             'Moodle adapter component is not configured. The product composition root must call '
             . self::class . '::configure() during bootstrap (e.g. alongside ContainerFactory::setBuilder()).'
         );
@@ -87,7 +86,7 @@ final class ComponentContext
      * underscore (the plugin-type separator) is rewritten, matching the
      * {@code local_*}/{@code mod_*} plugin convention this adapter targets.
      *
-     * @throws LogicException when the product composition root has not configured the adapter
+     * @throws MoodleConfigurationException when the product composition root has not configured the adapter
      */
     public static function capabilityComponent(): string
     {
@@ -99,7 +98,7 @@ final class ComponentContext
      * e.g. {@code local_middag} → {@code /local/middag}. Used to build router
      * base URLs and redirect targets without hard-coding a product component.
      *
-     * @throws LogicException when the product composition root has not configured the adapter
+     * @throws MoodleConfigurationException when the product composition root has not configured the adapter
      */
     public static function baseUrlPath(): string
     {
@@ -109,13 +108,13 @@ final class ComponentContext
     /**
      * Resolve the plugin autoload function name.
      *
-     * @throws LogicException when the product composition root has not configured the adapter
+     * @throws MoodleConfigurationException when the product composition root has not configured the adapter
      */
     public static function autoloadFunction(): string
     {
         self::name();
 
-        return self::$autoloadFunction ?? throw new LogicException(
+        return self::$autoloadFunction ?? throw new MoodleConfigurationException(
             'Moodle adapter autoload function is not configured.'
         );
     }

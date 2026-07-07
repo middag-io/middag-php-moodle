@@ -31,7 +31,7 @@ require_once $CFG->dirroot . '/group/lib.php';
 /**
  * Utility functions for Moodle groups.
  *
- * @internal
+ * @api
  */
 class GroupSupport
 {

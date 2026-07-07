@@ -42,7 +42,7 @@ use Throwable;
  * - `completion_info` is instantiated in a single private helper so a future
  *   API rename or signature change only affects one method.
  *
- * @internal
+ * @api
  *
  * @see ADR-201 Moodle boundary consolidation
  * @see ADR-203 Support layer pattern

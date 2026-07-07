@@ -22,7 +22,7 @@ use Middag\Moodle\Shared\Util\Debug;
 /**
  * Utility functions for Moodle course categories.
  *
- * @internal
+ * @api
  */
 class CategorySupport
 {

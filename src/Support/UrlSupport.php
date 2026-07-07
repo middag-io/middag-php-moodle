@@ -24,7 +24,7 @@ use Middag\Moodle\Shared\Util\Debug;
  * Provides a centralized interface for creating Moodle URLs with proper
  * error handling and consistent parameter management.
  *
- * @internal
+ * @api
  */
 class UrlSupport
 {

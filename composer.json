@@ -23,8 +23,8 @@
     "php": "^8.2",
     "ext-json": "*",
     "firebase/php-jwt": "^7.0",
-    "middag-io/framework": "^1.0.2",
-    "middag-io/ui": "^1.2",
+    "middag-io/framework": "^1.2.1",
+    "middag-io/ui": "^1.2.3",
     "nyholm/psr7": "^1.8",
     "psr/container": "^2.0",
     "psr/log": "^3.0",
@@ -34,9 +34,6 @@
     "symfony/http-client": "^7.0",
     "symfony/http-foundation": "^7.0",
     "symfony/routing": "^7.0"
-  },
-  "conflict": {
-    "middag-io/core": "<1.2"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.0",

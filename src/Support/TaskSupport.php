@@ -29,7 +29,7 @@ use Middag\Moodle\Domain\Task\TaskSummaryDto;
  * Converts all Moodle entities to DTOs and provides
  * a stable, dependency-safe API for the framework.
  *
- * @internal
+ * @api
  */
 class TaskSupport
 {

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Table;
+namespace Middag\Moodle\Output\Table;
 
 use core_table\local\filter\filterset;
 

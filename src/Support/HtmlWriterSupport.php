@@ -19,7 +19,7 @@ use core_table\output\html_table;
 /**
  * Utility functions for generating HTML output.
  *
- * @internal
+ * @api
  */
 class HtmlWriterSupport
 {

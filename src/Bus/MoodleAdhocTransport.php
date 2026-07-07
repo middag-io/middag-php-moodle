@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Middag\Moodle\Bus;
 
 use core\task\adhoc_task;
-use LogicException;
 use Middag\Framework\Bus\Command\CommandWorker;
 use Middag\Framework\Bus\Contract\CommandInterface;
 use Middag\Framework\Bus\Contract\TransportInterface;
 use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
+use Middag\Moodle\Exception\MoodleTransportException;
 use Symfony\Component\Messenger\Envelope;
 
 /**
@@ -55,7 +55,7 @@ final readonly class MoodleAdhocTransport implements TransportInterface
         $command = $envelope->getMessage();
 
         if (!$command instanceof CommandInterface) {
-            throw new LogicException(sprintf(
+            throw new MoodleTransportException(sprintf(
                 'MoodleAdhocTransport only carries %s messages; got %s.',
                 CommandInterface::class,
                 $command::class,
@@ -77,16 +77,16 @@ final readonly class MoodleAdhocTransport implements TransportInterface
      */
     public function get(): iterable
     {
-        throw new LogicException('Moodle cron owns the receive side; draining this transport is unsupported.');
+        throw new MoodleTransportException('Moodle cron owns the receive side; draining this transport is unsupported.');
     }
 
     public function ack(Envelope $envelope): void
     {
-        throw new LogicException('Moodle cron owns the receive side; ack is unsupported.');
+        throw new MoodleTransportException('Moodle cron owns the receive side; ack is unsupported.');
     }
 
     public function reject(Envelope $envelope): void
     {
-        throw new LogicException('Moodle cron owns the receive side; reject is unsupported.');
+        throw new MoodleTransportException('Moodle cron owns the receive side; reject is unsupported.');
     }
 }

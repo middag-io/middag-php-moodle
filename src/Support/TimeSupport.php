@@ -23,7 +23,7 @@ use DateTimeZone;
  * utilities. Isolates direct usage of userdate(), usertime(), core_date and
  * the global $CFG timezone settings.
  *
- * @internal
+ * @api
  */
 class TimeSupport
 {

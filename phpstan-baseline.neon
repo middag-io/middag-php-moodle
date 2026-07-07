@@ -391,24 +391,6 @@ parameters:
 			path: src/Shared/Util/Helper.php
 
 		-
-			message: '#^PHPDoc tag @param for parameter \$definitions with type Middag\\Moodle\\Definition\\Contract\\DefinitionInterface is incompatible with native type array\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: src/Statics/StaticsCollector.php
-
-		-
-			message: '#^PHPDoc tag @return with type Middag\\Moodle\\Definition\\Contract\\DefinitionInterface is incompatible with native type array\.$#'
-			identifier: return.phpDocType
-			count: 2
-			path: src/Statics/StaticsCollector.php
-
-		-
-			message: '#^Call to an undefined method Middag\\Moodle\\Definition\\Contract\\DefinitionInterface\:\:get_qualified_name\(\)\.$#'
-			identifier: method.notFound
-			count: 6
-			path: src/Statics/StaticsRenderer.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$displaymessage$#'
 			identifier: parameter.notFound
 			count: 1

@@ -24,7 +24,7 @@ use stdClass;
  * Provides a clean interface for database operations, allowing for better
  * testability and isolation of Moodle's global state.
  *
- * @internal
+ * @api
  */
 class DbSupport
 {

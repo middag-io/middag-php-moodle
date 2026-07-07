@@ -20,7 +20,7 @@ use stdClass;
 /**
  * Utility functions for Moodle capabilities and permissions.
  *
- * @internal
+ * @api
  */
 class CapabilitySupport
 {
