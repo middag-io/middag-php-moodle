@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use stdClass;
 
 /**
  * FacadeLoader scans a host plugin's facade/ and extensions/ trees and returns a
@@ -40,7 +41,7 @@ final class FacadeLoaderCoverageTest extends TestCase
 
     private mixed $prevComponentDir;
 
-    private false|string $prevMoodleEnv;
+    private mixed $prevCfg;
 
     protected function setUp(): void
     {
@@ -48,7 +49,7 @@ final class FacadeLoaderCoverageTest extends TestCase
         mkdir($this->root, 0o777, true);
 
         $this->prevComponentDir = $GLOBALS['__middag_test_component_dir'] ?? null;
-        $this->prevMoodleEnv = getenv('MOODLE_ENV');
+        $this->prevCfg = $GLOBALS['CFG'] ?? null;
 
         // Start every test from a clean, empty cache backing store so the
         // production cache-read branch sees a miss unless the test seeds it.
@@ -65,11 +66,11 @@ final class FacadeLoaderCoverageTest extends TestCase
             $GLOBALS['__middag_test_component_dir'] = $this->prevComponentDir;
         }
 
-        // Restore MOODLE_ENV (the dev-mode test mutates it).
-        if ($this->prevMoodleEnv === false) {
-            putenv('MOODLE_ENV');
+        // Restore $CFG (the dev-mode test mutates it).
+        if ($this->prevCfg === null) {
+            unset($GLOBALS['CFG']);
         } else {
-            putenv('MOODLE_ENV=' . $this->prevMoodleEnv);
+            $GLOBALS['CFG'] = $this->prevCfg;
         }
 
         unset($GLOBALS['__middag_test_cache_store']);
@@ -93,20 +94,17 @@ final class FacadeLoaderCoverageTest extends TestCase
     }
 
     // ------------------------------------------------------------------
-    // Full discovery — core + legacy-extension + suffix facades, with the
-    // abstract / missing-class / non-facade / non-file entries all filtered.
+    // Full discovery — core + suffix facades, with the abstract /
+    // missing-class / non-facade / non-file entries all filtered.
     // ------------------------------------------------------------------
 
     #[Test]
-    public function testGetDefinitionsDiscoversAndFiltersAcrossAllThreeShapes(): void
+    public function testGetDefinitionsDiscoversAndFiltersAcrossBothShapes(): void
     {
-        // Core facades: local_example\base\facade\*
+        // Core facades: local_example\facade\*
         $this->writeFile('/facade/CovAlphaFacade.php');       // concrete → kept
         $this->writeFile('/facade/CovAbstractFacade.php');    // abstract → filtered
         $this->writeFile('/facade/CovGhost.php');             // no class → filtered
-
-        // Legacy extension facades: extensions/{slug}/facade/*
-        $this->writeFile('/extensions/covext/facade/CovExtFacade.php'); // concrete → kept
 
         // Suffix facades: *_facade.php anywhere under extensions/
         $this->writeFile('/extensions/covext/deep/cov_suffix_facade.php');          // concrete → kept
@@ -124,10 +122,7 @@ final class FacadeLoaderCoverageTest extends TestCase
 
         // Kept (concrete) facades — one per shape.
         self::assertArrayHasKey('CovAlphaFacade', $map);
-        self::assertSame('local_example\base\facade\CovAlphaFacade', $map['CovAlphaFacade']);
-
-        self::assertArrayHasKey('CovExtFacade', $map);
-        self::assertSame('local_example\extensions\covext\facade\CovExtFacade', $map['CovExtFacade']);
+        self::assertSame('local_example\facade\CovAlphaFacade', $map['CovAlphaFacade']);
 
         self::assertArrayHasKey('cov_suffix_facade', $map);
         self::assertSame('local_example\extensions\covext\deep\cov_suffix_facade', $map['cov_suffix_facade']);
@@ -139,7 +134,7 @@ final class FacadeLoaderCoverageTest extends TestCase
         self::assertArrayNotHasKey('ghost_facade', $map);
         self::assertArrayNotHasKey('regular', $map);
 
-        self::assertCount(3, $map);
+        self::assertCount(2, $map);
 
         // The freshly discovered map is written to the cache.
         self::assertSame($map, $GLOBALS['__middag_test_cache_store'][self::CACHE_KEY] ?? null);
@@ -190,7 +185,8 @@ final class FacadeLoaderCoverageTest extends TestCase
     public function testDevelopmentModeSkipsCacheAndAlwaysScans(): void
     {
         // Force Environment::isDevelopment() true via the Moodle-native signal.
-        putenv('MOODLE_ENV=development');
+        $GLOBALS['CFG'] = new stdClass();
+        $GLOBALS['CFG']->middag_env = 'development';
 
         // Seed a stale cache value that MUST be ignored in development.
         $GLOBALS['__middag_test_cache_store'][self::CACHE_KEY] = ['Stale' => 'stale\Facade'];
@@ -221,7 +217,7 @@ final class FacadeLoaderCoverageTest extends TestCase
         $map = $loader->getDefinitions();
 
         self::assertArrayHasKey('CovAlphaFacade', $map);
-        self::assertSame('local_example\base\facade\CovAlphaFacade', $map['CovAlphaFacade']);
+        self::assertSame('local_example\facade\CovAlphaFacade', $map['CovAlphaFacade']);
     }
 
     // ------------------------------------------------------------------
@@ -240,7 +236,7 @@ final class FacadeLoaderCoverageTest extends TestCase
         $stored = $GLOBALS['__middag_test_cache_store'][self::CACHE_KEY] ?? null;
         self::assertIsArray($stored);
         self::assertArrayHasKey('CovAlphaFacade', $stored);
-        self::assertSame('local_example\base\facade\CovAlphaFacade', $stored['CovAlphaFacade']);
+        self::assertSame('local_example\facade\CovAlphaFacade', $stored['CovAlphaFacade']);
     }
 
     /**

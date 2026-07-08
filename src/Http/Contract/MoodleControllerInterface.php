@@ -29,7 +29,7 @@ use Middag\Moodle\Domain\Context\ContextLevel;
  *
  * It also opts in to {@see CapabilityRequirementAwareInterface}: the adapter
  * honours a distinct context level (and instance ID) per requirement, resolved
- * from each requirement's `options` — the legacy single-context path stays as a
+ * from each requirement's `options` — the string single-context path stays as a
  * fallback for capabilities wired without rich requirements.
  *
  * @api

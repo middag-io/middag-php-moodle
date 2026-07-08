@@ -241,7 +241,7 @@ abstract class AbstractController implements MoodleControllerInterface
      * Each requirement can carry its own context level and instance ID (via its
      * `options`), so authorization is resolved per-requirement instead of with
      * the single class-wide context of {@see self::setRequireCapabilities()}.
-     * The legacy call still runs and sets the class-wide fallback these
+     * The string-surface call still runs and sets the class-wide fallback these
      * requirements default to when they carry no `contextlevel`/`instanceid`.
      *
      * @param list<CapabilityRequirement> $requirements
@@ -383,7 +383,7 @@ abstract class AbstractController implements MoodleControllerInterface
      *
      * Prefers the rich requirements (each resolved with its own context level
      * and instance ID) when the kernel forwarded them; otherwise falls back to
-     * the legacy flat list under the single class-wide context.
+     * the string-surface flat list under the single class-wide context.
      *
      * @throws MiddagAuthorizationException
      */

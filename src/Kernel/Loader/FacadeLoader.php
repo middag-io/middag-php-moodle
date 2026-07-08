@@ -41,9 +41,12 @@ class FacadeLoader implements FacadeLoaderInterface
 
     /**
      * Map of core subdirectories to scan.
+     *
+     * Matches the current consumer layout: `{root}/facade/*.php` resolving to
+     * `{component}\facade\{Basename}` (root = the plugin's `classes/` dir).
      */
     private const CORE_PATHS = [
-        ['/facade', 'base\facade'],
+        ['/facade', 'facade'],
     ];
 
     /**
@@ -100,17 +103,8 @@ class FacadeLoader implements FacadeLoaderInterface
             );
         }
 
-        // 2. Extension Facades — legacy subdirectory pattern (extensions/{slug}/facade/)
+        // 2. Extension Facades — suffix pattern (*_facade.php anywhere in extensions/)
         $extensions_dir = $this->root() . '/extensions/';
-        if (is_dir($extensions_dir)) {
-            foreach (glob($extensions_dir . '*', GLOB_ONLYDIR) as $dir) {
-                $slug = basename($dir);
-                $ns = sprintf('%s\extensions\%s\facade', ComponentContext::name(), $slug);
-                $map += $this->scanDirectory($dir . '/facade', $ns);
-            }
-        }
-
-        // 3. Extension Facades — suffix pattern (*_facade.php anywhere in extensions/)
         if (is_dir($extensions_dir)) {
             $map += $this->scanSuffixFacades($extensions_dir);
         }

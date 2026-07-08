@@ -93,7 +93,7 @@ trait InteractsWithAuth
      *
      * Each requirement can carry its own context level and instance ID (via its
      * `options`), resolved per-requirement in {@see self::checkCapabilities()}.
-     * The legacy call still sets the class-wide fallback these default to.
+     * The string-surface call still sets the class-wide fallback these default to.
      *
      * @param list<CapabilityRequirement> $requirements
      */
@@ -129,7 +129,7 @@ trait InteractsWithAuth
      *
      * Prefers the rich requirements (each resolved with its own context level
      * and instance ID) when the kernel forwarded them; otherwise falls back to
-     * the legacy flat list under the single class-wide context.
+     * the string-surface flat list under the single class-wide context.
      *
      * @throws MiddagAuthorizationException
      */

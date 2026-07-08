@@ -19,8 +19,7 @@ use Middag\Framework\Shared\Util\Environment as BaseEnvironment;
  *
  * Extends the framework `Environment` to plug Moodle-native signals into
  * the resolution chain — `$CFG->middag_env` config + `DEBUG_DEVELOPER`
- * inference from `$CFG->debug`. `MOODLE_ENV` env var still recognized for
- * backwards-compat with prior deployments.
+ * inference from `$CFG->debug`.
  *
  * Public host-environment accessor: plugins and composition-roots call the
  * inherited is{Development,Testing,Production}() to branch on the resolved
@@ -33,9 +32,8 @@ final class Environment extends BaseEnvironment
     /**
      * Read Moodle-native environment signals.
      *
-     * Order: legacy `MOODLE_ENV` env var → `$CFG->middag_env` config →
-     * `$CFG->debug === DEBUG_DEVELOPER` inference → null (let framework
-     * resolution default to production).
+     * Order: `$CFG->middag_env` config → `$CFG->debug === DEBUG_DEVELOPER`
+     * inference → null (let framework resolution default to production).
      *
      * NOTE: Direct `$CFG` access is an accepted boundary exception —
      * environment detection runs during early bootstrap, before the
@@ -43,11 +41,6 @@ final class Environment extends BaseEnvironment
      */
     protected static function detectHostEnvironment(): ?string
     {
-        $legacy_env = getenv('MOODLE_ENV');
-        if ($legacy_env !== false && $legacy_env !== '') {
-            return $legacy_env;
-        }
-
         global $CFG;
 
         if (!empty($CFG->middag_env)) {

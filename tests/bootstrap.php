@@ -203,15 +203,19 @@ if (!class_exists('core_table\local\filter\filterset', false)) {
     eval('namespace core_table\local\filter; abstract class filterset {}');
 }
 
-// Stub: core\context — type of the $context arg on Table\UsersTable. Real class
-// is abstract (extends stdClass, IteratorAggregate); tests only need an
-// instantiable stand-in of the right type.
+// Stub: core\context — type of the $context arg on Table\UsersTable and the
+// canonical instance_by_id() entry used by ContextSupport::instanceById().
+// Real class is abstract (extends stdClass, IteratorAggregate); tests only
+// need an instantiable stand-in of the right type.
 if (!class_exists('core\context', false)) {
     // Real Moodle: `abstract class core\context extends stdClass`. Extending
     // stdClass here keeps the stub faithful and lets it satisfy the
     // array|stdClass contract of AbstractMoodleEntity::fromRecord() (exercised
     // by Domain\Context\Context::fromContext()).
-    eval('namespace core; class context extends \stdClass { public function __construct(public int $id = 0) {} }');
+    eval('namespace core; class context extends \stdClass {
+        public function __construct(public int $id = 0) {}
+        public static function instance_by_id($id, $strictness = \MUST_EXIST) { return new self((int) $id); }
+    }');
 }
 
 // Moodle debug + SQL param constants (from lib/setuplib.php / lib/dml). Real
