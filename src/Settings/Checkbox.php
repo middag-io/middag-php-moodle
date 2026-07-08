@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Checkbox extends Setting
+final class Checkbox extends AbstractSetting
 {
     public function __construct(
         string $name,

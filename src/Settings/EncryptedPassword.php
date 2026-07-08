@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class EncryptedPassword extends Setting
+final class EncryptedPassword extends AbstractSetting
 {
     public function __construct(
         string $name,

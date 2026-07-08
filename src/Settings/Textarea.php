@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Textarea extends Setting
+final class Textarea extends AbstractSetting
 {
     public function __construct(
         string $name,

@@ -22,7 +22,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Select extends Setting
+final class Select extends AbstractSetting
 {
     public function __construct(
         string $name,

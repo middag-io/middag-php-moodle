@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Duration extends Setting
+final class Duration extends AbstractSetting
 {
     public function __construct(
         string $name,

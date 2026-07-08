@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Multiselect extends Setting
+final class Multiselect extends AbstractSetting
 {
     public function __construct(
         string $name,

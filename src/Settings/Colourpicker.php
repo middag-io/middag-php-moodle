@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Colourpicker extends Setting
+final class Colourpicker extends AbstractSetting
 {
     public function __construct(
         string $name,

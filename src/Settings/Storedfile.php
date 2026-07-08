@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Storedfile extends Setting
+final class Storedfile extends AbstractSetting
 {
     public function __construct(
         string $name,

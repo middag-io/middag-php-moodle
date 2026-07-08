@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Iplist extends Setting
+final class Iplist extends AbstractSetting
 {
     public function __construct(
         string $name,

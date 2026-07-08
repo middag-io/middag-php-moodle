@@ -22,7 +22,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Autocomplete extends Setting
+final class Autocomplete extends AbstractSetting
 {
     public function __construct(
         string $name,

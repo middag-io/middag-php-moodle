@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Settings;
 
 use admin_setting;
-use Middag\Moodle\Settings\Setting;
+use Middag\Moodle\Settings\AbstractSetting;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  */
-#[CoversClass(Setting::class)]
+#[CoversClass(AbstractSetting::class)]
 final class SettingCoverageTest extends TestCase
 {
     protected function tearDown(): void
@@ -81,9 +81,9 @@ final class SettingCoverageTest extends TestCase
         $this->assertSame('mdg_ecommerce_apikey', $this->makeSetting()->resolveConfigName('ecommerce'));
     }
 
-    private function makeSetting(?string $label = null, ?string $description = null, string $name = 'apikey'): Setting
+    private function makeSetting(?string $label = null, ?string $description = null, string $name = 'apikey'): AbstractSetting
     {
-        return new class($name, null, $label, $description) extends Setting {
+        return new class($name, null, $label, $description) extends AbstractSetting {
             public function toMoodleSetting(string $extension, string $plugin): admin_setting
             {
                 return new admin_setting($this->name);

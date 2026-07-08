@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Portlist extends Setting
+final class Portlist extends AbstractSetting
 {
     public function __construct(
         string $name,

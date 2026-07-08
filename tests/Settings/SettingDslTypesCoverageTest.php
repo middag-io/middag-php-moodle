@@ -30,7 +30,7 @@ use Middag\Moodle\Settings\Multiselect;
 use Middag\Moodle\Settings\Password;
 use Middag\Moodle\Settings\Portlist;
 use Middag\Moodle\Settings\Select;
-use Middag\Moodle\Settings\Setting;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Settings\Storedfile;
 use Middag\Moodle\Settings\Text;
 use Middag\Moodle\Settings\Textarea;
@@ -76,7 +76,7 @@ use PHPUnit\Framework\TestCase;
 final class SettingDslTypesCoverageTest extends TestCase
 {
     /**
-     * @param callable(): Setting $make
+     * @param callable(): AbstractSetting $make
      */
     #[Test]
     #[DataProvider('typeProvider')]
@@ -92,33 +92,33 @@ final class SettingDslTypesCoverageTest extends TestCase
      * body — provider-time instantiation is not attributed to this test's
      * coverage.
      *
-     * @return array<string, array{0: callable(): Setting, 1: class-string}>
+     * @return array<string, array{0: callable(): AbstractSetting, 1: class-string}>
      */
     public static function typeProvider(): array
     {
         return [
-            'text' => [static fn (): Setting => new Text('apikey'), 'admin_setting_configtext'],
-            'textarea' => [static fn (): Setting => new Textarea('notes'), 'admin_setting_configtextarea'],
-            'checkbox' => [static fn (): Setting => new Checkbox('enabled'), 'admin_setting_configcheckbox'],
-            'select' => [static fn (): Setting => new Select('mode'), 'admin_setting_configselect'],
-            'autocomplete' => [static fn (): Setting => new Autocomplete('country'), 'admin_setting_configselect_autocomplete'],
-            'password' => [static fn (): Setting => new Password('secret'), 'admin_setting_configpasswordunmask'],
-            'encrypted_password' => [static fn (): Setting => new EncryptedPassword('token'), 'admin_setting_encryptedpassword'],
-            'htmleditor' => [static fn (): Setting => new Htmleditor('body'), 'admin_setting_confightmleditor'],
-            'colourpicker' => [static fn (): Setting => new Colourpicker('brand'), 'admin_setting_configcolourpicker'],
-            'duration' => [static fn (): Setting => new Duration('ttl'), 'admin_setting_configduration'],
-            'time' => [static fn (): Setting => new Time('cutoff'), 'admin_setting_configtime'],
-            'multicheckbox' => [static fn (): Setting => new Multicheckbox('flags'), 'admin_setting_configmulticheckbox'],
-            'multiselect' => [static fn (): Setting => new Multiselect('roles'), 'admin_setting_configmultiselect'],
-            'storedfile' => [static fn (): Setting => new Storedfile('logo'), 'admin_setting_configstoredfile'],
-            'filepath' => [static fn (): Setting => new Filepath('bin'), 'admin_setting_configfile'],
-            'directory' => [static fn (): Setting => new Directory('datadir'), 'admin_setting_configdirectory'],
-            'executable' => [static fn (): Setting => new Executable('pdftk'), 'admin_setting_configexecutable'],
-            'iplist' => [static fn (): Setting => new Iplist('allowlist'), 'admin_setting_configiplist'],
-            'portlist' => [static fn (): Setting => new Portlist('ports'), 'admin_setting_configportlist'],
-            'heading' => [static fn (): Setting => new Heading('section'), 'admin_setting_heading'],
-            'description' => [static fn (): Setting => new Description('note'), 'admin_setting_description'],
-            'link' => [static fn (): Setting => new Link('docs', 'https://example.test'), 'admin_setting_description'],
+            'text' => [static fn (): AbstractSetting => new Text('apikey'), 'admin_setting_configtext'],
+            'textarea' => [static fn (): AbstractSetting => new Textarea('notes'), 'admin_setting_configtextarea'],
+            'checkbox' => [static fn (): AbstractSetting => new Checkbox('enabled'), 'admin_setting_configcheckbox'],
+            'select' => [static fn (): AbstractSetting => new Select('mode'), 'admin_setting_configselect'],
+            'autocomplete' => [static fn (): AbstractSetting => new Autocomplete('country'), 'admin_setting_configselect_autocomplete'],
+            'password' => [static fn (): AbstractSetting => new Password('secret'), 'admin_setting_configpasswordunmask'],
+            'encrypted_password' => [static fn (): AbstractSetting => new EncryptedPassword('token'), 'admin_setting_encryptedpassword'],
+            'htmleditor' => [static fn (): AbstractSetting => new Htmleditor('body'), 'admin_setting_confightmleditor'],
+            'colourpicker' => [static fn (): AbstractSetting => new Colourpicker('brand'), 'admin_setting_configcolourpicker'],
+            'duration' => [static fn (): AbstractSetting => new Duration('ttl'), 'admin_setting_configduration'],
+            'time' => [static fn (): AbstractSetting => new Time('cutoff'), 'admin_setting_configtime'],
+            'multicheckbox' => [static fn (): AbstractSetting => new Multicheckbox('flags'), 'admin_setting_configmulticheckbox'],
+            'multiselect' => [static fn (): AbstractSetting => new Multiselect('roles'), 'admin_setting_configmultiselect'],
+            'storedfile' => [static fn (): AbstractSetting => new Storedfile('logo'), 'admin_setting_configstoredfile'],
+            'filepath' => [static fn (): AbstractSetting => new Filepath('bin'), 'admin_setting_configfile'],
+            'directory' => [static fn (): AbstractSetting => new Directory('datadir'), 'admin_setting_configdirectory'],
+            'executable' => [static fn (): AbstractSetting => new Executable('pdftk'), 'admin_setting_configexecutable'],
+            'iplist' => [static fn (): AbstractSetting => new Iplist('allowlist'), 'admin_setting_configiplist'],
+            'portlist' => [static fn (): AbstractSetting => new Portlist('ports'), 'admin_setting_configportlist'],
+            'heading' => [static fn (): AbstractSetting => new Heading('section'), 'admin_setting_heading'],
+            'description' => [static fn (): AbstractSetting => new Description('note'), 'admin_setting_description'],
+            'link' => [static fn (): AbstractSetting => new Link('docs', 'https://example.test'), 'admin_setting_description'],
         ];
     }
 

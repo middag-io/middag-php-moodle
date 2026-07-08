@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Password extends Setting
+final class Password extends AbstractSetting
 {
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {

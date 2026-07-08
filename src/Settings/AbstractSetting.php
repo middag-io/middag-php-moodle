@@ -20,14 +20,28 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-abstract class Setting
+abstract class AbstractSetting
 {
+    private ?SettingsNamingPolicy $namingPolicy = null;
+
     public function __construct(
         public readonly string $name,
         public readonly mixed $default = null,
         public readonly ?string $label = null,
         public readonly ?string $description = null,
     ) {}
+
+    /**
+     * Adopt the naming policy of the resolver materialising this setting.
+     *
+     * Injected by {@see SettingsResolver::resolveExtensionPages()} right
+     * before {@see self::toMoodleSetting()}; when never injected, the MIDDAG
+     * default policy applies.
+     */
+    public function useNamingPolicy(SettingsNamingPolicy $policy): void
+    {
+        $this->namingPolicy = $policy;
+    }
 
     /**
      * Resolve the lang string key for the label.
@@ -67,13 +81,14 @@ abstract class Setting
     }
 
     /**
-     * Resolve the canonical config key for this setting.
+     * Resolve the canonical config key for this setting under the adopted
+     * naming policy (MIDDAG default when none was injected).
      *
      * @internal
      */
     public function resolveConfigName(string $extension): string
     {
-        return SettingsResolver::resolveConfigKey($this->name, $extension);
+        return ($this->namingPolicy ?? new SettingsNamingPolicy())->configKey($this->name, $extension);
     }
 
     /**

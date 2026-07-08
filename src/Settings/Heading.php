@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Heading extends Setting
+final class Heading extends AbstractSetting
 {
     public function __construct(
         string $name,

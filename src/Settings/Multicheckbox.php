@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Multicheckbox extends Setting
+final class Multicheckbox extends AbstractSetting
 {
     public function __construct(
         string $name,

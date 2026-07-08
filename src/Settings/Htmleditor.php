@@ -21,7 +21,7 @@ use Middag\Moodle\Support\LangSupport;
  *
  * @api
  */
-final class Htmleditor extends Setting
+final class Htmleditor extends AbstractSetting
 {
     public function __construct(
         string $name,
