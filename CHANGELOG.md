@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.4.0](https://github.com/middag-io/middag-php-moodle/compare/v1.3.0...v1.4.0) (2026-07-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* normalize Moodle adapter structure
+
+### Features
+
+* **http:** honor per-requirement capability context from rich #[Auth] [LB-2-04] ([8eccb30](https://github.com/middag-io/middag-php-moodle/commit/8eccb30c9d5670ff2f559038d67922dbc2ad9aba))
+
+
+### Bug Fixes
+
+* **http:** resolve #[Auth] string context instead of degrading to SYSTEM [N-03/LB-2-04] ([718a8a0](https://github.com/middag-io/middag-php-moodle/commit/718a8a0f7f9251f78f4feef267bfa2a2a5421d28))
+
+
+### Refactoring
+
+* normalize Moodle adapter structure ([438a606](https://github.com/middag-io/middag-php-moodle/commit/438a606071d5c889e39307a6199ed46d855aaa5d))
+
+
+### Miscellaneous
+
+* **deps:** require middag-io/framework ^1.3.0 ([707e0dd](https://github.com/middag-io/middag-php-moodle/commit/707e0dda7f6d322bbf04fba2e090d74d03d075d9))
+* release moodle 1.4.0 ([181cd95](https://github.com/middag-io/middag-php-moodle/commit/181cd9597b07ca387b9378c8b7aa7e6069f9be04))
+
 ## [1.3.0](https://github.com/middag-io/middag-php-moodle/compare/v1.2.3...v1.3.0) (2026-07-07)
 
 
