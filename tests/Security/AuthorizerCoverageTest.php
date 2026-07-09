@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Security;
 
 use Middag\Framework\Exception\MiddagAuthorizationException;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Authorizer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

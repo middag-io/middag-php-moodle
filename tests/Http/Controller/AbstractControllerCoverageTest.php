@@ -25,7 +25,7 @@ use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Framework\Http\Contract\CapabilityDefinitionInterface;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaManager;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Controller\AbstractController;
 use Middag\Moodle\Runtime\Kernel;
@@ -232,6 +232,21 @@ final class AbstractControllerCoverageTest extends TestCase
 
         // An unknown context name resolves to null, so it falls back to SYSTEM.
         $controller->setRequireCapabilities(['cap/y'], 'not-a-level', 0);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['cap/y', ContextLevel::System, 0]], $cap->authorized);
+    }
+
+    #[Test]
+    public function testSetRequireCapabilitiesStoresNullWhenContextIsOmitted(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // No third arg at all — the match's `default => null` arm, distinct
+        // from the unknown-string-name case above (ContextLevel::fromString()).
+        $controller->setRequireCapabilities(['cap/y']);
 
         $controller->callCheckCapabilities();
 

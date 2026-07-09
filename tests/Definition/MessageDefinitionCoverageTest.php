@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Definition\MessageDefinition;
-use Middag\Moodle\Domain\Message\MessagePermission;
+use Middag\Moodle\Domain\Message\Enum\MessagePermission;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

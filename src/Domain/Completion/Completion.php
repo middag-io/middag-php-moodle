@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Completion;
 
 use Middag\Moodle\Domain\AbstractMoodleEntity;
+use Middag\Moodle\Domain\Completion\Enum\CompletionState;
 use stdClass;
 
 /**

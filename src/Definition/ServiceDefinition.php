@@ -64,7 +64,7 @@ final readonly class ServiceDefinition implements DefinitionInterface
     /**
      * Get the fully qualified function name (with plugin prefix).
      */
-    public function get_qualified_name(string $plugin_name): string
+    public function getQualifiedName(string $plugin_name): string
     {
         return $plugin_name . '_' . $this->name;
     }

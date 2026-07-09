@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Security\Contract;
 
 use Middag\Framework\Exception\MiddagAuthorizationException;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 
 /**
  * Capability contract — permission checking.

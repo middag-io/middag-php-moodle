@@ -15,7 +15,7 @@ namespace Middag\Moodle\Tests\Support;
 use core\check\result;
 use core\url as moodle_url;
 use Middag\Moodle\Domain\Platform\CheckResultDto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus;
+use Middag\Moodle\Domain\Platform\Enum\CheckResultStatus;
 use Middag\Moodle\Support\CheckSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

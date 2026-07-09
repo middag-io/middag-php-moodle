@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Enum\CapabilityRisk;
 use Middag\Moodle\Security\Enum\CapabilityType;
 
@@ -61,7 +61,7 @@ final readonly class CapabilityDefinition implements DefinitionInterface
      * @param string $plugin_name Frankenstyle plugin name (e.g. 'local_example').
      * @param string $extension   Extension slug. 'core' or null = no prefix.
      */
-    public function get_qualified_name(string $plugin_name, ?string $extension = null): string
+    public function getQualifiedName(string $plugin_name, ?string $extension = null): string
     {
         $prefix = str_replace('_', '/', $plugin_name);
 

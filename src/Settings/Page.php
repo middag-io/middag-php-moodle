@@ -34,7 +34,7 @@ final readonly class Page
      * When an explicit id is set, it is used directly. Otherwise the
      * resolver builds a conventional id from extension name + page name.
      */
-    public function resolve_id(string $extension_name, ?string $plugin_name = null): string
+    public function resolveId(string $extension_name, ?string $plugin_name = null): string
     {
         if ($this->id !== null) {
             return $this->id;
@@ -53,7 +53,7 @@ final readonly class Page
     /**
      * Resolve the lang string key for the page label.
      */
-    public function resolve_label(string $extension): string
+    public function resolveLabel(string $extension): string
     {
         if ($this->label !== null) {
             return $this->label;

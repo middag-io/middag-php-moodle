@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\Completion;
 
 use Middag\Moodle\Domain\Completion\Completion;
-use Middag\Moodle\Domain\Completion\CompletionState;
+use Middag\Moodle\Domain\Completion\Enum\CompletionState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

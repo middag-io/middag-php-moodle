@@ -39,7 +39,7 @@ final readonly class Capability implements Stringable
     public function __construct(
         public string $identifier,
     ) {
-        if (!self::is_valid_format($identifier)) {
+        if (!self::isValidFormat($identifier)) {
             throw new MiddagDomainException(
                 sprintf("Invalid capability format: '%s'. Expected '{type}/{plugin}:{name}'.", $identifier)
             );
@@ -86,7 +86,7 @@ final readonly class Capability implements Stringable
      * Validate the capability format: must contain exactly one ':' with
      * a component part containing '/' before it.
      */
-    public static function is_valid_format(string $identifier): bool
+    public static function isValidFormat(string $identifier): bool
     {
         if (!str_contains($identifier, ':')) {
             return false;

@@ -63,7 +63,7 @@ final class VersionSupport
      */
     public static function version(): MoodleVersion
     {
-        return MoodleVersion::from_string(self::versionSemver());
+        return MoodleVersion::fromString(self::versionSemver());
     }
 
     /**

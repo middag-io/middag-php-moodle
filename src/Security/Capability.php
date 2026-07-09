@@ -14,7 +14,7 @@ namespace Middag\Moodle\Security;
 
 use core\context;
 use Middag\Framework\Exception\MiddagAuthorizationException;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Contract\CapabilityInterface;
 use Middag\Moodle\Support\CapabilitySupport;
 use Middag\Moodle\Support\ContextSupport;

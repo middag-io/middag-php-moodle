@@ -47,7 +47,7 @@ final readonly class MoodleVersion implements Stringable
      *
      * @throws MiddagValidationException if format is invalid
      */
-    public static function from_string(string $version): self
+    public static function fromString(string $version): self
     {
         $version = trim($version);
         $suffix = null;
@@ -83,12 +83,12 @@ final readonly class MoodleVersion implements Stringable
             ?: ($this->patch <=> $other->patch);
     }
 
-    public function is_at_least(self $other): bool
+    public function isAtLeast(self $other): bool
     {
         return $this->compare($other) >= 0;
     }
 
-    public function is_between(self $min, self $max): bool
+    public function isBetween(self $min, self $max): bool
     {
         return $this->compare($min) >= 0 && $this->compare($max) <= 0;
     }

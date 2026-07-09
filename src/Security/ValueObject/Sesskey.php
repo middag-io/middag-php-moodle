@@ -37,7 +37,7 @@ final readonly class Sesskey implements Stringable
     /**
      * Create from the current session's sesskey.
      */
-    public static function from_current(): self
+    public static function fromCurrent(): self
     {
         return new self(sesskey());
     }
@@ -47,7 +47,7 @@ final readonly class Sesskey implements Stringable
      *
      * @throws MiddagValidationException if value is empty or too long
      */
-    public static function from_string(string $value): self
+    public static function fromString(string $value): self
     {
         $value = trim($value);
 

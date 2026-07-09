@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\CapabilityDefinition;
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Enum\CapabilityRisk;
 use Middag\Moodle\Security\Enum\CapabilityType;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -180,7 +180,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'manage');
 
-        $qualified = $cap->get_qualified_name('local_example');
+        $qualified = $cap->getQualifiedName('local_example');
         $this->assertSame('local/example:manage', $qualified);
     }
 
@@ -189,7 +189,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'manage');
 
-        $qualified = $cap->get_qualified_name('local_example', 'core');
+        $qualified = $cap->getQualifiedName('local_example', 'core');
         $this->assertSame('local/example:manage', $qualified);
     }
 
@@ -198,7 +198,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'manage');
 
-        $qualified = $cap->get_qualified_name('local_example');
+        $qualified = $cap->getQualifiedName('local_example');
         $this->assertSame('local/example:manage', $qualified);
     }
 
@@ -207,7 +207,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'manage');
 
-        $qualified = $cap->get_qualified_name('local_example', 'myext');
+        $qualified = $cap->getQualifiedName('local_example', 'myext');
         $this->assertSame('local/example:myext_manage', $qualified);
     }
 
@@ -216,7 +216,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'addinstance');
 
-        $qualified = $cap->get_qualified_name('mod_forum');
+        $qualified = $cap->getQualifiedName('mod_forum');
         $this->assertSame('mod/forum:addinstance', $qualified);
     }
 

@@ -23,7 +23,7 @@ use Middag\Framework\Form\Renderer\RendererRegistry;
 use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Http\Contract\MoodleControllerInterface;
 use Middag\Moodle\Output\Widget;
 use Middag\Moodle\Runtime\Kernel;

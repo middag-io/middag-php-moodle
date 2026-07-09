@@ -62,7 +62,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', 'something', 'text', 'F');
 
-        self::assertTrue($dto->has_value());
+        self::assertTrue($dto->hasValue());
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', null, 'text', 'F');
 
-        self::assertFalse($dto->has_value());
+        self::assertFalse($dto->hasValue());
     }
 
     #[Test]
@@ -78,7 +78,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', '', 'text', 'F');
 
-        self::assertFalse($dto->has_value());
+        self::assertFalse($dto->hasValue());
     }
 
     #[Test]
@@ -86,7 +86,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', '42', 'text', 'F');
 
-        self::assertSame(42, $dto->int_value());
+        self::assertSame(42, $dto->intValue());
     }
 
     #[Test]
@@ -94,7 +94,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', null, 'text', 'F');
 
-        self::assertSame(0, $dto->int_value());
+        self::assertSame(0, $dto->intValue());
     }
 
     #[Test]
@@ -102,7 +102,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', '1', 'checkbox', 'F');
 
-        self::assertTrue($dto->bool_value());
+        self::assertTrue($dto->boolValue());
     }
 
     #[Test]
@@ -110,7 +110,7 @@ final class CustomFieldValueDtoCoverageTest extends TestCase
     {
         $dto = new CustomFieldValueDto('f', null, 'checkbox', 'F');
 
-        self::assertFalse($dto->bool_value());
+        self::assertFalse($dto->boolValue());
     }
 
     #[Test]

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Event\EventEdulevel;
+use Middag\Moodle\Domain\Event\Enum\EventEdulevel;
 
 /**
  * Typed event definition for Moodle event classes.
@@ -66,7 +66,7 @@ final readonly class EventDefinition implements DefinitionInterface
      * @param string      $plugin_name frankenstyle plugin name (e.g. 'local_example')
      * @param null|string $extension   extension slug
      */
-    public function get_event_classname(string $plugin_name, ?string $extension = null): string
+    public function getEventClassname(string $plugin_name, ?string $extension = null): string
     {
         $prefix = $extension !== null && $extension !== 'core' ? $extension . '_' : '';
 

@@ -10,7 +10,7 @@
 // class_alias(core\output\action_link::class, action_link::class)), but the
 // michaelmeneses/moodle-stubs package omits that alias. Without it PHPStan
 // cannot resolve the `?\action_link` return type declared by
-// core\check\check::get_action_link() (consumed in Support/CheckSupport), so it
+// core\check\check::getAction_link() (consumed in Support/CheckSupport), so it
 // flags the otherwise-correct `->url` access. Model the alias here.
 
 class action_link

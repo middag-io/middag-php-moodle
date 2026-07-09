@@ -37,7 +37,7 @@ final readonly class CourseDto
     /**
      * Whether the course is currently visible.
      */
-    public function is_visible(): bool
+    public function isVisible(): bool
     {
         return $this->visible === 1;
     }
@@ -45,7 +45,7 @@ final readonly class CourseDto
     /**
      * Whether the course has an end date.
      */
-    public function has_end_date(): bool
+    public function hasEndDate(): bool
     {
         return $this->enddate > 0;
     }

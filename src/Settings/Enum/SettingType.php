@@ -96,7 +96,7 @@ enum SettingType: string
     /**
      * Whether this type stores a config value.
      */
-    public function stores_value(): bool
+    public function storesValue(): bool
     {
         return !in_array($this, [self::Heading, self::Description, self::Link], true);
     }

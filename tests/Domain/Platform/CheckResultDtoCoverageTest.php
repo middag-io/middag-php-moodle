@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\Platform;
 
 use Middag\Moodle\Domain\Platform\CheckResultDto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus;
+use Middag\Moodle\Domain\Platform\Enum\CheckResultStatus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

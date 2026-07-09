@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Definition\EventDefinition;
-use Middag\Moodle\Domain\Event\EventEdulevel;
+use Middag\Moodle\Domain\Event\Enum\EventEdulevel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -123,7 +123,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame(
             '\local\example\event\order_created',
-            $event->get_event_classname('local_example'),
+            $event->getEventClassname('local_example'),
         );
     }
 
@@ -134,7 +134,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame(
             '\local\example\event\order_created',
-            $event->get_event_classname('local_example'),
+            $event->getEventClassname('local_example'),
         );
     }
 
@@ -146,7 +146,7 @@ final class EventDefinitionCoverageTest extends TestCase
         // 'core' is the sentinel that suppresses the extension prefix.
         self::assertSame(
             '\local\example\event\order_created',
-            $event->get_event_classname('local_example', 'core'),
+            $event->getEventClassname('local_example', 'core'),
         );
     }
 
@@ -157,7 +157,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame(
             '\local\example\event\billing_order_created',
-            $event->get_event_classname('local_example', 'billing'),
+            $event->getEventClassname('local_example', 'billing'),
         );
     }
 
@@ -168,7 +168,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame(
             '\mod\forum\event\thing_happened',
-            $event->get_event_classname('mod_forum'),
+            $event->getEventClassname('mod_forum'),
         );
     }
 
