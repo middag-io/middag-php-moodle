@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.0](https://github.com/middag-io/middag-php-moodle/compare/v1.5.0...v1.6.0) (2026-07-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **runtime:** Middag\Moodle\Kernel\* FQCNs are gone; import Middag\Moodle\Runtime\* instead. Framework contracts (Middag\Framework\Kernel\*) are unaffected.
+
+### Refactoring
+
+* **runtime:** move Kernel namespace to Runtime ([fd5f6da](https://github.com/middag-io/middag-php-moodle/commit/fd5f6dafc6a5d7a42aa3f706be37c0b75ab29c42))
+
+
+### Miscellaneous
+
+* release moodle 1.6.0 ([957ec8f](https://github.com/middag-io/middag-php-moodle/commit/957ec8f54f668ac016c1888e9e566585c44e3219))
+
 ## [1.5.0](https://github.com/middag-io/middag-php-moodle/compare/v1.4.0...v1.5.0) (2026-07-09)
 
 
