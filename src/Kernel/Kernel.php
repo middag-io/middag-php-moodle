@@ -53,19 +53,6 @@ use Throwable;
  */
 class Kernel implements KernelInterface
 {
-    /**
-     * Absolute path to THIS package's root (src/Kernel/Kernel.php -> package root).
-     *
-     * As a Composer dependency this resolves inside vendor/ — NOT the consumer
-     * plugin's directory — so it must not be used to locate host resources.
-     *
-     * @deprecated use {@see self::hostDirectory()}, which resolves the consumer
-     *             plugin's directory through Moodle's component registry
-     *
-     * @var string
-     */
-    public const PROJECT_ROOT = __DIR__ . '/../..';
-
     /** @var null|self Singleton instance */
     private static ?self $instance = null;
 
@@ -334,8 +321,8 @@ class Kernel implements KernelInterface
      * Moodle installation, resolved through Moodle's component registry.
      *
      * This is the supported way to locate host resources (facade/, extensions/,
-     * lib.php, ...) — the package-relative {@see self::PROJECT_ROOT} points
-     * inside vendor/ in the Composer layout and is deprecated.
+     * lib.php, ...) — a package-relative path would point inside vendor/ in the
+     * Composer layout, so no such constant exists.
      *
      * Unit tests stub {@see core_component} (tests/bootstrap.php) and drive the
      * result via {@code $GLOBALS['__middag_test_component_dir']}; that stub is

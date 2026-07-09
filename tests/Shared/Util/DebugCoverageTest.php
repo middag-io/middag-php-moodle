@@ -43,7 +43,7 @@ final class DebugCoverageTest extends TestCase
 
         // Wire the static runtime so the debug gate always permits emission
         // (FULL >= NORMAL). The logger is never touched: emit() routes to mtrace.
-        Debug::setRuntime(new NullLogger(), static fn (): int => DebugMode::FULL->value);
+        Debug::setRuntime(new NullLogger(), static fn (): int => DebugMode::Full->value);
     }
 
     protected function tearDown(): void

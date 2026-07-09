@@ -21,18 +21,12 @@ use core\context\system as context_system;
 use core\context\user as context_user;
 
 /**
- * Utility to handle Moodle context classes across versions.
+ * Utility to obtain Moodle context instances.
  *
- * Since Moodle 4.2 there are namespaced classes `core\context\*`.
- * In 4.1 these classes do not exist and only legacy contexts `context_*`
- * are available. Also, cross-version aliases are managed by Moodle core —
- * we must not create them here.
- *
- * This helper:
- * - Prioritises namespaced classes when present (4.2+);
- * - Safely falls back to legacy classes on 4.1;
- * - Exposes utility methods to obtain context instances;
- * - Avoids direct type hints for classes that may not exist in 4.1.
+ * The supported Moodle matrix (4.5→5.2) always ships the namespaced
+ * `core\context\*` classes (introduced in 4.2), so this helper targets them
+ * directly — there is no pre-4.2 `context_*` fallback. Cross-version aliases
+ * are managed by Moodle core; we must not create them here.
  *
  * @api
  */
@@ -47,10 +41,7 @@ class ContextSupport
      */
     public static function system(int $strictness = MUST_EXIST): context_system
     {
-        /** @var context_system $class */
-        $class = self::classFor('system');
-
-        return $class::instance(0, $strictness);
+        return context_system::instance(0, $strictness);
     }
 
     /**
@@ -63,10 +54,7 @@ class ContextSupport
      */
     public static function course(int $courseid, int $strictness = MUST_EXIST): context_course
     {
-        /** @var context_course $class */
-        $class = self::classFor('course');
-
-        return $class::instance($courseid, $strictness);
+        return context_course::instance($courseid, $strictness);
     }
 
     /**
@@ -79,10 +67,7 @@ class ContextSupport
      */
     public static function coursecat(int $categoryid, int $strictness = MUST_EXIST): context_coursecat
     {
-        /** @var context_coursecat $class */
-        $class = self::classFor('coursecat');
-
-        return $class::instance($categoryid, $strictness);
+        return context_coursecat::instance($categoryid, $strictness);
     }
 
     /**
@@ -95,10 +80,7 @@ class ContextSupport
      */
     public static function module(int $cmid, int $strictness = MUST_EXIST): context_module
     {
-        /** @var context_module $class */
-        $class = self::classFor('module');
-
-        return $class::instance($cmid, $strictness);
+        return context_module::instance($cmid, $strictness);
     }
 
     /**
@@ -111,10 +93,7 @@ class ContextSupport
      */
     public static function user(int $userid, int $strictness = MUST_EXIST): context_user
     {
-        /** @var context_user $class */
-        $class = self::classFor('user');
-
-        return $class::instance($userid, $strictness);
+        return context_user::instance($userid, $strictness);
     }
 
     /**
@@ -127,72 +106,22 @@ class ContextSupport
      */
     public static function block(int $blockid, int $strictness = MUST_EXIST): context_block
     {
-        /** @var context_block $class */
-        $class = self::classFor('block');
-
-        return $class::instance($blockid, $strictness);
+        return context_block::instance($blockid, $strictness);
     }
 
     /**
      * Retrieves a context instance by its ID.
      *
-     * In Moodle 4.2+ the canonical entry point is \core\context\base::instance_by_id().
-     * In 4.1 the legacy global \context::instance_by_id() must be used instead.
-     *
-     * This helper hides that difference so callers do not need to depend
-     * directly on the global `context` class.
+     * Thin wrapper over the namespaced `core\context::instance_by_id()` so
+     * callers stay off the host class.
      *
      * @param int $id         Context ID
      * @param int $strictness Moodle strictness constant (IGNORE_MISSING, IGNORE_MULTIPLE, MUST_EXIST)
      *
-     * @return object The resolved context instance
+     * @return context The resolved context instance
      */
-    public static function instanceById(int $id, int $strictness = MUST_EXIST): object
+    public static function instanceById(int $id, int $strictness = MUST_EXIST): context
     {
-        // Moodle 4.2+: prefer the namespaced base context API when available.
-        if (VersionSupport::symbolExists('core\context\base')) {
-            /** @var class-string $base */
-            $base = '\core\context\base';
-
-            return $base::instance_by_id($id, $strictness);
-        }
-
-        // Moodle 4.1 legacy fallback: global context class.
         return context::instance_by_id($id, $strictness);
-    }
-
-    /**
-     * Returns the correct FQCN for the requested context type.
-     *
-     * Prioritises namespaced classes (4.2+) and falls back to legacy ones (4.1).
-     *
-     * @param string $type One of: system, course, module, coursecat, user, block
-     *
-     * @return class-string Fully-qualified context class name
-     */
-    private static function classFor(string $type): string
-    {
-        $map = [
-            'system' => ['\core\context\system', 'context_system'],
-            'course' => ['\core\context\course', 'context_course'],
-            'module' => ['\core\context\module', 'context_module'],
-            'coursecat' => ['\core\context\coursecat', 'context_coursecat'],
-            'user' => ['\core\context\user', 'context_user'],
-            'block' => ['\core\context\block', 'context_block'],
-        ];
-
-        if (!isset($map[$type])) {
-            // Conservative fallback
-            return 'context_system';
-        }
-
-        [$new, $legacy] = $map[$type];
-
-        // If the namespaced class exists (4.2+), use it; otherwise use legacy
-        if (class_exists($new)) {
-            return $new;
-        }
-
-        return $legacy;
     }
 }

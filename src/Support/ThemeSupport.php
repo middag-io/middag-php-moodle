@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use Middag\Moodle\Settings\SettingsResolver;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 
 /**
  * Theme Bridge Support.
@@ -46,14 +46,16 @@ class ThemeSupport
      * Check if theme color inheritance is enabled.
      *
      * Reads the `inherit_theme_colors` setting from core extension config
-     * (canonical key: mdg_core_inherit_theme_colors).
+     * (canonical key under the default policy: mdg_core_inherit_theme_colors).
+     *
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
      *
      * @return bool
      */
-    public static function isInheritanceEnabled(): bool
+    public static function isInheritanceEnabled(?SettingsNamingPolicy $policy = null): bool
     {
         return (bool) ConfigSupport::get(
-            SettingsResolver::resolveConfigKey('inherit_theme_colors', 'core'),
+            ($policy ?? new SettingsNamingPolicy())->configKey('inherit_theme_colors', 'core'),
         );
     }
 

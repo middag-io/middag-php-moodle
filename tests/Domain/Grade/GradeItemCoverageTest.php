@@ -40,7 +40,7 @@ final class GradeItemCoverageTest extends TestCase
     {
         $item = GradeItem::fromRecord(['gradetype' => 1]);
 
-        self::assertSame(GradeType::VALUE, $item->gradeType());
+        self::assertSame(GradeType::Value, $item->gradeType());
     }
 
     #[Test]
@@ -48,7 +48,7 @@ final class GradeItemCoverageTest extends TestCase
     {
         $item = GradeItem::fromRecord(['display' => 2]);
 
-        self::assertSame(GradeDisplayType::PERCENTAGE, $item->displayType());
+        self::assertSame(GradeDisplayType::Percentage, $item->displayType());
     }
 
     #[Test]

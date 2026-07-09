@@ -29,7 +29,7 @@ use Middag\Moodle\Support\ContextSupport;
  */
 class Capability implements CapabilityInterface
 {
-    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
+    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): bool
     {
         $context = $this->resolveContext($contextlevel, $instanceid);
 
@@ -39,7 +39,7 @@ class Capability implements CapabilityInterface
     /**
      * @throws MiddagAuthorizationException
      */
-    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void
+    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): void
     {
         if (!$this->can($capability, $contextlevel, $instanceid, $userid)) {
             throw new MiddagAuthorizationException(
@@ -54,12 +54,12 @@ class Capability implements CapabilityInterface
     private function resolveContext(ContextLevel $contextlevel, int $instanceid): context
     {
         return match ($contextlevel) {
-            ContextLevel::SYSTEM => ContextSupport::system(),
-            ContextLevel::COURSECAT => ContextSupport::coursecat($instanceid),
-            ContextLevel::COURSE => ContextSupport::course($instanceid),
-            ContextLevel::MODULE => ContextSupport::module($instanceid),
-            ContextLevel::BLOCK => ContextSupport::block($instanceid),
-            ContextLevel::USER => ContextSupport::user($instanceid),
+            ContextLevel::System => ContextSupport::system(),
+            ContextLevel::Coursecat => ContextSupport::coursecat($instanceid),
+            ContextLevel::Course => ContextSupport::course($instanceid),
+            ContextLevel::Module => ContextSupport::module($instanceid),
+            ContextLevel::Block => ContextSupport::block($instanceid),
+            ContextLevel::User => ContextSupport::user($instanceid),
         };
     }
 }

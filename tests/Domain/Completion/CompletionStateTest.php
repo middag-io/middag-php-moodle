@@ -33,67 +33,67 @@ final class CompletionStateTest extends TestCase
     #[Test]
     public function incompleteHasValue0(): void
     {
-        $this->assertSame(0, CompletionState::INCOMPLETE->value);
+        $this->assertSame(0, CompletionState::Incomplete->value);
     }
 
     #[Test]
     public function completeHasValue1(): void
     {
-        $this->assertSame(1, CompletionState::COMPLETE->value);
+        $this->assertSame(1, CompletionState::Complete->value);
     }
 
     #[Test]
     public function completePassHasValue2(): void
     {
-        $this->assertSame(2, CompletionState::COMPLETE_PASS->value);
+        $this->assertSame(2, CompletionState::CompletePass->value);
     }
 
     #[Test]
     public function completeFailHasValue3(): void
     {
-        $this->assertSame(3, CompletionState::COMPLETE_FAIL->value);
+        $this->assertSame(3, CompletionState::CompleteFail->value);
     }
 
     #[Test]
     public function isCompleteReturnsFalseOnlyForIncomplete(): void
     {
-        $this->assertFalse(CompletionState::INCOMPLETE->isComplete());
-        $this->assertTrue(CompletionState::COMPLETE->isComplete());
-        $this->assertTrue(CompletionState::COMPLETE_PASS->isComplete());
-        $this->assertTrue(CompletionState::COMPLETE_FAIL->isComplete());
+        $this->assertFalse(CompletionState::Incomplete->isComplete());
+        $this->assertTrue(CompletionState::Complete->isComplete());
+        $this->assertTrue(CompletionState::CompletePass->isComplete());
+        $this->assertTrue(CompletionState::CompleteFail->isComplete());
     }
 
     #[Test]
     public function isPassedReturnsTrueForCompleteAndCompletePass(): void
     {
-        $this->assertFalse(CompletionState::INCOMPLETE->isPassed());
-        $this->assertTrue(CompletionState::COMPLETE->isPassed());
-        $this->assertTrue(CompletionState::COMPLETE_PASS->isPassed());
-        $this->assertFalse(CompletionState::COMPLETE_FAIL->isPassed());
+        $this->assertFalse(CompletionState::Incomplete->isPassed());
+        $this->assertTrue(CompletionState::Complete->isPassed());
+        $this->assertTrue(CompletionState::CompletePass->isPassed());
+        $this->assertFalse(CompletionState::CompleteFail->isPassed());
     }
 
     #[Test]
     public function labelReturnsHumanReadableString(): void
     {
-        $this->assertSame('Incomplete', CompletionState::INCOMPLETE->label());
-        $this->assertSame('Complete', CompletionState::COMPLETE->label());
-        $this->assertSame('Complete (Pass)', CompletionState::COMPLETE_PASS->label());
-        $this->assertSame('Complete (Fail)', CompletionState::COMPLETE_FAIL->label());
+        $this->assertSame('Incomplete', CompletionState::Incomplete->label());
+        $this->assertSame('Complete', CompletionState::Complete->label());
+        $this->assertSame('Complete (Pass)', CompletionState::CompletePass->label());
+        $this->assertSame('Complete (Fail)', CompletionState::CompleteFail->label());
     }
 
     #[Test]
     public function resolveReturnsMatchingCase(): void
     {
-        $this->assertSame(CompletionState::INCOMPLETE, CompletionState::resolve(0));
-        $this->assertSame(CompletionState::COMPLETE, CompletionState::resolve(1));
-        $this->assertSame(CompletionState::COMPLETE_PASS, CompletionState::resolve(2));
-        $this->assertSame(CompletionState::COMPLETE_FAIL, CompletionState::resolve(3));
+        $this->assertSame(CompletionState::Incomplete, CompletionState::resolve(0));
+        $this->assertSame(CompletionState::Complete, CompletionState::resolve(1));
+        $this->assertSame(CompletionState::CompletePass, CompletionState::resolve(2));
+        $this->assertSame(CompletionState::CompleteFail, CompletionState::resolve(3));
     }
 
     #[Test]
     public function resolveDefaultsToIncompleteForUnknownValue(): void
     {
-        $this->assertSame(CompletionState::INCOMPLETE, CompletionState::resolve(99));
-        $this->assertSame(CompletionState::INCOMPLETE, CompletionState::resolve(-1));
+        $this->assertSame(CompletionState::Incomplete, CompletionState::resolve(99));
+        $this->assertSame(CompletionState::Incomplete, CompletionState::resolve(-1));
     }
 }

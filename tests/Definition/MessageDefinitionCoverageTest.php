@@ -36,8 +36,8 @@ final class MessageDefinitionCoverageTest extends TestCase
         $definition = new MessageDefinition(name: 'submission');
 
         self::assertSame('submission', $definition->name);
-        self::assertSame(MessagePermission::PERMITTED, $definition->popup);
-        self::assertSame(MessagePermission::PERMITTED, $definition->email);
+        self::assertSame(MessagePermission::Permitted, $definition->popup);
+        self::assertSame(MessagePermission::Permitted, $definition->email);
         self::assertNull($definition->min_moodle);
         self::assertNull($definition->max_moodle);
     }
@@ -47,15 +47,15 @@ final class MessageDefinitionCoverageTest extends TestCase
     {
         $definition = new MessageDefinition(
             name: 'grading',
-            popup: MessagePermission::FORCED,
-            email: MessagePermission::DISALLOWED,
+            popup: MessagePermission::Forced,
+            email: MessagePermission::Disallowed,
             min_moodle: '4.0',
             max_moodle: '4.5',
         );
 
         self::assertSame('grading', $definition->name);
-        self::assertSame(MessagePermission::FORCED, $definition->popup);
-        self::assertSame(MessagePermission::DISALLOWED, $definition->email);
+        self::assertSame(MessagePermission::Forced, $definition->popup);
+        self::assertSame(MessagePermission::Disallowed, $definition->email);
         self::assertSame('4.0', $definition->min_moodle);
         self::assertSame('4.5', $definition->max_moodle);
     }
@@ -90,8 +90,8 @@ final class MessageDefinitionCoverageTest extends TestCase
     {
         $definition = new MessageDefinition(
             name: 'grading',
-            popup: MessagePermission::FORCED,
-            email: MessagePermission::DISALLOWED,
+            popup: MessagePermission::Forced,
+            email: MessagePermission::Disallowed,
         );
 
         self::assertSame(

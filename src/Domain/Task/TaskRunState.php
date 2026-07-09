@@ -19,28 +19,28 @@ namespace Middag\Moodle\Domain\Task;
  */
 enum TaskRunState: string
 {
-    case NONE = 'none';
+    case None = 'none';
 
-    case RUNNING = 'running';
+    case Running = 'running';
 
-    case FAILED = 'failed';
+    case Failed = 'failed';
 
     public function isActive(): bool
     {
-        return $this === self::RUNNING;
+        return $this === self::Running;
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::NONE => 'Idle',
-            self::RUNNING => 'Running',
-            self::FAILED => 'Failed',
+            self::None => 'Idle',
+            self::Running => 'Running',
+            self::Failed => 'Failed',
         };
     }
 
     public static function resolve(string $value): self
     {
-        return self::tryFrom($value) ?? self::NONE;
+        return self::tryFrom($value) ?? self::None;
     }
 }

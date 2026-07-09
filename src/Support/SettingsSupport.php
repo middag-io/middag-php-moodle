@@ -14,7 +14,7 @@ namespace Middag\Moodle\Support;
 
 use BackedEnum;
 use InvalidArgumentException;
-use Middag\Moodle\Settings\SettingsResolver;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 use ReflectionEnum;
 
 /**
@@ -22,7 +22,8 @@ use ReflectionEnum;
  *
  * Accepts a string-backed enum whose class name follows the convention
  * `{slug}_config` — the slug is extracted automatically to resolve the
- * canonical key via `SettingsResolver::resolve_config_key()`. PascalCase
+ * canonical key via the {@see SettingsNamingPolicy} (pass a custom policy to
+ * read/write keys under a non-MIDDAG prefix). PascalCase
  * spellings (e.g. `FrameworkConfig`) are normalised to snake_case before
  * the slug is derived; an enum whose name cannot be mapped onto
  * `{slug}_config` is rejected instead of silently resolving a dead key.
@@ -39,33 +40,35 @@ class SettingsSupport
     /**
      * Read a setting value.
      *
-     * @param BackedEnum $key a string-backed enum case from a {slug}_config enum
+     * @param BackedEnum                $key    a string-backed enum case from a {slug}_config enum
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
      *
      * @return mixed the stored value, or false if not found
      */
-    public static function get(BackedEnum $key): mixed
+    public static function get(BackedEnum $key, ?SettingsNamingPolicy $policy = null): mixed
     {
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::get(
-            SettingsResolver::resolveConfigKey($name, $extension),
+            ($policy ?? new SettingsNamingPolicy())->configKey($name, $extension),
         );
     }
 
     /**
      * Write a setting value.
      *
-     * @param BackedEnum $key   a string-backed enum case
-     * @param mixed      $value the value to store
+     * @param BackedEnum                $key    a string-backed enum case
+     * @param mixed                     $value  the value to store
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
      *
      * @return bool true on success
      */
-    public static function set(BackedEnum $key, mixed $value): bool
+    public static function set(BackedEnum $key, mixed $value, ?SettingsNamingPolicy $policy = null): bool
     {
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::setConfig(
-            SettingsResolver::resolveConfigKey($name, $extension),
+            ($policy ?? new SettingsNamingPolicy())->configKey($name, $extension),
             $value,
         );
     }
@@ -73,16 +76,17 @@ class SettingsSupport
     /**
      * Remove a setting value.
      *
-     * @param BackedEnum $key a string-backed enum case
+     * @param BackedEnum                $key    a string-backed enum case
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
      *
      * @return bool true on success
      */
-    public static function unset(BackedEnum $key): bool
+    public static function unset(BackedEnum $key, ?SettingsNamingPolicy $policy = null): bool
     {
         [$name, $extension] = self::resolve($key);
 
         return ConfigSupport::unsetConfig(
-            SettingsResolver::resolveConfigKey($name, $extension),
+            ($policy ?? new SettingsNamingPolicy())->configKey($name, $extension),
         );
     }
 

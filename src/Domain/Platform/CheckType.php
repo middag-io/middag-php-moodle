@@ -21,11 +21,11 @@ namespace Middag\Moodle\Domain\Platform;
  */
 enum CheckType: string
 {
-    case STATUS = 'status';
+    case Status = 'status';
 
-    case SECURITY = 'security';
+    case Security = 'security';
 
-    case PERFORMANCE = 'performance';
+    case Performance = 'performance';
 
     /**
      * Convert to Moodle's string value.

@@ -39,7 +39,7 @@ final class GradeCoverageTest extends TestCase
     {
         $grade = Grade::fromRecord(['feedbackformat' => 1]);
 
-        self::assertSame(TextFormat::HTML, $grade->feedbackFormat());
+        self::assertSame(TextFormat::Html, $grade->feedbackFormat());
     }
 
     #[Test]
@@ -47,7 +47,7 @@ final class GradeCoverageTest extends TestCase
     {
         $grade = Grade::fromRecord(['informationformat' => 4]);
 
-        self::assertSame(TextFormat::MARKDOWN, $grade->infoFormat());
+        self::assertSame(TextFormat::Markdown, $grade->infoFormat());
     }
 
     #[Test]

@@ -34,7 +34,7 @@ interface CapabilityInterface
      * @param int          $instanceid   instance ID for the context (e.g. course ID)
      * @param null|int     $userid       user ID, or null for current user
      */
-    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool;
+    public function can(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): bool;
 
     /**
      * Require a capability, throwing an exception if not met.
@@ -46,5 +46,5 @@ interface CapabilityInterface
      *
      * @throws MiddagAuthorizationException
      */
-    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void;
+    public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): void;
 }

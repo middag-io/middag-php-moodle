@@ -21,20 +21,20 @@ namespace Middag\Moodle\Shared\Enum;
  */
 enum TextFormat: int
 {
-    case PLAIN = 0;
+    case Plain = 0;
 
-    case HTML = 1;
+    case Html = 1;
 
-    case WIKI = 3;
+    case Wiki = 3;
 
-    case MARKDOWN = 4;
+    case Markdown = 4;
 
     /**
      * Whether the format is HTML.
      */
     public function isHtml(): bool
     {
-        return $this === self::HTML;
+        return $this === self::Html;
     }
 
     /**
@@ -42,7 +42,7 @@ enum TextFormat: int
      */
     public function isMarkdown(): bool
     {
-        return $this === self::MARKDOWN;
+        return $this === self::Markdown;
     }
 
     /**
@@ -51,10 +51,10 @@ enum TextFormat: int
     public function label(): string
     {
         return match ($this) {
-            self::PLAIN => 'Plain text',
-            self::HTML => 'HTML',
-            self::WIKI => 'Wiki-like',
-            self::MARKDOWN => 'Markdown',
+            self::Plain => 'Plain text',
+            self::Html => 'HTML',
+            self::Wiki => 'Wiki-like',
+            self::Markdown => 'Markdown',
         };
     }
 
@@ -63,6 +63,6 @@ enum TextFormat: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::PLAIN;
+        return self::tryFrom($value) ?? self::Plain;
     }
 }

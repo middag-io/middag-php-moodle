@@ -30,76 +30,76 @@ final class CheckResultStatusCoverageTest extends TestCase
     #[Test]
     public function testBackingValues(): void
     {
-        self::assertSame('na', CheckResultStatus::NA->value);
-        self::assertSame('ok', CheckResultStatus::OK->value);
-        self::assertSame('info', CheckResultStatus::INFO->value);
-        self::assertSame('unknown', CheckResultStatus::UNKNOWN->value);
-        self::assertSame('warning', CheckResultStatus::WARNING->value);
-        self::assertSame('error', CheckResultStatus::ERROR->value);
-        self::assertSame('critical', CheckResultStatus::CRITICAL->value);
+        self::assertSame('na', CheckResultStatus::Na->value);
+        self::assertSame('ok', CheckResultStatus::Ok->value);
+        self::assertSame('info', CheckResultStatus::Info->value);
+        self::assertSame('unknown', CheckResultStatus::Unknown->value);
+        self::assertSame('warning', CheckResultStatus::Warning->value);
+        self::assertSame('error', CheckResultStatus::Error->value);
+        self::assertSame('critical', CheckResultStatus::Critical->value);
     }
 
     #[Test]
     public function testIsHealthyIsTrueOnlyForNaOkAndInfo(): void
     {
-        self::assertTrue(CheckResultStatus::NA->isHealthy());
-        self::assertTrue(CheckResultStatus::OK->isHealthy());
-        self::assertTrue(CheckResultStatus::INFO->isHealthy());
+        self::assertTrue(CheckResultStatus::Na->isHealthy());
+        self::assertTrue(CheckResultStatus::Ok->isHealthy());
+        self::assertTrue(CheckResultStatus::Info->isHealthy());
 
-        self::assertFalse(CheckResultStatus::UNKNOWN->isHealthy());
-        self::assertFalse(CheckResultStatus::WARNING->isHealthy());
-        self::assertFalse(CheckResultStatus::ERROR->isHealthy());
-        self::assertFalse(CheckResultStatus::CRITICAL->isHealthy());
+        self::assertFalse(CheckResultStatus::Unknown->isHealthy());
+        self::assertFalse(CheckResultStatus::Warning->isHealthy());
+        self::assertFalse(CheckResultStatus::Error->isHealthy());
+        self::assertFalse(CheckResultStatus::Critical->isHealthy());
     }
 
     #[Test]
     public function testIsCriticalOrWorseIsTrueOnlyForErrorAndCritical(): void
     {
-        self::assertTrue(CheckResultStatus::ERROR->isCriticalOrWorse());
-        self::assertTrue(CheckResultStatus::CRITICAL->isCriticalOrWorse());
+        self::assertTrue(CheckResultStatus::Error->isCriticalOrWorse());
+        self::assertTrue(CheckResultStatus::Critical->isCriticalOrWorse());
 
-        self::assertFalse(CheckResultStatus::NA->isCriticalOrWorse());
-        self::assertFalse(CheckResultStatus::OK->isCriticalOrWorse());
-        self::assertFalse(CheckResultStatus::INFO->isCriticalOrWorse());
-        self::assertFalse(CheckResultStatus::UNKNOWN->isCriticalOrWorse());
-        self::assertFalse(CheckResultStatus::WARNING->isCriticalOrWorse());
+        self::assertFalse(CheckResultStatus::Na->isCriticalOrWorse());
+        self::assertFalse(CheckResultStatus::Ok->isCriticalOrWorse());
+        self::assertFalse(CheckResultStatus::Info->isCriticalOrWorse());
+        self::assertFalse(CheckResultStatus::Unknown->isCriticalOrWorse());
+        self::assertFalse(CheckResultStatus::Warning->isCriticalOrWorse());
     }
 
     #[Test]
     public function testSeverityRanksEveryCaseFromLeastToMostSevere(): void
     {
-        self::assertSame(0, CheckResultStatus::NA->severity());
-        self::assertSame(1, CheckResultStatus::OK->severity());
-        self::assertSame(2, CheckResultStatus::INFO->severity());
-        self::assertSame(3, CheckResultStatus::UNKNOWN->severity());
-        self::assertSame(4, CheckResultStatus::WARNING->severity());
-        self::assertSame(5, CheckResultStatus::ERROR->severity());
-        self::assertSame(6, CheckResultStatus::CRITICAL->severity());
+        self::assertSame(0, CheckResultStatus::Na->severity());
+        self::assertSame(1, CheckResultStatus::Ok->severity());
+        self::assertSame(2, CheckResultStatus::Info->severity());
+        self::assertSame(3, CheckResultStatus::Unknown->severity());
+        self::assertSame(4, CheckResultStatus::Warning->severity());
+        self::assertSame(5, CheckResultStatus::Error->severity());
+        self::assertSame(6, CheckResultStatus::Critical->severity());
     }
 
     #[Test]
     public function testLabelReturnsAHumanReadableStringForEveryCase(): void
     {
-        self::assertSame('N/A', CheckResultStatus::NA->label());
-        self::assertSame('OK', CheckResultStatus::OK->label());
-        self::assertSame('Info', CheckResultStatus::INFO->label());
-        self::assertSame('Unknown', CheckResultStatus::UNKNOWN->label());
-        self::assertSame('Warning', CheckResultStatus::WARNING->label());
-        self::assertSame('Error', CheckResultStatus::ERROR->label());
-        self::assertSame('Critical', CheckResultStatus::CRITICAL->label());
+        self::assertSame('N/A', CheckResultStatus::Na->label());
+        self::assertSame('OK', CheckResultStatus::Ok->label());
+        self::assertSame('Info', CheckResultStatus::Info->label());
+        self::assertSame('Unknown', CheckResultStatus::Unknown->label());
+        self::assertSame('Warning', CheckResultStatus::Warning->label());
+        self::assertSame('Error', CheckResultStatus::Error->label());
+        self::assertSame('Critical', CheckResultStatus::Critical->label());
     }
 
     #[Test]
     public function testResolveReturnsTheMatchingCaseForAKnownValue(): void
     {
-        self::assertSame(CheckResultStatus::WARNING, CheckResultStatus::resolve('warning'));
-        self::assertSame(CheckResultStatus::CRITICAL, CheckResultStatus::resolve('critical'));
+        self::assertSame(CheckResultStatus::Warning, CheckResultStatus::resolve('warning'));
+        self::assertSame(CheckResultStatus::Critical, CheckResultStatus::resolve('critical'));
     }
 
     #[Test]
     public function testResolveFallsBackToUnknownForAnUnrecognizedValue(): void
     {
-        self::assertSame(CheckResultStatus::UNKNOWN, CheckResultStatus::resolve('not-a-status'));
-        self::assertSame(CheckResultStatus::UNKNOWN, CheckResultStatus::resolve(''));
+        self::assertSame(CheckResultStatus::Unknown, CheckResultStatus::resolve('not-a-status'));
+        self::assertSame(CheckResultStatus::Unknown, CheckResultStatus::resolve(''));
     }
 }

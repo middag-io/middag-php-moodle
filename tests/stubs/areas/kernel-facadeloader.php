@@ -15,10 +15,9 @@ declare(strict_types=1);
  *
  * FacadeLoader discovers facades by globbing *.php filenames and rebuilding an
  * FQCN it then feeds to class_exists() + ReflectionClass — the file contents are
- * never included. The three resolution shapes are:
- *   - core:       {component}\base\facade\{Basename}
- *   - legacy ext: {component}\extensions\{slug}\facade\{Basename}
- *   - suffix:     {component}\ + the file's path under the host root ('/'→'\\')
+ * never included. The two resolution shapes are:
+ *   - core:   {component}\facade\{Basename}
+ *   - suffix: {component}\ + the file's path under the host root ('/'→'\\')
  * where {component} is the bootstrap-configured ComponentContext ("local_example").
  *
  * These stand-in classes make that resolution honest without a Moodle plugin on
@@ -28,14 +27,11 @@ declare(strict_types=1);
  * the file is additive and order-independent, like the other area stubs.
  */
 
-if (!class_exists('local_example\base\facade\CovAlphaFacade', false)) {
-    eval('namespace local_example\base\facade; class CovAlphaFacade {}');
+if (!class_exists('local_example\facade\CovAlphaFacade', false)) {
+    eval('namespace local_example\facade; class CovAlphaFacade {}');
 }
-if (!class_exists('local_example\base\facade\CovAbstractFacade', false)) {
-    eval('namespace local_example\base\facade; abstract class CovAbstractFacade {}');
-}
-if (!class_exists('local_example\extensions\covext\facade\CovExtFacade', false)) {
-    eval('namespace local_example\extensions\covext\facade; class CovExtFacade {}');
+if (!class_exists('local_example\facade\CovAbstractFacade', false)) {
+    eval('namespace local_example\facade; abstract class CovAbstractFacade {}');
 }
 if (!class_exists('local_example\extensions\covext\deep\cov_suffix_facade', false)) {
     eval('namespace local_example\extensions\covext\deep; class cov_suffix_facade {}');

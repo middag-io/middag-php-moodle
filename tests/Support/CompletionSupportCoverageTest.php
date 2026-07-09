@@ -128,7 +128,7 @@ final class CompletionSupportCoverageTest extends TestCase
         self::assertNull(CompletionSupport::getCourseProgress(5, 0));
         self::assertSame([], CompletionSupport::getCourseCmCompletions(0, 5));
         self::assertSame([], CompletionSupport::getCourseCmCompletions(5, 0));
-        self::assertFalse(CompletionSupport::updateCmState(0, 5, 7, CompletionState::COMPLETE));
+        self::assertFalse(CompletionSupport::updateCmState(0, 5, 7, CompletionState::Complete));
         self::assertSame(0, CompletionSupport::getTrackedUsersCount(0));
         self::assertSame([], CompletionSupport::getCourseCriteria(0));
         self::assertFalse(CompletionSupport::markCourseEnrolled(0, 5));
@@ -182,7 +182,7 @@ final class CompletionSupportCoverageTest extends TestCase
     {
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['completion' => 2]]];
 
-        self::assertSame(CompletionTracking::AUTOMATIC, CompletionSupport::getCmTracking(10, 6));
+        self::assertSame(CompletionTracking::Automatic, CompletionSupport::getCmTracking(10, 6));
     }
 
     #[Test]
@@ -192,7 +192,7 @@ final class CompletionSupportCoverageTest extends TestCase
         // COMPLETION_TRACKING_NONE (an untracked module).
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['completion' => 0]]];
 
-        self::assertSame(CompletionTracking::NONE, CompletionSupport::getCmTracking(10, 6));
+        self::assertSame(CompletionTracking::None, CompletionSupport::getCmTracking(10, 6));
     }
 
     #[Test]
@@ -433,8 +433,8 @@ final class CompletionSupportCoverageTest extends TestCase
     {
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['id' => 6]]];
 
-        self::assertTrue(CompletionSupport::updateCmState(10, 6, 7, CompletionState::COMPLETE));
-        self::assertSame([CompletionState::COMPLETE->value, 7], $GLOBALS['__middag_test_updated_state']);
+        self::assertTrue(CompletionSupport::updateCmState(10, 6, 7, CompletionState::Complete));
+        self::assertSame([CompletionState::Complete->value, 7], $GLOBALS['__middag_test_updated_state']);
     }
 
     #[Test]
@@ -442,7 +442,7 @@ final class CompletionSupportCoverageTest extends TestCase
     {
         $GLOBALS['__middag_test_course_record'] = false;
 
-        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::COMPLETE));
+        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::Complete));
     }
 
     #[Test]
@@ -450,7 +450,7 @@ final class CompletionSupportCoverageTest extends TestCase
     {
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => []];
 
-        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::COMPLETE));
+        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::Complete));
     }
 
     #[Test]
@@ -459,7 +459,7 @@ final class CompletionSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['id' => 6]]];
         $GLOBALS['__middag_test_throw_update_state'] = true;
 
-        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::COMPLETE));
+        self::assertFalse(CompletionSupport::updateCmState(10, 6, 7, CompletionState::Complete));
     }
 
     #[Test]

@@ -34,7 +34,7 @@ use Attribute;
  *
  *         public function get_aggregate(): string { return 'enrolment'; }
  *         public function get_type(): ?string     { return 'user_enrolment'; }
- *         public function get_action(): Signal    { return Signal::CREATED; }
+ *         public function get_action(): Signal    { return Signal::Created; }
  *     }
  *
  * @api

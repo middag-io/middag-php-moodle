@@ -33,40 +33,40 @@ final class CourseVisibilityTest extends TestCase
     #[Test]
     public function hiddenHasValue0(): void
     {
-        $this->assertSame(0, CourseVisibility::HIDDEN->value);
+        $this->assertSame(0, CourseVisibility::Hidden->value);
     }
 
     #[Test]
     public function visibleHasValue1(): void
     {
-        $this->assertSame(1, CourseVisibility::VISIBLE->value);
+        $this->assertSame(1, CourseVisibility::Visible->value);
     }
 
     #[Test]
     public function isVisibleReturnsTrueOnlyForVisible(): void
     {
-        $this->assertFalse(CourseVisibility::HIDDEN->isVisible());
-        $this->assertTrue(CourseVisibility::VISIBLE->isVisible());
+        $this->assertFalse(CourseVisibility::Hidden->isVisible());
+        $this->assertTrue(CourseVisibility::Visible->isVisible());
     }
 
     #[Test]
     public function labelReturnsHumanReadableString(): void
     {
-        $this->assertSame('Hidden', CourseVisibility::HIDDEN->label());
-        $this->assertSame('Visible', CourseVisibility::VISIBLE->label());
+        $this->assertSame('Hidden', CourseVisibility::Hidden->label());
+        $this->assertSame('Visible', CourseVisibility::Visible->label());
     }
 
     #[Test]
     public function resolveReturnsMatchingCase(): void
     {
-        $this->assertSame(CourseVisibility::HIDDEN, CourseVisibility::resolve(0));
-        $this->assertSame(CourseVisibility::VISIBLE, CourseVisibility::resolve(1));
+        $this->assertSame(CourseVisibility::Hidden, CourseVisibility::resolve(0));
+        $this->assertSame(CourseVisibility::Visible, CourseVisibility::resolve(1));
     }
 
     #[Test]
     public function resolveDefaultsToVisibleForUnknownValue(): void
     {
-        $this->assertSame(CourseVisibility::VISIBLE, CourseVisibility::resolve(99));
-        $this->assertSame(CourseVisibility::VISIBLE, CourseVisibility::resolve(-1));
+        $this->assertSame(CourseVisibility::Visible, CourseVisibility::resolve(99));
+        $this->assertSame(CourseVisibility::Visible, CourseVisibility::resolve(-1));
     }
 }

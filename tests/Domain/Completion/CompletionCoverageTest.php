@@ -35,7 +35,7 @@ final class CompletionCoverageTest extends TestCase
     {
         $entity = Completion::fromRecord(['completionstate' => 2]);
 
-        self::assertSame(CompletionState::COMPLETE_PASS, $entity->getState());
+        self::assertSame(CompletionState::CompletePass, $entity->getState());
     }
 
     #[Test]
@@ -43,7 +43,7 @@ final class CompletionCoverageTest extends TestCase
     {
         $entity = Completion::fromRecord(['completionstate' => 99]);
 
-        self::assertSame(CompletionState::INCOMPLETE, $entity->getState());
+        self::assertSame(CompletionState::Incomplete, $entity->getState());
     }
 
     #[Test]
@@ -51,16 +51,16 @@ final class CompletionCoverageTest extends TestCase
     {
         $entity = new Completion();
 
-        $returned = $entity->withState(CompletionState::COMPLETE_FAIL);
+        $returned = $entity->withState(CompletionState::CompleteFail);
 
         self::assertSame($entity, $returned);
-        self::assertSame(CompletionState::COMPLETE_FAIL, $entity->getState());
+        self::assertSame(CompletionState::CompleteFail, $entity->getState());
     }
 
     #[Test]
     public function isCompleteTrueForNonIncompleteState(): void
     {
-        $entity = (new Completion())->withState(CompletionState::COMPLETE);
+        $entity = (new Completion())->withState(CompletionState::Complete);
 
         self::assertTrue($entity->isComplete());
     }
@@ -68,7 +68,7 @@ final class CompletionCoverageTest extends TestCase
     #[Test]
     public function isCompleteFalseForIncompleteState(): void
     {
-        $entity = (new Completion())->withState(CompletionState::INCOMPLETE);
+        $entity = (new Completion())->withState(CompletionState::Incomplete);
 
         self::assertFalse($entity->isComplete());
     }
@@ -129,7 +129,7 @@ final class CompletionCoverageTest extends TestCase
         self::assertSame(5, $entity->get_id());
         self::assertSame(12, $entity->get_coursemoduleid());
         self::assertSame(3, $entity->get_userid());
-        self::assertSame(CompletionState::COMPLETE, $entity->getState());
+        self::assertSame(CompletionState::Complete, $entity->getState());
         self::assertTrue($entity->hasViewed());
         self::assertSame(9, $entity->get_overrideby());
         self::assertSame(1700, $entity->getTimemodified());
@@ -167,7 +167,7 @@ final class CompletionCoverageTest extends TestCase
         self::assertNull($entity->getId());
         self::assertSame(0, $entity->get_coursemoduleid());
         self::assertSame(0, $entity->get_userid());
-        self::assertSame(CompletionState::INCOMPLETE, $entity->getState());
+        self::assertSame(CompletionState::Incomplete, $entity->getState());
         self::assertSame(0, $entity->get_viewed());
         self::assertNull($entity->get_overrideby());
     }

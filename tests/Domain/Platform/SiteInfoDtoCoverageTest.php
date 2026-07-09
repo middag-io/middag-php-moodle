@@ -37,7 +37,7 @@ final class SiteInfoDtoCoverageTest extends TestCase
         self::assertSame('', $dto->fullname);
         self::assertSame('', $dto->shortname);
         self::assertSame('', $dto->summary);
-        self::assertSame(TextFormat::HTML, $dto->summaryformat);
+        self::assertSame(TextFormat::Html, $dto->summaryformat);
         self::assertSame('', $dto->format);
         self::assertSame('', $dto->lang);
         self::assertSame('', $dto->theme);
@@ -53,7 +53,7 @@ final class SiteInfoDtoCoverageTest extends TestCase
             fullname: 'Helico Site',
             shortname: 'helico',
             summary: '<p>Welcome</p>',
-            summaryformat: TextFormat::MARKDOWN,
+            summaryformat: TextFormat::Markdown,
             format: 'topics',
             lang: 'pt_br',
             theme: 'boost',
@@ -64,7 +64,7 @@ final class SiteInfoDtoCoverageTest extends TestCase
         self::assertSame('Helico Site', $dto->fullname);
         self::assertSame('helico', $dto->shortname);
         self::assertSame('<p>Welcome</p>', $dto->summary);
-        self::assertSame(TextFormat::MARKDOWN, $dto->summaryformat);
+        self::assertSame(TextFormat::Markdown, $dto->summaryformat);
         self::assertSame('topics', $dto->format);
         self::assertSame('pt_br', $dto->lang);
         self::assertSame('boost', $dto->theme);
@@ -79,7 +79,7 @@ final class SiteInfoDtoCoverageTest extends TestCase
             fullname: 'Helico Site',
             shortname: 'helico',
             summary: '<p>Welcome</p>',
-            summaryformat: TextFormat::MARKDOWN,
+            summaryformat: TextFormat::Markdown,
             format: 'topics',
             lang: 'pt_br',
             theme: 'boost',
@@ -92,7 +92,7 @@ final class SiteInfoDtoCoverageTest extends TestCase
             'fullname' => 'Helico Site',
             'shortname' => 'helico',
             'summary' => '<p>Welcome</p>',
-            'summaryformat' => TextFormat::MARKDOWN->value,
+            'summaryformat' => TextFormat::Markdown->value,
             'format' => 'topics',
             'lang' => 'pt_br',
             'theme' => 'boost',
@@ -104,9 +104,9 @@ final class SiteInfoDtoCoverageTest extends TestCase
     #[Test]
     public function testJsonSerializeDelegatesToToArray(): void
     {
-        $dto = new SiteInfoDto(fullname: 'Helico Site', summaryformat: TextFormat::PLAIN);
+        $dto = new SiteInfoDto(fullname: 'Helico Site', summaryformat: TextFormat::Plain);
 
         self::assertSame($dto->toArray(), $dto->jsonSerialize());
-        self::assertSame(TextFormat::PLAIN->value, $dto->toArray()['summaryformat']);
+        self::assertSame(TextFormat::Plain->value, $dto->toArray()['summaryformat']);
     }
 }

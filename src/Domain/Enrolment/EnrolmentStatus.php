@@ -22,9 +22,9 @@ namespace Middag\Moodle\Domain\Enrolment;
  */
 enum EnrolmentStatus: int
 {
-    case ACTIVE = 0;
+    case Active = 0;
 
-    case SUSPENDED = 1;
+    case Suspended = 1;
 
     /**
      * Returns the Moodle constant value for use with enrol APIs.
@@ -40,8 +40,8 @@ enum EnrolmentStatus: int
     public function label(): string
     {
         return match ($this) {
-            self::ACTIVE => 'Active',
-            self::SUSPENDED => 'Suspended',
+            self::Active => 'Active',
+            self::Suspended => 'Suspended',
         };
     }
 
@@ -50,7 +50,7 @@ enum EnrolmentStatus: int
      */
     public function isActive(): bool
     {
-        return $this === self::ACTIVE;
+        return $this === self::Active;
     }
 
     /**
@@ -58,6 +58,6 @@ enum EnrolmentStatus: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::ACTIVE;
+        return self::tryFrom($value) ?? self::Active;
     }
 }

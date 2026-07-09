@@ -56,37 +56,37 @@ final class MformFieldMapperCoverageTest extends TestCase
     public static function fieldTypeProvider(): array
     {
         return [
-            'text' => [FieldType::TEXT, 'text', PARAM_TEXT],
-            'textarea' => [FieldType::TEXTAREA, 'textarea', PARAM_TEXT],
-            'password' => [FieldType::PASSWORD, 'passwordunmask', PARAM_RAW],
-            'email' => [FieldType::EMAIL, 'text', PARAM_EMAIL],
-            'url' => [FieldType::URL, 'text', PARAM_URL],
-            'int' => [FieldType::INT, 'text', PARAM_INT],
-            'float' => [FieldType::FLOAT, 'text', PARAM_FLOAT],
-            'select' => [FieldType::SELECT, 'select', PARAM_RAW],
-            'multiselect' => [FieldType::MULTISELECT, 'autocomplete', PARAM_RAW],
-            'radio' => [FieldType::RADIO, 'radio', PARAM_RAW],
-            'checkbox' => [FieldType::CHECKBOX, 'advcheckbox', PARAM_INT],
-            'switch' => [FieldType::SWITCH, 'advcheckbox', PARAM_INT],
-            'date' => [FieldType::DATE, 'date_selector', null],
-            'datetime' => [FieldType::DATETIME, 'date_time_selector', null],
-            'duration' => [FieldType::DURATION, 'duration', null],
-            'file' => [FieldType::FILE, 'filepicker', null],
-            'entity_picker' => [FieldType::ENTITY_PICKER, 'autocomplete', PARAM_RAW],
-            'hidden' => [FieldType::HIDDEN, 'hidden', PARAM_RAW],
-            'static' => [FieldType::STATIC, 'static', null],
-            'header' => [FieldType::HEADER, 'header', null],
+            'text' => [FieldType::Text, 'text', PARAM_TEXT],
+            'textarea' => [FieldType::Textarea, 'textarea', PARAM_TEXT],
+            'password' => [FieldType::Password, 'passwordunmask', PARAM_RAW],
+            'email' => [FieldType::Email, 'text', PARAM_EMAIL],
+            'url' => [FieldType::Url, 'text', PARAM_URL],
+            'int' => [FieldType::Int, 'text', PARAM_INT],
+            'float' => [FieldType::Float, 'text', PARAM_FLOAT],
+            'select' => [FieldType::Select, 'select', PARAM_RAW],
+            'multiselect' => [FieldType::Multiselect, 'autocomplete', PARAM_RAW],
+            'radio' => [FieldType::Radio, 'radio', PARAM_RAW],
+            'checkbox' => [FieldType::Checkbox, 'advcheckbox', PARAM_INT],
+            'switch' => [FieldType::Switch, 'advcheckbox', PARAM_INT],
+            'date' => [FieldType::Date, 'date_selector', null],
+            'datetime' => [FieldType::Datetime, 'date_time_selector', null],
+            'duration' => [FieldType::Duration, 'duration', null],
+            'file' => [FieldType::File, 'filepicker', null],
+            'entity_picker' => [FieldType::EntityPicker, 'autocomplete', PARAM_RAW],
+            'hidden' => [FieldType::Hidden, 'hidden', PARAM_RAW],
+            'static' => [FieldType::Static, 'static', null],
+            'header' => [FieldType::Header, 'header', null],
             // default arm (no dedicated mform element):
-            'richtext_default' => [FieldType::RICHTEXT, 'text', PARAM_TEXT],
-            'slider_default' => [FieldType::SLIDER, 'text', PARAM_TEXT],
-            'tags_default' => [FieldType::TAGS, 'text', PARAM_TEXT],
+            'richtext_default' => [FieldType::Richtext, 'text', PARAM_TEXT],
+            'slider_default' => [FieldType::Slider, 'text', PARAM_TEXT],
+            'tags_default' => [FieldType::Tags, 'text', PARAM_TEXT],
         ];
     }
 
     #[Test]
     public function requiredFieldGetsRequiredRule(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::TEXT, required: true));
+        $spec = $this->mapper->map($this->field(FieldType::Text, required: true));
 
         $this->assertSame(['required'], $spec->rule);
     }
@@ -94,7 +94,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function optionalFieldHasNoRule(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::TEXT, required: false));
+        $spec = $this->mapper->map($this->field(FieldType::Text, required: false));
 
         $this->assertNull($spec->rule);
     }
@@ -103,7 +103,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     public function checkboxNeverGetsARuleEvenWhenRequired(): void
     {
         // CHECKBOX/SWITCH intentionally omit the rule branch.
-        $spec = $this->mapper->map($this->field(FieldType::CHECKBOX, required: true));
+        $spec = $this->mapper->map($this->field(FieldType::Checkbox, required: true));
 
         $this->assertNull($spec->rule);
     }
@@ -111,7 +111,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function selectCarriesItsOptions(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::SELECT, options: ['a' => 'A', 'b' => 'B']));
+        $spec = $this->mapper->map($this->field(FieldType::Select, options: ['a' => 'A', 'b' => 'B']));
 
         $this->assertSame(['a' => 'A', 'b' => 'B'], $spec->options);
     }
@@ -119,7 +119,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function multiselectMarksMultipleElementArg(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::MULTISELECT));
+        $spec = $this->mapper->map($this->field(FieldType::Multiselect));
 
         $this->assertSame(['multiple' => true], $spec->element_args);
     }
@@ -127,7 +127,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function entityPickerForwardsAttributesAsElementArgs(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::ENTITY_PICKER, attributes: ['ajax' => 'core/search']));
+        $spec = $this->mapper->map($this->field(FieldType::EntityPicker, attributes: ['ajax' => 'core/search']));
 
         $this->assertSame(['ajax' => 'core/search'], $spec->element_args);
     }
@@ -135,7 +135,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function labelUsesTranslatableKey(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::TEXT, label: Translatable::of('field.title', 'local_example')));
+        $spec = $this->mapper->map($this->field(FieldType::Text, label: Translatable::of('field.title', 'local_example')));
 
         $this->assertSame('field.title', $spec->label_html);
     }
@@ -143,7 +143,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function labelUsesRawStringWhenProvided(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::TEXT, label: 'Explicit Label'));
+        $spec = $this->mapper->map($this->field(FieldType::Text, label: 'Explicit Label'));
 
         $this->assertSame('Explicit Label', $spec->label_html);
     }
@@ -151,7 +151,7 @@ final class MformFieldMapperCoverageTest extends TestCase
     #[Test]
     public function labelFallsBackToHumanisedNameWhenEmpty(): void
     {
-        $spec = $this->mapper->map($this->field(FieldType::TEXT, name: 'user_full_name', label: ''));
+        $spec = $this->mapper->map($this->field(FieldType::Text, name: 'user_full_name', label: ''));
 
         $this->assertSame('User full name', $spec->label_html);
     }

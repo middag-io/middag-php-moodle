@@ -24,7 +24,7 @@ final readonly class CacheDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,
-        public CacheMode $mode = CacheMode::APPLICATION,
+        public CacheMode $mode = CacheMode::Application,
         public bool $simple_keys = true,
         public bool $simple_data = false,
         public ?string $min_moodle = null,

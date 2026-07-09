@@ -23,7 +23,7 @@ final class CheckResultDto extends AbstractDto
 {
     public function __construct(
         public string $checkId = '',
-        public CheckResultStatus $status = CheckResultStatus::UNKNOWN,
+        public CheckResultStatus $status = CheckResultStatus::Unknown,
         public string $summary = '',
         public ?string $details = null,
         public ?int $timecreated = null,

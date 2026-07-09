@@ -15,3 +15,12 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: missingType.iterableValue
+        # moodle-stubs defines the PARAM_* constants as null placeholders
+        # (lib/moodlelib.stub.php: define('PARAM_TEXT', null)), so PHPStan
+        # evaluates the promoted `string $param = PARAM_TEXT` default as null.
+        # At runtime PARAM_TEXT is the string 'text' — stub-resolution
+        # false-positive, not a real finding. Scoped visible exemption, not a
+        # baseline pad.
+        -
+            identifier: parameter.defaultValue
+            path: src/Settings/Type/Text.php

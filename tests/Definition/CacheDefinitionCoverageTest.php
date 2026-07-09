@@ -32,7 +32,7 @@ final class CacheDefinitionCoverageTest extends TestCase
         $cache = new CacheDefinition(name: 'sessions');
 
         self::assertSame('sessions', $cache->name);
-        self::assertSame(CacheMode::APPLICATION, $cache->mode);
+        self::assertSame(CacheMode::Application, $cache->mode);
         self::assertTrue($cache->simple_keys);
         self::assertFalse($cache->simple_data);
         self::assertNull($cache->min_moodle);
@@ -44,7 +44,7 @@ final class CacheDefinitionCoverageTest extends TestCase
     {
         $cache = new CacheDefinition(
             name: 'lookups',
-            mode: CacheMode::SESSION,
+            mode: CacheMode::Session,
             simple_keys: false,
             simple_data: true,
             min_moodle: '4.0',
@@ -52,7 +52,7 @@ final class CacheDefinitionCoverageTest extends TestCase
         );
 
         self::assertSame('lookups', $cache->name);
-        self::assertSame(CacheMode::SESSION, $cache->mode);
+        self::assertSame(CacheMode::Session, $cache->mode);
         self::assertFalse($cache->simple_keys);
         self::assertTrue($cache->simple_data);
         self::assertSame('4.0', $cache->min_moodle);
@@ -78,7 +78,7 @@ final class CacheDefinitionCoverageTest extends TestCase
 
         // simple_data defaults to false → the 'simpledata' key must be absent.
         self::assertSame(
-            ['mode' => CacheMode::APPLICATION->value, 'simplekeys' => true],
+            ['mode' => CacheMode::Application->value, 'simplekeys' => true],
             $entry,
         );
         self::assertArrayNotHasKey('simpledata', $entry);
@@ -104,17 +104,17 @@ final class CacheDefinitionCoverageTest extends TestCase
     #[Test]
     public function toMoodleArrayMapsSessionMode(): void
     {
-        $entry = (new CacheDefinition(name: 'sessions', mode: CacheMode::SESSION))->toMoodleArray('local_example');
+        $entry = (new CacheDefinition(name: 'sessions', mode: CacheMode::Session))->toMoodleArray('local_example');
 
-        self::assertSame(CacheMode::SESSION->value, $entry['mode']);
+        self::assertSame(CacheMode::Session->value, $entry['mode']);
     }
 
     #[Test]
     public function toMoodleArrayMapsRequestMode(): void
     {
-        $entry = (new CacheDefinition(name: 'sessions', mode: CacheMode::REQUEST))->toMoodleArray('local_example');
+        $entry = (new CacheDefinition(name: 'sessions', mode: CacheMode::Request))->toMoodleArray('local_example');
 
-        self::assertSame(CacheMode::REQUEST->value, $entry['mode']);
+        self::assertSame(CacheMode::Request->value, $entry['mode']);
     }
 
     #[Test]

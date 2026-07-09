@@ -34,7 +34,7 @@ final class CheckResultDtoCoverageTest extends TestCase
         $dto = new CheckResultDto();
 
         self::assertSame('', $dto->checkId);
-        self::assertSame(CheckResultStatus::UNKNOWN, $dto->status);
+        self::assertSame(CheckResultStatus::Unknown, $dto->status);
         self::assertSame('', $dto->summary);
         self::assertNull($dto->details);
         self::assertNull($dto->timecreated);
@@ -45,14 +45,14 @@ final class CheckResultDtoCoverageTest extends TestCase
     {
         $dto = new CheckResultDto(
             checkId: 'core_check_dbschema',
-            status: CheckResultStatus::OK,
+            status: CheckResultStatus::Ok,
             summary: 'Schema is up to date',
             details: 'All tables match the install schema.',
             timecreated: 1_700_000_000,
         );
 
         self::assertSame('core_check_dbschema', $dto->checkId);
-        self::assertSame(CheckResultStatus::OK, $dto->status);
+        self::assertSame(CheckResultStatus::Ok, $dto->status);
         self::assertSame('Schema is up to date', $dto->summary);
         self::assertSame('All tables match the install schema.', $dto->details);
         self::assertSame(1_700_000_000, $dto->timecreated);
@@ -61,7 +61,7 @@ final class CheckResultDtoCoverageTest extends TestCase
     #[Test]
     public function testIsHealthyIsTrueForAHealthyStatus(): void
     {
-        $dto = new CheckResultDto(checkId: 'ok', status: CheckResultStatus::OK);
+        $dto = new CheckResultDto(checkId: 'ok', status: CheckResultStatus::Ok);
 
         self::assertTrue($dto->isHealthy());
     }
@@ -69,7 +69,7 @@ final class CheckResultDtoCoverageTest extends TestCase
     #[Test]
     public function testIsHealthyIsFalseForAnUnhealthyStatus(): void
     {
-        $dto = new CheckResultDto(checkId: 'boom', status: CheckResultStatus::ERROR);
+        $dto = new CheckResultDto(checkId: 'boom', status: CheckResultStatus::Error);
 
         self::assertFalse($dto->isHealthy());
     }
@@ -79,7 +79,7 @@ final class CheckResultDtoCoverageTest extends TestCase
     {
         $dto = new CheckResultDto(
             checkId: 'core_check_dbschema',
-            status: CheckResultStatus::WARNING,
+            status: CheckResultStatus::Warning,
             summary: 'Schema drift detected',
             details: 'Column X missing.',
             timecreated: 1_700_000_000,
@@ -87,7 +87,7 @@ final class CheckResultDtoCoverageTest extends TestCase
 
         self::assertSame([
             'check_id' => 'core_check_dbschema',
-            'status' => CheckResultStatus::WARNING->value,
+            'status' => CheckResultStatus::Warning->value,
             'summary' => 'Schema drift detected',
             'details' => 'Column X missing.',
             'timecreated' => 1_700_000_000,
@@ -99,7 +99,7 @@ final class CheckResultDtoCoverageTest extends TestCase
     {
         $dto = new CheckResultDto(
             checkId: 'core_check_dbschema',
-            status: CheckResultStatus::NA,
+            status: CheckResultStatus::Na,
             summary: 'Not applicable',
         );
 
@@ -113,7 +113,7 @@ final class CheckResultDtoCoverageTest extends TestCase
     #[Test]
     public function testJsonSerializeDelegatesToToArray(): void
     {
-        $dto = new CheckResultDto(checkId: 'ok', status: CheckResultStatus::INFO);
+        $dto = new CheckResultDto(checkId: 'ok', status: CheckResultStatus::Info);
 
         self::assertSame($dto->toArray(), $dto->jsonSerialize());
     }

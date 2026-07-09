@@ -93,7 +93,7 @@ trait InteractsWithAuth
      *
      * Each requirement can carry its own context level and instance ID (via its
      * `options`), resolved per-requirement in {@see self::checkCapabilities()}.
-     * The legacy call still sets the class-wide fallback these default to.
+     * The string-surface call still sets the class-wide fallback these default to.
      *
      * @param list<CapabilityRequirement> $requirements
      */
@@ -129,7 +129,7 @@ trait InteractsWithAuth
      *
      * Prefers the rich requirements (each resolved with its own context level
      * and instance ID) when the kernel forwarded them; otherwise falls back to
-     * the legacy flat list under the single class-wide context.
+     * the string-surface flat list under the single class-wide context.
      *
      * @throws MiddagAuthorizationException
      */
@@ -141,7 +141,7 @@ trait InteractsWithAuth
             return;
         }
 
-        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::System;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
@@ -171,7 +171,7 @@ trait InteractsWithAuth
 
             $contextlevel = ContextLevel::fromString(
                 isset($options['contextlevel']) ? (string) $options['contextlevel'] : null,
-            ) ?? $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+            ) ?? $this->capabilityContextLevel ?? ContextLevel::System;
 
             $instanceid = isset($options['instanceid']) ? (int) $options['instanceid'] : $this->capabilityInstanceId;
 

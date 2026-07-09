@@ -119,10 +119,3 @@ foreach (['course', 'module', 'coursecat', 'user', 'block'] as $middagContextTyp
         }');
     }
 }
-
-// core\context\base::instance_by_id — the 4.2+ canonical entry ContextSupport::instanceById prefers.
-if (!class_exists('core\context\base', false)) {
-    eval('namespace core\context; class base extends \core\context {
-        public static function instance_by_id($id, $strictness = \MUST_EXIST) { return new self((int) $id); }
-    }');
-}

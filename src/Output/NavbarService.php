@@ -92,13 +92,8 @@ final class NavbarService
      * separator, tools (System Status, Maintenance), separator, Settings.
      * Docs/Support removed per NAVIGATION-SPEC.md — low operational value.
      *
-     * @return array<int, array{url?: string, name?: string, icon?: string, separator?: bool}>
-     */
-    /**
-     * Default menu items for the MIDDAG navbar dropdown.
-     *
      * URLs use PATH_INFO style (/local/middag/index.php/{route}) to match
-     * the Symfony router. Query-parameter style (?route=) is legacy.
+     * the Symfony router.
      *
      * @param ?Closure $url_generator Optional route-name → URL resolver.
      *                                When null, falls back to PATH_INFO concatenation.

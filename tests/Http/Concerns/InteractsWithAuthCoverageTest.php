@@ -152,12 +152,12 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $capability = $this->makeCapability();
         $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
 
-        $controller->setRequireCapabilities(['mod/x:view', 'mod/x:edit'], ContextLevel::COURSE, 55);
+        $controller->setRequireCapabilities(['mod/x:view', 'mod/x:edit'], ContextLevel::Course, 55);
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'mod/x:view', ContextLevel::COURSE, 55],
-            ['authorize', 'mod/x:edit', ContextLevel::COURSE, 55],
+            ['authorize', 'mod/x:view', ContextLevel::Course, 55],
+            ['authorize', 'mod/x:edit', ContextLevel::Course, 55],
         ], $capability->calls);
     }
 
@@ -173,7 +173,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'mod/x:view', ContextLevel::SYSTEM, 0],
+            ['authorize', 'mod/x:view', ContextLevel::System, 0],
         ], $capability->calls);
     }
 
@@ -189,7 +189,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'mod/x:view', ContextLevel::COURSE, 55],
+            ['authorize', 'mod/x:view', ContextLevel::Course, 55],
         ], $capability->calls);
     }
 
@@ -199,7 +199,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $capability = $this->makeCapability(new MiddagAuthorizationException('denied'));
         $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
 
-        $controller->setRequireCapabilities(['mod/x:manage'], ContextLevel::SYSTEM, 0);
+        $controller->setRequireCapabilities(['mod/x:manage'], ContextLevel::System, 0);
 
         $this->expectException(MiddagAuthorizationException::class);
 
@@ -219,8 +219,8 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'mod/x:view', ContextLevel::COURSE, 55],
-            ['authorize', 'mod/x:edit', ContextLevel::MODULE, 9],
+            ['authorize', 'mod/x:view', ContextLevel::Course, 55],
+            ['authorize', 'mod/x:edit', ContextLevel::Module, 9],
         ], $capability->calls);
     }
 
@@ -239,7 +239,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'rich/a', ContextLevel::COURSE, 7],
+            ['authorize', 'rich/a', ContextLevel::Course, 7],
         ], $capability->calls);
     }
 
@@ -256,7 +256,7 @@ final class InteractsWithAuthCoverageTest extends TestCase
         $controller->runCheckCapabilities();
 
         self::assertSame([
-            ['authorize', 'mod/x:real', ContextLevel::SYSTEM, 0],
+            ['authorize', 'mod/x:real', ContextLevel::System, 0],
         ], $capability->calls);
     }
 
@@ -306,12 +306,12 @@ final class InteractsWithAuthCoverageTest extends TestCase
 
             public function __construct(private readonly ?Throwable $throw) {}
 
-            public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
+            public function can(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): bool
             {
                 return true;
             }
 
-            public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void
+            public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): void
             {
                 $this->calls[] = ['authorize', $capability, $contextlevel, $instanceid];
 

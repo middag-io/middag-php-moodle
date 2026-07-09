@@ -52,13 +52,13 @@ class SqlGenerator
         // Exhaustive over Operator — PHPStan flags a missing case at build time,
         // so there is no runtime "unsupported operator" default arm to guard.
         return match ($op) {
-            Operator::EQ, Operator::NEQ => $this->compileBinary($column, $op, $value, $param_prefix, $is_text_column),
-            Operator::GT, Operator::GTE, Operator::LT, Operator::LTE => $this->compileBinary($column, $op, $value, $param_prefix, false),
-            Operator::LIKE => $this->compileLike($column, $value, $param_prefix),
-            Operator::IN, Operator::NOT_IN => $this->compileInList($column, $op, $value, $param_prefix),
-            Operator::BETWEEN => $this->compileBetween($column, $value, $value2, $param_prefix),
-            Operator::IS, Operator::IS_NOT => $this->compileNullOrBool($column, $op, $value),
-            Operator::RAW => [(string) $value, []],
+            Operator::Eq, Operator::Neq => $this->compileBinary($column, $op, $value, $param_prefix, $is_text_column),
+            Operator::Gt, Operator::Gte, Operator::Lt, Operator::Lte => $this->compileBinary($column, $op, $value, $param_prefix, false),
+            Operator::Like => $this->compileLike($column, $value, $param_prefix),
+            Operator::In, Operator::NotIn => $this->compileInList($column, $op, $value, $param_prefix),
+            Operator::Between => $this->compileBetween($column, $value, $value2, $param_prefix),
+            Operator::Is, Operator::IsNot => $this->compileNullOrBool($column, $op, $value),
+            Operator::Raw => [(string) $value, []],
         };
     }
 
@@ -92,7 +92,7 @@ class SqlGenerator
     private function compileInList(string $column, Operator $op, mixed $value, string $param_prefix): array
     {
         if (empty($value)) {
-            return [$op === Operator::IN ? '1=0' : '1=1', []];
+            return [$op === Operator::In ? '1=0' : '1=1', []];
         }
 
         if (!is_array($value)) {
@@ -103,7 +103,7 @@ class SqlGenerator
             $value,
             SQL_PARAMS_NAMED,
             $param_prefix,
-            $op === Operator::IN,
+            $op === Operator::In,
         );
 
         return [sprintf('%s %s', $column, $in_sql), $in_params];

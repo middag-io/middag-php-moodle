@@ -45,9 +45,9 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(name: 'manage');
         $this->assertSame([], $cap->archetypes);
-        $this->assertSame(CapabilityType::READ, $cap->type);
-        $this->assertSame(ContextLevel::SYSTEM, $cap->context);
-        $this->assertSame(CapabilityRisk::SPAM, $cap->risk);
+        $this->assertSame(CapabilityType::Read, $cap->type);
+        $this->assertSame(ContextLevel::System, $cap->context);
+        $this->assertSame(CapabilityRisk::Spam, $cap->risk);
         $this->assertNull($cap->clone_from);
         $this->assertNull($cap->min_moodle);
         $this->assertNull($cap->max_moodle);
@@ -59,9 +59,9 @@ final class CapabilityDefinitionTest extends TestCase
         $cap = new CapabilityDefinition(
             name: 'manage',
             archetypes: ['manager', 'editingteacher'],
-            type: CapabilityType::WRITE,
-            context: ContextLevel::COURSE,
-            risk: CapabilityRisk::CONFIG,
+            type: CapabilityType::Write,
+            context: ContextLevel::Course,
+            risk: CapabilityRisk::Config,
             clone_from: 'moodle/course:manage',
             min_moodle: '4.0',
             max_moodle: '4.5',
@@ -69,9 +69,9 @@ final class CapabilityDefinitionTest extends TestCase
 
         $this->assertSame('manage', $cap->name);
         $this->assertSame(['manager', 'editingteacher'], $cap->archetypes);
-        $this->assertSame(CapabilityType::WRITE, $cap->type);
-        $this->assertSame(ContextLevel::COURSE, $cap->context);
-        $this->assertSame(CapabilityRisk::CONFIG, $cap->risk);
+        $this->assertSame(CapabilityType::Write, $cap->type);
+        $this->assertSame(ContextLevel::Course, $cap->context);
+        $this->assertSame(CapabilityRisk::Config, $cap->risk);
         $this->assertSame('moodle/course:manage', $cap->clone_from);
         $this->assertSame('4.0', $cap->min_moodle);
         $this->assertSame('4.5', $cap->max_moodle);
@@ -96,16 +96,16 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(
             name: 'view',
-            type: CapabilityType::READ,
-            context: ContextLevel::SYSTEM,
-            risk: CapabilityRisk::SPAM,
+            type: CapabilityType::Read,
+            context: ContextLevel::System,
+            risk: CapabilityRisk::Spam,
         );
 
         $result = $cap->toMoodleArray('local_example');
 
-        $this->assertSame(CapabilityRisk::SPAM->value, $result['riskbitmask']);
+        $this->assertSame(CapabilityRisk::Spam->value, $result['riskbitmask']);
         $this->assertSame('read', $result['captype']);
-        $this->assertSame(ContextLevel::SYSTEM->value, $result['contextlevel']);
+        $this->assertSame(ContextLevel::System->value, $result['contextlevel']);
         $this->assertSame([], $result['archetypes']);
     }
 
@@ -154,7 +154,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(
             name: 'edit',
-            type: CapabilityType::WRITE,
+            type: CapabilityType::Write,
         );
 
         $result = $cap->toMoodleArray('local_example');
@@ -167,7 +167,7 @@ final class CapabilityDefinitionTest extends TestCase
     {
         $cap = new CapabilityDefinition(
             name: 'view',
-            context: ContextLevel::MODULE,
+            context: ContextLevel::Module,
         );
 
         $result = $cap->toMoodleArray('local_example');

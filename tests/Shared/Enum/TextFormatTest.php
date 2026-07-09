@@ -33,68 +33,68 @@ final class TextFormatTest extends TestCase
     #[Test]
     public function plainHasValue0(): void
     {
-        $this->assertSame(0, TextFormat::PLAIN->value);
+        $this->assertSame(0, TextFormat::Plain->value);
     }
 
     #[Test]
     public function htmlHasValue1(): void
     {
-        $this->assertSame(1, TextFormat::HTML->value);
+        $this->assertSame(1, TextFormat::Html->value);
     }
 
     #[Test]
     public function wikiHasValue3(): void
     {
-        $this->assertSame(3, TextFormat::WIKI->value);
+        $this->assertSame(3, TextFormat::Wiki->value);
     }
 
     #[Test]
     public function markdownHasValue4(): void
     {
-        $this->assertSame(4, TextFormat::MARKDOWN->value);
+        $this->assertSame(4, TextFormat::Markdown->value);
     }
 
     #[Test]
     public function isHtmlReturnsTrueOnlyForHtml(): void
     {
-        $this->assertFalse(TextFormat::PLAIN->isHtml());
-        $this->assertTrue(TextFormat::HTML->isHtml());
-        $this->assertFalse(TextFormat::WIKI->isHtml());
-        $this->assertFalse(TextFormat::MARKDOWN->isHtml());
+        $this->assertFalse(TextFormat::Plain->isHtml());
+        $this->assertTrue(TextFormat::Html->isHtml());
+        $this->assertFalse(TextFormat::Wiki->isHtml());
+        $this->assertFalse(TextFormat::Markdown->isHtml());
     }
 
     #[Test]
     public function isMarkdownReturnsTrueOnlyForMarkdown(): void
     {
-        $this->assertFalse(TextFormat::PLAIN->isMarkdown());
-        $this->assertFalse(TextFormat::HTML->isMarkdown());
-        $this->assertFalse(TextFormat::WIKI->isMarkdown());
-        $this->assertTrue(TextFormat::MARKDOWN->isMarkdown());
+        $this->assertFalse(TextFormat::Plain->isMarkdown());
+        $this->assertFalse(TextFormat::Html->isMarkdown());
+        $this->assertFalse(TextFormat::Wiki->isMarkdown());
+        $this->assertTrue(TextFormat::Markdown->isMarkdown());
     }
 
     #[Test]
     public function labelReturnsHumanReadableString(): void
     {
-        $this->assertSame('Plain text', TextFormat::PLAIN->label());
-        $this->assertSame('HTML', TextFormat::HTML->label());
-        $this->assertSame('Wiki-like', TextFormat::WIKI->label());
-        $this->assertSame('Markdown', TextFormat::MARKDOWN->label());
+        $this->assertSame('Plain text', TextFormat::Plain->label());
+        $this->assertSame('HTML', TextFormat::Html->label());
+        $this->assertSame('Wiki-like', TextFormat::Wiki->label());
+        $this->assertSame('Markdown', TextFormat::Markdown->label());
     }
 
     #[Test]
     public function resolveReturnsMatchingCase(): void
     {
-        $this->assertSame(TextFormat::PLAIN, TextFormat::resolve(0));
-        $this->assertSame(TextFormat::HTML, TextFormat::resolve(1));
-        $this->assertSame(TextFormat::WIKI, TextFormat::resolve(3));
-        $this->assertSame(TextFormat::MARKDOWN, TextFormat::resolve(4));
+        $this->assertSame(TextFormat::Plain, TextFormat::resolve(0));
+        $this->assertSame(TextFormat::Html, TextFormat::resolve(1));
+        $this->assertSame(TextFormat::Wiki, TextFormat::resolve(3));
+        $this->assertSame(TextFormat::Markdown, TextFormat::resolve(4));
     }
 
     #[Test]
     public function resolveDefaultsToPlainForUnknownValue(): void
     {
-        $this->assertSame(TextFormat::PLAIN, TextFormat::resolve(99));
-        $this->assertSame(TextFormat::PLAIN, TextFormat::resolve(2));
-        $this->assertSame(TextFormat::PLAIN, TextFormat::resolve(-1));
+        $this->assertSame(TextFormat::Plain, TextFormat::resolve(99));
+        $this->assertSame(TextFormat::Plain, TextFormat::resolve(2));
+        $this->assertSame(TextFormat::Plain, TextFormat::resolve(-1));
     }
 }

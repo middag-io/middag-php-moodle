@@ -57,7 +57,7 @@ final class CapabilityCoverageTest extends TestCase
 
         $capability = new Capability();
 
-        self::assertTrue($capability->can('local/example:manage', ContextLevel::COURSE, 5));
+        self::assertTrue($capability->can('local/example:manage', ContextLevel::Course, 5));
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class CapabilityCoverageTest extends TestCase
 
         $capability = new Capability();
 
-        self::assertFalse($capability->can('local/example:manage', ContextLevel::COURSE, 5));
+        self::assertFalse($capability->can('local/example:manage', ContextLevel::Course, 5));
     }
 
     /**
@@ -90,15 +90,15 @@ final class CapabilityCoverageTest extends TestCase
      */
     public static function nonSystemContextLevels(): iterable
     {
-        yield 'course' => [ContextLevel::COURSE, 5];
+        yield 'course' => [ContextLevel::Course, 5];
 
-        yield 'coursecat' => [ContextLevel::COURSECAT, 3];
+        yield 'coursecat' => [ContextLevel::Coursecat, 3];
 
-        yield 'module' => [ContextLevel::MODULE, 7];
+        yield 'module' => [ContextLevel::Module, 7];
 
-        yield 'block' => [ContextLevel::BLOCK, 9];
+        yield 'block' => [ContextLevel::Block, 9];
 
-        yield 'user' => [ContextLevel::USER, 11];
+        yield 'user' => [ContextLevel::User, 11];
     }
 
     /**
@@ -117,7 +117,7 @@ final class CapabilityCoverageTest extends TestCase
 
         $this->expectException(TypeError::class);
 
-        $capability->can('local/example:manage', ContextLevel::SYSTEM);
+        $capability->can('local/example:manage', ContextLevel::System);
     }
 
     #[Test]
@@ -127,11 +127,11 @@ final class CapabilityCoverageTest extends TestCase
 
         $capability = new Capability();
 
-        $capability->authorize('local/example:manage', ContextLevel::COURSE, 5);
+        $capability->authorize('local/example:manage', ContextLevel::Course, 5);
 
         // Reaching this line proves authorize() did not throw when granted; the
         // assertion re-confirms the underlying grant is observable.
-        self::assertTrue($capability->can('local/example:manage', ContextLevel::COURSE, 5));
+        self::assertTrue($capability->can('local/example:manage', ContextLevel::Course, 5));
     }
 
     #[Test]
@@ -144,6 +144,6 @@ final class CapabilityCoverageTest extends TestCase
         $this->expectException(MiddagAuthorizationException::class);
         $this->expectExceptionMessage('Missing capability: local/example:manage');
 
-        $capability->authorize('local/example:manage', ContextLevel::COURSE, 5);
+        $capability->authorize('local/example:manage', ContextLevel::Course, 5);
     }
 }

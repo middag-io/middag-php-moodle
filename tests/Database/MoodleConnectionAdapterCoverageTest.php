@@ -52,13 +52,13 @@ final class MoodleConnectionAdapterCoverageTest extends TestCase
     #[Test]
     public function reportsSupportedCapabilities(): void
     {
-        $this->assertTrue($this->adapter->supports(Capability::TRANSACTIONS));
-        $this->assertTrue($this->adapter->supports(Capability::STREAMING));
-        $this->assertTrue($this->adapter->supports(Capability::JSON_WHERE));
-        $this->assertTrue($this->adapter->supports(Capability::UPSERT));
-        $this->assertTrue($this->adapter->supports(Capability::ROW_LOCK));
-        $this->assertFalse($this->adapter->supports(Capability::RETURNING));
-        $this->assertFalse($this->adapter->supports(Capability::SCHEMA_DIFF));
+        $this->assertTrue($this->adapter->supports(Capability::Transactions));
+        $this->assertTrue($this->adapter->supports(Capability::Streaming));
+        $this->assertTrue($this->adapter->supports(Capability::JsonWhere));
+        $this->assertTrue($this->adapter->supports(Capability::Upsert));
+        $this->assertTrue($this->adapter->supports(Capability::RowLock));
+        $this->assertFalse($this->adapter->supports(Capability::Returning));
+        $this->assertFalse($this->adapter->supports(Capability::SchemaDiff));
     }
 
     #[Test]

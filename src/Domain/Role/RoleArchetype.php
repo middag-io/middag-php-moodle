@@ -19,28 +19,28 @@ namespace Middag\Moodle\Domain\Role;
  */
 enum RoleArchetype: string
 {
-    case MANAGER = 'manager';
+    case Manager = 'manager';
 
-    case COURSE_CREATOR = 'coursecreator';
+    case CourseCreator = 'coursecreator';
 
-    case EDITING_TEACHER = 'editingteacher';
+    case EditingTeacher = 'editingteacher';
 
-    case TEACHER = 'teacher';
+    case Teacher = 'teacher';
 
-    case STUDENT = 'student';
+    case Student = 'student';
 
-    case GUEST = 'guest';
+    case Guest = 'guest';
 
-    case USER = 'user';
+    case User = 'user';
 
-    case FRONTPAGE = 'frontpage';
+    case Frontpage = 'frontpage';
 
     /**
      * Whether the archetype represents a teaching role.
      */
     public function isTeacherLike(): bool
     {
-        return in_array($this, [self::EDITING_TEACHER, self::TEACHER], true);
+        return in_array($this, [self::EditingTeacher, self::Teacher], true);
     }
 
     /**
@@ -48,7 +48,7 @@ enum RoleArchetype: string
      */
     public function isAdminLike(): bool
     {
-        return in_array($this, [self::MANAGER, self::COURSE_CREATOR], true);
+        return in_array($this, [self::Manager, self::CourseCreator], true);
     }
 
     /**
@@ -56,7 +56,7 @@ enum RoleArchetype: string
      */
     public function isLearner(): bool
     {
-        return $this === self::STUDENT;
+        return $this === self::Student;
     }
 
     /**
@@ -65,14 +65,14 @@ enum RoleArchetype: string
     public function label(): string
     {
         return match ($this) {
-            self::MANAGER => 'Manager',
-            self::COURSE_CREATOR => 'Course creator',
-            self::EDITING_TEACHER => 'Editing teacher',
-            self::TEACHER => 'Non-editing teacher',
-            self::STUDENT => 'Student',
-            self::GUEST => 'Guest',
-            self::USER => 'Authenticated user',
-            self::FRONTPAGE => 'Frontpage user',
+            self::Manager => 'Manager',
+            self::CourseCreator => 'Course creator',
+            self::EditingTeacher => 'Editing teacher',
+            self::Teacher => 'Non-editing teacher',
+            self::Student => 'Student',
+            self::Guest => 'Guest',
+            self::User => 'Authenticated user',
+            self::Frontpage => 'Frontpage user',
         };
     }
 
@@ -81,6 +81,6 @@ enum RoleArchetype: string
      */
     public static function resolve(string $value): self
     {
-        return self::tryFrom($value) ?? self::USER;
+        return self::tryFrom($value) ?? self::User;
     }
 }

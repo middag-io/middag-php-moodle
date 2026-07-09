@@ -18,32 +18,48 @@ use Middag\Moodle\Support\LangSupport;
 /**
  * Translates framework settings to Moodle admin_setting instances.
  *
+ * Key naming is delegated to the injected {@see SettingsNamingPolicy}
+ * (default: the MIDDAG `mdg_` prefix) so a client plugin on the same host
+ * can run its own resolver without colliding with the product's keys.
+ *
  * @internal
  */
 class SettingsResolver
 {
-    /** @var string Canonical prefix for all framework config keys. */
-    private const PREFIX = 'mdg_';
+    public function __construct(
+        private readonly SettingsNamingPolicy $policy = new SettingsNamingPolicy(),
+    ) {}
 
     /**
-     * Resolve a setting name to its canonical config key.
+     * Resolve a setting name to its canonical config key under this
+     * resolver's naming policy.
      *
-     * Convention: mdg_{extension}_{name} (ADR-311).
+     * Convention: {prefix}{extension}_{name} (ADR-311).
      *
      * @param string $name      the raw setting name declared in the typed DSL
      * @param string $extension the extension slug (e.g. "core", "ecommerce")
      *
      * @return string the canonical config key
      */
+    public function configKey(string $name, string $extension): string
+    {
+        return $this->policy->configKey($name, $extension);
+    }
+
+    /**
+     * Default-policy convenience for the static support seams
+     * (`SettingsSupport`, `ThemeSupport`) and DSL fallbacks. Policy-aware
+     * callers construct the resolver with their policy and use
+     * {@see self::configKey()} instead.
+     *
+     * @param string $name      the raw setting name declared in the typed DSL
+     * @param string $extension the extension slug (e.g. "core", "ecommerce")
+     *
+     * @return string the canonical config key under the DEFAULT policy
+     */
     public static function resolveConfigKey(string $name, string $extension): string
     {
-        $prefix = self::PREFIX . $extension . '_';
-
-        if (str_starts_with($name, $prefix)) {
-            return $name;
-        }
-
-        return $prefix . $name;
+        return (new SettingsNamingPolicy())->configKey($name, $extension);
     }
 
     /**
@@ -65,15 +81,16 @@ class SettingsResolver
     ): array {
         $pages = [];
 
-        foreach ($settings as $item) {
-            if ($item instanceof page) {
+        foreach ($settings as $setting) {
+            if ($setting instanceof Page) {
                 $admin_page = new admin_settingpage(
-                    $item->resolve_id($extension_name, $plugin_name),
-                    LangSupport::getString($item->resolve_label($extension_name), $plugin_name),
+                    $setting->resolve_id($extension_name, $plugin_name),
+                    LangSupport::getString($setting->resolve_label($extension_name), $plugin_name),
                 );
 
-                foreach ($item->settings as $child) {
-                    if ($child instanceof setting) {
+                foreach ($setting->settings as $child) {
+                    if ($child instanceof AbstractSetting) {
+                        $child->useNamingPolicy($this->policy);
                         $admin_page->add($child->toMoodleSetting($extension_name, $plugin_name));
                     }
                 }

@@ -28,41 +28,41 @@ final class TaskRunStateCoverageTest extends TestCase
     #[Test]
     public function testBackingValuesAreStable(): void
     {
-        self::assertSame('none', TaskRunState::NONE->value);
-        self::assertSame('running', TaskRunState::RUNNING->value);
-        self::assertSame('failed', TaskRunState::FAILED->value);
+        self::assertSame('none', TaskRunState::None->value);
+        self::assertSame('running', TaskRunState::Running->value);
+        self::assertSame('failed', TaskRunState::Failed->value);
     }
 
     #[Test]
     public function testIsActiveIsTrueOnlyForRunning(): void
     {
-        self::assertTrue(TaskRunState::RUNNING->isActive());
+        self::assertTrue(TaskRunState::Running->isActive());
     }
 
     #[Test]
     public function testIsActiveIsFalseForNonRunningStates(): void
     {
-        self::assertFalse(TaskRunState::NONE->isActive());
-        self::assertFalse(TaskRunState::FAILED->isActive());
+        self::assertFalse(TaskRunState::None->isActive());
+        self::assertFalse(TaskRunState::Failed->isActive());
     }
 
     #[Test]
     public function testLabelCoversEveryMatchArm(): void
     {
-        self::assertSame('Idle', TaskRunState::NONE->label());
-        self::assertSame('Running', TaskRunState::RUNNING->label());
-        self::assertSame('Failed', TaskRunState::FAILED->label());
+        self::assertSame('Idle', TaskRunState::None->label());
+        self::assertSame('Running', TaskRunState::Running->label());
+        self::assertSame('Failed', TaskRunState::Failed->label());
     }
 
     #[Test]
     public function testResolveReturnsTheMatchingCaseForAKnownValue(): void
     {
-        self::assertSame(TaskRunState::FAILED, TaskRunState::resolve('failed'));
+        self::assertSame(TaskRunState::Failed, TaskRunState::resolve('failed'));
     }
 
     #[Test]
     public function testResolveFallsBackToNoneForAnUnknownValue(): void
     {
-        self::assertSame(TaskRunState::NONE, TaskRunState::resolve('bogus'));
+        self::assertSame(TaskRunState::None, TaskRunState::resolve('bogus'));
     }
 }

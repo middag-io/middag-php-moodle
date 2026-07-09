@@ -192,7 +192,7 @@ final class ConfigSupportCoverageTest extends TestCase
         self::assertSame(1, $dto->id);
         self::assertSame('Full Name', $dto->fullname);
         self::assertSame('Short', $dto->shortname);
-        self::assertSame(TextFormat::HTML, $dto->summaryformat);
+        self::assertSame(TextFormat::Html, $dto->summaryformat);
         self::assertSame(200, $dto->timemodified);
     }
 
@@ -205,7 +205,7 @@ final class ConfigSupportCoverageTest extends TestCase
 
         self::assertSame('', $dto->fullname);
         self::assertSame(0, $dto->timecreated);
-        self::assertSame(TextFormat::HTML, $dto->summaryformat);
+        self::assertSame(TextFormat::Html, $dto->summaryformat);
     }
 
     #[Test]

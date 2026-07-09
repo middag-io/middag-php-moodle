@@ -228,9 +228,9 @@ final class CheckSupportCoverageTest extends TestCase
 
         self::assertInstanceOf(CheckResultDto::class, $results['okcheck']);
         self::assertSame('okcheck', $results['okcheck']->checkId);
-        self::assertSame(CheckResultStatus::OK, $results['okcheck']->status);
+        self::assertSame(CheckResultStatus::Ok, $results['okcheck']->status);
         self::assertSame('summary text', $results['okcheck']->summary);
         self::assertSame('details text', $results['okcheck']->details);
-        self::assertSame(CheckResultStatus::WARNING, $results['nolink']->status);
+        self::assertSame(CheckResultStatus::Warning, $results['nolink']->status);
     }
 }

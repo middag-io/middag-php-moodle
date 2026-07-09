@@ -124,7 +124,7 @@ final class AuthorizerCoverageTest extends TestCase
 
         // Non-SYSTEM level: ContextSupport::course() yields a proper
         // core\context\course, avoiding the intentional system() TypeError stub.
-        self::assertTrue($authorizer->can('local/example:view', ContextLevel::COURSE, 5));
+        self::assertTrue($authorizer->can('local/example:view', ContextLevel::Course, 5));
     }
 
     #[Test]
@@ -134,7 +134,7 @@ final class AuthorizerCoverageTest extends TestCase
 
         $authorizer = new Authorizer();
 
-        self::assertFalse($authorizer->can('local/example:view', ContextLevel::COURSE, 5));
+        self::assertFalse($authorizer->can('local/example:view', ContextLevel::Course, 5));
     }
 
     #[Test]
@@ -147,7 +147,7 @@ final class AuthorizerCoverageTest extends TestCase
         $threw = false;
 
         try {
-            $authorizer->authorize('local/example:manage', ContextLevel::COURSE, 5);
+            $authorizer->authorize('local/example:manage', ContextLevel::Course, 5);
         } catch (MiddagAuthorizationException) {
             $threw = true;
         }
@@ -165,7 +165,7 @@ final class AuthorizerCoverageTest extends TestCase
         $this->expectException(MiddagAuthorizationException::class);
         $this->expectExceptionMessage('Missing capability: local/example:manage');
 
-        $authorizer->authorize('local/example:manage', ContextLevel::COURSE, 5);
+        $authorizer->authorize('local/example:manage', ContextLevel::Course, 5);
     }
 
     private function resetGlobals(): void

@@ -29,7 +29,7 @@ final class SiteInfoDto extends AbstractDto
         public string $fullname = '',
         public string $shortname = '',
         public string $summary = '',
-        public TextFormat $summaryformat = TextFormat::HTML,
+        public TextFormat $summaryformat = TextFormat::Html,
         public string $format = '',
         public string $lang = '',
         public string $theme = '',

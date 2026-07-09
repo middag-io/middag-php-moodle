@@ -20,27 +20,27 @@ use PHPUnit\Framework\TestCase;
 
 enum core_config: string
 {
-    case debugmode = 'debugmode';
+    case DebugMode = 'debugmode';
 }
 
 enum ecommerce_config: string
 {
-    case sendfromwoo = 'sendfromwoo';
+    case SendFromWoo = 'sendfromwoo';
 }
 
 enum EcommerceConfig: string
 {
-    case sendfromwoo = 'sendfromwoo';
+    case SendFromWoo = 'sendfromwoo';
 }
 
 enum FrameworkConfig: string
 {
-    case debugmode = 'debugmode';
+    case DebugMode = 'debugmode';
 }
 
 enum sample_status: string
 {
-    case active = 'active';
+    case Active = 'active';
 }
 
 /**
@@ -64,7 +64,7 @@ final class SettingsSupportTest extends TestCase
     {
         $GLOBALS['__middag_test_config']['mdg_core_debugmode'] = '2';
 
-        self::assertSame('2', SettingsSupport::get(core_config::debugmode));
+        self::assertSame('2', SettingsSupport::get(core_config::DebugMode));
     }
 
     #[Test]
@@ -72,7 +72,7 @@ final class SettingsSupportTest extends TestCase
     {
         $GLOBALS['__middag_test_config']['mdg_ecommerce_sendfromwoo'] = '1';
 
-        self::assertSame('1', SettingsSupport::get(ecommerce_config::sendfromwoo));
+        self::assertSame('1', SettingsSupport::get(ecommerce_config::SendFromWoo));
     }
 
     #[Test]
@@ -80,7 +80,7 @@ final class SettingsSupportTest extends TestCase
     {
         $GLOBALS['__middag_test_config']['mdg_ecommerce_sendfromwoo'] = '1';
 
-        self::assertSame('1', SettingsSupport::get(EcommerceConfig::sendfromwoo));
+        self::assertSame('1', SettingsSupport::get(EcommerceConfig::SendFromWoo));
     }
 
     #[Test]
@@ -90,13 +90,13 @@ final class SettingsSupportTest extends TestCase
         // dead key mdg_FrameworkConfig_debugmode and silently read false.
         $GLOBALS['__middag_test_config']['mdg_core_debugmode'] = '2';
 
-        self::assertSame('2', SettingsSupport::get(FrameworkConfig::debugmode));
+        self::assertSame('2', SettingsSupport::get(FrameworkConfig::DebugMode));
     }
 
     #[Test]
     public function testSetWritesTheCanonicalKey(): void
     {
-        self::assertTrue(SettingsSupport::set(core_config::debugmode, '1'));
+        self::assertTrue(SettingsSupport::set(core_config::DebugMode, '1'));
         self::assertSame('1', $GLOBALS['__middag_test_config']['mdg_core_debugmode']);
     }
 
@@ -105,7 +105,7 @@ final class SettingsSupportTest extends TestCase
     {
         $GLOBALS['__middag_test_config']['mdg_core_debugmode'] = '1';
 
-        self::assertTrue(SettingsSupport::unset(core_config::debugmode));
+        self::assertTrue(SettingsSupport::unset(core_config::DebugMode));
         self::assertArrayNotHasKey('mdg_core_debugmode', $GLOBALS['__middag_test_config']);
     }
 
@@ -115,7 +115,7 @@ final class SettingsSupportTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('does not follow the {slug}_config naming convention');
 
-        SettingsSupport::get(sample_status::active);
+        SettingsSupport::get(sample_status::Active);
     }
 
     #[Test]
@@ -123,7 +123,7 @@ final class SettingsSupportTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        SettingsSupport::set(sample_status::active, '1');
+        SettingsSupport::set(sample_status::Active, '1');
     }
 
     #[Test]
@@ -131,6 +131,6 @@ final class SettingsSupportTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        SettingsSupport::unset(sample_status::active);
+        SettingsSupport::unset(sample_status::Active);
     }
 }

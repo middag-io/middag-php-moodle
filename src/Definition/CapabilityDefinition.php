@@ -27,9 +27,9 @@ final readonly class CapabilityDefinition implements DefinitionInterface
     public function __construct(
         public string $name,
         public array $archetypes = [],
-        public CapabilityType $type = CapabilityType::READ,
-        public ContextLevel $context = ContextLevel::SYSTEM,
-        public CapabilityRisk $risk = CapabilityRisk::SPAM,
+        public CapabilityType $type = CapabilityType::Read,
+        public ContextLevel $context = ContextLevel::System,
+        public CapabilityRisk $risk = CapabilityRisk::Spam,
         public ?string $clone_from = null,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,

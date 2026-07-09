@@ -34,7 +34,7 @@ final class EnrolmentDtoTest extends TestCase
             enrolid: 30,
             user_enrolment_id: 40,
             enrol_method: 'manual',
-            status: EnrolmentStatus::ACTIVE,
+            status: EnrolmentStatus::Active,
             roleid: 5,
             timestart: 1700000000,
             timeend: 1703000000,
@@ -47,7 +47,7 @@ final class EnrolmentDtoTest extends TestCase
         $this->assertSame(30, $dto->enrolid);
         $this->assertSame(40, $dto->user_enrolment_id);
         $this->assertSame('manual', $dto->enrol_method);
-        $this->assertSame(EnrolmentStatus::ACTIVE, $dto->status);
+        $this->assertSame(EnrolmentStatus::Active, $dto->status);
         $this->assertSame(5, $dto->roleid);
         $this->assertSame(1700000000, $dto->timestart);
         $this->assertSame(1703000000, $dto->timeend);
@@ -67,7 +67,7 @@ final class EnrolmentDtoTest extends TestCase
             enrolid: 30,
             user_enrolment_id: 40,
             enrol_method: 'manual',
-            status: EnrolmentStatus::SUSPENDED,
+            status: EnrolmentStatus::Suspended,
             roleid: 5,
             timestart: 0,
             timeend: 0,
@@ -130,7 +130,7 @@ final class EnrolmentDtoTest extends TestCase
             enrolid: 30,
             user_enrolment_id: 40,
             enrol_method: 'self',
-            status: EnrolmentStatus::SUSPENDED,
+            status: EnrolmentStatus::Suspended,
             roleid: 5,
             timestart: 1700000000,
             timeend: 1703000000,
@@ -144,7 +144,7 @@ final class EnrolmentDtoTest extends TestCase
             'enrolid' => 30,
             'user_enrolment_id' => 40,
             'enrol_method' => 'self',
-            'status' => 1, // EnrolmentStatus::SUSPENDED->value
+            'status' => 1, // EnrolmentStatus::Suspended->value
             'roleid' => 5,
             'timestart' => 1700000000,
             'timeend' => 1703000000,
@@ -187,7 +187,7 @@ final class EnrolmentDtoTest extends TestCase
                 enrolid: 1,
                 user_enrolment_id: 1,
                 enrol_method: $method,
-                status: EnrolmentStatus::ACTIVE,
+                status: EnrolmentStatus::Active,
                 roleid: 5,
                 timestart: 0,
                 timeend: 0,
@@ -206,7 +206,7 @@ final class EnrolmentDtoTest extends TestCase
             enrolid: 30,
             user_enrolment_id: 40,
             enrol_method: 'manual',
-            status: EnrolmentStatus::ACTIVE,
+            status: EnrolmentStatus::Active,
             roleid: 5,
             timestart: 1700000000,
             timeend: $timeend,

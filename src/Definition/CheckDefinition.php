@@ -35,7 +35,7 @@ final readonly class CheckDefinition implements DefinitionInterface
     public function __construct(
         public string $name,
         public string $classname,
-        public CheckType $type = CheckType::STATUS,
+        public CheckType $type = CheckType::Status,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,
     ) {}

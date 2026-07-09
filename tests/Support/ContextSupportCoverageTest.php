@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Support;
 
-use core\context\base as context_base;
+use core\context;
 use core\context\block as context_block;
 use core\context\course as context_course;
 use core\context\coursecat as context_coursecat;
@@ -22,7 +22,6 @@ use Middag\Moodle\Support\ContextSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 use TypeError;
 
 /**
@@ -36,7 +35,7 @@ final class ContextSupportCoverageTest extends TestCase
     {
         // tests/bootstrap.php models core\context\system::instance() as returning a
         // base core\context, so the wrapper's declared core\context\system return
-        // type is exercised and rejected — proving classFor('system') is wired.
+        // type is exercised and rejected — proving the system() wrapper is wired.
         $this->expectException(TypeError::class);
 
         ContextSupport::system();
@@ -73,19 +72,8 @@ final class ContextSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testInstanceByIdPrefersTheNamespacedBaseApi(): void
+    public function testInstanceByIdResolvesThroughTheNamespacedContextApi(): void
     {
-        self::assertInstanceOf(context_base::class, ContextSupport::instanceById(11));
-    }
-
-    #[Test]
-    public function testClassForFallsBackToSystemForAnUnmappedType(): void
-    {
-        // classFor() is private; every public wrapper feeds it a mapped type, so
-        // the conservative fallback for an unknown type is only reachable via
-        // reflection. An unmapped type returns the legacy global 'context_system'.
-        $classFor = new ReflectionMethod(ContextSupport::class, 'classFor');
-
-        self::assertSame('context_system', $classFor->invoke(null, 'nonexistent'));
+        self::assertInstanceOf(context::class, ContextSupport::instanceById(11));
     }
 }

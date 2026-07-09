@@ -19,18 +19,18 @@ namespace Middag\Moodle\Domain\Group;
  */
 enum GroupMode: int
 {
-    case NO_GROUPS = 0;
+    case NoGroups = 0;
 
-    case SEPARATE_GROUPS = 1;
+    case SeparateGroups = 1;
 
-    case VISIBLE_GROUPS = 2;
+    case VisibleGroups = 2;
 
     /**
      * Whether groups are enabled in any mode.
      */
     public function usesGroups(): bool
     {
-        return $this !== self::NO_GROUPS;
+        return $this !== self::NoGroups;
     }
 
     /**
@@ -38,7 +38,7 @@ enum GroupMode: int
      */
     public function isVisible(): bool
     {
-        return $this === self::VISIBLE_GROUPS;
+        return $this === self::VisibleGroups;
     }
 
     /**
@@ -47,9 +47,9 @@ enum GroupMode: int
     public function label(): string
     {
         return match ($this) {
-            self::NO_GROUPS => 'No groups',
-            self::SEPARATE_GROUPS => 'Separate groups',
-            self::VISIBLE_GROUPS => 'Visible groups',
+            self::NoGroups => 'No groups',
+            self::SeparateGroups => 'Separate groups',
+            self::VisibleGroups => 'Visible groups',
         };
     }
 
@@ -58,6 +58,6 @@ enum GroupMode: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::NO_GROUPS;
+        return self::tryFrom($value) ?? self::NoGroups;
     }
 }

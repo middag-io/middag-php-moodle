@@ -21,15 +21,15 @@ namespace Middag\Moodle\Security\Enum;
  */
 enum CapabilityRisk: int
 {
-    case SPAM = 1;       // RISK_SPAM
+    case Spam = 1;       // RISK_SPAM
 
-    case PERSONAL = 2;   // RISK_PERSONAL
+    case Personal = 2;   // RISK_PERSONAL
 
-    case XSS = 4;        // RISK_XSS
+    case Xss = 4;        // RISK_XSS
 
-    case CONFIG = 8;     // RISK_CONFIG
+    case Config = 8;     // RISK_CONFIG
 
-    case DATALOSS = 16;  // RISK_DATALOSS
+    case Dataloss = 16;  // RISK_DATALOSS
 
     public function toMoodleValue(): int
     {

@@ -30,40 +30,40 @@ final class MessageOutputTypeCoverageTest extends TestCase
     #[Test]
     public function testBackingValues(): void
     {
-        self::assertSame('popup', MessageOutputType::POPUP->value);
-        self::assertSame('email', MessageOutputType::EMAIL->value);
-        self::assertSame('airnotifier', MessageOutputType::AIRNOTIFIER->value);
-        self::assertSame('mobile', MessageOutputType::MOBILE->value);
+        self::assertSame('popup', MessageOutputType::Popup->value);
+        self::assertSame('email', MessageOutputType::Email->value);
+        self::assertSame('airnotifier', MessageOutputType::Airnotifier->value);
+        self::assertSame('mobile', MessageOutputType::Mobile->value);
     }
 
     #[Test]
     public function testIsRealtimeIsTrueForPopupMobileAndAirnotifier(): void
     {
-        self::assertTrue(MessageOutputType::POPUP->isRealtime());
-        self::assertTrue(MessageOutputType::MOBILE->isRealtime());
-        self::assertTrue(MessageOutputType::AIRNOTIFIER->isRealtime());
+        self::assertTrue(MessageOutputType::Popup->isRealtime());
+        self::assertTrue(MessageOutputType::Mobile->isRealtime());
+        self::assertTrue(MessageOutputType::Airnotifier->isRealtime());
     }
 
     #[Test]
     public function testIsRealtimeIsFalseForEmail(): void
     {
-        self::assertFalse(MessageOutputType::EMAIL->isRealtime());
+        self::assertFalse(MessageOutputType::Email->isRealtime());
     }
 
     #[Test]
     public function testLabelCoversEveryCase(): void
     {
-        self::assertSame('Web notification', MessageOutputType::POPUP->label());
-        self::assertSame('Email', MessageOutputType::EMAIL->label());
-        self::assertSame('Push notification', MessageOutputType::AIRNOTIFIER->label());
-        self::assertSame('Mobile app', MessageOutputType::MOBILE->label());
+        self::assertSame('Web notification', MessageOutputType::Popup->label());
+        self::assertSame('Email', MessageOutputType::Email->label());
+        self::assertSame('Push notification', MessageOutputType::Airnotifier->label());
+        self::assertSame('Mobile app', MessageOutputType::Mobile->label());
     }
 
     #[Test]
     public function testResolveReturnsCaseForKnownValue(): void
     {
-        self::assertSame(MessageOutputType::EMAIL, MessageOutputType::resolve('email'));
-        self::assertSame(MessageOutputType::POPUP, MessageOutputType::resolve('popup'));
+        self::assertSame(MessageOutputType::Email, MessageOutputType::resolve('email'));
+        self::assertSame(MessageOutputType::Popup, MessageOutputType::resolve('popup'));
     }
 
     #[Test]

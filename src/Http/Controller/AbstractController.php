@@ -241,7 +241,7 @@ abstract class AbstractController implements MoodleControllerInterface
      * Each requirement can carry its own context level and instance ID (via its
      * `options`), so authorization is resolved per-requirement instead of with
      * the single class-wide context of {@see self::setRequireCapabilities()}.
-     * The legacy call still runs and sets the class-wide fallback these
+     * The string-surface call still runs and sets the class-wide fallback these
      * requirements default to when they carry no `contextlevel`/`instanceid`.
      *
      * @param list<CapabilityRequirement> $requirements
@@ -383,7 +383,7 @@ abstract class AbstractController implements MoodleControllerInterface
      *
      * Prefers the rich requirements (each resolved with its own context level
      * and instance ID) when the kernel forwarded them; otherwise falls back to
-     * the legacy flat list under the single class-wide context.
+     * the string-surface flat list under the single class-wide context.
      *
      * @throws MiddagAuthorizationException
      */
@@ -395,7 +395,7 @@ abstract class AbstractController implements MoodleControllerInterface
             return;
         }
 
-        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::System;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
@@ -488,7 +488,7 @@ abstract class AbstractController implements MoodleControllerInterface
 
         $output = $registry->get($target)->render($form);
 
-        if ($target === RenderTarget::PROPS) {
+        if ($target === RenderTarget::Props) {
             return $this->inertia('FormPage', $output->props);
         }
 
@@ -503,7 +503,7 @@ abstract class AbstractController implements MoodleControllerInterface
      */
     protected function defaultRenderTarget(): RenderTarget
     {
-        return RenderTarget::HTML;
+        return RenderTarget::Html;
     }
 
     /**
@@ -940,7 +940,7 @@ abstract class AbstractController implements MoodleControllerInterface
 
             $contextlevel = ContextLevel::fromString(
                 isset($options['contextlevel']) ? (string) $options['contextlevel'] : null,
-            ) ?? $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+            ) ?? $this->capabilityContextLevel ?? ContextLevel::System;
 
             $instanceid = isset($options['instanceid']) ? (int) $options['instanceid'] : $this->capabilityInstanceId;
 

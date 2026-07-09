@@ -22,20 +22,20 @@ namespace Middag\Moodle\Domain\Course;
  */
 enum CourseVisibility: int
 {
-    case HIDDEN = 0;
+    case Hidden = 0;
 
-    case VISIBLE = 1;
+    case Visible = 1;
 
     public function isVisible(): bool
     {
-        return $this === self::VISIBLE;
+        return $this === self::Visible;
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::HIDDEN => 'Hidden',
-            self::VISIBLE => 'Visible',
+            self::Hidden => 'Hidden',
+            self::Visible => 'Visible',
         };
     }
 
@@ -44,6 +44,6 @@ enum CourseVisibility: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::VISIBLE;
+        return self::tryFrom($value) ?? self::Visible;
     }
 }

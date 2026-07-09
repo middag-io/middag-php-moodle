@@ -19,9 +19,9 @@ namespace Middag\Moodle\Security\Enum;
  */
 enum CapabilityType: string
 {
-    case READ = 'read';
+    case Read = 'read';
 
-    case WRITE = 'write';
+    case Write = 'write';
 
     public function toMoodleValue(): string
     {

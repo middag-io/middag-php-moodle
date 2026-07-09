@@ -19,28 +19,28 @@ namespace Middag\Moodle\Domain\Platform;
  */
 enum CheckResultStatus: string
 {
-    case NA = 'na';
+    case Na = 'na';
 
-    case OK = 'ok';
+    case Ok = 'ok';
 
-    case INFO = 'info';
+    case Info = 'info';
 
-    case UNKNOWN = 'unknown';
+    case Unknown = 'unknown';
 
-    case WARNING = 'warning';
+    case Warning = 'warning';
 
-    case ERROR = 'error';
+    case Error = 'error';
 
-    case CRITICAL = 'critical';
+    case Critical = 'critical';
 
     public function isHealthy(): bool
     {
-        return in_array($this, [self::NA, self::OK, self::INFO], true);
+        return in_array($this, [self::Na, self::Ok, self::Info], true);
     }
 
     public function isCriticalOrWorse(): bool
     {
-        return in_array($this, [self::ERROR, self::CRITICAL], true);
+        return in_array($this, [self::Error, self::Critical], true);
     }
 
     /**
@@ -49,31 +49,31 @@ enum CheckResultStatus: string
     public function severity(): int
     {
         return match ($this) {
-            self::NA => 0,
-            self::OK => 1,
-            self::INFO => 2,
-            self::UNKNOWN => 3,
-            self::WARNING => 4,
-            self::ERROR => 5,
-            self::CRITICAL => 6,
+            self::Na => 0,
+            self::Ok => 1,
+            self::Info => 2,
+            self::Unknown => 3,
+            self::Warning => 4,
+            self::Error => 5,
+            self::Critical => 6,
         };
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::NA => 'N/A',
-            self::OK => 'OK',
-            self::INFO => 'Info',
-            self::UNKNOWN => 'Unknown',
-            self::WARNING => 'Warning',
-            self::ERROR => 'Error',
-            self::CRITICAL => 'Critical',
+            self::Na => 'N/A',
+            self::Ok => 'OK',
+            self::Info => 'Info',
+            self::Unknown => 'Unknown',
+            self::Warning => 'Warning',
+            self::Error => 'Error',
+            self::Critical => 'Critical',
         };
     }
 
     public static function resolve(string $value): self
     {
-        return self::tryFrom($value) ?? self::UNKNOWN;
+        return self::tryFrom($value) ?? self::Unknown;
     }
 }

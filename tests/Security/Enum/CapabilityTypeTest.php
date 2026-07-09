@@ -33,27 +33,27 @@ final class CapabilityTypeTest extends TestCase
     #[Test]
     public function readHasValueRead(): void
     {
-        $this->assertSame('read', CapabilityType::READ->value);
+        $this->assertSame('read', CapabilityType::Read->value);
     }
 
     #[Test]
     public function writeHasValueWrite(): void
     {
-        $this->assertSame('write', CapabilityType::WRITE->value);
+        $this->assertSame('write', CapabilityType::Write->value);
     }
 
     #[Test]
     public function toMoodleValueReturnsBackingValue(): void
     {
-        $this->assertSame('read', CapabilityType::READ->toMoodleValue());
-        $this->assertSame('write', CapabilityType::WRITE->toMoodleValue());
+        $this->assertSame('read', CapabilityType::Read->toMoodleValue());
+        $this->assertSame('write', CapabilityType::Write->toMoodleValue());
     }
 
     #[Test]
     public function canBeCreatedFromValue(): void
     {
-        $this->assertSame(CapabilityType::READ, CapabilityType::from('read'));
-        $this->assertSame(CapabilityType::WRITE, CapabilityType::from('write'));
+        $this->assertSame(CapabilityType::Read, CapabilityType::from('read'));
+        $this->assertSame(CapabilityType::Write, CapabilityType::from('write'));
     }
 
     #[Test]

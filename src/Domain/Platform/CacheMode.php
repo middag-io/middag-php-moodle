@@ -21,11 +21,11 @@ namespace Middag\Moodle\Domain\Platform;
  */
 enum CacheMode: int
 {
-    case APPLICATION = 1;
+    case Application = 1;
 
-    case SESSION = 2;
+    case Session = 2;
 
-    case REQUEST = 4;
+    case Request = 4;
 
     public function toMoodleValue(): int
     {
