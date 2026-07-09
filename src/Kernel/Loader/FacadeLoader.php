@@ -29,6 +29,13 @@ use ReflectionClass;
  * While Facades are static and autoloaded by Composer/Moodle, this loader can perform
  * warm-up tasks like checking if the service linked to the facade is active.
  *
+ * WARM-UP ONLY (D-FACADE-SEAM, 2026-07-08): facades resolve at runtime via
+ * autoload + the product container — nothing consumes the map returned by
+ * {@see self::getDefinitions()} today; {@see self::load()} exists to warm the
+ * discovery cache. Callers wanting the host plugin scanned must construct
+ * with a null root (resolved through Kernel::hostDirectory()), not a vendor
+ * package root.
+ *
  * @internal
  *
  * @see FacadeLoaderInterface
