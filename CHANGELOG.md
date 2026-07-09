@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.7.0](https://github.com/middag-io/middag-php-moodle/compare/v1.6.0...v1.7.0) (2026-07-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **moodle:** enum FQCNs moved and @api method names changed; product (local_middag, §P/LB-PLG-00) must rewire.
+
+### Refactoring
+
+* **moodle:** relocate Domain enums to per-concern Enum/ and camelCase method names (D-047) ([274332f](https://github.com/middag-io/middag-php-moodle/commit/274332fb2087166e20fdf1128cd0ea6f25c0e78d))
+
+
+### Miscellaneous
+
+* **deps:** raise framework floor to ^1.7 ([c53bdd9](https://github.com/middag-io/middag-php-moodle/commit/c53bdd9312b4614c907a339567832bd6c4bd42ed))
+
 ## [1.6.0](https://github.com/middag-io/middag-php-moodle/compare/v1.5.0...v1.6.0) (2026-07-09)
 
 
