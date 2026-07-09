@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\CacheDefinition;
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Platform\CacheMode;
+use Middag\Moodle\Domain\Platform\Enum\CacheMode;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

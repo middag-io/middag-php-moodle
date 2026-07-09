@@ -40,7 +40,7 @@ final readonly class CustomFieldValueDto
     /**
      * Whether this field has a value set.
      */
-    public function has_value(): bool
+    public function hasValue(): bool
     {
         return $this->value !== null && $this->value !== '';
     }
@@ -48,7 +48,7 @@ final readonly class CustomFieldValueDto
     /**
      * Get value as integer (for numeric/date fields).
      */
-    public function int_value(): int
+    public function intValue(): int
     {
         return (int) ($this->value ?? 0);
     }
@@ -56,7 +56,7 @@ final readonly class CustomFieldValueDto
     /**
      * Get value as boolean (for checkbox fields).
      */
-    public function bool_value(): bool
+    public function boolValue(): bool
     {
         return (bool) ($this->value ?? false);
     }

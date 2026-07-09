@@ -93,7 +93,7 @@ final class ServiceDefinitionTest extends TestCase
     public function getQualifiedNamePrefixesPlugin(): void
     {
         $service = new ServiceDefinition(name: 'do_thing', classname: 'local_example\external');
-        $this->assertSame('local_example_do_thing', $service->get_qualified_name('local_example'));
+        $this->assertSame('local_example_do_thing', $service->getQualifiedName('local_example'));
     }
 
     #[Test]

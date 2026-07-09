@@ -14,7 +14,7 @@ namespace Middag\Moodle\Http\Contract;
 
 use Middag\Framework\Http\Contract\CapabilityRequirementAwareInterface;
 use Middag\Framework\Http\Contract\ControllerInterface;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 
 /**
  * Moodle-specific controller contract.

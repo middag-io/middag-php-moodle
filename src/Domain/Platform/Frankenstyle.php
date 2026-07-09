@@ -39,7 +39,7 @@ final readonly class Frankenstyle implements Stringable
      *
      * @throws MiddagValidationException if format is invalid
      */
-    public static function from_string(string $component): self
+    public static function fromString(string $component): self
     {
         $component = trim($component);
 
@@ -70,27 +70,27 @@ final readonly class Frankenstyle implements Stringable
 
     public static function local(string $name): self
     {
-        return self::from_string('local_' . $name);
+        return self::fromString('local_' . $name);
     }
 
     public static function mod(string $name): self
     {
-        return self::from_string('mod_' . $name);
+        return self::fromString('mod_' . $name);
     }
 
     public static function block(string $name): self
     {
-        return self::from_string('block_' . $name);
+        return self::fromString('block_' . $name);
     }
 
     public static function auth(string $name): self
     {
-        return self::from_string('auth_' . $name);
+        return self::fromString('auth_' . $name);
     }
 
     public static function tool(string $name): self
     {
-        return self::from_string('tool_' . $name);
+        return self::fromString('tool_' . $name);
     }
 
     public function equals(self $other): bool

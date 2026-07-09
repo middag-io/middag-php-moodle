@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Platform;
 
 use Middag\Framework\Shared\Dto\AbstractDto;
+use Middag\Moodle\Domain\Platform\Enum\CheckResultStatus;
 
 /**
  * System check result projection.

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Domain\Enrolment;
 
 use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
 use Middag\Moodle\Domain\Enrolment\EnrolmentService;
-use Middag\Moodle\Domain\Enrolment\EnrolmentStatus;
+use Middag\Moodle\Domain\Enrolment\Enum\EnrolmentStatus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

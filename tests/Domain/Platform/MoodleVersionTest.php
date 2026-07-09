@@ -77,7 +77,7 @@ final class MoodleVersionTest extends TestCase
     #[Test]
     public function fromStringParsesMajorMinorPatch(): void
     {
-        $v = MoodleVersion::from_string('4.5.2');
+        $v = MoodleVersion::fromString('4.5.2');
         $this->assertSame(4, $v->major);
         $this->assertSame(5, $v->minor);
         $this->assertSame(2, $v->patch);
@@ -87,7 +87,7 @@ final class MoodleVersionTest extends TestCase
     #[Test]
     public function fromStringParsesMajorMinorOnly(): void
     {
-        $v = MoodleVersion::from_string('4.5');
+        $v = MoodleVersion::fromString('4.5');
         $this->assertSame(4, $v->major);
         $this->assertSame(5, $v->minor);
         $this->assertSame(0, $v->patch);
@@ -96,7 +96,7 @@ final class MoodleVersionTest extends TestCase
     #[Test]
     public function fromStringParsesSuffix(): void
     {
-        $v = MoodleVersion::from_string('4.5.0+');
+        $v = MoodleVersion::fromString('4.5.0+');
         $this->assertSame(4, $v->major);
         $this->assertSame(5, $v->minor);
         $this->assertSame(0, $v->patch);
@@ -106,7 +106,7 @@ final class MoodleVersionTest extends TestCase
     #[Test]
     public function fromStringParsesBetaSuffix(): void
     {
-        $v = MoodleVersion::from_string('4.5.0-beta1');
+        $v = MoodleVersion::fromString('4.5.0-beta1');
         $this->assertSame(4, $v->major);
         $this->assertSame(5, $v->minor);
         $this->assertSame(0, $v->patch);
@@ -116,7 +116,7 @@ final class MoodleVersionTest extends TestCase
     #[Test]
     public function fromStringTrimsWhitespace(): void
     {
-        $v = MoodleVersion::from_string('  4.5.2  ');
+        $v = MoodleVersion::fromString('  4.5.2  ');
         $this->assertSame(4, $v->major);
         $this->assertSame(5, $v->minor);
         $this->assertSame(2, $v->patch);
@@ -126,14 +126,14 @@ final class MoodleVersionTest extends TestCase
     public function fromStringThrowsForSingleNumber(): void
     {
         $this->expectException(MiddagValidationException::class);
-        MoodleVersion::from_string('4');
+        MoodleVersion::fromString('4');
     }
 
     #[Test]
     public function fromStringThrowsForFourParts(): void
     {
         $this->expectException(MiddagValidationException::class);
-        MoodleVersion::from_string('4.5.2.1');
+        MoodleVersion::fromString('4.5.2.1');
     }
 
     #[Test]
@@ -189,7 +189,7 @@ final class MoodleVersionTest extends TestCase
     {
         $a = new MoodleVersion(4, 5, 0);
         $b = new MoodleVersion(4, 5, 0);
-        $this->assertTrue($a->is_at_least($b));
+        $this->assertTrue($a->isAtLeast($b));
     }
 
     #[Test]
@@ -197,7 +197,7 @@ final class MoodleVersionTest extends TestCase
     {
         $a = new MoodleVersion(4, 5, 1);
         $b = new MoodleVersion(4, 5, 0);
-        $this->assertTrue($a->is_at_least($b));
+        $this->assertTrue($a->isAtLeast($b));
     }
 
     #[Test]
@@ -205,7 +205,7 @@ final class MoodleVersionTest extends TestCase
     {
         $a = new MoodleVersion(4, 4, 0);
         $b = new MoodleVersion(4, 5, 0);
-        $this->assertFalse($a->is_at_least($b));
+        $this->assertFalse($a->isAtLeast($b));
     }
 
     #[Test]
@@ -214,7 +214,7 @@ final class MoodleVersionTest extends TestCase
         $v = new MoodleVersion(4, 5, 0);
         $min = new MoodleVersion(4, 4, 0);
         $max = new MoodleVersion(4, 6, 0);
-        $this->assertTrue($v->is_between($min, $max));
+        $this->assertTrue($v->isBetween($min, $max));
     }
 
     #[Test]
@@ -223,10 +223,10 @@ final class MoodleVersionTest extends TestCase
         $v = new MoodleVersion(4, 4, 0);
         $min = new MoodleVersion(4, 4, 0);
         $max = new MoodleVersion(4, 6, 0);
-        $this->assertTrue($v->is_between($min, $max));
+        $this->assertTrue($v->isBetween($min, $max));
 
         $v2 = new MoodleVersion(4, 6, 0);
-        $this->assertTrue($v2->is_between($min, $max));
+        $this->assertTrue($v2->isBetween($min, $max));
     }
 
     #[Test]
@@ -235,10 +235,10 @@ final class MoodleVersionTest extends TestCase
         $v = new MoodleVersion(4, 3, 0);
         $min = new MoodleVersion(4, 4, 0);
         $max = new MoodleVersion(4, 6, 0);
-        $this->assertFalse($v->is_between($min, $max));
+        $this->assertFalse($v->isBetween($min, $max));
 
         $v2 = new MoodleVersion(4, 7, 0);
-        $this->assertFalse($v2->is_between($min, $max));
+        $this->assertFalse($v2->isBetween($min, $max));
     }
 
     #[Test]

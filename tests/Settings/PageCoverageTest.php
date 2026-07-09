@@ -21,9 +21,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test Page.
  *
- * Settings-page grouper. resolve_id() derives a conventional admin page id from
+ * Settings-page grouper. resolveId() derives a conventional admin page id from
  * the plugin short name + extension + page name (or uses an explicit id);
- * resolve_label() resolves the lang key. Plugin defaults to ComponentContext.
+ * resolveLabel() resolves the lang key. Plugin defaults to ComponentContext.
  *
  * @internal
  */
@@ -35,7 +35,7 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general', id: 'custom_page_id');
 
-        $this->assertSame('custom_page_id', $page->resolve_id('core', 'local_example'));
+        $this->assertSame('custom_page_id', $page->resolveId('core', 'local_example'));
     }
 
     #[Test]
@@ -43,7 +43,7 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general');
 
-        $this->assertSame('example_ecommerce_general', $page->resolve_id('ecommerce', 'local_example'));
+        $this->assertSame('example_ecommerce_general', $page->resolveId('ecommerce', 'local_example'));
     }
 
     #[Test]
@@ -51,7 +51,7 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general');
 
-        $this->assertSame('singleword_core_general', $page->resolve_id('core', 'singleword'));
+        $this->assertSame('singleword_core_general', $page->resolveId('core', 'singleword'));
     }
 
     #[Test]
@@ -63,7 +63,7 @@ final class PageCoverageTest extends TestCase
         $plugin = (string) ComponentContext::name();
         $expectedShort = substr($plugin, (int) strpos($plugin, '_') + 1);
 
-        $this->assertSame($expectedShort . '_core_general', $page->resolve_id('core'));
+        $this->assertSame($expectedShort . '_core_general', $page->resolveId('core'));
     }
 
     #[Test]
@@ -71,7 +71,7 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general', label: 'my_label_key');
 
-        $this->assertSame('my_label_key', $page->resolve_label('core'));
+        $this->assertSame('my_label_key', $page->resolveLabel('core'));
     }
 
     #[Test]
@@ -79,7 +79,7 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general');
 
-        $this->assertSame('settings_page_general', $page->resolve_label('core'));
+        $this->assertSame('settings_page_general', $page->resolveLabel('core'));
     }
 
     #[Test]
@@ -87,6 +87,6 @@ final class PageCoverageTest extends TestCase
     {
         $page = new Page('general');
 
-        $this->assertSame('settings_page_ecommerce_general', $page->resolve_label('ecommerce'));
+        $this->assertSame('settings_page_ecommerce_general', $page->resolveLabel('ecommerce'));
     }
 }

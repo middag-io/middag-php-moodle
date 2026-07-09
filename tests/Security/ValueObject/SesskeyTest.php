@@ -34,11 +34,11 @@ final class SesskeyTest extends TestCase
     #[Test]
     public function fromCurrentReadsTheCurrentMoodleSessionKey(): void
     {
-        // from_current() wraps Moodle's sesskey(); the bootstrap stub returns
+        // fromCurrent() wraps Moodle's sesskey(); the bootstrap stub returns
         // whatever the driving global holds.
         $GLOBALS['__middag_test_sesskey'] = 'abc123';
 
-        self::assertSame('abc123', Sesskey::from_current()->value);
+        self::assertSame('abc123', Sesskey::fromCurrent()->value);
     }
 
     #[Test]
@@ -65,14 +65,14 @@ final class SesskeyTest extends TestCase
     #[Test]
     public function fromStringCreatesFromValidValue(): void
     {
-        $sesskey = Sesskey::from_string('abcDEF123');
+        $sesskey = Sesskey::fromString('abcDEF123');
         $this->assertSame('abcDEF123', $sesskey->value);
     }
 
     #[Test]
     public function fromStringTrimsWhitespace(): void
     {
-        $sesskey = Sesskey::from_string('  abc123  ');
+        $sesskey = Sesskey::fromString('  abc123  ');
         $this->assertSame('abc123', $sesskey->value);
     }
 
@@ -81,14 +81,14 @@ final class SesskeyTest extends TestCase
     {
         $this->expectException(MiddagValidationException::class);
         $this->expectExceptionMessage('Invalid sesskey: must be 1-40 characters');
-        Sesskey::from_string('');
+        Sesskey::fromString('');
     }
 
     #[Test]
     public function fromStringThrowsForWhitespaceOnly(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Sesskey::from_string('   ');
+        Sesskey::fromString('   ');
     }
 
     #[Test]
@@ -96,21 +96,21 @@ final class SesskeyTest extends TestCase
     {
         $this->expectException(MiddagValidationException::class);
         $this->expectExceptionMessage('Invalid sesskey: must be 1-40 characters');
-        Sesskey::from_string(str_repeat('a', 41));
+        Sesskey::fromString(str_repeat('a', 41));
     }
 
     #[Test]
     public function fromStringAccepts40CharacterValue(): void
     {
         $value = str_repeat('a', 40);
-        $sesskey = Sesskey::from_string($value);
+        $sesskey = Sesskey::fromString($value);
         $this->assertSame($value, $sesskey->value);
     }
 
     #[Test]
     public function fromStringAcceptsSingleCharacter(): void
     {
-        $sesskey = Sesskey::from_string('a');
+        $sesskey = Sesskey::fromString('a');
         $this->assertSame('a', $sesskey->value);
     }
 
@@ -119,21 +119,21 @@ final class SesskeyTest extends TestCase
     {
         $this->expectException(MiddagValidationException::class);
         $this->expectExceptionMessage('Invalid sesskey: must be alphanumeric');
-        Sesskey::from_string('abc-123');
+        Sesskey::fromString('abc-123');
     }
 
     #[Test]
     public function fromStringThrowsForSpecialCharacters(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Sesskey::from_string('abc!@#');
+        Sesskey::fromString('abc!@#');
     }
 
     #[Test]
     public function fromStringThrowsForSpacesInValue(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Sesskey::from_string('abc 123');
+        Sesskey::fromString('abc 123');
     }
 
     #[Test]

@@ -16,7 +16,7 @@ use core\check\check as core_check;
 use core\check\manager as check_manager;
 use core\check\result;
 use Middag\Moodle\Domain\Platform\CheckResultDto;
-use Middag\Moodle\Domain\Platform\CheckResultStatus;
+use Middag\Moodle\Domain\Platform\Enum\CheckResultStatus;
 use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 

@@ -58,7 +58,7 @@ final class HasUrlCoverageTest extends TestCase
     #[Test]
     public function getUrlDefaultsTheTypeToItemWhenGetTypeIsAbsent(): void
     {
-        // A plain entity without get_type() falls back to the 'item' type.
+        // A plain entity without getType() falls back to the 'item' type.
         $item = $this->makeEntityWithoutType(7);
 
         $item->getUrl('view');
@@ -116,7 +116,7 @@ final class HasUrlCoverageTest extends TestCase
     }
 
     /**
-     * A HasUrl-consuming entity exposing get_type()/get_id(), wired to a Kernel
+     * A HasUrl-consuming entity exposing getType()/get_id(), wired to a Kernel
      * whose router records generateUrl() calls.
      */
     private function makeEntity(string $type, ?int $id): object
@@ -128,7 +128,7 @@ final class HasUrlCoverageTest extends TestCase
 
             public function __construct(private readonly string $type, private readonly ?int $id) {}
 
-            public function get_type(): string
+            public function getType(): string
             {
                 return $this->type;
             }
@@ -140,7 +140,7 @@ final class HasUrlCoverageTest extends TestCase
         };
     }
 
-    /** A HasUrl consumer with no get_type() hook (type -> 'item'). */
+    /** A HasUrl consumer with no getType() hook (type -> 'item'). */
     private function makeEntityWithoutType(int $id): object
     {
         $this->bootRouter();

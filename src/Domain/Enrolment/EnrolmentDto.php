@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Enrolment;
 
+use Middag\Moodle\Domain\Enrolment\Enum\EnrolmentStatus;
+
 /**
  * Composed enrolment data — user + course + enrolment state.
  *
@@ -51,7 +53,7 @@ final readonly class EnrolmentDto
     /**
      * Whether the enrolment is currently active.
      */
-    public function is_active(): bool
+    public function isActive(): bool
     {
         return $this->status->isActive();
     }
@@ -59,7 +61,7 @@ final readonly class EnrolmentDto
     /**
      * Whether the enrolment has a time limit.
      */
-    public function has_time_limit(): bool
+    public function hasTimeLimit(): bool
     {
         return $this->timeend > 0;
     }
@@ -67,9 +69,9 @@ final readonly class EnrolmentDto
     /**
      * Whether the enrolment has expired (if time-limited).
      */
-    public function is_expired(?int $now = null): bool
+    public function isExpired(?int $now = null): bool
     {
-        if (!$this->has_time_limit()) {
+        if (!$this->hasTimeLimit()) {
             return false;
         }
 

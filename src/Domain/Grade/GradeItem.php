@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Grade;
 
 use Middag\Moodle\Domain\AbstractMoodleEntity;
+use Middag\Moodle\Domain\Grade\Enum\GradeDisplayType;
+use Middag\Moodle\Domain\Grade\Enum\GradeType;
 
 /**
  * Grade item entity (Moodle native).

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Platform\CheckType;
+use Middag\Moodle\Domain\Platform\Enum\CheckType;
 
 /**
  * Check definition for Moodle's Check API.

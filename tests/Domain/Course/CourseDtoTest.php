@@ -87,35 +87,35 @@ final class CourseDtoTest extends TestCase
     public function isVisibleReturnsTrueWhenVisibleIs1(): void
     {
         $dto = new CourseDto(id: 1, fullname: 'Test', shortname: 'T', category: 1, visible: 1);
-        $this->assertTrue($dto->is_visible());
+        $this->assertTrue($dto->isVisible());
     }
 
     #[Test]
     public function isVisibleReturnsFalseWhenVisibleIs0(): void
     {
         $dto = new CourseDto(id: 1, fullname: 'Test', shortname: 'T', category: 1, visible: 0);
-        $this->assertFalse($dto->is_visible());
+        $this->assertFalse($dto->isVisible());
     }
 
     #[Test]
     public function hasEndDateReturnsTrueWhenEnddateGreaterThanZero(): void
     {
         $dto = new CourseDto(id: 1, fullname: 'Test', shortname: 'T', category: 1, enddate: 1700000000);
-        $this->assertTrue($dto->has_end_date());
+        $this->assertTrue($dto->hasEndDate());
     }
 
     #[Test]
     public function hasEndDateReturnsFalseWhenEnddateIsZero(): void
     {
         $dto = new CourseDto(id: 1, fullname: 'Test', shortname: 'T', category: 1, enddate: 0);
-        $this->assertFalse($dto->has_end_date());
+        $this->assertFalse($dto->hasEndDate());
     }
 
     #[Test]
     public function hasEndDateReturnsFalseByDefault(): void
     {
         $dto = new CourseDto(id: 1, fullname: 'Test', shortname: 'T', category: 1);
-        $this->assertFalse($dto->has_end_date());
+        $this->assertFalse($dto->hasEndDate());
     }
 
     #[Test]

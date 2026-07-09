@@ -25,7 +25,7 @@ use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Framework\Http\Contract\CapabilityDefinitionInterface;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaManager;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Controller\AbstractController;
 use Middag\Moodle\Runtime\Kernel;

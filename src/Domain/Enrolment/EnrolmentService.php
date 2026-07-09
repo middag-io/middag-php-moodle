@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Enrolment;
 
 use Middag\Moodle\Domain\Enrolment\Contract\EnrolmentServiceInterface;
+use Middag\Moodle\Domain\Enrolment\Enum\EnrolmentStatus;
 use Middag\Moodle\Support\CourseSupport;
 use Middag\Moodle\Support\DbSupport;
 use Middag\Moodle\Support\EnrolSupport;

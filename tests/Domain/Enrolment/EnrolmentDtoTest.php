@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\Enrolment;
 
 use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
-use Middag\Moodle\Domain\Enrolment\EnrolmentStatus;
+use Middag\Moodle\Domain\Enrolment\Enum\EnrolmentStatus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +59,7 @@ final class EnrolmentDtoTest extends TestCase
     public function isActiveDelegatesToStatusEnum(): void
     {
         $active = $this->createActiveEnrolment();
-        $this->assertTrue($active->is_active());
+        $this->assertTrue($active->isActive());
 
         $suspended = new EnrolmentDto(
             userid: 10,
@@ -74,42 +74,42 @@ final class EnrolmentDtoTest extends TestCase
             timecreated: 0,
             timemodified: 0,
         );
-        $this->assertFalse($suspended->is_active());
+        $this->assertFalse($suspended->isActive());
     }
 
     #[Test]
     public function hasTimeLimitReturnsTrueWhenTimeendGreaterThanZero(): void
     {
         $dto = $this->createActiveEnrolment(timeend: 1703000000);
-        $this->assertTrue($dto->has_time_limit());
+        $this->assertTrue($dto->hasTimeLimit());
     }
 
     #[Test]
     public function hasTimeLimitReturnsFalseWhenTimeendIsZero(): void
     {
         $dto = $this->createActiveEnrolment(timeend: 0);
-        $this->assertFalse($dto->has_time_limit());
+        $this->assertFalse($dto->hasTimeLimit());
     }
 
     #[Test]
     public function isExpiredReturnsFalseWhenNoTimeLimit(): void
     {
         $dto = $this->createActiveEnrolment(timeend: 0);
-        $this->assertFalse($dto->is_expired());
+        $this->assertFalse($dto->isExpired());
     }
 
     #[Test]
     public function isExpiredReturnsTrueWhenNowPastTimeend(): void
     {
         $dto = $this->createActiveEnrolment(timeend: 1700000000);
-        $this->assertTrue($dto->is_expired(1700000001));
+        $this->assertTrue($dto->isExpired(1700000001));
     }
 
     #[Test]
     public function isExpiredReturnsFalseWhenNowBeforeTimeend(): void
     {
         $dto = $this->createActiveEnrolment(timeend: 1700000000);
-        $this->assertFalse($dto->is_expired(1699999999));
+        $this->assertFalse($dto->isExpired(1699999999));
     }
 
     #[Test]
@@ -117,8 +117,8 @@ final class EnrolmentDtoTest extends TestCase
     {
         $dto = $this->createActiveEnrolment(timeend: 1700000000);
         // now > timeend means expired, now == timeend is not expired
-        $this->assertFalse($dto->is_expired(1700000000));
-        $this->assertTrue($dto->is_expired(1700000001));
+        $this->assertFalse($dto->isExpired(1700000000));
+        $this->assertTrue($dto->isExpired(1700000001));
     }
 
     #[Test]

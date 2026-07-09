@@ -14,7 +14,7 @@ namespace Middag\Moodle\Http\Concerns;
 
 use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Framework\Http\Auth\CapabilityRequirement;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
 use Middag\Moodle\Security\Contract\CapabilityInterface;
 use Symfony\Component\HttpFoundation\Request;

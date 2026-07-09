@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Domain\Grade;
 
-use Middag\Moodle\Domain\Grade\GradeDisplayType;
+use Middag\Moodle\Domain\Grade\Enum\GradeDisplayType;
+use Middag\Moodle\Domain\Grade\Enum\GradeType;
 use Middag\Moodle\Domain\Grade\GradeItem;
-use Middag\Moodle\Domain\Grade\GradeType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

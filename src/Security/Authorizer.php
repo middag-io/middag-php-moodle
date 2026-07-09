@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security;
 
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use Middag\Moodle\Security\Contract\AuthorizerInterface;
 
 /**

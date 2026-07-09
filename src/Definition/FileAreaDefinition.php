@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 
 /**
  * Typed file area definition.
@@ -58,7 +58,7 @@ final readonly class FileAreaDefinition implements DefinitionInterface
      *
      * @param null|string $extension extension slug
      */
-    public function get_qualified_name(?string $extension = null): string
+    public function getQualifiedName(?string $extension = null): string
     {
         if ($extension === null || $extension === 'core') {
             return $this->name;

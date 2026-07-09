@@ -32,9 +32,9 @@ use Attribute;
  *     {
  *         public function __construct(public \core\event\base $event) {}
  *
- *         public function get_aggregate(): string { return 'enrolment'; }
- *         public function get_type(): ?string     { return 'user_enrolment'; }
- *         public function get_action(): Signal    { return Signal::Created; }
+ *         public function getAggregate(): string { return 'enrolment'; }
+ *         public function getType(): ?string     { return 'user_enrolment'; }
+ *         public function getAction(): Signal    { return Signal::Created; }
  *     }
  *
  * @api

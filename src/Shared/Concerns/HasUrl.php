@@ -44,7 +44,7 @@ trait HasUrl
     {
         // 1. Determine Type
         // Safer than trusting property existence, prefers interface contract if exists
-        $type = method_exists($this, 'get_type') ? $this->get_type() : 'item';
+        $type = method_exists($this, 'getType') ? $this->getType() : 'item';
 
         // 2. Resolve Route Name
         // Normalize: if contains dots, assume full route name

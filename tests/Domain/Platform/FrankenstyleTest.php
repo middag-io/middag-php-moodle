@@ -51,7 +51,7 @@ final class FrankenstyleTest extends TestCase
     #[Test]
     public function fromStringParsesValidComponent(): void
     {
-        $fs = Frankenstyle::from_string('mod_assign');
+        $fs = Frankenstyle::fromString('mod_assign');
         $this->assertSame('mod', $fs->type);
         $this->assertSame('assign', $fs->name);
     }
@@ -59,7 +59,7 @@ final class FrankenstyleTest extends TestCase
     #[Test]
     public function fromStringParsesLocalComponent(): void
     {
-        $fs = Frankenstyle::from_string('local_example');
+        $fs = Frankenstyle::fromString('local_example');
         $this->assertSame('local', $fs->type);
         $this->assertSame('example', $fs->name);
     }
@@ -67,7 +67,7 @@ final class FrankenstyleTest extends TestCase
     #[Test]
     public function fromStringTrimsWhitespace(): void
     {
-        $fs = Frankenstyle::from_string('  mod_assign  ');
+        $fs = Frankenstyle::fromString('  mod_assign  ');
         $this->assertSame('mod', $fs->type);
         $this->assertSame('assign', $fs->name);
     }
@@ -76,48 +76,48 @@ final class FrankenstyleTest extends TestCase
     public function fromStringThrowsForEmptyString(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('');
+        Frankenstyle::fromString('');
     }
 
     #[Test]
     public function fromStringThrowsForStringWithoutUnderscore(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('modassign');
+        Frankenstyle::fromString('modassign');
     }
 
     #[Test]
     public function fromStringThrowsForInvalidNameWithUppercase(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('mod_Assign');
+        Frankenstyle::fromString('mod_Assign');
     }
 
     #[Test]
     public function fromStringThrowsForInvalidNameWithSpecialChars(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('mod_assign-2');
+        Frankenstyle::fromString('mod_assign-2');
     }
 
     #[Test]
     public function fromStringThrowsForInvalidTypeWithNumbers(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('mod2_assign');
+        Frankenstyle::fromString('mod2_assign');
     }
 
     #[Test]
     public function fromStringThrowsForInvalidTypeWithUppercase(): void
     {
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('Mod_assign');
+        Frankenstyle::fromString('Mod_assign');
     }
 
     #[Test]
     public function fromStringHandlesNameWithNumbers(): void
     {
-        $fs = Frankenstyle::from_string('mod_assign2');
+        $fs = Frankenstyle::fromString('mod_assign2');
         $this->assertSame('mod', $fs->type);
         $this->assertSame('assign2', $fs->name);
     }
@@ -128,7 +128,7 @@ final class FrankenstyleTest extends TestCase
         // 'block_my_plugin' -> type='block', name='my_plugin'
         // But 'my_plugin' won't match /^[a-z][a-z0-9]*$/ because of the underscore
         $this->expectException(MiddagValidationException::class);
-        Frankenstyle::from_string('block_my_plugin');
+        Frankenstyle::fromString('block_my_plugin');
     }
 
     #[Test]

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Definition;
 
 use Middag\Moodle\Definition\Contract\DefinitionInterface;
 use Middag\Moodle\Definition\FileAreaDefinition;
-use Middag\Moodle\Domain\Context\ContextLevel;
+use Middag\Moodle\Domain\Context\Enum\ContextLevel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -118,8 +118,8 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(name: 'attachments');
 
-        self::assertSame('attachments', $area->get_qualified_name());
-        self::assertSame('attachments', $area->get_qualified_name());
+        self::assertSame('attachments', $area->getQualifiedName());
+        self::assertSame('attachments', $area->getQualifiedName());
     }
 
     #[Test]
@@ -127,7 +127,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(name: 'attachments');
 
-        self::assertSame('attachments', $area->get_qualified_name('core'));
+        self::assertSame('attachments', $area->getQualifiedName('core'));
     }
 
     #[Test]
@@ -135,7 +135,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(name: 'attachments');
 
-        self::assertSame('myext_attachments', $area->get_qualified_name('myext'));
+        self::assertSame('myext_attachments', $area->getQualifiedName('myext'));
     }
 
     #[Test]

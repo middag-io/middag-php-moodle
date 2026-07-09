@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test SettingType.
  *
- * Enumerates the supported admin setting types; stores_value() distinguishes
+ * Enumerates the supported admin setting types; storesValue() distinguishes
  * input types from display-only ones (heading/description/link).
  *
  * @internal
@@ -33,7 +33,7 @@ final class SettingTypeCoverageTest extends TestCase
     #[DataProvider('displayOnlyProvider')]
     public function displayOnlyTypesDoNotStoreValues(SettingType $type): void
     {
-        $this->assertFalse($type->stores_value());
+        $this->assertFalse($type->storesValue());
     }
 
     /**
@@ -52,7 +52,7 @@ final class SettingTypeCoverageTest extends TestCase
     #[DataProvider('storageProvider')]
     public function inputTypesStoreValues(SettingType $type): void
     {
-        $this->assertTrue($type->stores_value());
+        $this->assertTrue($type->storesValue());
     }
 
     /**

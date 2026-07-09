@@ -142,19 +142,19 @@ final class CapabilityTest extends TestCase
     #[Test]
     public function isValidFormatReturnsTrueForValid(): void
     {
-        $this->assertTrue(Capability::is_valid_format('local/middag:manage'));
-        $this->assertTrue(Capability::is_valid_format('moodle/course:view'));
-        $this->assertTrue(Capability::is_valid_format('mod/forum:addinstance'));
+        $this->assertTrue(Capability::isValidFormat('local/middag:manage'));
+        $this->assertTrue(Capability::isValidFormat('moodle/course:view'));
+        $this->assertTrue(Capability::isValidFormat('mod/forum:addinstance'));
     }
 
     #[Test]
     public function isValidFormatReturnsFalseForInvalid(): void
     {
-        $this->assertFalse(Capability::is_valid_format('localmiddag:manage'));
-        $this->assertFalse(Capability::is_valid_format('local/middag'));
-        $this->assertFalse(Capability::is_valid_format('local/middag:'));
-        $this->assertFalse(Capability::is_valid_format('manage'));
-        $this->assertFalse(Capability::is_valid_format(''));
+        $this->assertFalse(Capability::isValidFormat('localmiddag:manage'));
+        $this->assertFalse(Capability::isValidFormat('local/middag'));
+        $this->assertFalse(Capability::isValidFormat('local/middag:'));
+        $this->assertFalse(Capability::isValidFormat('manage'));
+        $this->assertFalse(Capability::isValidFormat(''));
     }
 
     #[Test]
