@@ -178,6 +178,23 @@ final class InteractsWithAuthCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testCheckCapabilitiesDefaultsToSystemContextWhenContextIsOmitted(): void
+    {
+        $capability = $this->makeCapability();
+        $controller = $this->makeController($this->makeContainer($this->makeAuth(), $capability));
+
+        // No third arg at all (neither a ContextLevel nor a string) — the
+        // match's `default => null` arm, distinct from the unknown-string-name
+        // case above, which goes through ContextLevel::fromString() instead.
+        $controller->setRequireCapabilities(['mod/x:view']);
+        $controller->runCheckCapabilities();
+
+        self::assertSame([
+            ['authorize', 'mod/x:view', ContextLevel::System, 0],
+        ], $capability->calls);
+    }
+
+    #[Test]
     public function testCheckCapabilitiesResolvesKnownContextNameInsteadOfDegradingToSystem(): void
     {
         $capability = $this->makeCapability();

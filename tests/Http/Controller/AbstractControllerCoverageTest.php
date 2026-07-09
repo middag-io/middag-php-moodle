@@ -239,6 +239,21 @@ final class AbstractControllerCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSetRequireCapabilitiesStoresNullWhenContextIsOmitted(): void
+    {
+        $cap = $this->makeCapability();
+        $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
+
+        // No third arg at all — the match's `default => null` arm, distinct
+        // from the unknown-string-name case above (ContextLevel::fromString()).
+        $controller->setRequireCapabilities(['cap/y']);
+
+        $controller->callCheckCapabilities();
+
+        self::assertSame([['cap/y', ContextLevel::System, 0]], $cap->authorized);
+    }
+
+    #[Test]
     public function testSetRequireCapabilitiesResolvesKnownContextName(): void
     {
         $cap = $this->makeCapability();

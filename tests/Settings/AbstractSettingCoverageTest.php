@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Settings;
 
 use admin_setting;
 use Middag\Moodle\Settings\AbstractSetting;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -79,6 +80,15 @@ final class AbstractSettingCoverageTest extends TestCase
     public function resolveConfigNameDelegatesToResolver(): void
     {
         $this->assertSame('mdg_ecommerce_apikey', $this->makeSetting()->resolveConfigName('ecommerce'));
+    }
+
+    #[Test]
+    public function useNamingPolicyOverridesTheDefaultPolicyUsedByResolveConfigName(): void
+    {
+        $setting = $this->makeSetting();
+        $setting->useNamingPolicy(new SettingsNamingPolicy('acme_'));
+
+        $this->assertSame('acme_ecommerce_apikey', $setting->resolveConfigName('ecommerce'));
     }
 
     private function makeSetting(?string $label = null, ?string $description = null, string $name = 'apikey'): AbstractSetting
