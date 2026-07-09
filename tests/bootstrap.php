@@ -514,7 +514,7 @@ foreach (glob(__DIR__ . '/stubs/support/*.php') ?: [] as $supportStub) {
 }
 
 // Auto-load per-area stubs for the non-Support coverage areas (Domain, Http,
-// Kernel, Security, Statics, Shared, Definition, …). Same doctrine as the
+// Runtime, Security, Statics, Shared, Definition, …). Same doctrine as the
 // support stubs above: every definition is guarded with !function_exists /
 // !class_exists, so the files are order-independent, purely additive, and a
 // symbol is defined exactly once (first glob wins). This gives each area a

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Shared\Concerns;
 
 use core\url as moodle_url;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 
 /**
  * Trait has_url.

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Shared\Concerns;
 
 use core\url as moodle_url;
 use Middag\Moodle\Http\Contract\RouterInterface;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Shared\Concerns\HasUrl;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

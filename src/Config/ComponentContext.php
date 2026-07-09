@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Config;
 
 use Middag\Moodle\Exception\MoodleConfigurationException;
-use Middag\Moodle\Kernel\ContainerFactory;
+use Middag\Moodle\Runtime\ContainerFactory;
 
 /**
  * Composition-root seam for the running plugin's Moodle frankenstyle component.

@@ -33,7 +33,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Form/` | `MformRenderer` (ui `FormRendererInterface` → mforms), `MformFieldMapper`, `MformElementSpec` |
 | `Hook/` | `AbstractExtendExtensions` (Moodle hook API base) |
 | `Http/` | `MoodleHttpKernel` (extends framework `HttpKernel`; applies `#[Sesskey]`), `Client/HttpClientAdapter`, `Concerns/`, `Controller/{AbstractController,AbstractApiController}`, `Inertia/`, `Routing/{MoodleRouter,RouteLoader,MiddagProxy,PluginAwareUrlGenerator}` |
-| `Kernel/` | `Kernel` (singleton, framework `KernelInterface`), `ContainerFactory`, `MoodleBootstrap`, `MoodleHostContext`, `MoodleComponentNameResolver`, `MoodleMaintenanceGate`, `Facade/AbstractFacade`, `Loader/{FacadeLoader,MoodleHookfileLoader}` |
+| `Runtime/` | `Kernel` (singleton, framework `KernelInterface`), `ContainerFactory`, `MoodleBootstrap`, `MoodleHostContext`, `MoodleComponentNameResolver`, `MoodleMaintenanceGate`, `Facade/AbstractFacade`, `Loader/{FacadeLoader,MoodleHookfileLoader}` |
 | `Logging/` | `MoodleLogger` (PSR-3 `AbstractLogger`), `MoodleActorResolver`, `MoodleOriginResolver` |
 | `Mail/` | `MoodleMailer` (framework `MailerInterface` → `email_to_user`) |
 | `Output/` | `MoodleView` (local `ViewAdapterInterface`), `MoodleRenderer` (extends `plugin_renderer_base`), `AbstractBlock`, `NavbarService`, `Widget`, `Table/UsersTable`, `Table/UsersFilterset` |
@@ -50,16 +50,16 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 
 | Framework port | Moodle implementation |
 |---|---|
-| `Kernel\Contract\KernelInterface` | `Kernel\Kernel` |
-| `Kernel\Contract\BootstrapInterface` | `Kernel\MoodleBootstrap` |
-| `Kernel\Contract\MaintenanceGateInterface` | `Kernel\MoodleMaintenanceGate` |
-| `Kernel\Contract\HostComponentContextInterface` | `Kernel\MoodleHostContext` |
-| `Kernel\Contract\ComponentNameResolverInterface` | `Kernel\MoodleComponentNameResolver` |
+| `Kernel\Contract\KernelInterface` | `Runtime\Kernel` |
+| `Kernel\Contract\BootstrapInterface` | `Runtime\MoodleBootstrap` |
+| `Kernel\Contract\MaintenanceGateInterface` | `Runtime\MoodleMaintenanceGate` |
+| `Kernel\Contract\HostComponentContextInterface` | `Runtime\MoodleHostContext` |
+| `Kernel\Contract\ComponentNameResolverInterface` | `Runtime\MoodleComponentNameResolver` |
 | `Kernel\Contract\ConfigResolverInterface` | `Config\MoodleConfigResolver` |
 | `Kernel\Contract\HostEventBridgeInterface` | `Bus\MoodleHostEventBridge` |
-| `Kernel\Contract\FacadeInterface` | `Kernel\Facade\AbstractFacade` |
-| `Kernel\Contract\FacadeLoaderInterface` | `Kernel\Loader\FacadeLoader` |
-| `Kernel\Loader\HookfileLoader` (extends) | `Kernel\Loader\MoodleHookfileLoader` |
+| `Kernel\Contract\FacadeInterface` | `Runtime\Facade\AbstractFacade` |
+| `Kernel\Contract\FacadeLoaderInterface` | `Runtime\Loader\FacadeLoader` |
+| `Kernel\Loader\HookfileLoader` (extends) | `Runtime\Loader\MoodleHookfileLoader` |
 | `Bus\Contract\TransportInterface` | `Bus\MoodleAdhocTransport` |
 | `Bus\Contract\UserContextResolverInterface` | `Bus\MoodleUserContext` |
 | `Database\Contract\ConnectionAdapterInterface` | `Database\MoodleConnectionAdapter` |
@@ -151,7 +151,7 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    ship a default OSS builder). A facade whose accessor is a core/premium
    service therefore requires core; one whose accessor is a service the
    plugin registers itself does not
-   (`tests/Kernel/Facade/ThirdPartyFacadeResolutionTest.php` proves the
+   (`tests/Runtime/Facade/ThirdPartyFacadeResolutionTest.php` proves the
    no-core path end-to-end; `FacadeLoaderCoverageTest` proves
    `new FacadeLoader()` with a null root scans the third party's own
    `/facade` dir through `Kernel::hostDirectory()`).

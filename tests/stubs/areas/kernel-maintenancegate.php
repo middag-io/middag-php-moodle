@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 /*
- * Moodle function stub for Middag\Moodle\Kernel\MoodleMaintenanceGate coverage.
+ * Moodle function stub for Middag\Moodle\Runtime\MoodleMaintenanceGate coverage.
  *
  * The gate probes during_initial_install() (true while the site has no config
  * table yet — the very first install run). Moodle declares this in

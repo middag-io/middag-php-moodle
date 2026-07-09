@@ -94,8 +94,8 @@ declared (and frozen) in `middag-io/framework`. Depend on the **framework**
 | `TranslatorInterface` | `Middag\Moodle\Translation\MoodleTranslator` |
 | `ConfigResolverInterface` | `Middag\Moodle\Config\MoodleConfigResolver` |
 | `UserContextResolverInterface` | `Middag\Moodle\Bus\MoodleUserContext` |
-| `MaintenanceGateInterface` | `Middag\Moodle\Kernel\MoodleMaintenanceGate` |
-| `BootstrapInterface` | `Middag\Moodle\Kernel\MoodleBootstrap` |
+| `MaintenanceGateInterface` | `Middag\Moodle\Runtime\MoodleMaintenanceGate` |
+| `BootstrapInterface` | `Middag\Moodle\Runtime\MoodleBootstrap` |
 
 The adapter also implements the framework's frozen bridge seams
 (`MoodleHostContext`, `MoodleHostEventBridge`, `MoodleComponentNameResolver`) and
