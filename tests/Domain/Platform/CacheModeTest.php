@@ -33,35 +33,35 @@ final class CacheModeTest extends TestCase
     #[Test]
     public function applicationHasValue1(): void
     {
-        $this->assertSame(1, CacheMode::APPLICATION->value);
+        $this->assertSame(1, CacheMode::Application->value);
     }
 
     #[Test]
     public function sessionHasValue2(): void
     {
-        $this->assertSame(2, CacheMode::SESSION->value);
+        $this->assertSame(2, CacheMode::Session->value);
     }
 
     #[Test]
     public function requestHasValue4(): void
     {
-        $this->assertSame(4, CacheMode::REQUEST->value);
+        $this->assertSame(4, CacheMode::Request->value);
     }
 
     #[Test]
     public function toMoodleValueReturnsBackingValue(): void
     {
-        $this->assertSame(1, CacheMode::APPLICATION->toMoodleValue());
-        $this->assertSame(2, CacheMode::SESSION->toMoodleValue());
-        $this->assertSame(4, CacheMode::REQUEST->toMoodleValue());
+        $this->assertSame(1, CacheMode::Application->toMoodleValue());
+        $this->assertSame(2, CacheMode::Session->toMoodleValue());
+        $this->assertSame(4, CacheMode::Request->toMoodleValue());
     }
 
     #[Test]
     public function canBeCreatedFromValue(): void
     {
-        $this->assertSame(CacheMode::APPLICATION, CacheMode::from(1));
-        $this->assertSame(CacheMode::SESSION, CacheMode::from(2));
-        $this->assertSame(CacheMode::REQUEST, CacheMode::from(4));
+        $this->assertSame(CacheMode::Application, CacheMode::from(1));
+        $this->assertSame(CacheMode::Session, CacheMode::from(2));
+        $this->assertSame(CacheMode::Request, CacheMode::from(4));
     }
 
     #[Test]

@@ -37,7 +37,7 @@ final class CheckDefinitionCoverageTest extends TestCase
 
         self::assertSame('eav_integrity', $check->name);
         self::assertSame('local_example\check\eav_integrity', $check->classname);
-        self::assertSame(CheckType::STATUS, $check->type);
+        self::assertSame(CheckType::Status, $check->type);
         self::assertNull($check->min_moodle);
         self::assertNull($check->max_moodle);
     }
@@ -48,14 +48,14 @@ final class CheckDefinitionCoverageTest extends TestCase
         $check = new CheckDefinition(
             name: 'perf_probe',
             classname: 'local_example\check\perf_probe',
-            type: CheckType::PERFORMANCE,
+            type: CheckType::Performance,
             min_moodle: '4.0',
             max_moodle: '5.0',
         );
 
         self::assertSame('perf_probe', $check->name);
         self::assertSame('local_example\check\perf_probe', $check->classname);
-        self::assertSame(CheckType::PERFORMANCE, $check->type);
+        self::assertSame(CheckType::Performance, $check->type);
         self::assertSame('4.0', $check->min_moodle);
         self::assertSame('5.0', $check->max_moodle);
     }
@@ -100,7 +100,7 @@ final class CheckDefinitionCoverageTest extends TestCase
         $check = new CheckDefinition(
             name: 'lockout',
             classname: 'local_example\check\lockout',
-            type: CheckType::SECURITY,
+            type: CheckType::Security,
         );
 
         $result = $check->toMoodleArray('local_example');
@@ -115,7 +115,7 @@ final class CheckDefinitionCoverageTest extends TestCase
         $check = new CheckDefinition(
             name: 'cachestats',
             classname: 'local_example\check\cachestats',
-            type: CheckType::PERFORMANCE,
+            type: CheckType::Performance,
         );
 
         $result = $check->toMoodleArray('local_example');

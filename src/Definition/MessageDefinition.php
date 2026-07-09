@@ -24,8 +24,8 @@ final readonly class MessageDefinition implements DefinitionInterface
 {
     public function __construct(
         public string $name,
-        public MessagePermission $popup = MessagePermission::PERMITTED,
-        public MessagePermission $email = MessagePermission::PERMITTED,
+        public MessagePermission $popup = MessagePermission::Permitted,
+        public MessagePermission $email = MessagePermission::Permitted,
         public ?string $min_moodle = null,
         public ?string $max_moodle = null,
     ) {}

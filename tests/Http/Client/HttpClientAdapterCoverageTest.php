@@ -61,7 +61,7 @@ final class HttpClientAdapterCoverageTest extends TestCase
         // Enable framework Debug so Debug::trace() actually emits (via the mtrace
         // stub) — lets the error/connection branches be asserted on observable
         // output as well as the return value.
-        Debug::setRuntime(new NullLogger(), static fn (): int => DebugMode::FULL->value);
+        Debug::setRuntime(new NullLogger(), static fn (): int => DebugMode::Full->value);
     }
 
     protected function tearDown(): void

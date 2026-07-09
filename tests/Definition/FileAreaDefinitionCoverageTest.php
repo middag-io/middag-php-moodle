@@ -39,7 +39,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(name: 'attachments');
 
-        self::assertSame(ContextLevel::SYSTEM, $area->context_level);
+        self::assertSame(ContextLevel::System, $area->context_level);
         self::assertNull($area->handler);
         self::assertFalse($area->supports_preview);
         self::assertSame('', $area->description);
@@ -52,7 +52,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(
             name: 'gallery',
-            context_level: ContextLevel::MODULE,
+            context_level: ContextLevel::Module,
             handler: 'Some\Handler\Class',
             supports_preview: true,
             description: 'Image gallery files',
@@ -61,7 +61,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
         );
 
         self::assertSame('gallery', $area->name);
-        self::assertSame(ContextLevel::MODULE, $area->context_level);
+        self::assertSame(ContextLevel::Module, $area->context_level);
         self::assertSame('Some\Handler\Class', $area->handler);
         self::assertTrue($area->supports_preview);
         self::assertSame('Image gallery files', $area->description);
@@ -90,13 +90,13 @@ final class FileAreaDefinitionCoverageTest extends TestCase
     {
         $area = new FileAreaDefinition(
             name: 'attachments',
-            context_level: ContextLevel::MODULE,
+            context_level: ContextLevel::Module,
             supports_preview: true,
         );
 
         $result = $area->toMoodleArray('local_example');
 
-        self::assertSame(ContextLevel::MODULE->toMoodleValue(), $result['contextlevel']);
+        self::assertSame(ContextLevel::Module->toMoodleValue(), $result['contextlevel']);
         self::assertSame(70, $result['contextlevel']);
         self::assertTrue($result['supports_preview']);
         self::assertSame(['contextlevel', 'supports_preview'], array_keys($result));
@@ -109,7 +109,7 @@ final class FileAreaDefinitionCoverageTest extends TestCase
 
         $result = $area->toMoodleArray('local_example');
 
-        self::assertSame(ContextLevel::SYSTEM->value, $result['contextlevel']);
+        self::assertSame(ContextLevel::System->value, $result['contextlevel']);
         self::assertFalse($result['supports_preview']);
     }
 

@@ -33,55 +33,55 @@ final class EnrolmentStatusTest extends TestCase
     #[Test]
     public function activeHasValue0(): void
     {
-        $this->assertSame(0, EnrolmentStatus::ACTIVE->value);
+        $this->assertSame(0, EnrolmentStatus::Active->value);
     }
 
     #[Test]
     public function suspendedHasValue1(): void
     {
-        $this->assertSame(1, EnrolmentStatus::SUSPENDED->value);
+        $this->assertSame(1, EnrolmentStatus::Suspended->value);
     }
 
     #[Test]
     public function toMoodleValueReturnsBackingValue(): void
     {
-        $this->assertSame(0, EnrolmentStatus::ACTIVE->toMoodleValue());
-        $this->assertSame(1, EnrolmentStatus::SUSPENDED->toMoodleValue());
+        $this->assertSame(0, EnrolmentStatus::Active->toMoodleValue());
+        $this->assertSame(1, EnrolmentStatus::Suspended->toMoodleValue());
     }
 
     #[Test]
     public function labelReturnsHumanReadableString(): void
     {
-        $this->assertSame('Active', EnrolmentStatus::ACTIVE->label());
-        $this->assertSame('Suspended', EnrolmentStatus::SUSPENDED->label());
+        $this->assertSame('Active', EnrolmentStatus::Active->label());
+        $this->assertSame('Suspended', EnrolmentStatus::Suspended->label());
     }
 
     #[Test]
     public function isActiveReturnsTrueOnlyForActive(): void
     {
-        $this->assertTrue(EnrolmentStatus::ACTIVE->isActive());
-        $this->assertFalse(EnrolmentStatus::SUSPENDED->isActive());
+        $this->assertTrue(EnrolmentStatus::Active->isActive());
+        $this->assertFalse(EnrolmentStatus::Suspended->isActive());
     }
 
     #[Test]
     public function resolveReturnsMatchingCase(): void
     {
-        $this->assertSame(EnrolmentStatus::ACTIVE, EnrolmentStatus::resolve(0));
-        $this->assertSame(EnrolmentStatus::SUSPENDED, EnrolmentStatus::resolve(1));
+        $this->assertSame(EnrolmentStatus::Active, EnrolmentStatus::resolve(0));
+        $this->assertSame(EnrolmentStatus::Suspended, EnrolmentStatus::resolve(1));
     }
 
     #[Test]
     public function resolveDefaultsToActiveForUnknownValue(): void
     {
-        $this->assertSame(EnrolmentStatus::ACTIVE, EnrolmentStatus::resolve(99));
-        $this->assertSame(EnrolmentStatus::ACTIVE, EnrolmentStatus::resolve(-1));
+        $this->assertSame(EnrolmentStatus::Active, EnrolmentStatus::resolve(99));
+        $this->assertSame(EnrolmentStatus::Active, EnrolmentStatus::resolve(-1));
     }
 
     #[Test]
     public function canBeCreatedFromValue(): void
     {
-        $this->assertSame(EnrolmentStatus::ACTIVE, EnrolmentStatus::from(0));
-        $this->assertSame(EnrolmentStatus::SUSPENDED, EnrolmentStatus::from(1));
+        $this->assertSame(EnrolmentStatus::Active, EnrolmentStatus::from(0));
+        $this->assertSame(EnrolmentStatus::Suspended, EnrolmentStatus::from(1));
     }
 
     #[Test]

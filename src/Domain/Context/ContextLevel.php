@@ -21,17 +21,17 @@ namespace Middag\Moodle\Domain\Context;
  */
 enum ContextLevel: int
 {
-    case SYSTEM = 10;
+    case System = 10;
 
-    case USER = 30;
+    case User = 30;
 
-    case COURSECAT = 40;
+    case Coursecat = 40;
 
-    case COURSE = 50;
+    case Course = 50;
 
-    case MODULE = 70;
+    case Module = 70;
 
-    case BLOCK = 80;
+    case Block = 80;
 
     public function toMoodleValue(): int
     {
@@ -56,12 +56,12 @@ enum ContextLevel: int
         $key = str_starts_with($key, 'context_') ? substr($key, 8) : $key;
 
         return match ($key) {
-            'system' => self::SYSTEM,
-            'user' => self::USER,
-            'coursecat', 'category' => self::COURSECAT,
-            'course' => self::COURSE,
-            'module', 'coursemodule', 'cm' => self::MODULE,
-            'block' => self::BLOCK,
+            'system' => self::System,
+            'user' => self::User,
+            'coursecat', 'category' => self::Coursecat,
+            'course' => self::Course,
+            'module', 'coursemodule', 'cm' => self::Module,
+            'block' => self::Block,
             default => null,
         };
     }

@@ -21,11 +21,11 @@ namespace Middag\Moodle\Domain\Message;
  */
 enum MessagePermission: string
 {
-    case FORCED = 'forced';
+    case Forced = 'forced';
 
-    case PERMITTED = 'permitted';
+    case Permitted = 'permitted';
 
-    case DISALLOWED = 'disallowed';
+    case Disallowed = 'disallowed';
 
     public function toMoodleValue(): int
     {
@@ -33,9 +33,9 @@ enum MessagePermission: string
         // MESSAGE_DISALLOWED = 0x4, MESSAGE_PERMITTED = 0x8, MESSAGE_FORCED = 0xc.
         // (The old 1/2/0 mapping collided with MESSAGE_DEFAULT_LOGGEDIN/LOGGEDOFF.)
         return match ($this) {
-            self::FORCED => 0xC, // MESSAGE_FORCED
-            self::PERMITTED => 0x8, // MESSAGE_PERMITTED
-            self::DISALLOWED => 0x4, // MESSAGE_DISALLOWED
+            self::Forced => 0xC, // MESSAGE_FORCED
+            self::Permitted => 0x8, // MESSAGE_PERMITTED
+            self::Disallowed => 0x4, // MESSAGE_DISALLOWED
         };
     }
 }

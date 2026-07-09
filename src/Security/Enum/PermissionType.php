@@ -22,20 +22,20 @@ namespace Middag\Moodle\Security\Enum;
 enum PermissionType: string
 {
     /** Check a Moodle Capability string (e.g., 'moodle/course:view') */
-    case CAPABILITY = 'capability';
+    case Capability = 'capability';
 
     /** Check if the user has a specific Role ID in the context */
-    case ROLE = 'role';
+    case Role = 'role';
 
     /** Check if the user is enrolled in the course/context */
-    case ENROLMENT = 'enrolment';
+    case Enrolment = 'enrolment';
 
     /** Check if the user is the owner (creator) of the resource */
-    case OWNER = 'owner';
+    case Owner = 'owner';
 
     /** Check if the user is logged in (guest check) */
-    case LOGIN = 'login';
+    case Login = 'login';
 
     /** Check against a custom callback logic */
-    case CALLBACK = 'callback';
+    case Callback = 'callback';
 }

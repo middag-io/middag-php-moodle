@@ -26,78 +26,78 @@ enum SettingType: string
     // --- Input types (with storage) ---
 
     /** Single-line text input. DSL: text.php */
-    case text = 'text';
+    case Text = 'text';
 
     /** Boolean checkbox. DSL: checkbox.php */
-    case checkbox = 'checkbox';
+    case Checkbox = 'checkbox';
 
     /** Dropdown select. DSL: select.php */
-    case select = 'select';
+    case Select = 'select';
 
     /** Dropdown select with search/autocomplete. */
-    case autocomplete = 'autocomplete';
+    case Autocomplete = 'autocomplete';
 
     /** Password input (unmasked). DSL: password.php */
-    case password = 'password';
+    case Password = 'password';
 
     /** Password input (encrypted at rest). */
     case EncryptedPassword = 'EncryptedPassword';
 
     /** Multi-line text area. DSL: textarea.php */
-    case textarea = 'textarea';
+    case Textarea = 'textarea';
 
     /** Rich text editor (TinyMCE/Atto). */
-    case htmleditor = 'htmleditor';
+    case HtmlEditor = 'htmleditor';
 
     /** Colour picker. */
-    case colourpicker = 'colourpicker';
+    case ColourPicker = 'colourpicker';
 
     /** Time duration (seconds, minutes, hours, days). */
-    case duration = 'duration';
+    case Duration = 'duration';
 
     /** Time of day (hour:minute). */
-    case time = 'time';
+    case Time = 'time';
 
     /** Multiple checkboxes (key-value pairs). */
-    case multicheckbox = 'multicheckbox';
+    case MultiCheckbox = 'multicheckbox';
 
     /** Multiple select (multi-value). */
-    case multiselect = 'multiselect';
+    case MultiSelect = 'multiselect';
 
     /** File stored via Moodle file API. */
-    case storedfile = 'storedfile';
+    case StoredFile = 'storedfile';
 
     /** File path on server filesystem. */
-    case filepath = 'filepath';
+    case FilePath = 'filepath';
 
     /** Directory path on server filesystem. */
-    case directory = 'directory';
+    case Directory = 'directory';
 
     /** Executable path on server. */
-    case executable = 'executable';
+    case Executable = 'executable';
 
     /** IP address list. */
-    case iplist = 'iplist';
+    case IpList = 'iplist';
 
     /** Port list. */
-    case portlist = 'portlist';
+    case PortList = 'portlist';
 
     // --- Non-storage types (display only) ---
 
     /** Section heading. DSL: heading.php */
-    case heading = 'heading';
+    case Heading = 'heading';
 
     /** Static description text. DSL: description.php */
-    case description = 'description';
+    case Description = 'description';
 
     /** Clickable link. DSL: link.php */
-    case link = 'link';
+    case Link = 'link';
 
     /**
      * Whether this type stores a config value.
      */
     public function stores_value(): bool
     {
-        return !in_array($this, [self::heading, self::description, self::link], true);
+        return !in_array($this, [self::Heading, self::Description, self::Link], true);
     }
 }

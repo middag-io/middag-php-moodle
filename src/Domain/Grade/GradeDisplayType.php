@@ -21,59 +21,59 @@ namespace Middag\Moodle\Domain\Grade;
  */
 enum GradeDisplayType: int
 {
-    case DEFAULT = 0;
+    case Default = 0;
 
-    case REAL = 1;
+    case Real = 1;
 
-    case PERCENTAGE = 2;
+    case Percentage = 2;
 
-    case LETTER = 3;
+    case Letter = 3;
 
-    case REAL_PERCENTAGE = 12;
+    case RealPercentage = 12;
 
-    case REAL_LETTER = 13;
+    case RealLetter = 13;
 
-    case LETTER_REAL = 31;
+    case LetterReal = 31;
 
-    case LETTER_PERCENTAGE = 32;
+    case LetterPercentage = 32;
 
-    case PERCENTAGE_LETTER = 23;
+    case PercentageLetter = 23;
 
-    case PERCENTAGE_REAL = 21;
+    case PercentageReal = 21;
 
     public function showsReal(): bool
     {
-        return in_array($this, [self::REAL, self::REAL_PERCENTAGE, self::REAL_LETTER, self::PERCENTAGE_REAL, self::LETTER_REAL], true);
+        return in_array($this, [self::Real, self::RealPercentage, self::RealLetter, self::PercentageReal, self::LetterReal], true);
     }
 
     public function showsPercentage(): bool
     {
-        return in_array($this, [self::PERCENTAGE, self::REAL_PERCENTAGE, self::LETTER_PERCENTAGE, self::PERCENTAGE_LETTER, self::PERCENTAGE_REAL], true);
+        return in_array($this, [self::Percentage, self::RealPercentage, self::LetterPercentage, self::PercentageLetter, self::PercentageReal], true);
     }
 
     public function showsLetter(): bool
     {
-        return in_array($this, [self::LETTER, self::REAL_LETTER, self::LETTER_REAL, self::LETTER_PERCENTAGE, self::PERCENTAGE_LETTER], true);
+        return in_array($this, [self::Letter, self::RealLetter, self::LetterReal, self::LetterPercentage, self::PercentageLetter], true);
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::DEFAULT => 'Default',
-            self::REAL => 'Real',
-            self::PERCENTAGE => 'Percentage',
-            self::LETTER => 'Letter',
-            self::REAL_PERCENTAGE => 'Real (Percentage)',
-            self::REAL_LETTER => 'Real (Letter)',
-            self::LETTER_REAL => 'Letter (Real)',
-            self::LETTER_PERCENTAGE => 'Letter (Percentage)',
-            self::PERCENTAGE_LETTER => 'Percentage (Letter)',
-            self::PERCENTAGE_REAL => 'Percentage (Real)',
+            self::Default => 'Default',
+            self::Real => 'Real',
+            self::Percentage => 'Percentage',
+            self::Letter => 'Letter',
+            self::RealPercentage => 'Real (Percentage)',
+            self::RealLetter => 'Real (Letter)',
+            self::LetterReal => 'Letter (Real)',
+            self::LetterPercentage => 'Letter (Percentage)',
+            self::PercentageLetter => 'Percentage (Letter)',
+            self::PercentageReal => 'Percentage (Real)',
         };
     }
 
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::DEFAULT;
+        return self::tryFrom($value) ?? self::Default;
     }
 }

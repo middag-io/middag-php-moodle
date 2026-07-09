@@ -51,19 +51,19 @@ final readonly class MoodleConnectionAdapter implements ConnectionAdapterInterfa
     {
         return match ($feature) {
             // Moodle DML exposes start_delegated_transaction()/commit/rollback.
-            Capability::TRANSACTIONS => true,
+            Capability::Transactions => true,
             // get_recordset_sql() backs an unbuffered cursor.
-            Capability::STREAMING => true,
+            Capability::Streaming => true,
             // MySQL 5.7+/MariaDB/pgsql baselines support JSON predicates.
-            Capability::JSON_WHERE => true,
+            Capability::JsonWhere => true,
             // No portable RETURNING across Moodle's supported engines.
-            Capability::RETURNING => false,
+            Capability::Returning => false,
             // INSERT ... ON DUPLICATE KEY UPDATE (mysqli/mariadb family).
-            Capability::UPSERT => true,
+            Capability::Upsert => true,
             // Moodle owns schema lifecycle via XMLDB/database_manager; no diffing here.
-            Capability::SCHEMA_DIFF => false,
+            Capability::SchemaDiff => false,
             // InnoDB / pgsql support SELECT ... FOR UPDATE / FOR SHARE.
-            Capability::ROW_LOCK => true,
+            Capability::RowLock => true,
         };
     }
 

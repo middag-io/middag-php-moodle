@@ -33,37 +33,37 @@ final class ContextLevelTest extends TestCase
     #[Test]
     public function systemHasValue10(): void
     {
-        $this->assertSame(10, ContextLevel::SYSTEM->value);
+        $this->assertSame(10, ContextLevel::System->value);
     }
 
     #[Test]
     public function userHasValue30(): void
     {
-        $this->assertSame(30, ContextLevel::USER->value);
+        $this->assertSame(30, ContextLevel::User->value);
     }
 
     #[Test]
     public function coursecatHasValue40(): void
     {
-        $this->assertSame(40, ContextLevel::COURSECAT->value);
+        $this->assertSame(40, ContextLevel::Coursecat->value);
     }
 
     #[Test]
     public function courseHasValue50(): void
     {
-        $this->assertSame(50, ContextLevel::COURSE->value);
+        $this->assertSame(50, ContextLevel::Course->value);
     }
 
     #[Test]
     public function moduleHasValue70(): void
     {
-        $this->assertSame(70, ContextLevel::MODULE->value);
+        $this->assertSame(70, ContextLevel::Module->value);
     }
 
     #[Test]
     public function blockHasValue80(): void
     {
-        $this->assertSame(80, ContextLevel::BLOCK->value);
+        $this->assertSame(80, ContextLevel::Block->value);
     }
 
     #[Test]
@@ -77,12 +77,12 @@ final class ContextLevelTest extends TestCase
     #[Test]
     public function canBeCreatedFromValue(): void
     {
-        $this->assertSame(ContextLevel::SYSTEM, ContextLevel::from(10));
-        $this->assertSame(ContextLevel::USER, ContextLevel::from(30));
-        $this->assertSame(ContextLevel::COURSECAT, ContextLevel::from(40));
-        $this->assertSame(ContextLevel::COURSE, ContextLevel::from(50));
-        $this->assertSame(ContextLevel::MODULE, ContextLevel::from(70));
-        $this->assertSame(ContextLevel::BLOCK, ContextLevel::from(80));
+        $this->assertSame(ContextLevel::System, ContextLevel::from(10));
+        $this->assertSame(ContextLevel::User, ContextLevel::from(30));
+        $this->assertSame(ContextLevel::Coursecat, ContextLevel::from(40));
+        $this->assertSame(ContextLevel::Course, ContextLevel::from(50));
+        $this->assertSame(ContextLevel::Module, ContextLevel::from(70));
+        $this->assertSame(ContextLevel::Block, ContextLevel::from(80));
     }
 
     #[Test]
@@ -95,24 +95,24 @@ final class ContextLevelTest extends TestCase
     #[Test]
     public function fromStringResolvesShortNames(): void
     {
-        $this->assertSame(ContextLevel::SYSTEM, ContextLevel::fromString('system'));
-        $this->assertSame(ContextLevel::USER, ContextLevel::fromString('user'));
-        $this->assertSame(ContextLevel::COURSECAT, ContextLevel::fromString('coursecat'));
-        $this->assertSame(ContextLevel::COURSECAT, ContextLevel::fromString('category'));
-        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('course'));
-        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('module'));
-        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('coursemodule'));
-        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('cm'));
-        $this->assertSame(ContextLevel::BLOCK, ContextLevel::fromString('block'));
+        $this->assertSame(ContextLevel::System, ContextLevel::fromString('system'));
+        $this->assertSame(ContextLevel::User, ContextLevel::fromString('user'));
+        $this->assertSame(ContextLevel::Coursecat, ContextLevel::fromString('coursecat'));
+        $this->assertSame(ContextLevel::Coursecat, ContextLevel::fromString('category'));
+        $this->assertSame(ContextLevel::Course, ContextLevel::fromString('course'));
+        $this->assertSame(ContextLevel::Module, ContextLevel::fromString('module'));
+        $this->assertSame(ContextLevel::Module, ContextLevel::fromString('coursemodule'));
+        $this->assertSame(ContextLevel::Module, ContextLevel::fromString('cm'));
+        $this->assertSame(ContextLevel::Block, ContextLevel::fromString('block'));
     }
 
     #[Test]
     public function fromStringIsCaseInsensitiveAndAcceptsMoodleConstantSpelling(): void
     {
-        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('COURSE'));
-        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('  Course  '));
-        $this->assertSame(ContextLevel::COURSE, ContextLevel::fromString('CONTEXT_COURSE'));
-        $this->assertSame(ContextLevel::MODULE, ContextLevel::fromString('context_module'));
+        $this->assertSame(ContextLevel::Course, ContextLevel::fromString('COURSE'));
+        $this->assertSame(ContextLevel::Course, ContextLevel::fromString('  Course  '));
+        $this->assertSame(ContextLevel::Course, ContextLevel::fromString('CONTEXT_COURSE'));
+        $this->assertSame(ContextLevel::Module, ContextLevel::fromString('context_module'));
     }
 
     #[Test]

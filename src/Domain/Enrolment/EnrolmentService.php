@@ -89,12 +89,12 @@ class EnrolmentService implements EnrolmentServiceInterface
 
     public function suspend(int $userid, int $courseid): bool
     {
-        return $this->updateStatus($userid, $courseid, EnrolmentStatus::SUSPENDED);
+        return $this->updateStatus($userid, $courseid, EnrolmentStatus::Suspended);
     }
 
     public function reactivate(int $userid, int $courseid): bool
     {
-        return $this->updateStatus($userid, $courseid, EnrolmentStatus::ACTIVE);
+        return $this->updateStatus($userid, $courseid, EnrolmentStatus::Active);
     }
 
     public function countEnrolled(int $courseid, bool $activeonly = true): int

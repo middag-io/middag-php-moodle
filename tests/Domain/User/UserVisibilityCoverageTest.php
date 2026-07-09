@@ -26,46 +26,46 @@ final class UserVisibilityCoverageTest extends TestCase
     #[Test]
     public function casesCarryMoodleIntValues(): void
     {
-        self::assertSame(0, UserVisibility::NOBODY->value);
-        self::assertSame(1, UserVisibility::EVERYONE->value);
-        self::assertSame(2, UserVisibility::SELF->value);
+        self::assertSame(0, UserVisibility::Nobody->value);
+        self::assertSame(1, UserVisibility::Everyone->value);
+        self::assertSame(2, UserVisibility::Self->value);
     }
 
     #[Test]
     public function isPublicTrueOnlyForEveryone(): void
     {
-        self::assertTrue(UserVisibility::EVERYONE->isPublic());
-        self::assertFalse(UserVisibility::NOBODY->isPublic());
-        self::assertFalse(UserVisibility::SELF->isPublic());
+        self::assertTrue(UserVisibility::Everyone->isPublic());
+        self::assertFalse(UserVisibility::Nobody->isPublic());
+        self::assertFalse(UserVisibility::Self->isPublic());
     }
 
     #[Test]
     public function isPrivateTrueOnlyForNobody(): void
     {
-        self::assertTrue(UserVisibility::NOBODY->isPrivate());
-        self::assertFalse(UserVisibility::EVERYONE->isPrivate());
-        self::assertFalse(UserVisibility::SELF->isPrivate());
+        self::assertTrue(UserVisibility::Nobody->isPrivate());
+        self::assertFalse(UserVisibility::Everyone->isPrivate());
+        self::assertFalse(UserVisibility::Self->isPrivate());
     }
 
     #[Test]
     public function labelReturnsHumanReadableTextForEachCase(): void
     {
-        self::assertSame('Not visible', UserVisibility::NOBODY->label());
-        self::assertSame('Visible to everyone', UserVisibility::EVERYONE->label());
-        self::assertSame('Visible to user only', UserVisibility::SELF->label());
+        self::assertSame('Not visible', UserVisibility::Nobody->label());
+        self::assertSame('Visible to everyone', UserVisibility::Everyone->label());
+        self::assertSame('Visible to user only', UserVisibility::Self->label());
     }
 
     #[Test]
     public function resolveMapsKnownIntsToCases(): void
     {
-        self::assertSame(UserVisibility::NOBODY, UserVisibility::resolve(0));
-        self::assertSame(UserVisibility::EVERYONE, UserVisibility::resolve(1));
-        self::assertSame(UserVisibility::SELF, UserVisibility::resolve(2));
+        self::assertSame(UserVisibility::Nobody, UserVisibility::resolve(0));
+        self::assertSame(UserVisibility::Everyone, UserVisibility::resolve(1));
+        self::assertSame(UserVisibility::Self, UserVisibility::resolve(2));
     }
 
     #[Test]
     public function resolveFallsBackToNobodyForUnknownInt(): void
     {
-        self::assertSame(UserVisibility::NOBODY, UserVisibility::resolve(99));
+        self::assertSame(UserVisibility::Nobody, UserVisibility::resolve(99));
     }
 }

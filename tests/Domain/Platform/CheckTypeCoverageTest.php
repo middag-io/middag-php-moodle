@@ -29,16 +29,16 @@ final class CheckTypeCoverageTest extends TestCase
     #[Test]
     public function testBackingValuesMatchMoodleCheckTypeStrings(): void
     {
-        self::assertSame('status', CheckType::STATUS->value);
-        self::assertSame('security', CheckType::SECURITY->value);
-        self::assertSame('performance', CheckType::PERFORMANCE->value);
+        self::assertSame('status', CheckType::Status->value);
+        self::assertSame('security', CheckType::Security->value);
+        self::assertSame('performance', CheckType::Performance->value);
     }
 
     #[Test]
     public function testToMoodleValueReturnsTheBackingValueForEveryCase(): void
     {
-        self::assertSame('status', CheckType::STATUS->toMoodleValue());
-        self::assertSame('security', CheckType::SECURITY->toMoodleValue());
-        self::assertSame('performance', CheckType::PERFORMANCE->toMoodleValue());
+        self::assertSame('status', CheckType::Status->toMoodleValue());
+        self::assertSame('security', CheckType::Security->toMoodleValue());
+        self::assertSame('performance', CheckType::Performance->toMoodleValue());
     }
 }

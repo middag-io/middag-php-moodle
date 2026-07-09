@@ -27,18 +27,18 @@ namespace Middag\Moodle\Domain\Completion;
  */
 enum CompletionTracking: int
 {
-    case NONE = 0;
+    case None = 0;
 
-    case MANUAL = 1;
+    case Manual = 1;
 
-    case AUTOMATIC = 2;
+    case Automatic = 2;
 
     /**
      * Whether completion is tracked at all.
      */
     public function isTracked(): bool
     {
-        return $this !== self::NONE;
+        return $this !== self::None;
     }
 
     /**
@@ -46,7 +46,7 @@ enum CompletionTracking: int
      */
     public function isManual(): bool
     {
-        return $this === self::MANUAL;
+        return $this === self::Manual;
     }
 
     /**
@@ -54,7 +54,7 @@ enum CompletionTracking: int
      */
     public function isAutomatic(): bool
     {
-        return $this === self::AUTOMATIC;
+        return $this === self::Automatic;
     }
 
     /**
@@ -63,9 +63,9 @@ enum CompletionTracking: int
     public function label(): string
     {
         return match ($this) {
-            self::NONE => 'Not tracked',
-            self::MANUAL => 'Manual',
-            self::AUTOMATIC => 'Automatic',
+            self::None => 'Not tracked',
+            self::Manual => 'Manual',
+            self::Automatic => 'Automatic',
         };
     }
 
@@ -74,6 +74,6 @@ enum CompletionTracking: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::NONE;
+        return self::tryFrom($value) ?? self::None;
     }
 }

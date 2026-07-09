@@ -141,7 +141,7 @@ trait InteractsWithAuth
             return;
         }
 
-        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+        $contextlevel = $this->capabilityContextLevel ?? ContextLevel::System;
 
         foreach ($this->capabilities as $capability) {
             $this->capability()->authorize($capability, $contextlevel, $this->capabilityInstanceId);
@@ -171,7 +171,7 @@ trait InteractsWithAuth
 
             $contextlevel = ContextLevel::fromString(
                 isset($options['contextlevel']) ? (string) $options['contextlevel'] : null,
-            ) ?? $this->capabilityContextLevel ?? ContextLevel::SYSTEM;
+            ) ?? $this->capabilityContextLevel ?? ContextLevel::System;
 
             $instanceid = isset($options['instanceid']) ? (int) $options['instanceid'] : $this->capabilityInstanceId;
 

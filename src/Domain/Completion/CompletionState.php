@@ -22,20 +22,20 @@ namespace Middag\Moodle\Domain\Completion;
  */
 enum CompletionState: int
 {
-    case INCOMPLETE = 0;
+    case Incomplete = 0;
 
-    case COMPLETE = 1;
+    case Complete = 1;
 
-    case COMPLETE_PASS = 2;
+    case CompletePass = 2;
 
-    case COMPLETE_FAIL = 3;
+    case CompleteFail = 3;
 
     /**
      * Whether the activity is considered completed (regardless of pass/fail).
      */
     public function isComplete(): bool
     {
-        return $this !== self::INCOMPLETE;
+        return $this !== self::Incomplete;
     }
 
     /**
@@ -43,7 +43,7 @@ enum CompletionState: int
      */
     public function isPassed(): bool
     {
-        return $this === self::COMPLETE || $this === self::COMPLETE_PASS;
+        return $this === self::Complete || $this === self::CompletePass;
     }
 
     /**
@@ -52,10 +52,10 @@ enum CompletionState: int
     public function label(): string
     {
         return match ($this) {
-            self::INCOMPLETE => 'Incomplete',
-            self::COMPLETE => 'Complete',
-            self::COMPLETE_PASS => 'Complete (Pass)',
-            self::COMPLETE_FAIL => 'Complete (Fail)',
+            self::Incomplete => 'Incomplete',
+            self::Complete => 'Complete',
+            self::CompletePass => 'Complete (Pass)',
+            self::CompleteFail => 'Complete (Fail)',
         };
     }
 
@@ -64,6 +64,6 @@ enum CompletionState: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::INCOMPLETE;
+        return self::tryFrom($value) ?? self::Incomplete;
     }
 }

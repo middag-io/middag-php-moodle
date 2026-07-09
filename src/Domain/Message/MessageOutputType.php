@@ -22,26 +22,26 @@ namespace Middag\Moodle\Domain\Message;
  */
 enum MessageOutputType: string
 {
-    case POPUP = 'popup';
+    case Popup = 'popup';
 
-    case EMAIL = 'email';
+    case Email = 'email';
 
-    case AIRNOTIFIER = 'airnotifier';
+    case Airnotifier = 'airnotifier';
 
-    case MOBILE = 'mobile';
+    case Mobile = 'mobile';
 
     public function isRealtime(): bool
     {
-        return in_array($this, [self::POPUP, self::MOBILE, self::AIRNOTIFIER], true);
+        return in_array($this, [self::Popup, self::Mobile, self::Airnotifier], true);
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::POPUP => 'Web notification',
-            self::EMAIL => 'Email',
-            self::AIRNOTIFIER => 'Push notification',
-            self::MOBILE => 'Mobile app',
+            self::Popup => 'Web notification',
+            self::Email => 'Email',
+            self::Airnotifier => 'Push notification',
+            self::Mobile => 'Mobile app',
         };
     }
 

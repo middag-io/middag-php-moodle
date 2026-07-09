@@ -42,9 +42,9 @@ final class SettingTypeCoverageTest extends TestCase
     public static function displayOnlyProvider(): array
     {
         return [
-            'heading' => [SettingType::heading],
-            'description' => [SettingType::description],
-            'link' => [SettingType::link],
+            'heading' => [SettingType::Heading],
+            'description' => [SettingType::Description],
+            'link' => [SettingType::Link],
         ];
     }
 
@@ -61,18 +61,18 @@ final class SettingTypeCoverageTest extends TestCase
     public static function storageProvider(): array
     {
         return [
-            'text' => [SettingType::text],
-            'checkbox' => [SettingType::checkbox],
-            'select' => [SettingType::select],
-            'storedfile' => [SettingType::storedfile],
-            'duration' => [SettingType::duration],
+            'text' => [SettingType::Text],
+            'checkbox' => [SettingType::Checkbox],
+            'select' => [SettingType::Select],
+            'storedfile' => [SettingType::StoredFile],
+            'duration' => [SettingType::Duration],
         ];
     }
 
     #[Test]
     public function backingValueMatchesCaseName(): void
     {
-        $this->assertSame('text', SettingType::text->value);
-        $this->assertSame('storedfile', SettingType::storedfile->value);
+        $this->assertSame('text', SettingType::Text->value);
+        $this->assertSame('storedfile', SettingType::StoredFile->value);
     }
 }

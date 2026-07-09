@@ -44,7 +44,7 @@ final readonly class MformRenderer implements FormRendererInterface
     /** {@inheritdoc} */
     public static function target(): RenderTarget
     {
-        return RenderTarget::HTML;
+        return RenderTarget::Html;
     }
 
     /** {@inheritdoc} */
@@ -114,7 +114,7 @@ final readonly class MformRenderer implements FormRendererInterface
         $mform_instance->display();
         $html = ob_get_clean() ?: '';
 
-        return RendererOutput::html(RenderTarget::HTML, $html);
+        return RendererOutput::html(RenderTarget::Html, $html);
     }
 
     /**

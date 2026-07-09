@@ -19,36 +19,36 @@ namespace Middag\Moodle\Domain\Grade;
  */
 enum GradeType: int
 {
-    case NONE = 0;
+    case None = 0;
 
-    case VALUE = 1;
+    case Value = 1;
 
-    case SCALE = 2;
+    case Scale = 2;
 
-    case TEXT = 3;
+    case Text = 3;
 
     public function isNumeric(): bool
     {
-        return $this === self::VALUE;
+        return $this === self::Value;
     }
 
     public function isScale(): bool
     {
-        return $this === self::SCALE;
+        return $this === self::Scale;
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::NONE => 'None',
-            self::VALUE => 'Value',
-            self::SCALE => 'Scale',
-            self::TEXT => 'Text',
+            self::None => 'None',
+            self::Value => 'Value',
+            self::Scale => 'Scale',
+            self::Text => 'Text',
         };
     }
 
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::NONE;
+        return self::tryFrom($value) ?? self::None;
     }
 }

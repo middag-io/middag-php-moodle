@@ -37,17 +37,17 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function eachCaseBacksItsMoodleRiskConstant(): void
     {
-        $this->assertSame(1, CapabilityRisk::SPAM->value);
-        $this->assertSame(2, CapabilityRisk::PERSONAL->value);
-        $this->assertSame(4, CapabilityRisk::XSS->value);
-        $this->assertSame(8, CapabilityRisk::CONFIG->value);
-        $this->assertSame(16, CapabilityRisk::DATALOSS->value);
+        $this->assertSame(1, CapabilityRisk::Spam->value);
+        $this->assertSame(2, CapabilityRisk::Personal->value);
+        $this->assertSame(4, CapabilityRisk::Xss->value);
+        $this->assertSame(8, CapabilityRisk::Config->value);
+        $this->assertSame(16, CapabilityRisk::Dataloss->value);
     }
 
     #[Test]
     public function toMoodleValueReturnsBackingValueForSpam(): void
     {
-        $risk = CapabilityRisk::SPAM;
+        $risk = CapabilityRisk::Spam;
 
         $this->assertSame(1, $risk->toMoodleValue());
     }
@@ -55,7 +55,7 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function toMoodleValueReturnsBackingValueForPersonal(): void
     {
-        $risk = CapabilityRisk::PERSONAL;
+        $risk = CapabilityRisk::Personal;
 
         $this->assertSame(2, $risk->toMoodleValue());
     }
@@ -63,7 +63,7 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function toMoodleValueReturnsBackingValueForXss(): void
     {
-        $risk = CapabilityRisk::XSS;
+        $risk = CapabilityRisk::Xss;
 
         $this->assertSame(4, $risk->toMoodleValue());
     }
@@ -71,7 +71,7 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function toMoodleValueReturnsBackingValueForConfig(): void
     {
-        $risk = CapabilityRisk::CONFIG;
+        $risk = CapabilityRisk::Config;
 
         $this->assertSame(8, $risk->toMoodleValue());
     }
@@ -79,7 +79,7 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function toMoodleValueReturnsBackingValueForDataloss(): void
     {
-        $risk = CapabilityRisk::DATALOSS;
+        $risk = CapabilityRisk::Dataloss;
 
         $this->assertSame(16, $risk->toMoodleValue());
     }
@@ -95,19 +95,19 @@ final class CapabilityRiskCoverageTest extends TestCase
     #[Test]
     public function moodleValuesAreComposableViaBitwiseOr(): void
     {
-        $mask = CapabilityRisk::XSS->toMoodleValue() | CapabilityRisk::CONFIG->toMoodleValue();
+        $mask = CapabilityRisk::Xss->toMoodleValue() | CapabilityRisk::Config->toMoodleValue();
 
         // 4 | 8 = 12; distinct power-of-two bits so the composed mask is lossless.
         $this->assertSame(12, $mask);
-        $this->assertSame(CapabilityRisk::XSS->value, $mask & CapabilityRisk::XSS->value);
-        $this->assertSame(CapabilityRisk::CONFIG->value, $mask & CapabilityRisk::CONFIG->value);
-        $this->assertSame(0, $mask & CapabilityRisk::SPAM->value);
+        $this->assertSame(CapabilityRisk::Xss->value, $mask & CapabilityRisk::Xss->value);
+        $this->assertSame(CapabilityRisk::Config->value, $mask & CapabilityRisk::Config->value);
+        $this->assertSame(0, $mask & CapabilityRisk::Spam->value);
     }
 
     #[Test]
     public function canBeCreatedFromBackingValue(): void
     {
-        $this->assertSame(CapabilityRisk::DATALOSS, CapabilityRisk::from(16));
+        $this->assertSame(CapabilityRisk::Dataloss, CapabilityRisk::from(16));
     }
 
     #[Test]

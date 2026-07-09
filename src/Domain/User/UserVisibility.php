@@ -19,18 +19,18 @@ namespace Middag\Moodle\Domain\User;
  */
 enum UserVisibility: int
 {
-    case NOBODY = 0;
+    case Nobody = 0;
 
-    case EVERYONE = 1;
+    case Everyone = 1;
 
-    case SELF = 2;
+    case Self = 2;
 
     /**
      * Whether the field is visible to everyone.
      */
     public function isPublic(): bool
     {
-        return $this === self::EVERYONE;
+        return $this === self::Everyone;
     }
 
     /**
@@ -38,7 +38,7 @@ enum UserVisibility: int
      */
     public function isPrivate(): bool
     {
-        return $this === self::NOBODY;
+        return $this === self::Nobody;
     }
 
     /**
@@ -47,9 +47,9 @@ enum UserVisibility: int
     public function label(): string
     {
         return match ($this) {
-            self::NOBODY => 'Not visible',
-            self::EVERYONE => 'Visible to everyone',
-            self::SELF => 'Visible to user only',
+            self::Nobody => 'Not visible',
+            self::Everyone => 'Visible to everyone',
+            self::Self => 'Visible to user only',
         };
     }
 
@@ -58,6 +58,6 @@ enum UserVisibility: int
      */
     public static function resolve(int $value): self
     {
-        return self::tryFrom($value) ?? self::NOBODY;
+        return self::tryFrom($value) ?? self::Nobody;
     }
 }

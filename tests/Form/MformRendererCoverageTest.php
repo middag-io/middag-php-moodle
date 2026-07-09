@@ -52,7 +52,7 @@ final class MformRendererCoverageTest extends TestCase
     #[Test]
     public function targetIsHtml(): void
     {
-        $this->assertSame(RenderTarget::HTML, MformRenderer::target());
+        $this->assertSame(RenderTarget::Html, MformRenderer::target());
     }
 
     #[Test]
@@ -64,10 +64,10 @@ final class MformRendererCoverageTest extends TestCase
         // together they exercise options, element_args, setType, setDefault,
         // addRule in the anonymous moodleform definition().
         $nestedField = $this->fieldNode(
-            $this->fieldDefinition(FieldType::SELECT, 'category', required: true, options: ['a' => 'A'])
+            $this->fieldDefinition(FieldType::Select, 'category', required: true, options: ['a' => 'A'])
         );
         $topField = $this->fieldNode(
-            $this->fieldDefinition(FieldType::MULTISELECT, 'tags', options: ['x' => 'X'])
+            $this->fieldDefinition(FieldType::Multiselect, 'tags', options: ['x' => 'X'])
         );
 
         $layout = $this->createMock(LayoutElementInterface::class);
@@ -86,7 +86,7 @@ final class MformRendererCoverageTest extends TestCase
 
         $output = $renderer->render($form);
 
-        $this->assertSame(RenderTarget::HTML, $output->target);
+        $this->assertSame(RenderTarget::Html, $output->target);
         $this->assertStringContainsString('rendered', $output->body);
     }
 

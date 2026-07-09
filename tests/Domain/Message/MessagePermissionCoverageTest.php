@@ -30,37 +30,37 @@ final class MessagePermissionCoverageTest extends TestCase
     #[Test]
     public function testBackingValues(): void
     {
-        self::assertSame('forced', MessagePermission::FORCED->value);
-        self::assertSame('permitted', MessagePermission::PERMITTED->value);
-        self::assertSame('disallowed', MessagePermission::DISALLOWED->value);
+        self::assertSame('forced', MessagePermission::Forced->value);
+        self::assertSame('permitted', MessagePermission::Permitted->value);
+        self::assertSame('disallowed', MessagePermission::Disallowed->value);
     }
 
     #[Test]
     public function testFromResolvesEachBackingValue(): void
     {
-        self::assertSame(MessagePermission::FORCED, MessagePermission::from('forced'));
-        self::assertSame(MessagePermission::PERMITTED, MessagePermission::from('permitted'));
-        self::assertSame(MessagePermission::DISALLOWED, MessagePermission::from('disallowed'));
+        self::assertSame(MessagePermission::Forced, MessagePermission::from('forced'));
+        self::assertSame(MessagePermission::Permitted, MessagePermission::from('permitted'));
+        self::assertSame(MessagePermission::Disallowed, MessagePermission::from('disallowed'));
     }
 
     #[Test]
     public function testToMoodleValueMapsForcedTo0xC(): void
     {
-        self::assertSame(0xC, MessagePermission::FORCED->toMoodleValue());
-        self::assertSame(12, MessagePermission::FORCED->toMoodleValue());
+        self::assertSame(0xC, MessagePermission::Forced->toMoodleValue());
+        self::assertSame(12, MessagePermission::Forced->toMoodleValue());
     }
 
     #[Test]
     public function testToMoodleValueMapsPermittedTo0x8(): void
     {
-        self::assertSame(0x8, MessagePermission::PERMITTED->toMoodleValue());
-        self::assertSame(8, MessagePermission::PERMITTED->toMoodleValue());
+        self::assertSame(0x8, MessagePermission::Permitted->toMoodleValue());
+        self::assertSame(8, MessagePermission::Permitted->toMoodleValue());
     }
 
     #[Test]
     public function testToMoodleValueMapsDisallowedTo0x4(): void
     {
-        self::assertSame(0x4, MessagePermission::DISALLOWED->toMoodleValue());
-        self::assertSame(4, MessagePermission::DISALLOWED->toMoodleValue());
+        self::assertSame(0x4, MessagePermission::Disallowed->toMoodleValue());
+        self::assertSame(4, MessagePermission::Disallowed->toMoodleValue());
     }
 }

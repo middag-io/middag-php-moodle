@@ -37,7 +37,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame('order_created', $event->name);
         self::assertSame('c', $event->crud);
-        self::assertSame(EventEdulevel::OTHER, $event->edulevel);
+        self::assertSame(EventEdulevel::Other, $event->edulevel);
         self::assertSame('', $event->objecttable);
         self::assertSame('', $event->description);
         self::assertNull($event->min_moodle);
@@ -50,7 +50,7 @@ final class EventDefinitionCoverageTest extends TestCase
         $event = new EventDefinition(
             name: 'order_updated',
             crud: 'u',
-            edulevel: EventEdulevel::PARTICIPATING,
+            edulevel: EventEdulevel::Participating,
             objecttable: 'local_example_order',
             description: 'An order was updated',
             min_moodle: '4.0',
@@ -59,7 +59,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         self::assertSame('order_updated', $event->name);
         self::assertSame('u', $event->crud);
-        self::assertSame(EventEdulevel::PARTICIPATING, $event->edulevel);
+        self::assertSame(EventEdulevel::Participating, $event->edulevel);
         self::assertSame('local_example_order', $event->objecttable);
         self::assertSame('An order was updated', $event->description);
         self::assertSame('4.0', $event->min_moodle);
@@ -78,7 +78,7 @@ final class EventDefinitionCoverageTest extends TestCase
         $event = new EventDefinition(
             name: 'order_deleted',
             crud: 'd',
-            edulevel: EventEdulevel::PARTICIPATING,
+            edulevel: EventEdulevel::Participating,
             objecttable: 'local_example_order',
         );
 
@@ -95,7 +95,7 @@ final class EventDefinitionCoverageTest extends TestCase
     #[Test]
     public function toMoodleArrayMapsEdulevelThroughToMoodleValue(): void
     {
-        $event = new EventDefinition(name: 'seen', edulevel: EventEdulevel::TEACHING);
+        $event = new EventDefinition(name: 'seen', edulevel: EventEdulevel::Teaching);
 
         $result = $event->toMoodleArray('local_example');
 

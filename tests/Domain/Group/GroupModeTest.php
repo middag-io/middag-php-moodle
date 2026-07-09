@@ -33,57 +33,57 @@ final class GroupModeTest extends TestCase
     #[Test]
     public function noGroupsHasValue0(): void
     {
-        $this->assertSame(0, GroupMode::NO_GROUPS->value);
+        $this->assertSame(0, GroupMode::NoGroups->value);
     }
 
     #[Test]
     public function separateGroupsHasValue1(): void
     {
-        $this->assertSame(1, GroupMode::SEPARATE_GROUPS->value);
+        $this->assertSame(1, GroupMode::SeparateGroups->value);
     }
 
     #[Test]
     public function visibleGroupsHasValue2(): void
     {
-        $this->assertSame(2, GroupMode::VISIBLE_GROUPS->value);
+        $this->assertSame(2, GroupMode::VisibleGroups->value);
     }
 
     #[Test]
     public function usesGroupsReturnsFalseOnlyForNoGroups(): void
     {
-        $this->assertFalse(GroupMode::NO_GROUPS->usesGroups());
-        $this->assertTrue(GroupMode::SEPARATE_GROUPS->usesGroups());
-        $this->assertTrue(GroupMode::VISIBLE_GROUPS->usesGroups());
+        $this->assertFalse(GroupMode::NoGroups->usesGroups());
+        $this->assertTrue(GroupMode::SeparateGroups->usesGroups());
+        $this->assertTrue(GroupMode::VisibleGroups->usesGroups());
     }
 
     #[Test]
     public function isVisibleReturnsTrueOnlyForVisibleGroups(): void
     {
-        $this->assertFalse(GroupMode::NO_GROUPS->isVisible());
-        $this->assertFalse(GroupMode::SEPARATE_GROUPS->isVisible());
-        $this->assertTrue(GroupMode::VISIBLE_GROUPS->isVisible());
+        $this->assertFalse(GroupMode::NoGroups->isVisible());
+        $this->assertFalse(GroupMode::SeparateGroups->isVisible());
+        $this->assertTrue(GroupMode::VisibleGroups->isVisible());
     }
 
     #[Test]
     public function labelReturnsHumanReadableString(): void
     {
-        $this->assertSame('No groups', GroupMode::NO_GROUPS->label());
-        $this->assertSame('Separate groups', GroupMode::SEPARATE_GROUPS->label());
-        $this->assertSame('Visible groups', GroupMode::VISIBLE_GROUPS->label());
+        $this->assertSame('No groups', GroupMode::NoGroups->label());
+        $this->assertSame('Separate groups', GroupMode::SeparateGroups->label());
+        $this->assertSame('Visible groups', GroupMode::VisibleGroups->label());
     }
 
     #[Test]
     public function resolveReturnsMatchingCase(): void
     {
-        $this->assertSame(GroupMode::NO_GROUPS, GroupMode::resolve(0));
-        $this->assertSame(GroupMode::SEPARATE_GROUPS, GroupMode::resolve(1));
-        $this->assertSame(GroupMode::VISIBLE_GROUPS, GroupMode::resolve(2));
+        $this->assertSame(GroupMode::NoGroups, GroupMode::resolve(0));
+        $this->assertSame(GroupMode::SeparateGroups, GroupMode::resolve(1));
+        $this->assertSame(GroupMode::VisibleGroups, GroupMode::resolve(2));
     }
 
     #[Test]
     public function resolveDefaultsToNoGroupsForUnknownValue(): void
     {
-        $this->assertSame(GroupMode::NO_GROUPS, GroupMode::resolve(99));
-        $this->assertSame(GroupMode::NO_GROUPS, GroupMode::resolve(-1));
+        $this->assertSame(GroupMode::NoGroups, GroupMode::resolve(99));
+        $this->assertSame(GroupMode::NoGroups, GroupMode::resolve(-1));
     }
 }

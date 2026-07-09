@@ -165,7 +165,7 @@ final class EnrolmentServiceCoverageTest extends TestCase
         self::assertSame(2, $dto->enrolid);
         self::assertSame(10, $dto->user_enrolment_id);
         self::assertSame('manual', $dto->enrol_method);
-        self::assertSame(EnrolmentStatus::SUSPENDED, $dto->status);
+        self::assertSame(EnrolmentStatus::Suspended, $dto->status);
         self::assertSame(100, $dto->timestart);
     }
 
@@ -223,7 +223,7 @@ final class EnrolmentServiceCoverageTest extends TestCase
         self::assertArrayHasKey(5, $result);
         self::assertArrayHasKey(6, $result);
         self::assertSame(3, $result[5]->courseid);
-        self::assertSame(EnrolmentStatus::SUSPENDED, $result[6]->status);
+        self::assertSame(EnrolmentStatus::Suspended, $result[6]->status);
     }
 
     #[Test]
@@ -261,7 +261,7 @@ final class EnrolmentServiceCoverageTest extends TestCase
         self::assertTrue($service->suspend(5, 3));
         self::assertCount(1, $this->db->updateCalls);
         self::assertSame('user_enrolments', $this->db->updateCalls[0][0]);
-        self::assertSame(EnrolmentStatus::SUSPENDED->value, $this->db->updateCalls[0][1]->status);
+        self::assertSame(EnrolmentStatus::Suspended->value, $this->db->updateCalls[0][1]->status);
     }
 
     #[Test]
@@ -277,7 +277,7 @@ final class EnrolmentServiceCoverageTest extends TestCase
 
         // update_record returns false here → the whole call reports failure.
         self::assertFalse($service->reactivate(5, 3));
-        self::assertSame(EnrolmentStatus::ACTIVE->value, $this->db->updateCalls[0][1]->status);
+        self::assertSame(EnrolmentStatus::Active->value, $this->db->updateCalls[0][1]->status);
     }
 
     #[Test]

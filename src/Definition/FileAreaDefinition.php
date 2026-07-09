@@ -37,7 +37,7 @@ final readonly class FileAreaDefinition implements DefinitionInterface
      */
     public function __construct(
         public string $name,
-        public ContextLevel $context_level = ContextLevel::SYSTEM,
+        public ContextLevel $context_level = ContextLevel::System,
         public ?string $handler = null,
         public bool $supports_preview = false,
         public string $description = '',

@@ -217,11 +217,11 @@ final class AbstractControllerCoverageTest extends TestCase
     {
         $cap = $this->makeCapability();
         $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
-        $controller->setRequireCapabilities(['cap/x'], ContextLevel::COURSE, 3);
+        $controller->setRequireCapabilities(['cap/x'], ContextLevel::Course, 3);
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['cap/x', ContextLevel::COURSE, 3]], $cap->authorized);
+        self::assertSame([['cap/x', ContextLevel::Course, 3]], $cap->authorized);
     }
 
     #[Test]
@@ -235,7 +235,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['cap/y', ContextLevel::SYSTEM, 0]], $cap->authorized);
+        self::assertSame([['cap/y', ContextLevel::System, 0]], $cap->authorized);
     }
 
     #[Test]
@@ -250,7 +250,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['cap/z', ContextLevel::COURSE, 7]], $cap->authorized);
+        self::assertSame([['cap/z', ContextLevel::Course, 7]], $cap->authorized);
     }
 
     // =========================================================================
@@ -273,8 +273,8 @@ final class AbstractControllerCoverageTest extends TestCase
         $controller->callCheckCapabilities();
 
         self::assertSame([
-            ['cap/a', ContextLevel::COURSE, 5],
-            ['cap/b', ContextLevel::MODULE, 9],
+            ['cap/a', ContextLevel::Course, 5],
+            ['cap/b', ContextLevel::Module, 9],
         ], $cap->authorized);
     }
 
@@ -293,7 +293,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['cap/a', ContextLevel::COURSE, 7]], $cap->authorized);
+        self::assertSame([['cap/a', ContextLevel::Course, 7]], $cap->authorized);
     }
 
     #[Test]
@@ -311,7 +311,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['rich/a', ContextLevel::COURSE, 0]], $cap->authorized);
+        self::assertSame([['rich/a', ContextLevel::Course, 0]], $cap->authorized);
     }
 
     #[Test]
@@ -329,7 +329,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['cap/real', ContextLevel::SYSTEM, 0]], $cap->authorized);
+        self::assertSame([['cap/real', ContextLevel::System, 0]], $cap->authorized);
     }
 
     #[Test]
@@ -347,7 +347,7 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callCheckCapabilities();
 
-        self::assertSame([['def/cap', ContextLevel::MODULE, 0]], $cap->authorized);
+        self::assertSame([['def/cap', ContextLevel::Module, 0]], $cap->authorized);
     }
 
     // =========================================================================
@@ -592,7 +592,7 @@ final class AbstractControllerCoverageTest extends TestCase
     {
         $controller = new CoverageController();
 
-        self::assertSame(RenderTarget::HTML, $controller->callDefaultRenderTarget());
+        self::assertSame(RenderTarget::Html, $controller->callDefaultRenderTarget());
     }
 
     #[Test]
@@ -628,7 +628,7 @@ final class AbstractControllerCoverageTest extends TestCase
         $controller = $this->makeController(new Request(), $this->makeContainer([RendererRegistry::class => $registry]), new context(1));
         $controller->setPageUrl(new moodle_url('/form'));
 
-        $response = $controller->callRenderForm($this->makeFormInterface(), RenderTarget::PROPS);
+        $response = $controller->callRenderForm($this->makeFormInterface(), RenderTarget::Props);
 
         self::assertInstanceOf(JsonResponse::class, $response);
         self::assertStringContainsString('FormPage', (string) $response->getContent());
@@ -1297,12 +1297,12 @@ final class AbstractControllerCoverageTest extends TestCase
             /** @var array<int, array{0: string, 1: ContextLevel, 2: int}> */
             public array $authorized = [];
 
-            public function can(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): bool
+            public function can(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): bool
             {
                 return true;
             }
 
-            public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::SYSTEM, int $instanceid = 0, ?int $userid = null): void
+            public function authorize(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): void
             {
                 $this->authorized[] = [$capability, $contextlevel, $instanceid];
             }
@@ -1362,12 +1362,12 @@ final class AbstractControllerCoverageTest extends TestCase
 
             public static function target(): RenderTarget
             {
-                return RenderTarget::HTML;
+                return RenderTarget::Html;
             }
 
             public function render(FormInterface $form): RendererOutput
             {
-                return RendererOutput::html(RenderTarget::HTML, $this->body);
+                return RendererOutput::html(RenderTarget::Html, $this->body);
             }
         };
     }
@@ -1380,12 +1380,12 @@ final class AbstractControllerCoverageTest extends TestCase
 
             public static function target(): RenderTarget
             {
-                return RenderTarget::PROPS;
+                return RenderTarget::Props;
             }
 
             public function render(FormInterface $form): RendererOutput
             {
-                return RendererOutput::props(RenderTarget::PROPS, $this->props);
+                return RendererOutput::props(RenderTarget::Props, $this->props);
             }
         };
     }

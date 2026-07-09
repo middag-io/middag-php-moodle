@@ -41,7 +41,7 @@ final readonly class EventDefinition implements DefinitionInterface
     public function __construct(
         public string $name,
         public string $crud = 'c',
-        public EventEdulevel $edulevel = EventEdulevel::OTHER,
+        public EventEdulevel $edulevel = EventEdulevel::Other,
         public string $objecttable = '',
         public string $description = '',
         public ?string $min_moodle = null,
