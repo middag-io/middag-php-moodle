@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.5.0](https://github.com/middag-io/middag-php-moodle/compare/v1.4.0...v1.5.0) (2026-07-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* enum case names changed for SettingType, PermissionType, CapabilityRisk, CapabilityType, TextFormat, the 17 Domain/* enums and usages of the renamed middag-io/framework and middag-io/ui cases. Consumers referencing cases by name must update (values unchanged).
+* the 22 settings DSL classes moved from Middag\Moodle\Settings\* to Middag\Moodle\Settings\Type\*. Consumers must update imports.
+* **settings:** the @api base class Middag\Moodle\Settings\Setting was renamed to AbstractSetting (maintainer rename, folded into this commit); consumers subclassing or type-hinting Setting must update the import.
+* drop pre-4.5 compat and stale product-era paths
+* **settings:** move SettingType to Settings\Enum namespace
+
+### Features
+
+* move the 22 settings DSL classes to Settings/Type/ ([685e533](https://github.com/middag-io/middag-php-moodle/commit/685e5331ea3cb847fdcd6e55619b56f99e779e0a))
+* rename all enum cases to strict PascalCase (PER-CS 2.0) ([916cd44](https://github.com/middag-io/middag-php-moodle/commit/916cd44fed4c7ea6325505f2909aa82fa6c5711b))
+* **settings:** injectable naming policy + rename Setting to AbstractSetting ([3707962](https://github.com/middag-io/middag-php-moodle/commit/37079621afa4d0c3821937f9de4373e67f6d01f9))
+
+
+### Refactoring
+
+* drop pre-4.5 compat and stale product-era paths ([3c5af37](https://github.com/middag-io/middag-php-moodle/commit/3c5af37998722f2c4598e86a196602a8a30a1193))
+* **settings:** move SettingType to Settings\Enum namespace ([7976153](https://github.com/middag-io/middag-php-moodle/commit/79761532fbf31efa79f2865e043380d5a76ccecf))
+
+
+### Documentation
+
+* **facade:** prove and document the bootless third-party facade seam ([4c805df](https://github.com/middag-io/middag-php-moodle/commit/4c805df04815698591e6eee97845f8fac130bae0))
+* retire blocked-work backlog ([86b7348](https://github.com/middag-io/middag-php-moodle/commit/86b7348037cefed16d5ba78c6d1046867030268c))
+
+
+### Miscellaneous
+
+* **deps:** raise framework floor to ^1.5 ([8ee8003](https://github.com/middag-io/middag-php-moodle/commit/8ee800308ea2cd8193f71a16d70f592fff101f4c))
+* **deps:** raise framework floor to ^1.6, ui to ^1.3 ([69624e5](https://github.com/middag-io/middag-php-moodle/commit/69624e5a73a975f5d23a7e323b4a593e61f9d001))
+* **deps:** raise framework floor to ^1.6, ui to ^1.3 ([97bd8c2](https://github.com/middag-io/middag-php-moodle/commit/97bd8c2de8c3b8de0382772235f5de0bdcf0366e))
+* release moodle 1.5.0 ([0dc0d8c](https://github.com/middag-io/middag-php-moodle/commit/0dc0d8c6d5dba36721a5532833a9fda6ae40d430))
+* release moodle 1.5.0 ([a6c0502](https://github.com/middag-io/middag-php-moodle/commit/a6c0502449034c9e7a78f7ff0696fe6146f8a8f6))
+
 ## [1.4.0](https://github.com/middag-io/middag-php-moodle/compare/v1.3.0...v1.4.0) (2026-07-08)
 
 
