@@ -10,26 +10,41 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configdirectory;
+use admin_setting_configiplist;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Directory path on server filesystem.
+ * IP address list setting.
  *
  * @api
  */
-final class Directory extends AbstractSetting
+final class Iplist extends AbstractSetting
 {
+    public function __construct(
+        string $name,
+        mixed $default = null,
+        ?string $label = null,
+        ?string $description = null,
+        public readonly int $rows = 8,
+        public readonly int $cols = 60,
+    ) {
+        parent::__construct($name, $default, $label, $description);
+    }
+
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configdirectory(
+        return new admin_setting_configiplist(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
+            PARAM_RAW,
+            $this->cols . '',
+            $this->rows . '',
         );
     }
 }

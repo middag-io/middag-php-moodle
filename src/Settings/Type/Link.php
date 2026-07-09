@@ -10,11 +10,12 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
 use admin_setting_description;
 use core\output\html_writer;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**

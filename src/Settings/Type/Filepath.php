@@ -10,37 +10,27 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configmulticheckbox;
+use admin_setting_configfile;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Multiple checkboxes setting (key-value pairs).
+ * File path on server filesystem.
  *
  * @api
  */
-final class Multicheckbox extends AbstractSetting
+final class Filepath extends AbstractSetting
 {
-    public function __construct(
-        string $name,
-        mixed $default = null,
-        ?string $label = null,
-        ?string $description = null,
-        public readonly array $choices = [],
-    ) {
-        parent::__construct($name, $default, $label, $description);
-    }
-
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configmulticheckbox(
+        return new admin_setting_configfile(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
-            $this->choices,
         );
     }
 }

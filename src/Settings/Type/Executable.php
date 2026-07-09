@@ -10,40 +10,27 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configportlist;
+use admin_setting_configexecutable;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Port list setting.
+ * Executable path on server.
  *
  * @api
  */
-final class Portlist extends AbstractSetting
+final class Executable extends AbstractSetting
 {
-    public function __construct(
-        string $name,
-        mixed $default = null,
-        ?string $label = null,
-        ?string $description = null,
-        public readonly int $rows = 8,
-        public readonly int $cols = 60,
-    ) {
-        parent::__construct($name, $default, $label, $description);
-    }
-
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configportlist(
+        return new admin_setting_configexecutable(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
-            PARAM_RAW,
-            $this->cols . '',
-            $this->rows . '',
         );
     }
 }

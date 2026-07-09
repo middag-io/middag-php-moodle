@@ -40,7 +40,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Persistence/` | `UpgradeHelper`, `VersionTracker` (framework `VersionTrackerInterface`), `Query/SqlGenerator` |
 | `Privacy/` | `PrivacyProvider` + `Contract/` (Moodle privacy API) |
 | `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
-| `Settings/` | Settings-as-code family mirroring Moodle's `admin_setting_*` types + `SettingsResolver` |
+| `Settings/` | Settings-as-code family: root keeps the mechanism (`AbstractSetting`, `Page`, `SettingsNamingPolicy`, `SettingsResolver`, `Enum/SettingType`); `Settings/Type/` holds the 22 DSL classes mirroring Moodle's `admin_setting_*` types |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
 | `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
 | `Translation/` | `MoodleTranslator` (framework `TranslatorInterface` → `get_string`) |
@@ -122,9 +122,11 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    adapter no longer ships a `framework_config` enum: those framework-tier keys
    are owned by the consumer product (e.g. `Middag\Core\Config\FrameworkConfig`);
    this lib only provides the generic resolution mechanism.
-3. **`Settings/Storedfile` vs `Domain/File/StoredFile`** differ only by case —
-   an accepted divergence: `Settings/` mirrors Moodle's `admin_setting_*`
-   naming, `Domain/` is the entity. Case-sensitive Linux CI guards collisions.
+3. **`Settings/Type/Storedfile` vs `Domain/File/StoredFile`** differ only by
+   case — an accepted divergence: `Settings/Type/` mirrors Moodle's
+   `admin_setting_*` naming (class names stay Moodle-cased, e.g. `Storedfile`,
+   `Htmleditor`), `Domain/` is the entity. Case-sensitive Linux CI guards
+   collisions.
 4. **There is no PDF surface in this adapter.** `Pdf/PdftkAdapter` (and the
    `mikehaertl/php-pdftk` dependency) moved to the proprietary MIDDAG core
    package. Do not reintroduce PDF tooling here.

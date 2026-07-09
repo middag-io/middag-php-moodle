@@ -81,14 +81,14 @@ class SettingsResolver
     ): array {
         $pages = [];
 
-        foreach ($settings as $item) {
-            if ($item instanceof page) {
+        foreach ($settings as $setting) {
+            if ($setting instanceof Page) {
                 $admin_page = new admin_settingpage(
-                    $item->resolve_id($extension_name, $plugin_name),
-                    LangSupport::getString($item->resolve_label($extension_name), $plugin_name),
+                    $setting->resolve_id($extension_name, $plugin_name),
+                    LangSupport::getString($setting->resolve_label($extension_name), $plugin_name),
                 );
 
-                foreach ($item->settings as $child) {
+                foreach ($setting->settings as $child) {
                     if ($child instanceof AbstractSetting) {
                         $child->useNamingPolicy($this->policy);
                         $admin_page->add($child->toMoodleSetting($extension_name, $plugin_name));

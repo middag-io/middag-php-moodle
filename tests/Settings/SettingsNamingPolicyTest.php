@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Settings;
 
 use Middag\Moodle\Settings\SettingsNamingPolicy;
 use Middag\Moodle\Settings\SettingsResolver;
-use Middag\Moodle\Settings\Text;
+use Middag\Moodle\Settings\Type\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

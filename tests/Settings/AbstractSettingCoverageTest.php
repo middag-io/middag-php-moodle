@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  */
 #[CoversClass(AbstractSetting::class)]
-final class SettingCoverageTest extends TestCase
+final class AbstractSettingCoverageTest extends TestCase
 {
     protected function tearDown(): void
     {

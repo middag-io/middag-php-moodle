@@ -10,19 +10,20 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configselect_autocomplete;
+use admin_setting_configselect;
 use Closure;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Dropdown select setting with search/autocomplete.
+ * Dropdown select setting.
  *
  * @api
  */
-final class Autocomplete extends AbstractSetting
+final class Select extends AbstractSetting
 {
     public function __construct(
         string $name,
@@ -31,14 +32,13 @@ final class Autocomplete extends AbstractSetting
         public readonly array $options = [],
         mixed $default = null,
         public readonly Closure|string|null $updatedCallback = null,
-        public readonly array $attributes = [],
     ) {
         parent::__construct($name, $default, $label, $description);
     }
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        $setting = new admin_setting_configselect_autocomplete(
+        $setting = new admin_setting_configselect(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),

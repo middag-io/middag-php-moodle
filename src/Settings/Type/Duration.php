@@ -10,39 +10,38 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configstoredfile;
+use admin_setting_configduration;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * File stored via Moodle file API.
+ * Time duration setting (seconds, minutes, hours, days).
  *
  * @api
  */
-final class Storedfile extends AbstractSetting
+final class Duration extends AbstractSetting
 {
     public function __construct(
         string $name,
         mixed $default = null,
         ?string $label = null,
         ?string $description = null,
-        public readonly int $itemid = 0,
-        public readonly ?array $options = null,
+        public readonly int $defaultUnit = 86400,
     ) {
         parent::__construct($name, $default, $label, $description);
     }
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configstoredfile(
+        return new admin_setting_configduration(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
-            $this->name,
-            $this->itemid,
-            $this->options,
+            $this->default,
+            $this->defaultUnit,
         );
     }
 }

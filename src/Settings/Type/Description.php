@@ -10,35 +10,35 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configcheckbox;
+use admin_setting_description;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Boolean checkbox setting.
+ * Static description block (no stored value).
  *
  * @api
  */
-final class Checkbox extends AbstractSetting
+final class Description extends AbstractSetting
 {
     public function __construct(
         string $name,
-        mixed $default = false,
         ?string $label = null,
         ?string $description = null,
+        public readonly string $content = '',
     ) {
-        parent::__construct($name, $default, $label, $description);
+        parent::__construct($name, null, $label, $description);
     }
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configcheckbox(
-            $plugin . '/' . $this->resolveConfigName($extension),
+        return new admin_setting_description(
+            $plugin . '/' . $this->name,
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
-            LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
-            $this->default,
+            $this->content,
         );
     }
 }

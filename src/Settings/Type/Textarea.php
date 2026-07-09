@@ -10,18 +10,19 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configiplist;
+use admin_setting_configtextarea;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * IP address list setting.
+ * Multi-line text area setting.
  *
  * @api
  */
-final class Iplist extends AbstractSetting
+final class Textarea extends AbstractSetting
 {
     public function __construct(
         string $name,
@@ -36,7 +37,7 @@ final class Iplist extends AbstractSetting
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configiplist(
+        return new admin_setting_configtextarea(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),

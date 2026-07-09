@@ -10,37 +10,38 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configduration;
+use admin_setting_configtime;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Time duration setting (seconds, minutes, hours, days).
+ * Time of day setting (hour:minute).
  *
  * @api
  */
-final class Duration extends AbstractSetting
+final class Time extends AbstractSetting
 {
     public function __construct(
         string $name,
         mixed $default = null,
         ?string $label = null,
         ?string $description = null,
-        public readonly int $defaultUnit = 86400,
+        public readonly string $minutesName = 'minutes',
     ) {
         parent::__construct($name, $default, $label, $description);
     }
 
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configduration(
+        return new admin_setting_configtime(
             $plugin . '/' . $this->resolveConfigName($extension),
+            $plugin . '/' . $this->resolveConfigName($extension) . '_' . $this->minutesName,
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
-            $this->defaultUnit,
         );
     }
 }

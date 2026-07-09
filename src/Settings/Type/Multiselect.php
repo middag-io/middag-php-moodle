@@ -10,26 +10,38 @@ declare(strict_types=1);
  * @license     Apache-2.0
  */
 
-namespace Middag\Moodle\Settings;
+namespace Middag\Moodle\Settings\Type;
 
 use admin_setting;
-use admin_setting_configexecutable;
+use admin_setting_configmultiselect;
+use Middag\Moodle\Settings\AbstractSetting;
 use Middag\Moodle\Support\LangSupport;
 
 /**
- * Executable path on server.
+ * Multiple select setting (multi-value).
  *
  * @api
  */
-final class Executable extends AbstractSetting
+final class Multiselect extends AbstractSetting
 {
+    public function __construct(
+        string $name,
+        mixed $default = null,
+        ?string $label = null,
+        ?string $description = null,
+        public readonly array $choices = [],
+    ) {
+        parent::__construct($name, $default, $label, $description);
+    }
+
     public function toMoodleSetting(string $extension, string $plugin): admin_setting
     {
-        return new admin_setting_configexecutable(
+        return new admin_setting_configmultiselect(
             $plugin . '/' . $this->resolveConfigName($extension),
             LangSupport::getString($this->resolveLabel($extension, $plugin), $plugin),
             LangSupport::getString($this->resolveDescription($extension, $plugin), $plugin),
             $this->default,
+            $this->choices,
         );
     }
 }
