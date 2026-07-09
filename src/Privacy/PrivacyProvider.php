@@ -17,9 +17,9 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
-use Middag\Moodle\Kernel\Kernel;
 use Middag\Moodle\Privacy\Contract\PrivacyProviderInterface;
 use Middag\Moodle\Privacy\Contract\PrivacyRepositoryInterface;
+use Middag\Moodle\Runtime\Kernel;
 use Symfony\Component\DependencyInjection\TaggedContainerInterface;
 use Throwable;
 

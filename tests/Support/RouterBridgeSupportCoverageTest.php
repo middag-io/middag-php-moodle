@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Support;
 
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\MoodleHttpKernel;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Support\RouterBridgeSupport;
 use Middag\Moodle\Support\VersionSupport;
 use Nyholm\Psr7\Factory\Psr17Factory;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Http\Concerns;
 
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Support\UrlSupport;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

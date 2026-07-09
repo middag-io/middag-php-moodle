@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 

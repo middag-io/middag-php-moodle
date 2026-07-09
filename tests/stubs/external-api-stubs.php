@@ -15,7 +15,7 @@ declare(strict_types=1);
  *
  * michaelmeneses/moodle-stubs ships these for PHPStan (scanDirectories) only —
  * they are NOT autoloadable at runtime. Any class that extends
- * core_external\external_api (e.g. Middag\Moodle\Kernel\WebService\AbstractExternal)
+ * core_external\external_api (e.g. Middag\Moodle\WebService\AbstractExternal)
  * would fatal under PHPUnit without a behavioural stand-in. These minimal stubs
  * mirror the real constructor signatures and store the declared shape so tests can
  * assert it. They do NOT reproduce Moodle's parameter/return validation engine —

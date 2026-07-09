@@ -274,31 +274,31 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
-			path: src/Kernel/Facade/AbstractFacade.php
+			path: src/Runtime/Facade/AbstractFacade.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: src/Kernel/Kernel.php
+			path: src/Runtime/Kernel.php
 
 		-
-			message: '#^Template type T of method Middag\\Moodle\\Kernel\\Kernel\:\:get\(\) is not referenced in a parameter\.$#'
+			message: '#^Template type T of method Middag\\Moodle\\Runtime\\Kernel\:\:get\(\) is not referenced in a parameter\.$#'
 			identifier: method.templateTypeNotInParameter
 			count: 1
-			path: src/Kernel/Kernel.php
+			path: src/Runtime/Kernel.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: src/Kernel/Loader/MoodleHookfileLoader.php
+			path: src/Runtime/Loader/MoodleHookfileLoader.php
 
 		-
 			message: '#^Class core_renderer not found\.$#'
 			identifier: class.notFound
 			count: 1
-			path: src/Kernel/MoodleBootstrap.php
+			path: src/Runtime/MoodleBootstrap.php
 
 		-
 			message: '#^Right side of && is always true\.$#'

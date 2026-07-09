@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 /*
- * Per-area Moodle stubs for Middag\Moodle\Kernel\Kernel lifecycle coverage.
+ * Per-area Moodle stubs for Middag\Moodle\Runtime\Kernel lifecycle coverage.
  *
  * Kernel::ensureAutoload() resolves the consumer plugin's autoload function name
  * (ComponentContext::autoloadFunction(), 'local_example_autoload' for the default

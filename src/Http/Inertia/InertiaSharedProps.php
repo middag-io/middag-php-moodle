@@ -16,7 +16,7 @@ use core\context\system;
 use core\output\user_picture;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Moodle\Config\ComponentContext;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Support\ThemeSupport;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Tests\Http\Concerns;
 
 use Middag\Moodle\Http\Concerns\UrlGenerator;
 use Middag\Moodle\Http\Contract\RouterInterface;
-use Middag\Moodle\Kernel\Kernel;
+use Middag\Moodle\Runtime\Kernel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
