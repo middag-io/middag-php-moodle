@@ -45,7 +45,11 @@
   "autoload": {
     "psr-4": {
       "Middag\\Moodle\\": "src/"
-    }
+    },
+    "exclude-from-classmap": [
+      "/tests/phpstan/",
+      "/tests/stubs/"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
