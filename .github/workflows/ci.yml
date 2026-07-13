@@ -58,3 +58,33 @@ jobs:
 
       - name: PHPUnit
         run: composer test
+
+  # LB-CI-01: PHPStan against every supported Moodle stubs series (4.5→5.2).
+  # Informative (continue-on-error) until the per-version compat modelling
+  # (cm_info/modinfo/navigation_node class_alias) lands — the canonical
+  # series stays blocking in the quality job.
+  stan-matrix:
+    name: PHPStan (moodle-stubs ${{ matrix.stubs }})
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        stubs: ['~4.5.0', '~5.1.0', '~5.2.0']
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Pin moodle-stubs to the matrix series
+        run: composer require --dev "michaelmeneses/moodle-stubs:${{ matrix.stubs }}" --with-all-dependencies --no-interaction
+
+      - name: PHPStan against the matrix stubs
+        run: composer check:stan
