@@ -36,9 +36,10 @@ final class EventEdulevelCoverageTest extends TestCase
     #[Test]
     public function backingValuesMatchMoodleLevels(): void
     {
-        self::assertSame(0, EventEdulevel::Teaching->value);
-        self::assertSame(1, EventEdulevel::Participating->value);
-        self::assertSame(2, EventEdulevel::Other->value);
+        // \core\event\base: LEVEL_OTHER = 0, LEVEL_TEACHING = 1, LEVEL_PARTICIPATING = 2.
+        self::assertSame(0, EventEdulevel::Other->value);
+        self::assertSame(1, EventEdulevel::Teaching->value);
+        self::assertSame(2, EventEdulevel::Participating->value);
     }
 
     #[Test]
@@ -52,8 +53,8 @@ final class EventEdulevelCoverageTest extends TestCase
     #[Test]
     public function canBeCreatedFromValue(): void
     {
-        self::assertSame(EventEdulevel::Teaching, EventEdulevel::from(0));
-        self::assertSame(EventEdulevel::Participating, EventEdulevel::from(1));
-        self::assertSame(EventEdulevel::Other, EventEdulevel::from(2));
+        self::assertSame(EventEdulevel::Other, EventEdulevel::from(0));
+        self::assertSame(EventEdulevel::Teaching, EventEdulevel::from(1));
+        self::assertSame(EventEdulevel::Participating, EventEdulevel::from(2));
     }
 }
