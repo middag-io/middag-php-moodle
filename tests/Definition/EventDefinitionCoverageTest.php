@@ -85,7 +85,7 @@ final class EventDefinitionCoverageTest extends TestCase
         self::assertSame(
             [
                 'crud' => 'd',
-                'edulevel' => 1,
+                'edulevel' => 2,
                 'objecttable' => 'local_example_order',
             ],
             $event->toMoodleArray('local_example'),
@@ -99,8 +99,8 @@ final class EventDefinitionCoverageTest extends TestCase
 
         $result = $event->toMoodleArray('local_example');
 
-        // TEACHING->toMoodleValue() is 0; asserting the mapped scalar (not the enum).
-        self::assertSame(0, $result['edulevel']);
+        // Teaching->toMoodleValue() is LEVEL_TEACHING (1); asserting the mapped scalar (not the enum).
+        self::assertSame(1, $result['edulevel']);
     }
 
     #[Test]
@@ -122,7 +122,7 @@ final class EventDefinitionCoverageTest extends TestCase
         $event = new EventDefinition(name: 'order_created');
 
         self::assertSame(
-            '\local\example\event\order_created',
+            '\local_example\event\order_created',
             $event->getEventClassname('local_example'),
         );
     }
@@ -133,7 +133,7 @@ final class EventDefinitionCoverageTest extends TestCase
         $event = new EventDefinition(name: 'order_created');
 
         self::assertSame(
-            '\local\example\event\order_created',
+            '\local_example\event\order_created',
             $event->getEventClassname('local_example'),
         );
     }
@@ -145,7 +145,7 @@ final class EventDefinitionCoverageTest extends TestCase
 
         // 'core' is the sentinel that suppresses the extension prefix.
         self::assertSame(
-            '\local\example\event\order_created',
+            '\local_example\event\order_created',
             $event->getEventClassname('local_example', 'core'),
         );
     }
@@ -156,18 +156,20 @@ final class EventDefinitionCoverageTest extends TestCase
         $event = new EventDefinition(name: 'order_created');
 
         self::assertSame(
-            '\local\example\event\billing_order_created',
+            '\local_example\event\billing_order_created',
             $event->getEventClassname('local_example', 'billing'),
         );
     }
 
     #[Test]
-    public function getEventClassnameConvertsUnderscoresToNamespaceSeparators(): void
+    public function getEventClassnameKeepsTheFrankenstylePluginNameIntact(): void
     {
         $event = new EventDefinition(name: 'thing_happened');
 
+        // Moodle plugin namespaces use the frankenstyle name as ONE segment
+        // (\mod_forum\event\...), never split on underscores.
         self::assertSame(
-            '\mod\forum\event\thing_happened',
+            '\mod_forum\event\thing_happened',
             $event->getEventClassname('mod_forum'),
         );
     }
