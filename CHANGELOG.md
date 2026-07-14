@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/middag-io/middag-php-moodle/compare/v1.7.0...v1.7.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* **autoload:** release the classmap host-stub exclusion ([d740acf](https://github.com/middag-io/middag-php-moodle/commit/d740acf8c17191b60d6cc10d628634ee7749b4e3))
+
 ## [1.7.0](https://github.com/middag-io/middag-php-moodle/compare/v1.6.0...v1.7.0) (2026-07-09)
 
 
