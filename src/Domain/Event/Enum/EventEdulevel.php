@@ -21,11 +21,11 @@ namespace Middag\Moodle\Domain\Event\Enum;
  */
 enum EventEdulevel: int
 {
-    case Teaching = 0;
+    case Other = 0;
 
-    case Participating = 1;
+    case Teaching = 1;
 
-    case Other = 2;
+    case Participating = 2;
 
     public function toMoodleValue(): int
     {

@@ -63,6 +63,9 @@ final readonly class EventDefinition implements DefinitionInterface
     /**
      * Get the fully qualified event class name.
      *
+     * The frankenstyle plugin name is a single namespace segment in Moodle
+     * (`\local_example\event\...`), never split on underscores.
+     *
      * @param string      $plugin_name frankenstyle plugin name (e.g. 'local_example')
      * @param null|string $extension   extension slug
      */
@@ -70,7 +73,7 @@ final readonly class EventDefinition implements DefinitionInterface
     {
         $prefix = $extension !== null && $extension !== 'core' ? $extension . '_' : '';
 
-        return '\\' . str_replace('_', '\\', $plugin_name) . '\event\\' . $prefix . $this->name;
+        return '\\' . $plugin_name . '\event\\' . $prefix . $this->name;
     }
 
     public function isCompatible(string $moodle_version): bool

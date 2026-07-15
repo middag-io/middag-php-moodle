@@ -7,11 +7,6 @@ parameters:
         - src
     scanDirectories:
         - vendor/michaelmeneses/moodle-stubs/stubs
-    scanFiles:
-        # Models the runtime global \action_link alias that moodle-stubs omits
-        # (see the file). Registers the symbol so PHPStan resolves the
-        # ?\action_link return type of core\check\check::get_action_link().
-        - tests/phpstan/moodle-compat.stub.php
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: missingType.iterableValue
@@ -24,3 +19,19 @@ parameters:
         -
             identifier: parameter.defaultValue
             path: src/Settings/Type/Text.php
+        # Moodle signatures typed against the legacy global aliases (`context`,
+        # `moodle_url`) reject the core\* types under PHPStan. Since stubs
+        # v*.*.*.2 bimoo re-emits the runtime class_alias() calls as subclass
+        # declarations, which resolves the names and the RECEIVING direction —
+        # but a signature EXPECTING the legacy alias still rejects the
+        # canonical core\* type (class identity cannot be expressed
+        # statically). Runtime-correct calls — stub-resolution false
+        # positives, scoped per file.
+        -
+            message: "#expects context(\\|int)?, core\\\\context\\\\system given#"
+            identifier: argument.type
+            path: src/Support/CompetencySupport.php
+        -
+            message: "#expects moodle_url, core\\\\url given#"
+            identifier: argument.type
+            path: src/Support/HtmlWriterSupport.php

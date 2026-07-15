@@ -83,8 +83,14 @@
     ],
     "fix:style": "php-cs-fixer fix --verbose --show-progress=none --config=.php-cs-fixer.dist.php",
     "fix:rector": "rector process --config=.php-rector.php --no-progress-bar",
-    "test": "phpunit",
+    "test": [
+      "@test:unit",
+      "@test:no-host"
+    ],
+    "test:unit": "phpunit",
     "test:cov": "XDEBUG_MODE=coverage phpunit --coverage-text",
+    "test:no-host": "phpunit --configuration=phpunit.no-host.xml",
+    "test:no-host:cov": "XDEBUG_MODE=coverage phpunit --configuration=phpunit.no-host.xml --coverage-text",
     "lint:php82": "bin/lint-php82.sh"
   }
 }

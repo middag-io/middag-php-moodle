@@ -177,7 +177,7 @@ final class CourseSupportCoverageTest extends TestCase
     {
         $this->installFormat(
             5,
-            (object) ['section' => 1, 'uservisible' => true],
+            (object) ['sectionnum' => 1, 'uservisible' => true],
             [1 => [100, 101]],
             [100 => $this->cm(true), 101 => $this->cm(false)],
         );
@@ -200,7 +200,7 @@ final class CourseSupportCoverageTest extends TestCase
     {
         $this->installFormat(
             0,
-            (object) ['section' => 1, 'uservisible' => true],
+            (object) ['sectionnum' => 1, 'uservisible' => true],
             [1 => [100]],
             [100 => $this->cm(true)],
         );
@@ -213,7 +213,7 @@ final class CourseSupportCoverageTest extends TestCase
     {
         $this->installFormat(
             5,
-            (object) ['section' => 1, 'uservisible' => true],
+            (object) ['sectionnum' => 1, 'uservisible' => true],
             [1 => [100]],
             [100 => $this->cm(true)],
             false,
@@ -227,7 +227,7 @@ final class CourseSupportCoverageTest extends TestCase
     {
         $this->installFormat(
             5,
-            (object) ['section' => 1, 'uservisible' => false],
+            (object) ['sectionnum' => 1, 'uservisible' => false],
             [1 => [100]],
             [100 => $this->cm(true)],
         );
@@ -240,7 +240,7 @@ final class CourseSupportCoverageTest extends TestCase
     {
         $this->installFormat(
             5,
-            (object) ['section' => 9, 'uservisible' => true],
+            (object) ['sectionnum' => 9, 'uservisible' => true],
             [],
             [],
         );

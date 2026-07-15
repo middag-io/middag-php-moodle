@@ -97,11 +97,15 @@ final class RouterBridgeSupport
     {
         try {
             if (!class_exists(Kernel::class)) {
+                // @codeCoverageIgnoreStart — the framework Kernel is a hard
+                // dependency of this library and always autoloadable inside the
+                // suite; the guard only matters for broken installs (R-05).
                 $response->getBody()->write(json_encode(['error' => 'Framework not available'], JSON_THROW_ON_ERROR));
 
                 return $response
                     ->withHeader('Content-Type', 'application/json')
                     ->withStatus(503);
+                // @codeCoverageIgnoreEnd
             }
 
             // Best-effort output buffering.
