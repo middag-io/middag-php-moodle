@@ -137,7 +137,9 @@ class CourseSupport
                 return [];
             }
 
-            $numsection = $section->section;
+            // sectionnum replaced the deprecated magic `section` property
+            // (available since Moodle 4.4, inside the 4.5+ support floor).
+            $numsection = $section->sectionnum;
             if (!empty($modinfo->sections[$numsection])) {
                 foreach ($modinfo->sections[$numsection] as $modnumber) {
                     if ($sectionnumber > $numsections) {

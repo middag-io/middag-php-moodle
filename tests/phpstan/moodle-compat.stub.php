@@ -17,3 +17,14 @@ class action_link
 {
     public \core\url $url;
 }
+
+// Moodle registers the legacy global `\moodle_url` name as a runtime
+// class_alias() of core\url, which bimoo strips from the stubs (statement
+// expressions are not declarations). Stub tags before the v*.*.*.1 rebuilds
+// never resolved global names at all, so the gap only surfaced once the stubs
+// regained their `use` imports. PHPStan does not register class_alias() from
+// scanned files, so model the alias as a subclass — enough for consumers that
+// RECEIVE a moodle_url (methods resolve through core\url). Signatures that
+// EXPECT the legacy name (context/moodle_url params) cannot be modeled by
+// inheritance at all — those carry scoped exemptions in .phpstan.neon.
+class moodle_url extends \core\url {}

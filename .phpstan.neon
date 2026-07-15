@@ -24,3 +24,17 @@ parameters:
         -
             identifier: parameter.defaultValue
             path: src/Settings/Type/Text.php
+        # Moodle signatures typed against the legacy global aliases (`context`,
+        # `moodle_url`) reject the core\* types under PHPStan because the
+        # runtime class_alias() identity (context === core\context) cannot be
+        # modeled: bimoo strips the alias statements from the stubs and an
+        # inheritance shim only covers one direction. Runtime-correct calls —
+        # stub-resolution false positives, scoped per file.
+        -
+            message: "#expects context(\\|int)?, core\\\\context\\\\system given#"
+            identifier: argument.type
+            path: src/Support/CompetencySupport.php
+        -
+            message: "#expects moodle_url, core\\\\url given#"
+            identifier: argument.type
+            path: src/Support/HtmlWriterSupport.php
