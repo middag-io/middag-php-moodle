@@ -47,7 +47,14 @@ final class Environment extends BaseEnvironment
             return $CFG->middag_env;
         }
 
-        if (isset($CFG->debug) && $CFG->debug === DEBUG_DEVELOPER) {
+        // Dynamic constant lookup: the moodle-stubs 4.5 series types the
+        // DEBUG_DEVELOPER literal in a way PHPStan can prove always-false
+        // against $CFG->debug; constant() keeps the comparison opaque to the
+        // analyser and the defined() guard keeps no-host runs safe. 32767 is
+        // Moodle's DEBUG_DEVELOPER value on every supported branch.
+        $developerLevel = \defined('DEBUG_DEVELOPER') ? (int) \constant('DEBUG_DEVELOPER') : 32767;
+
+        if (isset($CFG->debug) && (int) $CFG->debug === $developerLevel) {
             return self::ENV_DEVELOPMENT;
         }
 
