@@ -10,6 +10,8 @@
     <testsuites>
         <testsuite name="Unit">
             <directory>tests</directory>
+            <!-- Host-absence suite: needs the stub-free bootstrap (phpunit.no-host.xml). -->
+            <exclude>tests/NoHost</exclude>
         </testsuite>
     </testsuites>
     <source>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    No-host suite: runs tests/NoHost against tests/bootstrap-no-host.php, which
+    defines no Moodle stand-ins so the src class_exists()/function_exists()
+    absence guards are reachable. Coverage is reported separately from the main
+    suite (composer test:cov vs test:no-host:cov).
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap-no-host.php"
+         colors="true"
+         cacheDirectory=".phpunit.no-host.cache"
+         executionOrder="depends,defects"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="NoHost">
+            <directory>tests/NoHost</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>
