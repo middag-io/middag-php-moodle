@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.8.0](https://github.com/middag-io/middag-php-moodle/compare/v1.7.1...v1.8.0) (2026-07-15)
+
+
+### Features
+
+* **definition:** add LangDefinition for managed lang-file blocks ([e8c0482](https://github.com/middag-io/middag-php-moodle/commit/e8c0482676ff69ab0cf2a96e7f409ecba9db0bd8))
+* **support:** complete the DbSupport delegation surface across Moodle 4.5-5.2 ([a79432c](https://github.com/middag-io/middag-php-moodle/commit/a79432c2dcbe7f2dc73895faaf868c671c96c655))
+
+
+### Bug Fixes
+
+* **definition:** keep the frankenstyle plugin name intact in event classnames ([4da30de](https://github.com/middag-io/middag-php-moodle/commit/4da30de3eb14a06d7522ab1f608baf3b1243b9ed))
+* **enum:** align EventEdulevel backing values with the core event LEVEL_* constants ([713368b](https://github.com/middag-io/middag-php-moodle/commit/713368be675b7694b6dfada0a7a1a854ac0bc699))
+* **shared:** keep DEBUG_DEVELOPER comparison opaque to per-stub analysis ([a9da3f3](https://github.com/middag-io/middag-php-moodle/commit/a9da3f31b818fb6d1c362cebaae8c3afc9c19803))
+* **support:** adopt the rebuilt stubs and drop the deprecated section property ([b99ac11](https://github.com/middag-io/middag-php-moodle/commit/b99ac11cbef5b7cc2cf0309ac2ece35dbc87914a))
+
+
+### Miscellaneous
+
+* ignore the no-host phpunit cache directory ([f7f6f6f](https://github.com/middag-io/middag-php-moodle/commit/f7f6f6f2847a68885f1a98cc1e0b747bb3156e18))
+
 ## [1.7.1](https://github.com/middag-io/middag-php-moodle/compare/v1.7.0...v1.7.1) (2026-07-14)
 
 
