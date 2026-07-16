@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use coding_exception;
 use core\user as core_user;
 use Middag\Moodle\Domain\User\User;
+use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 
 /**
@@ -120,7 +122,7 @@ class UserSupport
     /**
      * Soft-deletes a user.
      *
-     * @param stdClass $user user object to delete
+     * @param stdClass $user user object to delete (must carry 'id' and 'username')
      *
      * @return bool True on success, false otherwise
      */
@@ -130,7 +132,17 @@ class UserSupport
 
         require_once $CFG->dirroot . '/user/lib.php';
 
-        return delete_user($user);
+        try {
+            return delete_user($user);
+        } catch (coding_exception $codingexception) {
+            // Moodle's delete_user() throws when the record lacks the id or
+            // username property (even though it re-fetches the row by id and
+            // discards the rest); the documented contract here is bool, so
+            // surface that guard as false instead of crashing the caller.
+            Debug::traceException($codingexception);
+
+            return false;
+        }
     }
 
     /**

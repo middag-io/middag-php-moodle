@@ -101,6 +101,12 @@ if (!function_exists('user_update_user')) {
 if (!function_exists('delete_user')) {
     function delete_user($user): bool
     {
+        // Mirror moodlelib.php's guard: delete_user() requires both the id
+        // and username properties before it re-fetches the row by id.
+        if (!property_exists($user, 'id') || !property_exists($user, 'username')) {
+            throw new coding_exception('Invalid $user parameter in delete_user() detected');
+        }
+
         return $GLOBALS['__middag_test_delete_result'] ?? true;
     }
 }

@@ -167,11 +167,24 @@ final class UserSupportCoverageTest extends TestCase
     #[Test]
     public function testDeleteUserReturnsTheMoodleResult(): void
     {
+        $user = (object) ['id' => 7, 'username' => 'jane'];
+
         $GLOBALS['__middag_test_delete_result'] = false;
-        self::assertFalse(UserSupport::deleteUser(new stdClass()));
+        self::assertFalse(UserSupport::deleteUser($user));
 
         $GLOBALS['__middag_test_delete_result'] = true;
-        self::assertTrue(UserSupport::deleteUser(new stdClass()));
+        self::assertTrue(UserSupport::deleteUser($user));
+    }
+
+    #[Test]
+    public function testDeleteUserHonoursTheBoolContractForAnIdOnlyRecord(): void
+    {
+        // Moodle's delete_user() throws a coding_exception when the record
+        // lacks the username property; the adapter's documented contract is
+        // bool, so the guard must surface as false — not as an uncaught crash.
+        $GLOBALS['__middag_test_delete_result'] = true;
+
+        self::assertFalse(UserSupport::deleteUser((object) ['id' => 7]));
     }
 
     #[Test]
