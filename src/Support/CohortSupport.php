@@ -42,7 +42,11 @@ class CohortSupport
      * @param int    $perpage   items per page
      * @param string $search    optional search term
      *
-     * @return array<int, object> list of cohort objects (as returned by cohort_get_cohorts)
+     * @return array<string, mixed> the keyed structure cohort_get_cohorts() returns across the
+     *                              supported version range: 'cohorts' (list of cohort objects),
+     *                              'totalcohorts' (int) and 'allcohorts' (int) — NOT a flat list.
+     *                              Use {@see getCohortsWithTotal()} for a normalised result, or
+     *                              read the 'cohorts' key directly.
      */
     public static function getCohorts(int $contextid, int $page = 0, int $perpage = 25, string $search = ''): array
     {
@@ -66,18 +70,15 @@ class CohortSupport
     {
         $raw = self::getCohorts($contextid, $page, $perpage, $search);
 
-        // Possible cases: plain list or structure with keys.
-        if (is_array($raw)) {
-            if (array_key_exists('cohorts', $raw) && array_key_exists('totalcohorts', $raw)) {
-                $items = $raw['cohorts'] ?? [];
-                $total = Typing::toInt($raw['totalcohorts'] ?? count($items));
-            } else {
-                $items = $raw;
-                $total = count($items);
-            }
+        // cohort_get_cohorts() returns the keyed structure; keep the plain-list
+        // handling as a defensive fallback for any non-conforming host.
+        if (array_key_exists('cohorts', $raw) && array_key_exists('totalcohorts', $raw)) {
+            $cohorts = $raw['cohorts'] ?? [];
+            $items = is_array($cohorts) ? $cohorts : [];
+            $total = Typing::toInt($raw['totalcohorts'] ?? count($items));
         } else {
-            $items = [];
-            $total = 0;
+            $items = $raw;
+            $total = count($items);
         }
 
         // Normalize items to entities.
@@ -159,7 +160,12 @@ class CohortSupport
             }
 
             return $result;
-        } catch (dml_exception) {
+        } catch (dml_exception $dmlexception) {
+            // Trace like getAll() does: a DB error must be observable, not
+            // silently indistinguishable from a cohort that has zero members
+            // (a caller reconciling membership would treat it as authoritative).
+            Debug::traceException($dmlexception);
+
             return [];
         }
     }

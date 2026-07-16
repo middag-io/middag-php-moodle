@@ -74,11 +74,22 @@ final class CohortSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testGetCohortsReturnsTheRawCohortList(): void
+    public function testGetCohortsReturnsTheKeyedStructureFromTheHost(): void
     {
-        $GLOBALS['__middag_test_cohorts'] = [(object) ['id' => 1], (object) ['id' => 2]];
+        // cohort_get_cohorts() always returns a keyed structure (never a flat
+        // list) across the supported version range; getCohorts() passes it
+        // through, so consumers must read the 'cohorts' key.
+        $GLOBALS['__middag_test_cohorts'] = [
+            'cohorts' => [(object) ['id' => 1], (object) ['id' => 2]],
+            'totalcohorts' => 2,
+            'allcohorts' => 2,
+        ];
 
-        self::assertCount(2, CohortSupport::getCohorts(10));
+        $result = CohortSupport::getCohorts(10);
+
+        self::assertArrayHasKey('cohorts', $result);
+        self::assertCount(2, $result['cohorts']);
+        self::assertSame(2, $result['totalcohorts']);
     }
 
     #[Test]
