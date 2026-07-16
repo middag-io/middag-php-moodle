@@ -51,6 +51,8 @@ final class CalendarSupportCoverageTest extends TestCase
             '__middag_test_calendar_deleted',
             '__middag_test_calendar_create_data',
             '__middag_test_calendar_update_data',
+            '__middag_test_calendar_create_checkcap',
+            '__middag_test_calendar_update_checkcap',
         ] as $key) {
             unset($GLOBALS[$key]);
         }
@@ -111,6 +113,50 @@ final class CalendarSupportCoverageTest extends TestCase
         CalendarSupport::update(new CalendarEventDto(id: 12, name: 'Weekly', timestart: 100, repeats: 4));
 
         self::assertSame(1, $GLOBALS['__middag_test_calendar_update_data']->repeat);
+    }
+
+    #[Test]
+    public function testCreateDefaultsSiteEventCourseidToSiteid(): void
+    {
+        // A null courseid on a site event must persist as SITEID, not 0, or the
+        // "anyone can see site events" visibility shortcut never matches.
+        CalendarSupport::create(new CalendarEventDto(name: 'Maintenance', eventtype: 'site', timestart: 100));
+
+        self::assertSame(SITEID, $GLOBALS['__middag_test_calendar_create_data']->courseid);
+    }
+
+    #[Test]
+    public function testCreateDefaultsNonSiteNullCourseidToZero(): void
+    {
+        CalendarSupport::create(new CalendarEventDto(name: 'X', eventtype: 'user', timestart: 100));
+
+        self::assertSame(0, $GLOBALS['__middag_test_calendar_create_data']->courseid);
+    }
+
+    #[Test]
+    public function testCreateSkipsTheCapabilityCheckByDefault(): void
+    {
+        // Adapter writes are programmatic; the interactive capability check must
+        // be off by default (it would throw for a non-session service caller).
+        CalendarSupport::create(new CalendarEventDto(name: 'X', timestart: 100));
+
+        self::assertFalse($GLOBALS['__middag_test_calendar_create_checkcap']);
+    }
+
+    #[Test]
+    public function testCreateForwardsAnExplicitCapabilityCheck(): void
+    {
+        CalendarSupport::create(new CalendarEventDto(name: 'X', timestart: 100), true);
+
+        self::assertTrue($GLOBALS['__middag_test_calendar_create_checkcap']);
+    }
+
+    #[Test]
+    public function testUpdateForwardsTheCapabilityCheckFlag(): void
+    {
+        CalendarSupport::update(new CalendarEventDto(id: 12, name: 'X', timestart: 100), true);
+
+        self::assertTrue($GLOBALS['__middag_test_calendar_update_checkcap']);
     }
 
     #[Test]

@@ -385,6 +385,7 @@ if (!class_exists('calendar_event', false)) {
             }
 
             $GLOBALS['__middag_test_calendar_create_data'] = $data;
+            $GLOBALS['__middag_test_calendar_create_checkcap'] = $checkcapability;
             $event = new self((array) $data);
             $event->id = $GLOBALS['__middag_test_calendar_new_id'] ?? 501;
 
@@ -407,6 +408,7 @@ if (!class_exists('calendar_event', false)) {
             }
 
             $GLOBALS['__middag_test_calendar_update_data'] = $data;
+            $GLOBALS['__middag_test_calendar_update_checkcap'] = $checkcapability;
             $this->props = array_merge($this->props, (array) $data);
 
             return true;

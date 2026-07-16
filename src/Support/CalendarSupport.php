@@ -38,11 +38,14 @@ class CalendarSupport
     /**
      * Creates a new calendar event from a DTO.
      *
-     * @param CalendarEventDto $dto the event data
+     * @param CalendarEventDto $dto             the event data
+     * @param bool             $checkcapability whether to run Moodle's interactive
+     *                                          capability check (default false for
+     *                                          programmatic/system writes)
      *
      * @return null|CalendarEventDto the created event DTO with id populated, or null on failure
      */
-    public static function create(CalendarEventDto $dto): ?CalendarEventDto
+    public static function create(CalendarEventDto $dto, bool $checkcapability = false): ?CalendarEventDto
     {
         try {
             $data = new stdClass();
@@ -52,7 +55,9 @@ class CalendarSupport
             $data->eventtype = $dto->eventtype;
             $data->timestart = $dto->timestart;
             $data->timeduration = $dto->timeduration;
-            $data->courseid = $dto->courseid ?? 0;
+            // A site event needs courseid = SITEID (not 0): calendar_view_event_allowed()'s
+            // "anyone can see site events" shortcut keys off courseid == SITEID.
+            $data->courseid = $dto->courseid ?? ($dto->eventtype === 'site' ? SITEID : 0);
             $data->groupid = $dto->groupid ?? 0;
             $data->userid = $dto->userid ?? 0;
             $data->visible = $dto->visible ? 1 : 0;
@@ -64,7 +69,10 @@ class CalendarSupport
             // ever created. Derive the flag from the requested repeat count.
             $data->repeat = $dto->repeats > 0 ? 1 : 0;
 
-            $event = calendar_event::create($data);
+            // Default $checkcapability = false: adapter writes are programmatic
+            // (tasks/services), and Moodle recommends skipping the interactive
+            // capability check for those (core does the same, e.g. mod_assign).
+            $event = calendar_event::create($data, $checkcapability);
 
             return new CalendarEventDto(
                 id: (int) $event->id,
@@ -91,11 +99,13 @@ class CalendarSupport
     /**
      * Updates an existing calendar event from a DTO.
      *
-     * @param CalendarEventDto $dto the event data (id must be set)
+     * @param CalendarEventDto $dto             the event data (id must be set)
+     * @param bool             $checkcapability whether to run Moodle's interactive
+     *                                          capability check (default false)
      *
      * @return bool true on success, false on failure
      */
-    public static function update(CalendarEventDto $dto): bool
+    public static function update(CalendarEventDto $dto, bool $checkcapability = false): bool
     {
         try {
             if ($dto->id === null) {
@@ -111,7 +121,9 @@ class CalendarSupport
             $data->eventtype = $dto->eventtype;
             $data->timestart = $dto->timestart;
             $data->timeduration = $dto->timeduration;
-            $data->courseid = $dto->courseid ?? 0;
+            // A site event needs courseid = SITEID (not 0): calendar_view_event_allowed()'s
+            // "anyone can see site events" shortcut keys off courseid == SITEID.
+            $data->courseid = $dto->courseid ?? ($dto->eventtype === 'site' ? SITEID : 0);
             $data->groupid = $dto->groupid ?? 0;
             $data->userid = $dto->userid ?? 0;
             $data->visible = $dto->visible ? 1 : 0;
@@ -120,7 +132,8 @@ class CalendarSupport
             // See create(): the repeat loop is gated on `repeat`, not `repeats`.
             $data->repeat = $dto->repeats > 0 ? 1 : 0;
 
-            $event->update($data);
+            // See create(): programmatic writes skip the capability check by default.
+            $event->update($data, $checkcapability);
 
             return true;
         } catch (Throwable $throwable) {
