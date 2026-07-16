@@ -33,6 +33,12 @@ host-provided; no private infrastructure is required.
 - `composer.lock` is **gitignored**. A local lock that references path or dev
   versions of the framework is expected development state — **not** a defect in
   the released package.
+- **Resolution is per PHP line by design** (a committed lock would break this):
+  on PHP 8.2/8.3 Composer resolves Symfony 7.x; on PHP 8.4 it may pick
+  Symfony 8.x (requires PHP >= 8.4.1). Moodle 4.5 caps PHP at 8.3, so a 4.5
+  host needs a vendor resolved on the 8.3 line — if your workstation runs
+  PHP 8.4, do not ship its `vendor/` to an older host. The CI test matrix
+  resolves fresh per cell and asserts the 8.2/8.3 cells stay on Symfony 7.x.
 - CI and external consumers resolve the `middag-io/*` packages from
   [Packagist](https://packagist.org/packages/middag-io/) — no private mirror and
   no credentials. They install with `composer require` from the default Composer

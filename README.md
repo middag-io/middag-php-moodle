@@ -92,6 +92,15 @@ framework through a consumer-declared path repository, a **local**
 `composer.lock` can show path or dev references. That is expected local
 development state and **not** a defect in the released package.
 
+Keeping the lock out of the repo is also what makes **per-PHP resolution**
+work: this lib requires `symfony/* ^7.0` and supports PHP `^8.2`, while
+Symfony 8.x requires PHP >= 8.4.1. On PHP 8.2/8.3 Composer resolves the
+Symfony 7.x line; on PHP 8.4 it may pick 8.x. Moodle 4.5 hosts cap PHP at
+8.3, so they need a vendor **resolved on the 8.3 line** — a workstation
+vendor resolved on PHP 8.4 freezes Symfony 8.x and fails `platform_check`
+on an 8.3 host. That is a local artifact, not a support limitation; CI
+asserts the 8.2/8.3 cells resolve Symfony 7.x (see `.github/workflows/ci.yml`).
+
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contributor setup,
 including the dependency-resolution notes.
 

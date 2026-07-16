@@ -37,6 +37,12 @@ jobs:
       - name: PHPStan + PHP-CS-Fixer + Rector (dry-run)
         run: composer check
 
+  # No composer.lock is committed (library convention): each cell resolves
+  # dependencies on its own PHP line. On 8.2/8.3 Composer must land on the
+  # Symfony 7.x line (Symfony 8.x requires PHP >= 8.4.1); on 8.4 it may pick
+  # Symfony 8.x. Moodle 4.5 hosts cap PHP at 8.3, so the 8.3 cell is what
+  # proves the lib still installs there — the assertions below keep a future
+  # constraint drift from silently masking the ^8.2 floor.
   tests:
     name: Tests (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
@@ -55,6 +61,14 @@ jobs:
 
       - name: Install dependencies
         uses: ramsey/composer-install@v3
+
+      - name: Assert the resolved vendor satisfies this cell's platform
+        run: composer check-platform-reqs
+
+      - name: Assert Symfony resolved on the 7.x line (PHP 8.2/8.3 floor)
+        if: matrix.php != '8.4'
+        run: |
+          composer show symfony/http-foundation | grep -E '^versions +: +\* v?7\.'
 
       - name: PHPUnit
         run: composer test
