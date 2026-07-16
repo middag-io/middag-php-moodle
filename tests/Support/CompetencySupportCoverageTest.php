@@ -214,6 +214,20 @@ final class CompetencySupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testActionConstantsMirrorTheMoodleEvidenceEnum(): void
+    {
+        // \core_competency\evidence defines ACTION_LOG=0, ACTION_COMPLETE=2,
+        // ACTION_OVERRIDE=3 (there is deliberately no value 1). Passing any
+        // other integer to api::add_evidence() lands on the switch default and
+        // throws coding_exception, which addEvidence() would swallow into a
+        // silent null. Pin the mapping so it can never regress into a 0/1/2
+        // sequence again.
+        self::assertSame(0, CompetencySupport::ACTION_LOG);
+        self::assertSame(2, CompetencySupport::ACTION_COMPLETE);
+        self::assertSame(3, CompetencySupport::ACTION_OVERRIDE);
+    }
+
+    #[Test]
     public function testAddEvidenceReturnsTheEvidenceId(): void
     {
         $GLOBALS['__middag_test_evidence'] = $this->persistent(['id' => 555]);

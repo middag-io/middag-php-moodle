@@ -28,14 +28,21 @@ use Throwable;
  */
 class CompetencySupport
 {
+    // These MUST mirror the integer values of \core_competency\evidence's
+    // ACTION_* enum exactly (stable across Moodle 4.3–5.x). Note the gap: the
+    // core enum has no value 1, so ACTION_COMPLETE is 2 and ACTION_OVERRIDE is
+    // 3. Any other value hits the default arm of api::add_evidence()'s switch
+    // and throws coding_exception, which addEvidence() would swallow into a
+    // silent null. Do NOT "normalise" these into a 0/1/2 sequence.
+
     /** @var int Evidence action: log only, no proficiency change. */
     public const ACTION_LOG = 0;
 
     /** @var int Evidence action: mark competency as complete. */
-    public const ACTION_COMPLETE = 1;
+    public const ACTION_COMPLETE = 2;
 
     /** @var int Evidence action: override current proficiency grade. */
-    public const ACTION_OVERRIDE = 2;
+    public const ACTION_OVERRIDE = 3;
 
     /**
      * Checks whether the competency subsystem is enabled site-wide.
