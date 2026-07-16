@@ -79,6 +79,30 @@ final class ThemeSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetBrandColorRejectsANonColorToken(): void
+    {
+        // The value is interpolated verbatim into inline <style> content by
+        // getCssInjection(); anything that is not a well-formed CSS color
+        // token must be rejected, not injected.
+        $GLOBALS['PAGE'] = $this->pageWithBrand('#fff; } body { display:none');
+
+        self::assertNull(ThemeSupport::getBrandColor());
+    }
+
+    #[Test]
+    public function testGetBrandColorAcceptsFunctionalAndNamedColorTokens(): void
+    {
+        $GLOBALS['PAGE'] = $this->pageWithBrand('rgba(15, 108, 191, 0.5)');
+        self::assertSame('rgba(15, 108, 191, 0.5)', ThemeSupport::getBrandColor());
+
+        $GLOBALS['PAGE'] = $this->pageWithBrand('rebeccapurple');
+        self::assertSame('rebeccapurple', ThemeSupport::getBrandColor());
+
+        $GLOBALS['PAGE'] = $this->pageWithBrand('#ABC');
+        self::assertSame('#ABC', ThemeSupport::getBrandColor());
+    }
+
+    #[Test]
     public function testIsInheritanceEnabledReadsTheConfigFlag(): void
     {
         $GLOBALS['__middag_test_config'][self::INHERIT_KEY] = 1;

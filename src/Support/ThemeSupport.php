@@ -27,7 +27,8 @@ class ThemeSupport
     /**
      * Get the brand color from the active Moodle theme.
      *
-     * @return null|string Hex color (e.g. '#0f6cbf') or null if not set
+     * @return null|string a validated CSS color token (e.g. '#0f6cbf') or
+     *                     null if not set or not a well-formed color
      */
     public static function getBrandColor(): ?string
     {
@@ -39,7 +40,20 @@ class ThemeSupport
 
         $color = $PAGE->theme->settings->brandcolor;
 
-        return is_string($color) && $color !== '' ? $color : null;
+        if (!is_string($color) || $color === '') {
+            return null;
+        }
+
+        // getCssInjection() interpolates this value verbatim into inline
+        // <style> content, so only well-formed CSS color tokens may pass:
+        // hex, rgb()/rgba()/hsl()/hsla() with numeric args, or a plain
+        // identifier (named colors, transparent/currentColor/inherit) —
+        // mirroring Moodle's own colour-picker validation posture.
+        $valid = preg_match('/^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i', $color)
+            || preg_match('/^(?:rgb|hsl)a?\(\s*[\d.%,\s\/]+\)$/i', $color)
+            || preg_match('/^[a-z]+$/i', $color);
+
+        return $valid ? $color : null;
     }
 
     /**
