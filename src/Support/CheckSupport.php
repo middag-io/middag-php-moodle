@@ -114,14 +114,23 @@ class CheckSupport
             // check_manager::get_checks() returns core\check\check OBJECTS, so
             // read them through their accessors (mirrors runCheck()); array
             // access here would fatal against a real Moodle check.
-            $checkresult = $check->get_result();
-            $id = $check->get_id();
-            $result[$id] = new CheckResultDto(
-                checkId: $id,
-                status: CheckResultStatus::resolve(self::getResultStatusLabel($checkresult->get_status())),
-                summary: $checkresult->get_summary(),
-                details: $checkresult->get_details(),
-            );
+            try {
+                $checkresult = $check->get_result();
+                // Key by get_ref() (component-qualified), not the bare get_id():
+                // get_id() is only unique WITHIN a component, so two plugins'
+                // checks can share an id and one would silently overwrite the
+                // other. checkId keeps the bare id for display.
+                $result[$check->get_ref()] = new CheckResultDto(
+                    checkId: $check->get_id(),
+                    status: CheckResultStatus::resolve(self::getResultStatusLabel($checkresult->get_status())),
+                    summary: $checkresult->get_summary(),
+                    details: $checkresult->get_details(),
+                );
+            } catch (Throwable $throwable) {
+                // Per-check guard (mirrors runCheck()): one misbehaving check
+                // must degrade gracefully instead of aborting the whole batch.
+                Debug::traceException($throwable);
+            }
         }
 
         return $result;

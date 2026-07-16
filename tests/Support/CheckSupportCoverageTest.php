@@ -73,6 +73,11 @@ final class CheckSupportOkCheckFixture
         return 'okcheck';
     }
 
+    public function get_ref(): string
+    {
+        return 'core_okcheck';
+    }
+
     public function get_name(): string
     {
         return 'OK Check';
@@ -101,6 +106,11 @@ final class CheckSupportNoLinkCheckFixture
         return 'nolink';
     }
 
+    public function get_ref(): string
+    {
+        return 'core_nolink';
+    }
+
     public function get_name(): string
     {
         return 'No Link Check';
@@ -127,6 +137,11 @@ final class CheckSupportThrowingCheckFixture
     public function get_id(): string
     {
         return 'boom';
+    }
+
+    public function get_ref(): string
+    {
+        return 'core_boom';
     }
 
     public function get_name(): string
@@ -226,11 +241,64 @@ final class CheckSupportCoverageTest extends TestCase
 
         $results = CheckSupport::getCheckResults();
 
-        self::assertInstanceOf(CheckResultDto::class, $results['okcheck']);
-        self::assertSame('okcheck', $results['okcheck']->checkId);
-        self::assertSame(CheckResultStatus::Ok, $results['okcheck']->status);
-        self::assertSame('summary text', $results['okcheck']->summary);
-        self::assertSame('details text', $results['okcheck']->details);
-        self::assertSame(CheckResultStatus::Warning, $results['nolink']->status);
+        // Keyed by the component-qualified ref; checkId keeps the bare id.
+        self::assertInstanceOf(CheckResultDto::class, $results['core_okcheck']);
+        self::assertSame('okcheck', $results['core_okcheck']->checkId);
+        self::assertSame(CheckResultStatus::Ok, $results['core_okcheck']->status);
+        self::assertSame('summary text', $results['core_okcheck']->summary);
+        self::assertSame('details text', $results['core_okcheck']->details);
+        self::assertSame(CheckResultStatus::Warning, $results['core_nolink']->status);
+    }
+
+    #[Test]
+    public function testGetCheckResultsKeepsChecksThatShareAnIdAcrossComponents(): void
+    {
+        // get_id() is unique only within a component; two plugins may share it.
+        // Keying by get_ref() must keep both instead of one overwriting the other.
+        $make = static fn (string $id, string $ref): object => new class($id, $ref) {
+            public function __construct(private readonly string $id, private readonly string $ref) {}
+
+            public function get_id(): string
+            {
+                return $this->id;
+            }
+
+            public function get_ref(): string
+            {
+                return $this->ref;
+            }
+
+            public function get_result(): CheckSupportResultFixture
+            {
+                return new CheckSupportResultFixture(result::OK);
+            }
+        };
+
+        $GLOBALS['__middag_test_checks'] = [
+            $make('check', 'plugin_a_check'),
+            $make('check', 'plugin_b_check'),
+        ];
+
+        $results = CheckSupport::getCheckResults();
+
+        self::assertCount(2, $results);
+        self::assertArrayHasKey('plugin_a_check', $results);
+        self::assertArrayHasKey('plugin_b_check', $results);
+    }
+
+    #[Test]
+    public function testGetCheckResultsSkipsAThrowingCheckWithoutAbortingTheBatch(): void
+    {
+        // One check whose get_result() throws must not take down the whole set
+        // (mirrors runCheck()'s per-check guard).
+        $GLOBALS['__middag_test_checks'] = [
+            new CheckSupportThrowingCheckFixture(),
+            new CheckSupportOkCheckFixture(),
+        ];
+
+        $results = CheckSupport::getCheckResults();
+
+        self::assertArrayHasKey('core_okcheck', $results);
+        self::assertArrayNotHasKey('core_boom', $results);
     }
 }
