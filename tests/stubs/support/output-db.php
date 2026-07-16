@@ -111,7 +111,8 @@ if (!class_exists('core_cache\cache', false)) {
                     unset($GLOBALS['__middag_test_cache_store'][$key]);
                 }
 
-                return \count($keys);
+                // Real contract: the count actually processed (may be < count($keys)).
+                return $GLOBALS['__middag_test_cache_delete_many_result'] ?? \count($keys);
             }
 
             public function get_many(array $keys)
@@ -132,7 +133,8 @@ if (!class_exists('core_cache\cache', false)) {
                     $GLOBALS['__middag_test_cache_store'][$key] = $value;
                 }
 
-                return \count($keyvalues);
+                // Real contract: the count actually stored (may be < count($keyvalues)).
+                return $GLOBALS['__middag_test_cache_set_many_result'] ?? \count($keyvalues);
             }
 
             public function purge()

@@ -208,7 +208,9 @@ class CacheSupport
      * @param array  $keys list of cache keys
      * @param string $area Cache area. Defaults to self::DEFAULT_CACHE.
      *
-     * @return bool True on success, false otherwise
+     * @return bool true only when EVERY key was deleted — delete_many()
+     *              reports the count actually processed, and a partial
+     *              backend failure must not read as success
      */
     public static function deleteMany(array $keys, string $area = self::DEFAULT_CACHE): bool
     {
@@ -217,9 +219,8 @@ class CacheSupport
             if (!$cache instanceof moodle_cache) {
                 return false;
             }
-            $cache->delete_many($keys);
 
-            return true;
+            return $cache->delete_many($keys) === count($keys);
         } catch (Exception $exception) {
             Debug::traceException($exception);
 
@@ -259,7 +260,7 @@ class CacheSupport
      * @param array  $keyvalues associative array of key => value
      * @param string $area      Cache area. Defaults to self::DEFAULT_CACHE.
      *
-     * @return bool True on success, false otherwise
+     * @return bool true only when EVERY entry was stored (see deleteMany())
      */
     public static function setMany(array $keyvalues, string $area = self::DEFAULT_CACHE): bool
     {
@@ -268,9 +269,10 @@ class CacheSupport
             if (!$cache instanceof moodle_cache) {
                 return false;
             }
-            $cache->set_many($keyvalues);
 
-            return true;
+            // set_many() reports how many entries were actually stored; a
+            // partial backend failure must not read as success.
+            return $cache->set_many($keyvalues) === count($keyvalues);
         } catch (Exception $exception) {
             Debug::traceException($exception);
 

@@ -256,6 +256,16 @@ final class CacheSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testDeleteManyReportsAPartialBackendFailure(): void
+    {
+        // delete_many() returns the count actually processed; 1 of 2 must
+        // not read as success.
+        $GLOBALS['__middag_test_cache_delete_many_result'] = 1;
+
+        self::assertFalse(CacheSupport::deleteMany(['a', 'b']));
+    }
+
+    #[Test]
     public function testGetManyReturnsTheFoundEntries(): void
     {
         $GLOBALS['__middag_test_cache_get_many'] = ['a' => 1, 'b' => 2];
@@ -304,6 +314,16 @@ final class CacheSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSetManyReportsAPartialBackendFailure(): void
+    {
+        // set_many() returns the count actually stored; 1 of 2 must not
+        // read as success.
+        $GLOBALS['__middag_test_cache_set_many_result'] = 1;
+
+        self::assertFalse(CacheSupport::setMany(['a' => 1, 'b' => 2]));
+    }
+
+    #[Test]
     public function testPurgeClearsTheAreaAndReturnsTrue(): void
     {
         $GLOBALS['__middag_test_cache_store'] = ['a' => 1];
@@ -341,8 +361,10 @@ final class CacheSupportCoverageTest extends TestCase
             '__middag_test_cache_has_throws',
             '__middag_test_cache_delete_throws',
             '__middag_test_cache_delete_many_throws',
+            '__middag_test_cache_delete_many_result',
             '__middag_test_cache_get_many_throws',
             '__middag_test_cache_set_many_throws',
+            '__middag_test_cache_set_many_result',
             '__middag_test_cache_purge_throws',
         ] as $key) {
             unset($GLOBALS[$key]);
