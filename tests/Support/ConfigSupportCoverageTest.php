@@ -224,6 +224,19 @@ final class ConfigSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetSiteInfoDegradesGracefullyWithoutASiteGlobal(): void
+    {
+        // Every field null-coalesces; id must too, or an unseeded $SITE
+        // raises a property-on-null warning (fatal under failOnWarning).
+        unset($GLOBALS['SITE']);
+
+        $dto = ConfigSupport::getSiteInfo();
+
+        self::assertSame(0, $dto->id);
+        self::assertSame('', $dto->fullname);
+    }
+
+    #[Test]
     public function testGetSiteIdReturnsTheSiteidConstant(): void
     {
         self::assertSame(1, ConfigSupport::getSiteId());

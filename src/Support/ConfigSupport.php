@@ -164,7 +164,7 @@ class ConfigSupport
         global $SITE;
 
         return new SiteInfoDto(
-            id: (int) $SITE->id,
+            id: (int) ($SITE->id ?? 0),
             fullname: (string) ($SITE->fullname ?? ''),
             shortname: (string) ($SITE->shortname ?? ''),
             summary: (string) ($SITE->summary ?? ''),
