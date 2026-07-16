@@ -29,6 +29,10 @@ if (!defined('FORMAT_HTML')) {
     define('FORMAT_HTML', 1);
 }
 
+if (!defined('FORMAT_PLAIN')) {
+    define('FORMAT_PLAIN', 2);
+}
+
 // --- Messaging classes/functions (MessageSupport, NotificationSupport) ---
 
 if (!class_exists('core\message\message', false)) {

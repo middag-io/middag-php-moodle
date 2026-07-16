@@ -57,7 +57,15 @@ class NotificationSupport
 
             $msg->subject = $notification->subject;
             $msg->fullmessage = $notification->fullMessage;
-            $msg->fullmessageformat = FORMAT_HTML;
+            // fullMessage is HTML only when it IS the HTML version (the
+            // sendSimple() convention, where both fields carry the same markup).
+            // A caller following the DTO contract — plain text in fullMessage,
+            // distinct HTML in fullMessageHtml — must be FORMAT_PLAIN, or a
+            // FORMAT_HTML-aware reader runs it through format_text() and mangles
+            // it (e.g. strips '<needs review>' as a bogus tag).
+            $msg->fullmessageformat = $notification->fullMessage === $notification->fullMessageHtml
+                ? FORMAT_HTML
+                : FORMAT_PLAIN;
             $msg->fullmessagehtml = $notification->fullMessageHtml;
             $msg->smallmessage = $notification->shortMessage;
 
@@ -121,6 +129,13 @@ class NotificationSupport
      */
     public static function getUnreadCount(int $userid): int
     {
+        // count_unread_popup_notifications() treats a 0 userid as empty() and
+        // substitutes $USER, leaking the current session user's count for a call
+        // the caller scoped to id 0. Honour the documented per-user contract.
+        if ($userid <= 0) {
+            return 0;
+        }
+
         try {
             return popup_api::count_unread_popup_notifications($userid);
         } catch (Throwable $throwable) {

@@ -79,6 +79,44 @@ final class NotificationSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSendMarksDistinctPlainTextAsFormatPlain(): void
+    {
+        // fullMessage differs from fullMessageHtml (genuine plain text) → it must
+        // be FORMAT_PLAIN, or a reader runs it through format_text() and mangles
+        // it (e.g. strips '<needs review>').
+        $dto = new NotificationDto(
+            component: 'local_example',
+            name: 'alert',
+            useridTo: 10,
+            subject: 'Hi',
+            fullMessage: 'Score 85% <needs review>',
+            fullMessageHtml: '<p>Score 85% needs review</p>',
+        );
+
+        NotificationSupport::send($dto);
+
+        self::assertSame(FORMAT_PLAIN, $GLOBALS['__middag_test_sent_message']->fullmessageformat);
+    }
+
+    #[Test]
+    public function testSendMarksAnHtmlBodyAsFormatHtml(): void
+    {
+        // When fullMessage IS the HTML version (sendSimple convention) → FORMAT_HTML.
+        $dto = new NotificationDto(
+            component: 'local_example',
+            name: 'alert',
+            useridTo: 10,
+            subject: 'Hi',
+            fullMessage: '<p>Body</p>',
+            fullMessageHtml: '<p>Body</p>',
+        );
+
+        NotificationSupport::send($dto);
+
+        self::assertSame(FORMAT_HTML, $GLOBALS['__middag_test_sent_message']->fullmessageformat);
+    }
+
+    #[Test]
     public function testSendWithoutOptionalFieldsUsesNoreplyAndReturnsId(): void
     {
         $GLOBALS['__middag_test_message_send_result'] = 100;
@@ -151,6 +189,16 @@ final class NotificationSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_throw_unread'] = true;
 
         self::assertSame(0, NotificationSupport::getUnreadCount(10));
+    }
+
+    #[Test]
+    public function testGetUnreadCountReturnsZeroForANonPositiveUserId(): void
+    {
+        // A 0 userid must not fall through to count_unread_popup_notifications(),
+        // whose empty() check would substitute $USER and leak that user's count.
+        $GLOBALS['__middag_test_unread_count'] = 7;
+
+        self::assertSame(0, NotificationSupport::getUnreadCount(0));
     }
 
     #[Test]
