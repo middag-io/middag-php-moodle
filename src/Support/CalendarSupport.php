@@ -58,6 +58,11 @@ class CalendarSupport
             $data->visible = $dto->visible ? 1 : 0;
             $data->categoryid = $dto->categoryid ?? 0;
             $data->repeats = $dto->repeats;
+            // calendar_event::update() gates its repeat-generation loop on the
+            // separate boolean `repeat` flag, not the `repeats` count. Without
+            // it the count is silently ignored and only a single event row is
+            // ever created. Derive the flag from the requested repeat count.
+            $data->repeat = $dto->repeats > 0 ? 1 : 0;
 
             $event = calendar_event::create($data);
 
@@ -112,6 +117,8 @@ class CalendarSupport
             $data->visible = $dto->visible ? 1 : 0;
             $data->categoryid = $dto->categoryid ?? 0;
             $data->repeats = $dto->repeats;
+            // See create(): the repeat loop is gated on `repeat`, not `repeats`.
+            $data->repeat = $dto->repeats > 0 ? 1 : 0;
 
             $event->update($data);
 

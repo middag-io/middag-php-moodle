@@ -384,6 +384,7 @@ if (!class_exists('calendar_event', false)) {
                 throw new Exception('calendar create');
             }
 
+            $GLOBALS['__middag_test_calendar_create_data'] = $data;
             $event = new self((array) $data);
             $event->id = $GLOBALS['__middag_test_calendar_new_id'] ?? 501;
 
@@ -405,6 +406,7 @@ if (!class_exists('calendar_event', false)) {
                 throw new Exception('calendar update');
             }
 
+            $GLOBALS['__middag_test_calendar_update_data'] = $data;
             $this->props = array_merge($this->props, (array) $data);
 
             return true;

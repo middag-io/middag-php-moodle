@@ -49,6 +49,8 @@ final class CalendarSupportCoverageTest extends TestCase
             '__middag_test_calendar_new_id',
             '__middag_test_calendar_props',
             '__middag_test_calendar_deleted',
+            '__middag_test_calendar_create_data',
+            '__middag_test_calendar_update_data',
         ] as $key) {
             unset($GLOBALS[$key]);
         }
@@ -81,6 +83,34 @@ final class CalendarSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_throw_calendar_create'] = true;
 
         self::assertNull(CalendarSupport::create(new CalendarEventDto(name: 'X')));
+    }
+
+    #[Test]
+    public function testCreateSetsTheRepeatFlagWhenRepeatsRequested(): void
+    {
+        // calendar_event only generates the recurring series when the boolean
+        // `repeat` flag is truthy; the `repeats` count alone is a silent no-op.
+        CalendarSupport::create(new CalendarEventDto(name: 'Weekly', timestart: 100, repeats: 8));
+
+        $data = $GLOBALS['__middag_test_calendar_create_data'];
+        self::assertSame(8, $data->repeats);
+        self::assertSame(1, $data->repeat);
+    }
+
+    #[Test]
+    public function testCreateLeavesTheRepeatFlagOffForSingleEvents(): void
+    {
+        CalendarSupport::create(new CalendarEventDto(name: 'Once', timestart: 100, repeats: 0));
+
+        self::assertSame(0, $GLOBALS['__middag_test_calendar_create_data']->repeat);
+    }
+
+    #[Test]
+    public function testUpdateSetsTheRepeatFlagWhenRepeatsRequested(): void
+    {
+        CalendarSupport::update(new CalendarEventDto(id: 12, name: 'Weekly', timestart: 100, repeats: 4));
+
+        self::assertSame(1, $GLOBALS['__middag_test_calendar_update_data']->repeat);
     }
 
     #[Test]
