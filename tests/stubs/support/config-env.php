@@ -118,7 +118,7 @@ if (!function_exists('admin_get_root')) {
 foreach (['course', 'module', 'coursecat', 'user', 'block'] as $middagContextType) {
     if (!class_exists('core\context\\' . $middagContextType, false)) {
         eval('namespace core\context; class ' . $middagContextType . ' extends \core\context {
-            public static function instance($id = 0, $strictness = \MUST_EXIST) { if (!empty($GLOBALS["__middag_test_throw_context_instance"])) { throw new \moodle_exception("invalidcontext"); } return new self((int) $id); }
+            public static function instance($id = 0, $strictness = \MUST_EXIST) { if (!empty($GLOBALS["__middag_test_throw_context_instance"])) { throw new \moodle_exception("invalidcontext"); } if (in_array((int) $id, $GLOBALS["__middag_test_context_course_throw_ids"] ?? [], true)) { throw new \moodle_exception("invalidcontext"); } return new self((int) $id); }
         }');
     }
 }

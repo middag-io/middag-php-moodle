@@ -51,6 +51,7 @@ final class CourseSupportCoverageTest extends TestCase
         '__middag_test_categories',
         '__middag_test_get_course_throw',
         '__middag_test_throw_context_instance',
+        '__middag_test_context_course_throw_ids',
     ];
 
     private mixed $prevDb;
@@ -170,6 +171,25 @@ final class CourseSupportCoverageTest extends TestCase
         self::assertArrayNotHasKey(1, $options);
         self::assertSame('ID 2 - Course Two', $options[2]);
         self::assertSame('ID 3 - Course Three', $options[3]);
+    }
+
+    #[Test]
+    public function testGetCourseWithContextidOptionsSkipsACourseWhoseContextThrows(): void
+    {
+        // A course mid-deletion can make context_course::instance() throw; that
+        // course must be skipped, not crash the whole options list.
+        $GLOBALS['__middag_test_courses'] = [
+            2 => (object) ['id' => 2, 'fullname' => 'Course Two'],
+            3 => (object) ['id' => 3, 'fullname' => 'Broken'],
+            4 => (object) ['id' => 4, 'fullname' => 'Course Four'],
+        ];
+        $GLOBALS['__middag_test_context_course_throw_ids'] = [3];
+
+        $options = CourseSupport::getCourseWithContextidOptions();
+
+        self::assertSame('ID 2 - Course Two', $options[2]);
+        self::assertSame('ID 4 - Course Four', $options[4]);
+        self::assertArrayNotHasKey(3, $options);
     }
 
     #[Test]

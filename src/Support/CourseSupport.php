@@ -103,9 +103,18 @@ class CourseSupport
         $courses = get_courses();
         unset($courses[1]);
         foreach ($courses as $course) {
-            $coursecontext = context_course::instance($course->id);
-            $contextid = Typing::toInt($coursecontext->id);
-            $options[$contextid] = 'ID ' . Typing::toInt($course->id) . ' - ' . Typing::toString($course->fullname);
+            try {
+                // A course mid-deletion or a corrupted/partial context table can
+                // make context_course::instance() throw; skip that course and
+                // keep building the list, like the sibling context methods do.
+                $coursecontext = context_course::instance($course->id);
+                $contextid = Typing::toInt($coursecontext->id);
+                $options[$contextid] = 'ID ' . Typing::toInt($course->id) . ' - ' . Typing::toString($course->fullname);
+            } catch (Exception $exception) {
+                Debug::traceException($exception);
+
+                continue;
+            }
         }
 
         return $options;
