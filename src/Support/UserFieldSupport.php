@@ -276,8 +276,9 @@ class UserFieldSupport
      * The caller is responsible for overall parameter uniqueness when combining
      * multiple fragments.
      *
-     * @param int   $comparison_sql SQL condition applied to `uid.data` (e.g. `uid.data = :upf_value`)
-     * @param array $params         parameters for the comparison SQL (caller must use `upf_` prefix)
+     * @param int    $fieldid        profile field id matched against `uid.fieldid`
+     * @param string $comparison_sql SQL condition applied to `uid.data` (e.g. `uid.data = :upf_value`)
+     * @param array  $params         parameters for the comparison SQL (caller must use `upf_` prefix)
      *
      * @return array{sql: string, params: array} SQL fragment and bound parameters
      */
