@@ -134,7 +134,11 @@ class EnrolSupport
             throw new moodle_exception('manual_enrol_not_found');
         }
 
-        $instances = enrol_get_instances($courseid, true);
+        // $enabled = false: include DISABLED instances too. With true, a manual
+        // instance the admin merely disabled (not deleted) is invisible, so the
+        // loop below misses it and inserts a brand-new duplicate {enrol} row on
+        // every call (there is no (courseid, enrol) unique constraint).
+        $instances = enrol_get_instances($courseid, false);
         $manualinstance = null;
 
         foreach ($instances as $instance) {
@@ -153,6 +157,10 @@ class EnrolSupport
             ];
             $instanceid = $DB->insert_record('enrol', $fields);
             $manualinstance = $DB->get_record('enrol', ['id' => $instanceid]);
+        } elseif ((int) ($manualinstance->status ?? ENROL_INSTANCE_ENABLED) !== ENROL_INSTANCE_ENABLED) {
+            // Re-enable the existing disabled instance instead of duplicating it.
+            $enrol->update_status($manualinstance, ENROL_INSTANCE_ENABLED);
+            $manualinstance = $DB->get_record('enrol', ['id' => $manualinstance->id]);
         }
 
         // is_enrolled() reports true for ANY enrolment in the course — even a

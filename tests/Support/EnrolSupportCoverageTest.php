@@ -196,6 +196,28 @@ final class EnrolSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testEnrolUserReenablesADisabledManualInstanceInsteadOfDuplicating(): void
+    {
+        // A manual instance the admin merely disabled must be re-enabled, not
+        // skipped — otherwise every call inserts a duplicate {enrol} row.
+        $this->db->recordExistsMap = ['course' => true, 'user' => true];
+        $this->db->getRecord = (object) ['id' => 77, 'enrol' => 'manual', 'status' => 0];
+
+        $plugin = $this->makePlugin();
+        $GLOBALS['__middag_test_enrol_plugin'] = $plugin;
+        $GLOBALS['__middag_test_enrol_instances'] = [
+            (object) ['id' => 77, 'enrol' => 'manual', 'status' => 1],
+        ];
+
+        self::assertTrue(EnrolSupport::enrolUser(3, 50, 5));
+
+        self::assertCount(1, $plugin->statusCalls);
+        self::assertSame(77, $plugin->statusCalls[0][0]->id);
+        self::assertSame(ENROL_INSTANCE_ENABLED, $plugin->statusCalls[0][1]);
+        self::assertSame([], $this->db->insertCalls);
+    }
+
+    #[Test]
     public function testEnrolUserCreatesAManualInstanceAndEnrolsTheUser(): void
     {
         $this->db->recordExistsMap = ['course' => true, 'user' => true];
@@ -222,9 +244,17 @@ final class EnrolSupportCoverageTest extends TestCase
             /** @var array<int, array<int, mixed>> */
             public array $enrolCalls = [];
 
+            /** @var array<int, array<int, mixed>> */
+            public array $statusCalls = [];
+
             public function enrol_user($instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null): void
             {
                 $this->enrolCalls[] = [$instance, $userid, $roleid, $timestart];
+            }
+
+            public function update_status($instance, $newstatus): void
+            {
+                $this->statusCalls[] = [$instance, $newstatus];
             }
         };
     }
