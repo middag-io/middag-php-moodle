@@ -91,11 +91,28 @@ class SettingsSupport
     }
 
     /**
+     * Extension-slug aliases applied after the slug is derived.
+     *
+     * The base resolver is value-free: every `{slug}_config` enum maps onto
+     * its own slug. Consumers whose enum class names no longer match the
+     * extension they belong to (e.g. an enum kept under a legacy name after
+     * the extension was renamed) can subclass and remap the derived slug
+     * onto its canonical extension.
+     *
+     * @return array<string, string> map of derived slug => canonical slug
+     */
+    protected static function extensionAliases(): array
+    {
+        return [];
+    }
+
+    /**
      * Extract setting name and extension slug from a backed enum.
      *
      * Convention: enum class `{slug}_config` → extension slug is `{slug}`.
      * PascalCase spellings are normalised (`FrameworkConfig` → `framework_config`)
-     * before the suffix check.
+     * before the suffix check. The derived slug is then passed through
+     * {@see extensionAliases()} so subclasses can remap legacy enum names.
      *
      * @return array{0: string, 1: string} [name, extension]
      *
@@ -125,9 +142,8 @@ class SettingsSupport
         // Strip "_config" suffix to get the extension slug.
         $extension = substr($normalized, 0, -7);
 
-        if ($extension === 'framework') {
-            $extension = 'core';
-        }
+        // Late static binding: subclasses remap legacy slugs here.
+        $extension = static::extensionAliases()[$extension] ?? $extension;
 
         return [$name, $extension];
     }
