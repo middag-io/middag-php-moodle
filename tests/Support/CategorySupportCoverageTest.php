@@ -35,13 +35,21 @@ final class CategorySupportCoverageTest extends TestCase
     protected function setUp(): void
     {
         $this->prevDb = $GLOBALS['DB'] ?? null;
-        unset($GLOBALS['__middag_test_categories'], $GLOBALS['__middag_test_throw_core_course_category']);
+        unset(
+            $GLOBALS['__middag_test_categories'],
+            $GLOBALS['__middag_test_throw_core_course_category'],
+            $GLOBALS['__middag_test_context_course_throw_ids'],
+        );
     }
 
     protected function tearDown(): void
     {
         $GLOBALS['DB'] = $this->prevDb;
-        unset($GLOBALS['__middag_test_categories'], $GLOBALS['__middag_test_throw_core_course_category']);
+        unset(
+            $GLOBALS['__middag_test_categories'],
+            $GLOBALS['__middag_test_throw_core_course_category'],
+            $GLOBALS['__middag_test_context_course_throw_ids'],
+        );
     }
 
     #[Test]
@@ -91,6 +99,23 @@ final class CategorySupportCoverageTest extends TestCase
 
         self::assertSame('ID 5 - Math', $options[5]);
         self::assertSame('ID 6 - Science', $options[6]);
+    }
+
+    #[Test]
+    public function testGetCategoryContextOptionsSkipsACategoryWhoseContextIsMissing(): void
+    {
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_records')->willReturn([
+            (object) ['id' => 5, 'name' => 'Math'],
+            (object) ['id' => 6, 'name' => 'Science'],
+        ]);
+        $GLOBALS['DB'] = $db;
+
+        // context::instance() defaults to MUST_EXIST; a category whose
+        // context row vanished must degrade to a partial list, not abort.
+        $GLOBALS['__middag_test_context_course_throw_ids'] = [6];
+
+        self::assertSame([5 => 'ID 5 - Math'], CategorySupport::getCategoryContextOptions());
     }
 
     #[Test]

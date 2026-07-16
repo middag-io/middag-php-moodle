@@ -69,7 +69,16 @@ class CategorySupport
         }
 
         foreach ($categories as $category) {
-            $context = context_coursecat::instance($category->id);
+            try {
+                $context = context_coursecat::instance($category->id);
+            } catch (\moodle_exception $moodleexception) {
+                // context::instance() defaults to MUST_EXIST; a category whose
+                // context row is missing (stale data, concurrent delete) must
+                // degrade to a partial list, not abort the whole options map.
+                Debug::traceException($moodleexception);
+
+                continue;
+            }
             $options[$context->id] = 'ID ' . $category->id . ' - ' . $category->name;
         }
 
