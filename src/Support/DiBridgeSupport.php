@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
-use core\di;
-use core\hook\di_configuration;
 use Middag\Moodle\Shared\Util\Debug;
 use Throwable;
 
@@ -28,9 +26,12 @@ use Throwable;
  * Only services classified as @api (ADR-901 Group A) are exposed.
  * The framework container (ADR-601) is not altered.
  *
- * @internal
+ * References Moodle DI classes (\core\di, \core\hook\di_configuration) via
+ * strings only, never via use statements or docblock @see tags (php-cs-fixer
+ * would import those), so the class stays loadable on hosts where the hook
+ * does not exist (Moodle < 4.4).
  *
- * @see di_configuration
+ * @internal
  */
 class DiBridgeSupport
 {
@@ -48,7 +49,7 @@ class DiBridgeSupport
      *
      * The adapter is product-agnostic and ships no exports by default; the
      * product (e.g. its plugin bootstrap) registers the @api services — including
-     * its own facade — it wants exposed via Moodle's {@see di}.
+     * its own facade — it wants exposed via Moodle's \core\di container.
      *
      * @param string   $id      fully qualified service/class id
      * @param callable $factory factory producing the service instance
