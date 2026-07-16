@@ -217,13 +217,16 @@ final class EventSupportCoverageTest extends TestCase
         self::assertArrayHasKey('\core\event\middag_test_valid', $byFqcn);
         self::assertArrayHasKey('\core\event\middag_test_noedulevel', $byFqcn);
 
-        // Deprecated/abstract/non-event are filtered by isValidEvent(); the
-        // throwing-info event passes isValidEvent() but yields empty static info
-        // (getStaticInfoSafe catch) so loadCoreEvents drops it.
+        // Deprecated/abstract/non-event are filtered by isValidEvent().
         self::assertArrayNotHasKey('\core\event\middag_test_deprecated', $byFqcn);
         self::assertArrayNotHasKey('\core\event\middag_test_abstract', $byFqcn);
         self::assertArrayNotHasKey('\core\event\middag_test_notevent', $byFqcn);
-        self::assertArrayNotHasKey('\core\event\middag_test_throwing', $byFqcn);
+
+        // A throwing get_static_info() must NOT drop an otherwise-valid event:
+        // it degrades to LEVEL_OTHER, the same handling loadPluginEvents()
+        // (and the missing-edulevel case below) already gets.
+        self::assertArrayHasKey('\core\event\middag_test_throwing', $byFqcn);
+        self::assertSame(base::LEVEL_OTHER, $byFqcn['\core\event\middag_test_throwing']->edulevel);
 
         self::assertSame(base::LEVEL_TEACHING, $byFqcn['\core\event\middag_test_valid']->edulevel);
         // Static info without an edulevel key falls back to LEVEL_OTHER.

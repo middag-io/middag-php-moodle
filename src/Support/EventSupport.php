@@ -146,13 +146,14 @@ class EventSupport
 
             $info = $this->getStaticInfoSafe($fqcn);
 
-            if ($info && method_exists($fqcn, 'get_name')) {
-                $out[] = new EventDto(
-                    fqcn: $fqcn,
-                    displayname: $this->getNameSafe($fqcn),
-                    edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,
-                );
-            }
+            // Same failure handling as loadPluginEvents(): a get_static_info()
+            // throw must not silently drop an otherwise-valid event — it falls
+            // back to LEVEL_OTHER, exactly like a missing edulevel key.
+            $out[] = new EventDto(
+                fqcn: $fqcn,
+                displayname: $this->getNameSafe($fqcn),
+                edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,
+            );
         }
 
         return $out;
