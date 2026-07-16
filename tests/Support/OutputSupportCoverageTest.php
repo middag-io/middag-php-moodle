@@ -17,6 +17,7 @@ use Middag\Moodle\Support\OutputSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * OutputSupport delegates to the global $OUTPUT. It is replaced with a recording
@@ -112,6 +113,20 @@ final class OutputSupportCoverageTest extends TestCase
         // Default must be 'info' (a type Moodle maps to INFO), not the
         // unrecognised 'notifyinfo' which falls through to error styling.
         self::assertSame('note:Hi|info', OutputSupport::notification('Hi'));
+    }
+
+    #[Test]
+    public function testNotificationDefaultTypeIsARecognisedMoodleAlias(): void
+    {
+        // core_renderer::notification() matches the modern types with ===
+        // ('success'/'info'/'warning'/'error'); anything outside the mapped
+        // set silently falls through to the ERROR template. The recording
+        // double above just echoes $type back, so this pins the default
+        // against the real alias set — a wrong constant can't hide again.
+        $default = (new ReflectionMethod(OutputSupport::class, 'notification'))
+            ->getParameters()[1]->getDefaultValue();
+
+        self::assertContains($default, ['success', 'info', 'warning', 'error']);
     }
 
     private function makeOutput(): object
