@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Middag\Moodle\Support;
 
 use core\context;
-use core\exception\moodle_exception;
 use dml_exception;
 use Exception;
 use Middag\Framework\Shared\Util\Typing;
@@ -166,40 +165,6 @@ class GroupSupport
         $id = groups_get_group_by_name($courseid, $groupname);
 
         return Typing::normalizeIdOrZero($id);
-    }
-
-    /**
-     * Ensures a user is in a group, creating the group if necessary.
-     *
-     * @param int    $courseid  Course ID
-     * @param int    $userid    User ID
-     * @param string $groupname Group name
-     *
-     * @return bool True if the user was confirmed/added to the group, false on failures
-     */
-    public static function addUserInGroup(int $courseid, int $userid, string $groupname): bool
-    {
-        try {
-            $groupid = self::getGroupByName($courseid, $groupname);
-            if ($groupid === false || $groupid === 0) {
-                $groupid = self::createGroup($courseid, $groupname);
-            }
-
-            if (!is_int($groupid) || $groupid <= 0) {
-                return false;
-            }
-
-            // Idempotent behavior: if already a member, consider success.
-            if (self::isMember($groupid, $userid)) {
-                return true;
-            }
-
-            return self::addMember($groupid, $userid);
-        } catch (moodle_exception $moodleexception) {
-            Debug::traceException($moodleexception);
-
-            return false;
-        }
     }
 
     /**

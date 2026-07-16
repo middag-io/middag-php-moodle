@@ -26,15 +26,24 @@ use Middag\Moodle\Domain\Enrolment\EnrolmentDto;
 interface EnrolmentServiceInterface
 {
     /**
+     * Default role assigned when enrolling without an explicit role.
+     *
+     * Moodle's standard student role id. The default lives here (the domain
+     * seam) rather than in the low-level EnrolSupport primitive, which now
+     * requires an explicit role.
+     */
+    public const DEFAULT_STUDENT_ROLE_ID = 5;
+
+    /**
      * Enrol a user in a course with a given role.
      *
      * @param int $userid   User ID
      * @param int $courseid Course ID
-     * @param int $roleid   Role ID (default: 5 = student)
+     * @param int $roleid   Role ID (defaults to the student role)
      *
      * @return bool Whether the enrolment was successful
      */
-    public function enrol(int $userid, int $courseid, int $roleid = 5): bool;
+    public function enrol(int $userid, int $courseid, int $roleid = self::DEFAULT_STUDENT_ROLE_ID): bool;
 
     /**
      * Check whether a user is enrolled in a course.

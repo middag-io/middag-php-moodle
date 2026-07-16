@@ -126,7 +126,7 @@ final class EnrolSupportCoverageTest extends TestCase
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('course_not_found');
 
-        EnrolSupport::enrolUser(3, 50);
+        EnrolSupport::enrolUser(3, 50, 5);
     }
 
     #[Test]
@@ -137,7 +137,7 @@ final class EnrolSupportCoverageTest extends TestCase
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('user_not_found');
 
-        EnrolSupport::enrolUser(3, 50);
+        EnrolSupport::enrolUser(3, 50, 5);
     }
 
     #[Test]
@@ -149,7 +149,7 @@ final class EnrolSupportCoverageTest extends TestCase
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('manual_enrol_not_found');
 
-        EnrolSupport::enrolUser(3, 50);
+        EnrolSupport::enrolUser(3, 50, 5);
     }
 
     #[Test]
@@ -164,7 +164,7 @@ final class EnrolSupportCoverageTest extends TestCase
         ];
         $GLOBALS['__middag_test_is_enrolled'] = true;
 
-        self::assertTrue(EnrolSupport::enrolUser(3, 50));
+        self::assertTrue(EnrolSupport::enrolUser(3, 50, 5));
         self::assertSame([], $plugin->enrolCalls);
         self::assertSame([], $this->db->insertCalls);
     }

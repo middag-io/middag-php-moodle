@@ -31,7 +31,7 @@ use stdClass;
  */
 class EnrolmentService implements EnrolmentServiceInterface
 {
-    public function enrol(int $userid, int $courseid, int $roleid = 5): bool
+    public function enrol(int $userid, int $courseid, int $roleid = EnrolmentServiceInterface::DEFAULT_STUDENT_ROLE_ID): bool
     {
         return EnrolSupport::enrolUser($courseid, $userid, $roleid);
     }
@@ -153,7 +153,7 @@ class EnrolmentService implements EnrolmentServiceInterface
             user_enrolment_id: (int) $ue->id,
             enrol_method: $enrol->enrol ?? 'manual',
             status: EnrolmentStatus::resolve((int) $ue->status),
-            roleid: (int) ($enrol->roleid ?? 5),
+            roleid: (int) ($enrol->roleid ?? EnrolmentServiceInterface::DEFAULT_STUDENT_ROLE_ID),
             timestart: (int) ($ue->timestart ?? 0),
             timeend: (int) ($ue->timeend ?? 0),
             timecreated: (int) ($ue->timecreated ?? 0),

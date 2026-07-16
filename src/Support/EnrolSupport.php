@@ -96,15 +96,18 @@ class EnrolSupport
     /**
      * Enrols a user into a course with a specific role.
      *
+     * Low-level primitive: the role is explicit. Callers that want the default
+     * student role use the enrolment domain service, which owns that policy.
+     *
      * @param int $courseid Course ID
      * @param int $userid   User ID
-     * @param int $roleid   Role ID (default: 5 - student)
+     * @param int $roleid   Role ID
      *
      * @return bool True if the user has been successfully enrolled
      *
      * @throws moodle_exception if course or user is not found, or if the manual enrolment plugin is not available
      */
-    public static function enrolUser(int $courseid, int $userid, int $roleid = 5): bool
+    public static function enrolUser(int $courseid, int $userid, int $roleid): bool
     {
         global $DB, $CFG;
 

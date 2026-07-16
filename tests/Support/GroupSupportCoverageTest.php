@@ -206,54 +206,6 @@ final class GroupSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testAddUserInGroupReturnsTrueWhenAlreadyAMember(): void
-    {
-        $GLOBALS['__middag_test_groups_get_group_by_name'] = 7;
-        $GLOBALS['__middag_test_groups_is_member'] = true;
-
-        self::assertTrue(GroupSupport::addUserInGroup(3, 5, 'Team'));
-    }
-
-    #[Test]
-    public function testAddUserInGroupAddsTheUserWhenNotYetAMember(): void
-    {
-        $GLOBALS['__middag_test_groups_get_group_by_name'] = 7;
-        $GLOBALS['__middag_test_groups_is_member'] = false;
-        $GLOBALS['__middag_test_groups_add_member'] = true;
-
-        self::assertTrue(GroupSupport::addUserInGroup(3, 5, 'Team'));
-    }
-
-    #[Test]
-    public function testAddUserInGroupCreatesTheGroupWhenMissing(): void
-    {
-        $GLOBALS['__middag_test_groups_get_group_by_name'] = false;
-        $GLOBALS['__middag_test_groups_create_group'] = 9;
-        $GLOBALS['__middag_test_groups_is_member'] = false;
-        $GLOBALS['__middag_test_groups_add_member'] = true;
-
-        self::assertTrue(GroupSupport::addUserInGroup(3, 5, 'Team'));
-        self::assertSame('Team', $GLOBALS['__middag_test_created_group']->name);
-    }
-
-    #[Test]
-    public function testAddUserInGroupReturnsFalseWhenGroupCreationFails(): void
-    {
-        $GLOBALS['__middag_test_groups_get_group_by_name'] = false;
-        $GLOBALS['__middag_test_groups_create_group'] = 0;
-
-        self::assertFalse(GroupSupport::addUserInGroup(3, 5, 'Team'));
-    }
-
-    #[Test]
-    public function testAddUserInGroupReturnsFalseWhenTheLookupThrows(): void
-    {
-        $GLOBALS['__middag_test_throw_groups_get_group_by_name'] = true;
-
-        self::assertFalse(GroupSupport::addUserInGroup(3, 5, 'Team'));
-    }
-
-    #[Test]
     public function testGetMembersReturnsDtosIndexedByUserId(): void
     {
         $this->db->records = [
