@@ -55,11 +55,22 @@ final class CacheSupportPsr16CoverageTest extends TestCase
     }
 
     #[Test]
-    public function testGetReturnsTheDefaultWhenTheStoredValueIsNull(): void
+    public function testGetReturnsAStoredNullNotTheDefault(): void
     {
+        // A key explicitly cached as null is a hit (has() is true), so get()
+        // returns null — not the default — matching getMultiple() on the same
+        // entry (PSR-16 contract).
         $GLOBALS['__middag_test_cache_store']['k'] = null;
 
-        self::assertSame('fallback', (new CacheSupportPsr16())->get('k', 'fallback'));
+        self::assertNull((new CacheSupportPsr16())->get('k', 'fallback'));
+    }
+
+    #[Test]
+    public function testGetReturnsAStoredFalseNotTheDefault(): void
+    {
+        $GLOBALS['__middag_test_cache_store']['feature_x'] = false;
+
+        self::assertFalse((new CacheSupportPsr16())->get('feature_x', true));
     }
 
     #[Test]
@@ -98,6 +109,22 @@ final class CacheSupportPsr16CoverageTest extends TestCase
         $result = (new CacheSupportPsr16())->getMultiple(['a', 'b', 'c'], 'def');
 
         self::assertSame(['a' => 1, 'b' => 'def', 'c' => 'def'], $result);
+    }
+
+    #[Test]
+    public function testGetMultipleReturnsStoredFalseAndNullConsistentlyWithGet(): void
+    {
+        // getMultiple() must agree with get() on the same entries: a stored
+        // false is a hit (disambiguated via has()), a stored null is a hit,
+        // and only a genuine miss falls back to the default.
+        $GLOBALS['__middag_test_cache_store'] = ['f' => false, 'n' => null];
+        $GLOBALS['__middag_test_cache_get_many'] = ['f' => false, 'n' => null, 'miss' => false];
+
+        $result = (new CacheSupportPsr16())->getMultiple(['f', 'n', 'miss'], 'DEFAULT');
+
+        self::assertFalse($result['f']);
+        self::assertNull($result['n']);
+        self::assertSame('DEFAULT', $result['miss']);
     }
 
     #[Test]

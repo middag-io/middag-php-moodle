@@ -33,12 +33,15 @@ final readonly class CacheSupportPsr16 implements CacheInterface
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = CacheSupport::get($key, $this->area);
-        if ($value === false || $value === null) {
+        // Only substitute the default on a genuine miss. CacheSupport::get()
+        // returns bare false both for a miss and for a stored false, so has()
+        // disambiguates — a value explicitly cached as false or null must be
+        // returned as-is (PSR-16 CacheInterface::get contract).
+        if (!CacheSupport::has($key, $this->area)) {
             return $default;
         }
 
-        return $value;
+        return CacheSupport::get($key, $this->area);
     }
 
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
@@ -75,9 +78,25 @@ final readonly class CacheSupportPsr16 implements CacheInterface
 
         $result = [];
         foreach ($list as $key) {
-            $result[$key] = array_key_exists($key, $found) && $found[$key] !== false
-                ? $found[$key]
-                : $default;
+            if (!array_key_exists($key, $found)) {
+                $result[$key] = $default;
+
+                continue;
+            }
+
+            $value = $found[$key];
+
+            // get_many() returns false for a miss, but a genuinely stored false
+            // is indistinguishable here — disambiguate with has() so get() and
+            // getMultiple() agree on the same entry. A stored null is
+            // unambiguous (misses come back as false, not null) and is a hit.
+            if ($value === false && !CacheSupport::has($key, $this->area)) {
+                $result[$key] = $default;
+
+                continue;
+            }
+
+            $result[$key] = $value;
         }
 
         return $result;
