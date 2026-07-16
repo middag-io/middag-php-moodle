@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Support;
 
 use InvalidArgumentException;
 use Middag\Moodle\Domain\Platform\MoodleVersion;
+use Middag\Moodle\Exception\MoodleVersionException;
 use Middag\Moodle\Support\VersionSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -204,8 +205,47 @@ final class VersionSupportCoverageTest extends TestCase
         $this->resetVersionCache();
 
         self::assertSame(403, VersionSupport::branch());
-        self::assertSame('4.3.0', VersionSupport::versionSemver());
+        self::assertSame('4.3.2', VersionSupport::versionSemver());
         self::assertSame(0, VersionSupport::build());
+    }
+
+    #[Test]
+    public function testBootstrapAdoptsTheReleasePatchWhenBranchIsPresent(): void
+    {
+        // The exact shape every real host presents (SUPPORT-HOST-EVIDENCE.md):
+        // branch supplies major/minor, release carries the real patch digit.
+        // Collapsing to 5.0.0 froze atLeast()/supports() gates at x.y.0.
+        $GLOBALS['CFG'] = (object) [
+            'branch' => '500',
+            'version' => 2025041400,
+            'release' => '5.0.7 (Build: 20260420)',
+        ];
+        $this->resetVersionCache();
+
+        self::assertSame('5.0.7', VersionSupport::versionSemver());
+        self::assertTrue(VersionSupport::compare('>=', '5.0.3'));
+        self::assertFalse(VersionSupport::supports('f', ['f' => ['until' => '5.0.2']]));
+    }
+
+    #[Test]
+    public function testBootstrapIgnoresAReleasePatchFromAMismatchedVersion(): void
+    {
+        // A release that disagrees with branch on major.minor must not
+        // contribute its patch digit to the branch-derived version.
+        $GLOBALS['CFG'] = (object) ['branch' => '500', 'release' => '4.9.9 (Build: 20250101)'];
+        $this->resetVersionCache();
+
+        self::assertSame('5.0.0', VersionSupport::versionSemver());
+    }
+
+    #[Test]
+    public function testCompareThrowsTheTypedExceptionForAnUnknownOperator(): void
+    {
+        // PHP 8 raises a raw ValueError for a bad operator; the documented
+        // failure mode is MoodleVersionException, matching bad constraints.
+        $this->expectException(MoodleVersionException::class);
+
+        VersionSupport::compare('=>', '5.0');
     }
 
     #[Test]

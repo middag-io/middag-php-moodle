@@ -16,6 +16,7 @@ use Middag\Moodle\Domain\Platform\MoodleVersion;
 use Middag\Moodle\Exception\MoodleAdapterException;
 use Middag\Moodle\Exception\MoodleVersionException;
 use stdClass;
+use ValueError;
 
 /**
  * Infrastructure service to normalize and compare Moodle Core versions.
@@ -106,6 +107,8 @@ final class VersionSupport
      * @return bool true if the comparison is satisfied
      *
      * @throws MoodleVersionException if the constraint has an invalid format
+     *                                or the operator is not a valid
+     *                                version_compare() operator
      *
      * @example
      * moodle_versions::compare('>=', '4.2');   // true/false
@@ -116,7 +119,15 @@ final class VersionSupport
         self::bootstrap();
         $normalized_constraint = self::normalizeVersionString($constraint, 'invalidversionconstraint');
 
-        return version_compare(self::$semantic, $normalized_constraint, $operator);
+        try {
+            return version_compare(self::$semantic, $normalized_constraint, $operator);
+        } catch (ValueError) {
+            // version_compare() raises a raw ValueError for an unknown
+            // operator (e.g. the "=>" typo); surface it as the documented,
+            // typed failure mode — the same treatment malformed constraint
+            // strings already get above.
+            throw new MoodleVersionException(self::str('invalidversionoperator', $operator));
+        }
     }
 
     /**
@@ -309,21 +320,32 @@ final class VersionSupport
             self::$branch = $branch_from_release;
         }
 
-        // "Semver-like": 4.4.0 from branch, or parse from release.
+        // "Semver-like": major/minor preferably from branch, patch from
+        // release — branch never carries the patch digit, so a 5.0.7 host
+        // must not collapse to "5.0.0" (that would freeze atLeast()/supports()
+        // gates at x.y.0 forever on real hosts, where branch is always set).
+        $release = isset($CFG->release) ? (string) $CFG->release : '';
         if (self::$branch > 0) {
             $major = intdiv(self::$branch, 100);
             $minor = self::$branch % 100;
-            self::$semantic = sprintf('%d.%d.0', $major, $minor);
-        } else {
-            $release = isset($CFG->release) ? (string) $CFG->release : '';
-            if (preg_match('~^(\d+)\.(\d+)(?:\.(\d+))?~', $release, $m)) {
-                $major = (int) $m[1];
-                $minor = (int) $m[2];
-                $patch = isset($m[3]) ? (int) $m[3] : 0;
-                self::$semantic = sprintf('%d.%d.%d', $major, $minor, $patch);
-            } else {
-                self::$semantic = '0.0.0';
+            // Only adopt the release patch when its major.minor agrees with
+            // branch; a mismatched release must not mislabel the version.
+            // Unanchored on purpose: some spellings prefix "Moodle ".
+            $patch = 0;
+            if (preg_match('~(\d+)\.(\d+)\.(\d+)~', $release, $m)
+                && (int) $m[1] === $major
+                && (int) $m[2] === $minor
+            ) {
+                $patch = (int) $m[3];
             }
+            self::$semantic = sprintf('%d.%d.%d', $major, $minor, $patch);
+        } elseif (preg_match('~^(\d+)\.(\d+)(?:\.(\d+))?~', $release, $m)) {
+            $major = (int) $m[1];
+            $minor = (int) $m[2];
+            $patch = isset($m[3]) ? (int) $m[3] : 0;
+            self::$semantic = sprintf('%d.%d.%d', $major, $minor, $patch);
+        } else {
+            self::$semantic = '0.0.0';
         }
 
         self::$bootstrapped = true;
