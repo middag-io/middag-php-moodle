@@ -238,6 +238,16 @@ final class UrlSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testToAbsoluteCompletesAProtocolRelativeUrlWithTheSiteScheme(): void
+    {
+        // '//other.test/a' points at other.test — stripping both slashes and
+        // prefixing wwwroot would silently rewrite it onto the local site.
+        $GLOBALS['CFG'] = (object) ['wwwroot' => 'https://moodle.test/'];
+
+        self::assertSame('https://other.test/a', UrlSupport::toAbsolute('//other.test/a'));
+    }
+
+    #[Test]
     public function testIsExternalReturnsFalseForARelativeUrl(): void
     {
         self::assertFalse(UrlSupport::isExternal('/course/view.php'));
@@ -253,6 +263,13 @@ final class UrlSupportCoverageTest extends TestCase
     public function testIsExternalReturnsTrueForADifferentHost(): void
     {
         self::assertTrue(UrlSupport::isExternal('https://evil.test/x'));
+    }
+
+    #[Test]
+    public function testIsExternalIgnoresHostCase(): void
+    {
+        // DNS hostnames are case-insensitive (RFC 3986 §3.2.2).
+        self::assertFalse(UrlSupport::isExternal('https://MOODLE.test/x'));
     }
 
     #[Test]

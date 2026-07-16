@@ -276,6 +276,15 @@ class UrlSupport
             return $relativeurl;
         }
 
+        // Protocol-relative ('//host/path') points at its own host — the
+        // ltrim below would strip both slashes and mislabel it as a local
+        // path under wwwroot. Complete it with the site scheme instead.
+        if (str_starts_with($relativeurl, '//')) {
+            $scheme = parse_url((string) $CFG->wwwroot, PHP_URL_SCHEME) ?? 'https';
+
+            return $scheme . ':' . $relativeurl;
+        }
+
         // Remove leading slash if present
         $relativeurl = ltrim($relativeurl, '/');
 
@@ -303,7 +312,9 @@ class UrlSupport
 
         $sitehost = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
-        return $parsed['host'] !== $sitehost;
+        // DNS hostnames are case-insensitive (RFC 3986 §3.2.2): a same-site
+        // URL with a differently-cased host must not classify as external.
+        return strtolower($parsed['host']) !== strtolower((string) $sitehost);
     }
 
     /**
