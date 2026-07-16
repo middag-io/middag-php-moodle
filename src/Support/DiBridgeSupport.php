@@ -37,6 +37,9 @@ class DiBridgeSupport
     /** @var array<string, callable> Product-supplied service ID => factory map to expose in Moodle's DI container. */
     private static array $exports = [];
 
+    /** @var string[] Product export ids individually confirmed in Moodle's DI builder by configure(). */
+    private static array $exportedIds = [];
+
     /** @var bool Whether configure() has actually pushed the exports into Moodle's DI builder. */
     private static bool $configured = false;
 
@@ -75,22 +78,30 @@ class DiBridgeSupport
      */
     public static function configure(object $hook): void
     {
-        try {
-            // Expose product-registered @api services (including the product facade).
-            foreach (self::$exports as $id => $factory) {
-                $hook->add_definition($id, $factory);
-            }
+        // Per-id isolation: one export the DI builder rejects must not abort
+        // the registration of every export after it in iteration order.
 
-            // Expose additional curated services.
-            foreach (self::getExtensionExports() as $id => $factory) {
+        // Expose product-registered @api services (including the product facade).
+        foreach (self::$exports as $id => $factory) {
+            try {
                 $hook->add_definition($id, $factory);
+                self::$exportedIds[] = $id;
+            } catch (Throwable $throwable) {
+                Debug::traceException($throwable);
             }
-
-            // Only now are the exports genuinely present in Moodle's DI builder.
-            self::$configured = true;
-        } catch (Throwable $throwable) {
-            Debug::traceException($throwable);
         }
+
+        // Expose additional curated services.
+        foreach (self::getExtensionExports() as $id => $factory) {
+            try {
+                $hook->add_definition($id, $factory);
+            } catch (Throwable $throwable) {
+                Debug::traceException($throwable);
+            }
+        }
+
+        // Only now are the (surviving) exports genuinely present in Moodle's DI builder.
+        self::$configured = true;
     }
 
     /**
@@ -98,8 +109,10 @@ class DiBridgeSupport
      *
      * Returns the ids only after configure() has pushed them into the DI
      * builder; an id merely registered via registerExport() is NOT reported,
-     * because core\di::get() cannot resolve it until configure() runs. Empty on
-     * hosts where the DI hook is unavailable (configure() never fires there).
+     * because core\di::get() cannot resolve it until configure() runs — and an
+     * id the DI builder rejected during configure() is not reported either.
+     * Empty on hosts where the DI hook is unavailable (configure() never
+     * fires there).
      *
      * @return string[] list of fully qualified class/interface names confirmed in Moodle's DI
      */
@@ -109,7 +122,7 @@ class DiBridgeSupport
             return [];
         }
 
-        return array_keys(self::$exports);
+        return self::$exportedIds;
     }
 
     /**

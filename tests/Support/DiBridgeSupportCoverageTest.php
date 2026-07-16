@@ -129,9 +129,38 @@ final class DiBridgeSupportCoverageTest extends TestCase
         self::assertTrue($hook->called);
     }
 
+    #[Test]
+    public function testConfigureIsolatesAFailingExportPerId(): void
+    {
+        // One export the DI builder rejects must not abort the registration
+        // of every export after it in iteration order — and the rejected id
+        // must not be reported as exposed.
+        DiBridgeSupport::registerExport('svc.bad', static fn (): stdClass => new stdClass());
+        DiBridgeSupport::registerExport('svc.good', static fn (): stdClass => new stdClass());
+
+        $hook = new class {
+            /** @var array<string, callable> */
+            public array $defs = [];
+
+            public function add_definition(string $id, callable $factory): void
+            {
+                if ($id === 'svc.bad') {
+                    throw new RuntimeException('hook rejected definition');
+                }
+                $this->defs[$id] = $factory;
+            }
+        };
+
+        DiBridgeSupport::configure($hook);
+
+        self::assertArrayHasKey('svc.good', $hook->defs);
+        self::assertSame(['svc.good'], DiBridgeSupport::getExportedServiceIds());
+    }
+
     private function resetExports(): void
     {
         (new ReflectionProperty(DiBridgeSupport::class, 'exports'))->setValue(null, []);
+        (new ReflectionProperty(DiBridgeSupport::class, 'exportedIds'))->setValue(null, []);
         (new ReflectionProperty(DiBridgeSupport::class, 'configured'))->setValue(null, false);
     }
 
