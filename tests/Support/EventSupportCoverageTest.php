@@ -61,6 +61,7 @@ final class EventSupportCoverageTest extends TestCase
             'middag_test_abstract.php',
             'middag_test_notevent.php',
             'middag_test_throwing.php',
+            'middag_test_throwname.php',
             'middag_test_ghost.php',
         ] as $file) {
             file_put_contents(self::$coreEventDir . '/' . $file, "<?php\n");
@@ -227,6 +228,27 @@ final class EventSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testLoadCoreEventsSurvivesAThrowingGetName(): void
+    {
+        $support = new EventSupport();
+
+        // middag_test_throwname has valid static info but a get_name() that
+        // throws. It must not abort the whole catalog: the event is kept with
+        // its class short name as a fallback, and healthy events still load.
+        /** @var EventDto[] $events */
+        $events = $this->invokePrivate($support, 'loadCoreEvents');
+
+        $byFqcn = [];
+        foreach ($events as $event) {
+            $byFqcn[$event->fqcn] = $event;
+        }
+
+        self::assertArrayHasKey('\core\event\middag_test_throwname', $byFqcn);
+        self::assertSame('middag_test_throwname', $byFqcn['\core\event\middag_test_throwname']->displayname);
+        self::assertArrayHasKey('\core\event\middag_test_valid', $byFqcn);
+    }
+
+    #[Test]
     public function testLoadPluginEventsReturnsEventsFromRegisteredPlugins(): void
     {
         $this->requirePluginTypeStub();
@@ -355,6 +377,12 @@ final class EventSupportCoverageTest extends TestCase
                 class middag_test_throwing extends base
                 {
                     public static function get_static_info() { throw new \RuntimeException('static info failed'); }
+                }
+
+                class middag_test_throwname extends base
+                {
+                    public static function get_name() { throw new \RuntimeException('get_name failed'); }
+                    public static function get_static_info() { return ['edulevel' => base::LEVEL_TEACHING]; }
                 }
                 PHP);
         }

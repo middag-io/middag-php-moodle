@@ -108,7 +108,7 @@ class EventSupport
 
                     $out[] = new EventDto(
                         fqcn: $fqcn,
-                        displayname: $fqcn::get_name(),
+                        displayname: $this->getNameSafe($fqcn),
                         edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,
                         pluginname: sprintf('%s_%s', $type, $plugin),
                         plugintype: $type,
@@ -146,7 +146,7 @@ class EventSupport
             if ($info && method_exists($fqcn, 'get_name')) {
                 $out[] = new EventDto(
                     fqcn: $fqcn,
-                    displayname: $fqcn::get_name(),
+                    displayname: $this->getNameSafe($fqcn),
                     edulevel: $info['edulevel'] ?? base::LEVEL_OTHER,
                 );
             }
@@ -211,6 +211,29 @@ class EventSupport
             return $eventname::get_static_info();
         } catch (Throwable) {
             return [];
+        }
+    }
+
+    /**
+     * Safely retrieves the display name from an event class.
+     *
+     * get_name() is plugin-overridable and can throw (e.g. a get_string()
+     * against a missing lang string). Left unguarded, one broken event class
+     * anywhere in the install would abort the entire catalog build for every
+     * consumer of getAllEvents(). Fall back to the class short name.
+     *
+     * @param string $eventname the event class name
+     *
+     * @return string the event display name, or its short name on failure
+     */
+    private function getNameSafe(string $eventname): string
+    {
+        try {
+            return (string) $eventname::get_name();
+        } catch (Throwable) {
+            $parts = explode('\\', ltrim($eventname, '\\'));
+
+            return end($parts) ?: $eventname;
         }
     }
 }
