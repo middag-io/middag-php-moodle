@@ -489,13 +489,15 @@ final class CompletionSupportCoverageTest extends TestCase
     #[Test]
     public function testGetCourseCriteriaBuildsDtosIndexedByCriterionId(): void
     {
+        // criteriatype is the int COMPLETION_CRITERIA_TYPE_* column (4 =
+        // ACTIVITY, 1 = SELF), never the label string — the adapter maps it.
         $GLOBALS['__middag_test_criteria_records'] = [
             (object) [
-                'id' => 2, 'course' => 10, 'criteriatype' => 'activity', 'moduleinstance' => 5,
+                'id' => 2, 'course' => 10, 'criteriatype' => 4, 'moduleinstance' => 5,
                 'gradepass' => 60.0, 'role' => 3, 'timeend' => 100, 'enrolperiod' => 200,
                 'courseinstance' => 7,
             ],
-            (object) ['course' => 10, 'criteriatype' => 'self'],
+            (object) ['course' => 10, 'criteriatype' => 1],
         ];
 
         $criteria = CompletionSupport::getCourseCriteria(10);

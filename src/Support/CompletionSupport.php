@@ -50,6 +50,25 @@ use Throwable;
 class CompletionSupport
 {
     /**
+     * Maps the numeric `course_completion_criteria.criteriatype` column to
+     * Moodle's symbolic label, mirroring the core `$COMPLETION_CRITERIA_TYPES`
+     * global (completion/criteria/completion_criteria.php). The DB column is an
+     * int (COMPLETION_CRITERIA_TYPE_*), never the label string.
+     *
+     * @var array<int, string>
+     */
+    private const CRITERIA_LABELS = [
+        1 => 'self',
+        2 => 'date',
+        3 => 'unenrol',
+        4 => 'activity',
+        5 => 'duration',
+        6 => 'grade',
+        7 => 'role',
+        8 => 'course',
+    ];
+
+    /**
      * Check if course completion is enabled site-wide.
      *
      * @return bool true if the site setting allows course completion
@@ -479,7 +498,7 @@ class CompletionSupport
             $criteria[$id] = new CompletionCriteriaDto(
                 id: $id > 0 ? $id : null,
                 courseid: (int) ($record->course ?? $courseid),
-                criteriaType: (string) ($record->criteriatype ?? ''),
+                criteriaType: self::CRITERIA_LABELS[(int) ($record->criteriatype ?? 0)] ?? (string) ($record->criteriatype ?? ''),
                 moduleinstance: isset($record->moduleinstance) ? (int) $record->moduleinstance : null,
                 courseinstance: isset($record->courseinstance) ? (int) $record->courseinstance : null,
                 enrolperiod: isset($record->enrolperiod) ? (int) $record->enrolperiod : null,
