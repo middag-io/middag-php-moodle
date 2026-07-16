@@ -46,9 +46,13 @@ class UrlSupport
         ?string $anchor = null,
         int $strictness = IGNORE_MISSING
     ): moodle_url {
-        // Normalize double slashes
+        // Collapse repeated slashes in the path, but NOT the scheme separator:
+        // a plain '#/+#' turns 'https://host/x' into 'https:/host/x', which
+        // parse_url reads as a hostless path and moodle_url then rejects (get()
+        // would silently fall back to the site home). The negative lookbehind
+        // leaves '://' intact.
         if (is_string($url)) {
-            $url = preg_replace('#/+#', '/', $url);
+            $url = preg_replace('#(?<!:)/{2,}#', '/', $url);
         }
 
         try {

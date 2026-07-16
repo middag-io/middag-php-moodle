@@ -64,6 +64,16 @@ final class UrlSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetPreservesTheSchemeSeparatorOfAbsoluteUrls(): void
+    {
+        // Collapsing '://' into ':/' would strip the host, so parse_url yields
+        // no host and get() silently falls back to the site home.
+        $url = UrlSupport::get('https://cdn.example.com/logo.png');
+
+        self::assertSame('https://cdn.example.com/logo.png', $url->out());
+    }
+
+    #[Test]
     public function testGetRethrowsWhenStrictnessIsMustExist(): void
     {
         $GLOBALS['__middag_test_throw_moodle_url'] = true;
