@@ -167,14 +167,16 @@ class DbSupport
     /**
      * Deletes records from a table.
      *
-     * @param string $table      Table name
-     * @param array  $conditions array of field => value conditions
+     * @param string     $table      Table name
+     * @param null|array $conditions array of field => value conditions; null
+     *                               (not []) deletes ALL rows via the host's
+     *                               TRUNCATE fast path
      *
      * @return bool True on success, false otherwise
      *
      * @throws dml_exception if a database error occurs
      */
-    public static function deleteRecords(string $table, array $conditions = []): bool
+    public static function deleteRecords(string $table, ?array $conditions = null): bool
     {
         global $DB;
 

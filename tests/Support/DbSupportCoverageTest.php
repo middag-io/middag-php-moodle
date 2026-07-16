@@ -107,6 +107,15 @@ final class DbSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testDeleteRecordsForwardsNullForTheTruncateFastPath(): void
+    {
+        // Omitting $conditions must reach the host as null (not []) so
+        // moodle_database::delete_records() can take its TRUNCATE fast path.
+        self::assertTrue(DbSupport::deleteRecords('user'));
+        self::assertSame(['user', null], $GLOBALS['__middag_test_db_delete_records_args']);
+    }
+
+    #[Test]
     public function testRecordExistsReturnsTrue(): void
     {
         self::assertTrue(DbSupport::recordExists('user', ['id' => 1]));
@@ -783,6 +792,8 @@ final class DbSupportCoverageTest extends TestCase
 
             public function delete_records(...$args): bool
             {
+                $GLOBALS['__middag_test_db_delete_records_args'] = $args;
+
                 return true;
             }
 
