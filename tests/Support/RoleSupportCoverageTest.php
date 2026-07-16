@@ -87,6 +87,24 @@ final class RoleSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetRoleOptionsExcludesRolesEvenForACourseContext(): void
+    {
+        // get_assignable_roles() replaces the filtered list, so the exclusion
+        // must be re-applied by id — otherwise an excluded role reappears in a
+        // course-context picker.
+        $GLOBALS['__middag_test_all_roles'] = [
+            1 => (object) ['id' => 1, 'shortname' => 'manager'],
+            2 => (object) ['id' => 2, 'shortname' => 'editingteacher'],
+        ];
+        $GLOBALS['__middag_test_assignable_roles'] = [1 => 'Manager', 2 => 'Teacher'];
+
+        $result = RoleSupport::getRoleOptions(new context(5), ['manager']);
+
+        self::assertArrayNotHasKey(1, $result);
+        self::assertSame('Teacher', $result[2]);
+    }
+
+    #[Test]
     public function testGetRolesOptionsUsesTheCurrentCourseContext(): void
     {
         $GLOBALS['COURSE'] = (object) ['id' => 7];

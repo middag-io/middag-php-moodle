@@ -41,15 +41,23 @@ class RoleSupport
     public static function getRoleOptions(?context $coursecontext = null, array $excluderoles = ['guest']): array
     {
         $roles = get_all_roles();
+        $excludeids = [];
         foreach ($roles as $key => $role) {
             if (in_array($role->shortname, $excluderoles, true)) {
+                $excludeids[$key] = true;
                 unset($roles[$key]);
             }
         }
         $roles = role_fix_names($roles, $coursecontext, ROLENAME_ALIAS, true);
 
         if ($coursecontext instanceof context) {
+            // get_assignable_roles() returns a fresh, unfiltered list keyed by
+            // role id — re-apply the caller's exclusions here too, otherwise
+            // $excluderoles is silently ignored for course contexts.
             $roles = get_assignable_roles($coursecontext, ROLENAME_BOTH);
+            foreach (array_keys($excludeids) as $id) {
+                unset($roles[$id]);
+            }
         }
 
         $roles[0] = '-- ' . LangSupport::getString('none') . ' --';
