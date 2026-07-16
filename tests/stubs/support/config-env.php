@@ -62,8 +62,12 @@ if (!function_exists('require_login')) {
 }
 
 if (!function_exists('complete_user_login')) {
-    function complete_user_login(object $user): mixed
+    // Mirrors the real contract (moodlelib.php): every return path yields the
+    // populated $USER object — a falsy return is impossible on a real host.
+    function complete_user_login(object $user, array $extrauserinfo = []): object
     {
+        $GLOBALS['__middag_test_complete_login_extrauserinfo'] = $extrauserinfo;
+
         return $GLOBALS['__middag_test_complete_login'] ?? $user;
     }
 }

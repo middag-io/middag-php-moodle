@@ -30,6 +30,7 @@ final class AuthSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_isloggedin'],
             $GLOBALS['__middag_test_isguest'],
             $GLOBALS['__middag_test_complete_login'],
+            $GLOBALS['__middag_test_complete_login_extrauserinfo'],
             $GLOBALS['__middag_test_admin'],
         );
     }
@@ -41,6 +42,7 @@ final class AuthSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_isloggedin'],
             $GLOBALS['__middag_test_isguest'],
             $GLOBALS['__middag_test_complete_login'],
+            $GLOBALS['__middag_test_complete_login_extrauserinfo'],
             $GLOBALS['__middag_test_admin'],
         );
     }
@@ -86,17 +88,24 @@ final class AuthSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testCompleteUserLoginReturnsTrueOnSuccess(): void
+    public function testCompleteUserLoginReturnsTheLoggedInUserRecord(): void
     {
-        self::assertTrue(AuthSupport::completeUserLogin((object) ['id' => 1]));
+        // Real complete_user_login() can never return a falsy value — the
+        // old bool contract let callers write dead failure branches.
+        $user = (object) ['id' => 1];
+
+        self::assertSame($user, AuthSupport::completeUserLogin($user));
     }
 
     #[Test]
-    public function testCompleteUserLoginReturnsFalseOnFailure(): void
+    public function testCompleteUserLoginForwardsExtraUserInfoToTheEvent(): void
     {
-        $GLOBALS['__middag_test_complete_login'] = false;
+        AuthSupport::completeUserLogin((object) ['id' => 1], ['authmethod' => 'sso']);
 
-        self::assertFalse(AuthSupport::completeUserLogin((object) ['id' => 1]));
+        self::assertSame(
+            ['authmethod' => 'sso'],
+            $GLOBALS['__middag_test_complete_login_extrauserinfo'],
+        );
     }
 
     #[Test]

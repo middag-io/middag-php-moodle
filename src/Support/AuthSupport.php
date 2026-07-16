@@ -61,13 +61,20 @@ class AuthSupport
     /**
      * Completes the user login process.
      *
-     * @param stdClass $user User object to login
+     * Moodle's complete_user_login() never returns a falsy value: every
+     * return path yields the populated $USER record, and its failure paths
+     * redirect (terminating the request) or throw. The previous bool
+     * contract made callers write permanently-dead `false` branches.
      *
-     * @return bool True on success, false otherwise
+     * @param stdClass             $user          User object to login
+     * @param array<string, mixed> $extrauserinfo extra payload recorded on the
+     *                                            \core\event\user_loggedin event
+     *
+     * @return stdClass the logged-in $USER record
      */
-    public static function completeUserLogin(stdClass $user): bool
+    public static function completeUserLogin(stdClass $user, array $extrauserinfo = []): stdClass
     {
-        return (bool) complete_user_login($user);
+        return complete_user_login($user, $extrauserinfo);
     }
 
     /**
