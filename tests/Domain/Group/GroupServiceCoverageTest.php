@@ -31,11 +31,14 @@ final class GroupServiceCoverageTest extends TestCase
 {
     private mixed $prevCfg;
 
+    private mixed $prevDb;
+
     private GroupService $service;
 
     protected function setUp(): void
     {
         $this->prevCfg = $GLOBALS['CFG'] ?? null;
+        $this->prevDb = $GLOBALS['DB'] ?? null;
 
         $base = sys_get_temp_dir() . '/middag_group_service_stubs';
         if (!is_dir($base . '/group')) {
@@ -44,9 +47,19 @@ final class GroupServiceCoverageTest extends TestCase
         file_put_contents($base . '/group/lib.php', "<?php\n");
         $GLOBALS['CFG'] = (object) ['dirroot' => $base, 'libdir' => $base . '/lib'];
 
+        // GroupSupport::isMember() now queries groups_members directly; drive it
+        // through a record_exists() double keyed on a membership flag.
+        $GLOBALS['DB'] = new class {
+            public function record_exists($table, $conditions = null): bool
+            {
+                return !empty($GLOBALS['__middag_test_group_membership_exists']);
+            }
+        };
+
         $this->service = new GroupService();
 
         unset(
+            $GLOBALS['__middag_test_group_membership_exists'],
             $GLOBALS['__middag_test_groups_is_member'],
             $GLOBALS['__middag_test_groups_add_member'],
             $GLOBALS['__middag_test_groups_create_group'],
@@ -59,8 +72,10 @@ final class GroupServiceCoverageTest extends TestCase
     protected function tearDown(): void
     {
         $GLOBALS['CFG'] = $this->prevCfg;
+        $GLOBALS['DB'] = $this->prevDb;
 
         unset(
+            $GLOBALS['__middag_test_group_membership_exists'],
             $GLOBALS['__middag_test_groups_is_member'],
             $GLOBALS['__middag_test_groups_add_member'],
             $GLOBALS['__middag_test_groups_create_group'],
@@ -74,7 +89,7 @@ final class GroupServiceCoverageTest extends TestCase
     public function addUserToGroupReturnsTrueWhenAlreadyAMember(): void
     {
         $GLOBALS['__middag_test_groups_get_group_by_name'] = 7;
-        $GLOBALS['__middag_test_groups_is_member'] = true;
+        $GLOBALS['__middag_test_group_membership_exists'] = true;
 
         self::assertTrue($this->service->addUserToGroup(3, 5, 'Team'));
     }
@@ -83,7 +98,7 @@ final class GroupServiceCoverageTest extends TestCase
     public function addUserToGroupAddsTheUserWhenNotYetAMember(): void
     {
         $GLOBALS['__middag_test_groups_get_group_by_name'] = 7;
-        $GLOBALS['__middag_test_groups_is_member'] = false;
+        $GLOBALS['__middag_test_group_membership_exists'] = false;
         $GLOBALS['__middag_test_groups_add_member'] = true;
 
         self::assertTrue($this->service->addUserToGroup(3, 5, 'Team'));
@@ -94,7 +109,7 @@ final class GroupServiceCoverageTest extends TestCase
     {
         $GLOBALS['__middag_test_groups_get_group_by_name'] = false;
         $GLOBALS['__middag_test_groups_create_group'] = 9;
-        $GLOBALS['__middag_test_groups_is_member'] = false;
+        $GLOBALS['__middag_test_group_membership_exists'] = false;
         $GLOBALS['__middag_test_groups_add_member'] = true;
 
         self::assertTrue($this->service->addUserToGroup(3, 5, 'Team'));

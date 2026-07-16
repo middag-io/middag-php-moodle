@@ -78,6 +78,10 @@ if (!function_exists('groups_add_member')) {
 if (!function_exists('groups_create_group')) {
     function groups_create_group($data, $editform = false, $editoroptions = false)
     {
+        if (!empty($GLOBALS['__middag_test_throw_groups_create_group'])) {
+            throw new moodle_exception('idnumbertaken');
+        }
+
         $GLOBALS['__middag_test_created_group'] = $data;
 
         return $GLOBALS['__middag_test_groups_create_group'] ?? 1;

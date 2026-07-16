@@ -64,6 +64,7 @@ final class GroupSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_groups_add_member'],
             $GLOBALS['__middag_test_throw_groups_add_member'],
             $GLOBALS['__middag_test_groups_create_group'],
+            $GLOBALS['__middag_test_throw_groups_create_group'],
             $GLOBALS['__middag_test_created_group'],
             $GLOBALS['__middag_test_groups_get_group_by_name'],
             $GLOBALS['__middag_test_throw_groups_get_group_by_name'],
@@ -81,6 +82,7 @@ final class GroupSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_groups_add_member'],
             $GLOBALS['__middag_test_throw_groups_add_member'],
             $GLOBALS['__middag_test_groups_create_group'],
+            $GLOBALS['__middag_test_throw_groups_create_group'],
             $GLOBALS['__middag_test_created_group'],
             $GLOBALS['__middag_test_groups_get_group_by_name'],
             $GLOBALS['__middag_test_throw_groups_get_group_by_name'],
@@ -143,11 +145,24 @@ final class GroupSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testIsMemberDelegatesToGroupsIsMember(): void
+    public function testIsMemberQueriesTheMembershipTableDirectly(): void
     {
-        $GLOBALS['__middag_test_groups_is_member'] = true;
-
+        // Must be a session-independent DB check, not the visibility-scoped
+        // groups_is_member() (which false-negatives for a caller lacking
+        // viewhiddengroups on a members-only-visibility course).
+        $this->db->recordExists = true;
         self::assertTrue(GroupSupport::isMember(1, 2));
+
+        $this->db->recordExists = false;
+        self::assertFalse(GroupSupport::isMember(1, 2));
+    }
+
+    #[Test]
+    public function testIsMemberReturnsFalseWhenTheQueryThrows(): void
+    {
+        $this->db->throwRecordExists = new dml_exception('db failure');
+
+        self::assertFalse(GroupSupport::isMember(1, 2));
     }
 
     #[Test]
@@ -179,6 +194,16 @@ final class GroupSupportCoverageTest extends TestCase
         self::assertSame('idn', $group->idnumber);
         self::assertSame('<p>desc</p>', $group->description);
         self::assertSame(FORMAT_HTML, $group->descriptionformat);
+    }
+
+    #[Test]
+    public function testCreateGroupReturnsNullWhenTheGroupsApiThrows(): void
+    {
+        // A stale courseid or a duplicate idnumber makes groups_create_group()
+        // throw; the method must honour its '?int, null on failure' contract.
+        $GLOBALS['__middag_test_throw_groups_create_group'] = true;
+
+        self::assertNull(GroupSupport::createGroup(3, 'Team', 'dup-idnumber'));
     }
 
     #[Test]
@@ -243,6 +268,10 @@ final class GroupSupportCoverageTest extends TestCase
 
             public ?Throwable $throwRecords = null;
 
+            public bool $recordExists = false;
+
+            public ?Throwable $throwRecordExists = null;
+
             public string $lastSql = '';
 
             /** @var array<string, mixed> */
@@ -285,6 +314,19 @@ final class GroupSupportCoverageTest extends TestCase
                 }
 
                 return $this->records;
+            }
+
+            /**
+             * @param mixed      $table
+             * @param null|mixed $conditions
+             */
+            public function record_exists($table, $conditions = null): bool
+            {
+                if ($this->throwRecordExists instanceof Throwable) {
+                    throw $this->throwRecordExists;
+                }
+
+                return $this->recordExists;
             }
         };
     }

@@ -106,7 +106,21 @@ class GroupSupport
      */
     public static function isMember(int $groupid, int $userid): bool
     {
-        return groups_is_member($groupid, $userid);
+        global $DB;
+
+        try {
+            // A factual membership check must be session-independent. Moodle's
+            // groups_is_member() scopes visibility to the EXECUTING $USER's
+            // moodle/course:viewhiddengroups capability, so it can return false
+            // for a real member when the caller (e.g. cron, or an admin acting
+            // for a student) lacks it. Query the table directly, like
+            // getMembers()/getGroups() do elsewhere in this class.
+            return $DB->record_exists('groups_members', ['groupid' => $groupid, 'userid' => $userid]);
+        } catch (dml_exception $dmlexception) {
+            Debug::traceException($dmlexception);
+
+            return false;
+        }
     }
 
     /**
@@ -147,9 +161,18 @@ class GroupSupport
         $group->description = $description;
         $group->descriptionformat = FORMAT_HTML;
 
-        $groupid = groups_create_group($group);
+        try {
+            // groups_create_group() throws on a stale courseid (MUST_EXIST) or a
+            // duplicate idnumber; honour the documented '?int, null on failure'
+            // contract instead of letting it crash direct facade/API callers.
+            $groupid = groups_create_group($group);
 
-        return Typing::normalizeId($groupid);
+            return Typing::normalizeId($groupid);
+        } catch (Exception $exception) {
+            Debug::traceException($exception);
+
+            return null;
+        }
     }
 
     /**
