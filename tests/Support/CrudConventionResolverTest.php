@@ -100,6 +100,15 @@ final class CrudConventionResolverTest extends TestCase
     }
 
     #[Test]
+    public function testCapabilityKeepsTrailingSForNativelyPluralBasenames(): void
+    {
+        // Entities whose basename natively ends in 's' (Status, Address) must
+        // not be over-stripped to manage_statu / manage_addre.
+        self::assertSame('local/example:manage_status', CrudConventionResolver::capability('App\Entity\Status'));
+        self::assertSame('local/example:manage_address', CrudConventionResolver::capability('App\Entity\Address'));
+    }
+
+    #[Test]
     public function testRoutePrefixEqualsSlug(): void
     {
         self::assertSame('invoices', CrudConventionResolver::routePrefix('App\Entity\Invoice'));

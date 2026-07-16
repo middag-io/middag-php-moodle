@@ -110,7 +110,12 @@ final class CrudConventionResolver
      */
     public static function capability(string $entity_class): string
     {
-        return ComponentContext::capabilityComponent() . ':manage_' . rtrim(self::slug($entity_class), 's');
+        // The suffix is the singular lowercase basename. Do NOT rtrim 's' off
+        // the pluralised slug: rtrim strips every trailing 's', so a basename
+        // that natively ends in 's' (Status -> slug "statuss") over-strips to
+        // "statu". The basename is already singular by convention, so lowercase
+        // it directly — identical to the old result for every other name.
+        return ComponentContext::capabilityComponent() . ':manage_' . strtolower(self::basename($entity_class));
     }
 
     /**
