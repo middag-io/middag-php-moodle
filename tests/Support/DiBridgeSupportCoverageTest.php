@@ -45,10 +45,26 @@ final class DiBridgeSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testRegisterExportExposesTheServiceId(): void
+    public function testGetExportedServiceIdsIsEmptyUntilConfigured(): void
+    {
+        // registerExport() only records locally; core\di::get() cannot resolve
+        // the id until configure() pushes it into Moodle's DI builder, so the
+        // getter must not report it as exposed yet.
+        DiBridgeSupport::registerExport('svc.x', static fn (): stdClass => new stdClass());
+
+        self::assertSame([], DiBridgeSupport::getExportedServiceIds());
+    }
+
+    #[Test]
+    public function testGetExportedServiceIdsListsIdsAfterConfigure(): void
     {
         DiBridgeSupport::registerExport('svc.x', static fn (): stdClass => new stdClass());
         DiBridgeSupport::registerExport('svc.y', static fn (): stdClass => new stdClass());
+
+        $hook = new class {
+            public function add_definition(string $id, callable $factory): void {}
+        };
+        DiBridgeSupport::configure($hook);
 
         self::assertSame(['svc.x', 'svc.y'], DiBridgeSupport::getExportedServiceIds());
     }
@@ -116,6 +132,7 @@ final class DiBridgeSupportCoverageTest extends TestCase
     private function resetExports(): void
     {
         (new ReflectionProperty(DiBridgeSupport::class, 'exports'))->setValue(null, []);
+        (new ReflectionProperty(DiBridgeSupport::class, 'configured'))->setValue(null, false);
     }
 
     private function setMoodleBranch(int $branch): void
