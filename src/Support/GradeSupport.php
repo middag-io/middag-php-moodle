@@ -70,12 +70,9 @@ class GradeSupport
                 if ($val === null) {
                     return null;
                 }
-                // If the field looks numeric, convert to float (or int when integral).
+                // Numeric fields come back as int when integral, float otherwise.
                 if (is_numeric($val)) {
-                    $f = Typing::toFloat($val);
-                    $i = Typing::toInt($val);
-
-                    return ((float) $i === $f) ? $i : $f;
+                    return Typing::toNumber($val);
                 }
 
                 return $val;

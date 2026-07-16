@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use Middag\Framework\Shared\Util\Inflector;
 use Middag\Moodle\Config\ComponentContext;
 use ReflectionClass;
 use ReflectionProperty;
@@ -33,10 +34,7 @@ final class CrudConventionResolver
      */
     public static function slug(string $entity_class): string
     {
-        $parts = explode('\\', $entity_class);
-        $basename = end($parts);
-
-        return strtolower($basename) . 's';
+        return Inflector::slug(self::basename($entity_class));
     }
 
     /**
@@ -44,7 +42,7 @@ final class CrudConventionResolver
      */
     public static function title(string $entity_class): string
     {
-        return ucfirst(self::slug($entity_class));
+        return Inflector::title(self::basename($entity_class));
     }
 
     /**
@@ -52,9 +50,7 @@ final class CrudConventionResolver
      */
     public static function singular(string $entity_class): string
     {
-        $parts = explode('\\', $entity_class);
-
-        return ucfirst(strtolower(end($parts)));
+        return Inflector::singular(self::basename($entity_class));
     }
 
     /**
@@ -122,6 +118,16 @@ final class CrudConventionResolver
      */
     public static function routePrefix(string $entity_class): string
     {
-        return self::slug($entity_class);
+        return Inflector::routePrefix(self::basename($entity_class));
+    }
+
+    /**
+     * Class basename (last namespace segment) of an entity FQCN.
+     */
+    private static function basename(string $entity_class): string
+    {
+        $parts = explode('\\', $entity_class);
+
+        return (string) end($parts);
     }
 }
