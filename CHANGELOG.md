@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.9.0](https://github.com/middag-io/middag-php-moodle/compare/v1.8.0...v1.9.0) (2026-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **domain:** EnrolSupport::enrolUser() no longer defaults roleid — pass it explicitly or use EnrolmentServiceInterface::enrol(). GroupSupport::addUserInGroup() is removed; use GroupServiceInterface::addUserToGroup().
+* **database:** Middag\Moodle\Database\Contract\TransactionManagerInterface is removed; use Middag\Framework\Database\Contract\TransactionManagerInterface instead.
+
+### Bug Fixes
+
+* **shared:** use E_ALL for the no-host DEBUG_DEVELOPER fallback ([580e3a3](https://github.com/middag-io/middag-php-moodle/commit/580e3a37ba70c38fd57ba3ccd512ccf95477a6af))
+* **support:** drop legacy brand slug from message temp dir ([b899ba0](https://github.com/middag-io/middag-php-moodle/commit/b899ba05625f065f33e46e40dc8b406be0ca52ad))
+
+
+### Refactoring
+
+* **database:** consume framework query/transaction seams ([8cfd624](https://github.com/middag-io/middag-php-moodle/commit/8cfd624a39c89215c3619a6312d6b2cff9603195))
+* **domain:** extract enrolment/group domain policy from supports ([58902f9](https://github.com/middag-io/middag-php-moodle/commit/58902f928064cc514f31ad1d81d53a0219f78d09))
+* **domain:** move course-visibility predicate onto the Course entity ([856151b](https://github.com/middag-io/middag-php-moodle/commit/856151b69467ff46c3ce214a4ad9efaaad829270))
+* **support:** adopt framework Shared/Util helpers ([c3e0348](https://github.com/middag-io/middag-php-moodle/commit/c3e0348290785215b32f53b9aeaaf3e84ca65108))
+
+
+### Miscellaneous
+
+* release moodle 1.9.0 ([e7fbcd9](https://github.com/middag-io/middag-php-moodle/commit/e7fbcd92cff9cd68bb1e43225d3b25f1104ab90b))
+
 ## [1.8.0](https://github.com/middag-io/middag-php-moodle/compare/v1.7.1...v1.8.0) (2026-07-15)
 
 
