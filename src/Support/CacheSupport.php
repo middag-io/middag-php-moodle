@@ -85,9 +85,12 @@ class CacheSupport
                 return false;
             }
 
-            $value = $cache->get($key);
-            if ($value !== false && $value !== null) {
-                return $value;
+            // core_cache\cache::get() returns false for BOTH a miss and a
+            // genuinely stored false, so a `!== false` hit test would re-run
+            // the resolver forever for any falsy result (e.g. a feature flag).
+            // Use has() to tell a real miss from a stored falsy value.
+            if ($cache->has($key)) {
+                return $cache->get($key);
             }
 
             // Resolve and store the value
@@ -230,7 +233,9 @@ class CacheSupport
      * @param array  $keys list of keys to fetch
      * @param string $area Cache area. Defaults to self::DEFAULT_CACHE.
      *
-     * @return array|false associative array of key => value (missing keys omitted) or false on error
+     * @return array|false associative array with EVERY requested key present, a value of
+     *                     false marking a miss (core_cache\cache::get_many() contract — missing
+     *                     keys are NOT omitted); false only if the whole operation errored
      */
     public static function getMany(array $keys, string $area = self::DEFAULT_CACHE): array|false
     {

@@ -107,8 +107,28 @@ final class CacheSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetOrSetMemoisesAFalseResolverResult(): void
+    {
+        // core_cache\cache::get() returns false for both a miss and a stored
+        // false, so a naive `!== false` hit test would re-resolve forever. The
+        // has()-based check must serve the stored false on the second call.
+        $calls = 0;
+        $resolver = function () use (&$calls): bool {
+            ++$calls;
+
+            return false;
+        };
+
+        self::assertFalse(CacheSupport::getOrSet('flag', $resolver));
+        self::assertFalse(CacheSupport::getOrSet('flag', $resolver));
+        self::assertSame(1, $calls);
+    }
+
+    #[Test]
     public function testGetOrSetReturnsFalseWhenACacheOperationThrows(): void
     {
+        // On a hit the value is read via get(); a throw there degrades to false.
+        $GLOBALS['__middag_test_cache_store']['k'] = 'v';
         $GLOBALS['__middag_test_cache_get_throws'] = true;
 
         self::assertFalse(CacheSupport::getOrSet('k', fn (): string => 'x'));
