@@ -283,7 +283,9 @@ if (!function_exists('getremoteaddr')) {
 // Stub: sesskey() — returns $GLOBALS['__middag_test_sesskey'] (default 'sesskeytest'),
 // so Sesskey::fromCurrent() can be exercised without a Moodle session.
 if (!function_exists('sesskey')) {
-    function sesskey(): string
+    // Return type mirrors real Moodle: sesskey() yields false when
+    // $_SESSION['USER'] is not set yet (early bootstrap / CLI / webservice).
+    function sesskey(): false|string
     {
         return $GLOBALS['__middag_test_sesskey'] ?? 'sesskeytest';
     }

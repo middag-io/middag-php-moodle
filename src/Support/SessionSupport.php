@@ -62,7 +62,11 @@ class SessionSupport
      */
     public static function sesskey(): string
     {
-        return sesskey();
+        // Moodle's sesskey() returns false when $_SESSION['USER'] isn't set yet
+        // (early bootstrap / CLI / webservice). Under strict_types that false
+        // would TypeError against this ': string' return, so normalise it to ''
+        // — a downstream === comparison fails on '' just as it would on false.
+        return sesskey() ?: '';
     }
 
     /**

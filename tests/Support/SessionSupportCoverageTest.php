@@ -88,6 +88,17 @@ final class SessionSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSesskeyReturnsEmptyStringWhenTheHostReturnsFalse(): void
+    {
+        // Moodle's sesskey() returns false before $_SESSION['USER'] is set;
+        // under strict_types that would TypeError against the ': string' return,
+        // so it must be normalised to '' rather than crashing.
+        $GLOBALS['__middag_test_sesskey'] = false;
+
+        self::assertSame('', SessionSupport::sesskey());
+    }
+
+    #[Test]
     public function testDestroyUserSessionsForwardsToTheManager(): void
     {
         SessionSupport::destroyUserSessions(7, 'sid-keep');
