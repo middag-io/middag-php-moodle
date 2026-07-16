@@ -76,14 +76,14 @@ class LangSupport
     /**
      * Retrieves a localized string if it exists, otherwise returns the identifier.
      *
-     * @param string $identifier the string identifier
-     * @param string $component  Component name
-     * @param mixed  $a          variable to replace in the string
-     * @param bool   $lazyload   whether to return a lang_string object
+     * @param string      $identifier the string identifier
+     * @param null|string $component  Component name; resolves via ComponentContext when null
+     * @param mixed       $a          variable to replace in the string
+     * @param bool        $lazyload   whether to return a lang_string object
      *
      * @return lang_string|string the localized string or the identifier
      */
-    public static function getStringOrIdentifier(string $identifier, string $component = '', mixed $a = null, bool $lazyload = false): lang_string|string
+    public static function getStringOrIdentifier(string $identifier, ?string $component = null, mixed $a = null, bool $lazyload = false): lang_string|string
     {
         try {
             if (self::stringExists($identifier, $component)) {

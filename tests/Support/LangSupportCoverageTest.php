@@ -106,6 +106,17 @@ final class LangSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetStringOrIdentifierResolvesTheComponentFromContextWhenNull(): void
+    {
+        // Omitting the component must resolve via ComponentContext, not default
+        // to core — otherwise a plugin's own string is never found and the raw
+        // identifier leaks through instead of the translation.
+        $GLOBALS['__middag_test_string_exists'] = static fn (): bool => true;
+
+        self::assertSame('[local_example/id]', LangSupport::getStringOrIdentifier('id'));
+    }
+
+    #[Test]
     public function testStringExistsReturnsTrueWhenTheManagerConfirmsIt(): void
     {
         $GLOBALS['__middag_test_string_exists'] = static fn (): bool => true;
