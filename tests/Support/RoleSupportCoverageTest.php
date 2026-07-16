@@ -122,6 +122,8 @@ final class RoleSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_record_exists'] = true;
 
         self::assertTrue(RoleSupport::isteacher(5));
+        // Match teachers by the stable archetype, not the admin-editable shortname.
+        self::assertStringContainsString('r.archetype IN', $GLOBALS['__middag_test_last_sql']);
     }
 
     #[Test]
@@ -266,6 +268,8 @@ final class RoleSupportCoverageTest extends TestCase
         return new class {
             public function record_exists_sql($sql, ?array $params = null): bool
             {
+                $GLOBALS['__middag_test_last_sql'] = (string) $sql;
+
                 if (!empty($GLOBALS['__middag_test_throw_record_exists_sql'])) {
                     throw new dml_exception('recordexistsfailed');
                 }
@@ -275,9 +279,11 @@ final class RoleSupportCoverageTest extends TestCase
 
             public function get_record($table, ?array $conditions = null, $fields = '*', $strictness = 0)
             {
-                $shortname = $conditions['shortname'] ?? null;
+                // Keyed by archetype (getTeacher now matches on archetype), with a
+                // shortname fallback for any remaining shortname-based lookup.
+                $key = $conditions['archetype'] ?? $conditions['shortname'] ?? null;
 
-                return $GLOBALS['__middag_test_role_records'][$shortname] ?? false;
+                return $GLOBALS['__middag_test_role_records'][$key] ?? false;
             }
 
             public function get_record_sql($sql, ?array $params = null, $strictness = 0)
@@ -303,6 +309,7 @@ final class RoleSupportCoverageTest extends TestCase
     private function clearRoleGlobals(): void
     {
         unset(
+            $GLOBALS['__middag_test_last_sql'],
             $GLOBALS['__middag_test_all_roles'],
             $GLOBALS['__middag_test_assignable_roles'],
             $GLOBALS['__middag_test_role_names'],

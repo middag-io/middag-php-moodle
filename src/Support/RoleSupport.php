@@ -99,7 +99,7 @@ class RoleSupport
                 JOIN {role_assignments} ra ON ra.userid = u.id
                 JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
                 JOIN {course} c ON c.id = ct.instanceid AND e.courseid = c.id
-                JOIN {role} r ON r.id = ra.roleid AND r.shortname IN ('editingteacher', 'teacher')
+                JOIN {role} r ON r.id = ra.roleid AND r.archetype IN ('editingteacher', 'teacher')
                 WHERE e.status = 0 AND u.id = :userid
                 ORDER BY u.id";
 
@@ -115,7 +115,7 @@ class RoleSupport
     /**
      * Retrieves a teacher user record for a specific course.
      *
-     * Tries to find role by shortname prioritizing 'editingteacher' and,
+     * Tries to find role by archetype prioritizing 'editingteacher' and,
      * if not found, falls back to 'teacher'. Avoids using numeric indexes from
      * get_all_roles() as they can vary between installations.
      *
@@ -131,10 +131,12 @@ class RoleSupport
 
         $context = ContextSupport::course($courseid);
 
-        // Try to find the teacher role (editingteacher -> teacher) via database.
-        $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        // Match by archetype (stable) not shortname (admin-editable), consistent
+        // with getTeachers()/getTeacherAssignment(). IGNORE_MULTIPLE: a custom
+        // install can have more than one role sharing the same archetype.
+        $role = $DB->get_record('role', ['archetype' => 'editingteacher'], '*', IGNORE_MULTIPLE);
         if (!$role) {
-            $role = $DB->get_record('role', ['shortname' => 'teacher']);
+            $role = $DB->get_record('role', ['archetype' => 'teacher'], '*', IGNORE_MULTIPLE);
         }
 
         if (!$role) {
