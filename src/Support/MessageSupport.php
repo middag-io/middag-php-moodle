@@ -112,8 +112,14 @@ class MessageSupport
      */
     public static function getConversationId(core_message $message): int
     {
-        $from_userid = (int) $message->userfrom->id;
-        $to_userid = (int) $message->userto->id;
+        // core\message\message documents userfrom/userto as object|int (and they
+        // default to null unset). Dereferencing ->id on a raw int id would read a
+        // property off an int (PHP warning) and silently coerce to 0, collapsing
+        // an individual conversation into a bogus self-conversation on user 0.
+        $userfrom = $message->userfrom;
+        $userto = $message->userto;
+        $from_userid = is_object($userfrom) ? (int) $userfrom->id : (int) $userfrom;
+        $to_userid = is_object($userto) ? (int) $userto->id : (int) $userto;
 
         if ($from_userid === $to_userid) {
             // Self conversation

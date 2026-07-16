@@ -148,6 +148,21 @@ final class MessageSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetConversationIdAcceptsRawIntUserIds(): void
+    {
+        // core\message\message allows userfrom/userto to be a raw int id.
+        // Dereferencing ->id on an int would coerce to 0 and misclassify this
+        // as a self-conversation on user 0 instead of a private one.
+        $GLOBALS['__middag_test_conversation_between'] = 42;
+
+        $message = MessageSupport::createMessage();
+        $message->userfrom = 7;
+        $message->userto = 9;
+
+        self::assertSame(42, MessageSupport::getConversationId($message));
+    }
+
+    #[Test]
     public function testGetConversationIdCreatesPrivateConversationWhenMissing(): void
     {
         // No conversation between users → create INDIVIDUAL (default stub id 901).
