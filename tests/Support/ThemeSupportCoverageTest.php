@@ -137,7 +137,19 @@ final class ThemeSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_config'][self::INHERIT_KEY] = 1;
         $GLOBALS['PAGE'] = $this->pageWithBrand('#123456');
 
-        self::assertSame(':root { --middag-brand: #123456; }', ThemeSupport::getCssInjection());
+        self::assertSame(':root { --brand: #123456; }', ThemeSupport::getCssInjection());
+    }
+
+    #[Test]
+    public function testGetCssInjectionHonoursABrandCssVariableOverride(): void
+    {
+        // The seam must resolve via late static binding: a host subclass
+        // overriding brandCssVariable() retargets the injected rule onto the
+        // custom property its design system actually reads.
+        $GLOBALS['__middag_test_config'][self::INHERIT_KEY] = 1;
+        $GLOBALS['PAGE'] = $this->pageWithBrand('#123456');
+
+        self::assertSame(':root { --acme-brand: #123456; }', ThemeSupportWithCustomBrandVariable::getCssInjection());
     }
 
     #[Test]
@@ -164,5 +176,18 @@ final class ThemeSupportCoverageTest extends TestCase
                 'settings' => (object) ['brandcolor' => $brandcolor],
             ],
         ];
+    }
+}
+
+/**
+ * Fixture: host subclass overriding the brandCssVariable() seam.
+ *
+ * @internal
+ */
+final class ThemeSupportWithCustomBrandVariable extends ThemeSupport
+{
+    protected static function brandCssVariable(): string
+    {
+        return '--acme-brand';
     }
 }

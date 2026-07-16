@@ -79,7 +79,7 @@ class ThemeSupport
      * Returns the CSS rule to inject as inline style, or null if inheritance is disabled
      * or no brand color is available.
      *
-     * @return null|string CSS rule like ":root { --middag-brand: #0f6cbf; }"
+     * @return null|string CSS rule like ":root { --brand: #0f6cbf; }"
      */
     public static function getCssInjection(): ?string
     {
@@ -92,7 +92,7 @@ class ThemeSupport
             return null;
         }
 
-        return sprintf(':root { --middag-brand: %s; }', $brand);
+        return sprintf(':root { %s: %s; }', static::brandCssVariable(), $brand);
     }
 
     /**
@@ -106,5 +106,17 @@ class ThemeSupport
             'brandColor' => self::isInheritanceEnabled() ? self::getBrandColor() : null,
             'inherit' => self::isInheritanceEnabled(),
         ];
+    }
+
+    /**
+     * CSS custom property name used by {@see getCssInjection()}.
+     *
+     * Value-free default: `--brand`. A host whose design system consumes a
+     * branded variable name overrides this seam (late static binding) so the
+     * injected rule targets the property its stylesheets actually read.
+     */
+    protected static function brandCssVariable(): string
+    {
+        return '--brand';
     }
 }
