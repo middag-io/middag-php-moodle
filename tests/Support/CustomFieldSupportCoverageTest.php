@@ -58,6 +58,23 @@ final class CustomFieldSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetFieldValuesRequestsAllFieldsRegardlessOfVisibility(): void
+    {
+        CustomFieldSupport::getFieldValues('core_course', 'course', 10);
+
+        // Must pass $returnall = true so session-hidden fields are not filtered.
+        self::assertTrue($GLOBALS['__middag_test_cf_export_returnall']);
+    }
+
+    #[Test]
+    public function testGetFieldValuesBulkRequestsAllFields(): void
+    {
+        CustomFieldSupport::getFieldValuesBulk('core_course', 'course', [100]);
+
+        self::assertTrue($GLOBALS['__middag_test_cf_bulk_returnall']);
+    }
+
+    #[Test]
     public function testGetFieldValueReturnsTheNamedValue(): void
     {
         $GLOBALS['__middag_test_cf_values'] = ['city' => 'NYC'];
@@ -131,6 +148,29 @@ final class CustomFieldSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSaveFieldDataRequestsAllFields(): void
+    {
+        $GLOBALS['__middag_test_cf_instance_data'] = [$this->makeController('city')];
+
+        CustomFieldSupport::saveFieldData('core_course', 'course', 10, ['city' => 'NYC']);
+
+        // Hidden fields must be reachable for matching, or the write no-ops.
+        self::assertTrue($GLOBALS['__middag_test_cf_instance_returnall']);
+    }
+
+    #[Test]
+    public function testSaveFieldDataReturnsFalseWhenAShortnameHasNoDefinedField(): void
+    {
+        // Only 'city' is defined; saving 'internal_notes' must not report
+        // success, since that value is silently dropped.
+        $GLOBALS['__middag_test_cf_instance_data'] = [$this->makeController('city')];
+
+        self::assertFalse(
+            CustomFieldSupport::saveFieldData('core_course', 'course', 10, ['internal_notes' => 'x'])
+        );
+    }
+
+    #[Test]
     public function testSaveFieldDataReturnsFalseOnFailure(): void
     {
         $GLOBALS['__middag_test_cf_throw'] = true;
@@ -163,6 +203,9 @@ final class CustomFieldSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_cf_deleted'],
             $GLOBALS['__middag_test_cf_throw'],
             $GLOBALS['__middag_test_cf_throw_get_handler'],
+            $GLOBALS['__middag_test_cf_export_returnall'],
+            $GLOBALS['__middag_test_cf_bulk_returnall'],
+            $GLOBALS['__middag_test_cf_instance_returnall'],
         );
     }
 

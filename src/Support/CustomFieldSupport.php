@@ -40,7 +40,12 @@ class CustomFieldSupport
     {
         try {
             $handler = handler::get_handler($component, $area);
-            $data = $handler->export_instance_data_object($instanceid);
+            // $returnall = true: this is a data-layer read, so return every
+            // defined field's persisted value regardless of the ambient
+            // session's per-field view capability. The default (false) filters
+            // fields the current $USER cannot see, making a hidden-but-populated
+            // field indistinguishable from an absent one in cron/CLI/WS context.
+            $data = $handler->export_instance_data_object($instanceid, true);
 
             return (array) $data;
         } catch (Throwable $throwable) {
@@ -80,7 +85,9 @@ class CustomFieldSupport
     {
         try {
             $handler = handler::get_handler($component, $area);
-            $alldata = $handler->get_instances_data($instanceids);
+            // See getFieldValues(): return all defined fields, not only those
+            // visible to the ambient session.
+            $alldata = $handler->get_instances_data($instanceids, true);
             $result = [];
 
             foreach ($alldata as $instanceid => $controllers) {
@@ -147,8 +154,12 @@ class CustomFieldSupport
     {
         try {
             $handler = handler::get_handler($component, $area);
-            $controllers = $handler->get_instance_data($instanceid);
+            // $returnall = true so hidden (NOTVISIBLE / VISIBLETOTEACHERS)
+            // fields are still available to match; the default filters them out
+            // and the write silently no-ops while returning true.
+            $controllers = $handler->get_instance_data($instanceid, true);
 
+            $saved = [];
             foreach ($controllers as $controller) {
                 $field = $controller->get_field();
                 $shortname = $field->get('shortname');
@@ -157,10 +168,13 @@ class CustomFieldSupport
                     $controller->set($controller->datafield(), $data[$shortname]);
                     $controller->set('value', $data[$shortname]);
                     $controller->save();
+                    $saved[$shortname] = true;
                 }
             }
 
-            return true;
+            // Signal failure if any requested shortname had no defined field:
+            // returning true while part of the payload was dropped hides the bug.
+            return count($saved) === count($data);
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 

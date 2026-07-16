@@ -153,20 +153,24 @@ if (!class_exists('core_customfield\handler', false)) {
                 return new self();
             }
 
-            public function export_instance_data_object(int $instanceid, bool $onlyvisible = false): \stdClass
+            public function export_instance_data_object(int $instanceid, bool $returnall = false): \stdClass
             {
                 if (!empty($GLOBALS['__middag_test_cf_throw'])) {
                     throw new \dml_exception('custom field read failed');
                 }
 
+                $GLOBALS['__middag_test_cf_export_returnall'] = $returnall;
+
                 return (object) ($GLOBALS['__middag_test_cf_values'] ?? []);
             }
 
-            public function get_instances_data(array $instanceids, bool $onlyvisible = false): array
+            public function get_instances_data(array $instanceids, bool $returnall = false): array
             {
                 if (!empty($GLOBALS['__middag_test_cf_throw'])) {
                     throw new \dml_exception('custom field bulk read failed');
                 }
+
+                $GLOBALS['__middag_test_cf_bulk_returnall'] = $returnall;
 
                 return $GLOBALS['__middag_test_cf_bulk'] ?? [];
             }
@@ -180,11 +184,13 @@ if (!class_exists('core_customfield\handler', false)) {
                 return $GLOBALS['__middag_test_cf_fields'] ?? [];
             }
 
-            public function get_instance_data(int $instanceid, bool $onlyvisible = false): array
+            public function get_instance_data(int $instanceid, bool $returnall = false): array
             {
                 if (!empty($GLOBALS['__middag_test_cf_throw'])) {
                     throw new \dml_exception('custom field instance read failed');
                 }
+
+                $GLOBALS['__middag_test_cf_instance_returnall'] = $returnall;
 
                 return $GLOBALS['__middag_test_cf_instance_data'] ?? [];
             }
