@@ -92,7 +92,8 @@ class NotificationSupport
      * Sends a simple system notification with minimal configuration.
      *
      * Convenience method that creates a {@see NotificationDto} internally
-     * using `local_example` as component and `system_notification` as name.
+     * using {@see ComponentContext::name()} as component and
+     * {@see defaultMessageName()} as name.
      *
      * @param int         $userid_to    recipient user ID
      * @param string      $subject      notification subject line
@@ -109,7 +110,7 @@ class NotificationSupport
     ): ?int {
         $notification = new NotificationDto(
             component: ComponentContext::name(),
-            name: 'system_notification',
+            name: static::defaultMessageName(),
             useridTo: $userid_to,
             subject: $subject,
             fullMessage: $message_html,
@@ -172,5 +173,18 @@ class NotificationSupport
 
             return false;
         }
+    }
+
+    /**
+     * Message provider name used by {@see sendSimple()}.
+     *
+     * Value-free default: `system_notification`. A host whose product
+     * registers a differently named provider in its `db/messages.php`
+     * overrides this seam (late static binding) so simple sends route
+     * through the provider that actually exists.
+     */
+    protected static function defaultMessageName(): string
+    {
+        return 'system_notification';
     }
 }

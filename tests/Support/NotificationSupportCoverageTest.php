@@ -176,6 +176,29 @@ final class NotificationSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSendSimpleUsesTheValueFreeDefaultMessageName(): void
+    {
+        $GLOBALS['__middag_test_message_send_result'] = 202;
+
+        NotificationSupport::sendSimple(10, 'Subject', '<p>Message</p>');
+
+        self::assertSame('system_notification', $GLOBALS['__middag_test_sent_message']->name);
+    }
+
+    #[Test]
+    public function testSendSimpleHonoursADefaultMessageNameOverride(): void
+    {
+        // The seam must resolve via late static binding: a host subclass
+        // overriding defaultMessageName() reroutes sendSimple() to the
+        // provider its product actually registers in db/messages.php.
+        $GLOBALS['__middag_test_message_send_result'] = 202;
+
+        NotificationSupportWithCustomMessageName::sendSimple(10, 'Subject', '<p>Message</p>');
+
+        self::assertSame('custom_provider', $GLOBALS['__middag_test_sent_message']->name);
+    }
+
+    #[Test]
     public function testGetUnreadCountReturnsTheApiCount(): void
     {
         $GLOBALS['__middag_test_unread_count'] = 7;
@@ -243,5 +266,18 @@ final class NotificationSupportCoverageTest extends TestCase
         };
 
         self::assertFalse(NotificationSupport::markRead(99));
+    }
+}
+
+/**
+ * Fixture: host subclass overriding the defaultMessageName() seam.
+ *
+ * @internal
+ */
+final class NotificationSupportWithCustomMessageName extends NotificationSupport
+{
+    protected static function defaultMessageName(): string
+    {
+        return 'custom_provider';
     }
 }
