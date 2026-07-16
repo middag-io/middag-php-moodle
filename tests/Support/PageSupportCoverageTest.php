@@ -252,6 +252,66 @@ final class PageSupportCoverageTest extends TestCase
         unset($GLOBALS['__middag_test_admin_root']);
     }
 
+    #[Test]
+    public function testAdminLoadNavigationDegradesGracefullyWhenTheSectionIsUnknown(): void
+    {
+        // locate() returns null for an unknown/capability-gated section; reading
+        // ->path on null and count()ing it would TypeError. Degrade to no path.
+        $GLOBALS['__middag_test_admin_root'] = new class {
+            public function locate(string $section, bool $strict = false): mixed
+            {
+                return null;
+            }
+        };
+        $this->page->settingsnav = new class {
+            public function get(mixed $key): object
+            {
+                return $this;
+            }
+        };
+
+        PageSupport::adminLoadNavigation('unknown_section');
+
+        self::assertCount(0, $this->page->navbar->added);
+
+        unset($GLOBALS['__middag_test_admin_root']);
+    }
+
+    #[Test]
+    public function testAdminLoadNavigationStopsWhenASettingsNodeIsMissing(): void
+    {
+        // A path segment from the full admin tree can be missing from the
+        // per-user settingsnav; get() returns false. The loop must break, not
+        // read ->text on false and push a blank breadcrumb.
+        $GLOBALS['__middag_test_admin_root'] = new class {
+            public function locate(string $section, bool $strict = false): stdClass
+            {
+                return (object) ['path' => ['a', 'b', 'c', 'd']];
+            }
+        };
+        $this->page->settingsnav = new class {
+            public string $text = 'Node';
+
+            public mixed $action = 'https://moodle.test/node';
+
+            private int $calls = 0;
+
+            public function get(mixed $key): mixed
+            {
+                // Resolve the first three segments, then fail on the fourth.
+                return ++$this->calls < 4 ? $this : false;
+            }
+        };
+
+        PageSupport::adminLoadNavigation('mysection');
+
+        // Only node 3 (i=3 > jump=2) is added; the loop breaks on the missing
+        // 4th node instead of pushing a blank breadcrumb.
+        self::assertCount(1, $this->page->navbar->added);
+
+        unset($GLOBALS['__middag_test_admin_root']);
+    }
+
     private function makePage(): object
     {
         return new class {

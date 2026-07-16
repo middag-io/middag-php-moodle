@@ -136,11 +136,21 @@ class PageSupport
         navigation_node::require_admin_tree();
         $adminroot = admin_get_root(false, false); // settings not required for external pages
         $extpage = $adminroot->locate($section, true);
-        $path = $extpage->path;
+        // locate() returns a reference to NULL for an unknown or capability-gated
+        // section; reading ->path on that would warn and then count(null)
+        // TypeErrors. Degrade gracefully to an empty path (no extra breadcrumbs).
+        $path = is_object($extpage) ? $extpage->path : [];
         $node = $PAGE->settingsnav;
         $i = 0;
         while ($node && count($path) > 0) {
             $node = $node->get(array_pop($path));
+            // A path segment from the full admin tree can be missing from the
+            // per-user settingsnav (capability-filtered); get() returns false.
+            // Re-check before reading ->text/->action so we don't push a blank
+            // breadcrumb (false->text) — only the NEXT iteration's guard would.
+            if (!$node) {
+                break;
+            }
             ++$i;
             if ($i > $jump) {
                 $PAGE->navbar->add($node->text, $node->action);
