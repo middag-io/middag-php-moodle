@@ -21,8 +21,10 @@ use Middag\Framework\Bus\Attribute\Schedule;
  * helper translates it into the array shape consumed by Moodle's
  * `core\task` registration tooling (`db/tasks.php`).
  *
- * Used by code-generation tooling that scans command classes for the
- * `#[Schedule]` attribute and emits a `tasks.php` manifest.
+ * This class is the canonical, host-side statement of that mapping. It has
+ * no in-library callers: code-generation tooling that cannot require this
+ * package re-implements the mapping and pins parity against this class in
+ * its own test suite instead of delegating.
  *
  * @internal
  */
