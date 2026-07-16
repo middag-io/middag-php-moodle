@@ -158,4 +158,27 @@ final class TimeSupportCoverageTest extends TestCase
 
         self::assertInstanceOf(DateTimeZone::class, TimeSupport::userTimezoneObject(7));
     }
+
+    #[Test]
+    public function testUserTimezoneWithMissingUserFallsBackToTheServerTimezone(): void
+    {
+        // get_user() returning false (deleted/nonexistent id) must not leak
+        // the AMBIENT session user's timezone — the zones differ here to
+        // prove the deterministic server fallback is taken.
+        $GLOBALS['__middag_test_user_record'] = false;
+        $GLOBALS['__middag_test_user_tz'] = 'America/Sao_Paulo';
+        $GLOBALS['__middag_test_server_tz'] = 'Australia/Perth';
+
+        self::assertSame('Australia/Perth', TimeSupport::userTimezone(999999));
+    }
+
+    #[Test]
+    public function testUserTimezoneObjectWithMissingUserFallsBackToTheServerTimezone(): void
+    {
+        $GLOBALS['__middag_test_user_record'] = false;
+        $GLOBALS['__middag_test_user_tz'] = 'America/Sao_Paulo';
+        $GLOBALS['__middag_test_server_tz'] = 'Australia/Perth';
+
+        self::assertSame('Australia/Perth', TimeSupport::userTimezoneObject(999999)->getName());
+    }
 }

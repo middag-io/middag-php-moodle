@@ -93,16 +93,20 @@ class TimeSupport
      *
      * @param null|int $userid user ID (null = current user)
      *
-     * @return string timezone identifier (e.g. 'America/Sao_Paulo')
+     * @return string timezone identifier (e.g. 'America/Sao_Paulo'); the
+     *                server timezone when the requested user cannot be found
      */
     public static function userTimezone(?int $userid = null): string
     {
         if ($userid !== null) {
             $user = core_user::get_user($userid);
 
-            if ($user) {
-                return core_date::get_user_timezone($user);
-            }
+            // A missing/deleted user must not fall through to the ambient
+            // session user's timezone (non-deterministic, attributed to the
+            // wrong user) — the server timezone is the documented fallback.
+            return $user
+                ? core_date::get_user_timezone($user)
+                : core_date::get_server_timezone();
         }
 
         return core_date::get_user_timezone();
@@ -152,16 +156,19 @@ class TimeSupport
      *
      * @param null|int $userid user ID (null = current user)
      *
-     * @return DateTimeZone the user timezone
+     * @return DateTimeZone the user timezone; the server timezone when the
+     *                      requested user cannot be found
      */
     public static function userTimezoneObject(?int $userid = null): DateTimeZone
     {
         if ($userid !== null) {
             $user = core_user::get_user($userid);
 
-            if ($user) {
-                return core_date::get_user_timezone_object($user);
-            }
+            // See userTimezone(): never leak the ambient session user's
+            // timezone for a user id that cannot be resolved.
+            return $user
+                ? core_date::get_user_timezone_object($user)
+                : core_date::get_server_timezone_object();
         }
 
         return core_date::get_user_timezone_object();
