@@ -24,17 +24,18 @@ use Throwable;
  * Centralizes access to get_config/set_config/unset_config for the plugin as a
  * deliberate SAFE FACADE: every read/write method catches Throwable, routes it
  * to {@see Debug::traceException()} (emitted only when the runtime debug mode is
- * enabled) and returns a predictable failure value — `false` for the mixed
- * getters, `false` for the boolean mutators. By design, config access never
- * propagates a host exception into caller flow.
+ * enabled) and returns a predictable failure value. By design, config access
+ * never propagates a host exception into caller flow.
  *
- * POLICY / trade-off (QG-MDL-06, accepted): because errors collapse into
- * `false`, the mixed getters do NOT distinguish "key absent" (`null`) from
- * "read failed" (`false`); a caller needing that distinction must read the host
- * API directly. In production (debug off) a swallowed exception surfaces only as
- * the `false` return, not as a log line. Consumers should treat `false` as
- * "unavailable" and use the native Moodle config API directly when they need
- * to distinguish absent values from host read failures.
+ * CONTRACT (amends QG-MDL-06): the mixed getters DO distinguish the two failure
+ * modes. Moodle's get_config() returns `false` for an absent key; the getters
+ * normalise that to `null`, and reserve `false` for a genuine host read failure
+ * (the Throwable path). So a single-key read yields the value when present,
+ * `null` when the key was never set, and `false` only on error — letting a
+ * caller safely write `ConfigSupport::get($k) ?? $default`. The boolean mutators
+ * return `false` on failure. (The prior QG-MDL-06 rule collapsed both absent and
+ * error into `false`; it was superseded because the normalisation restores the
+ * distinction its own consumers assumed via `?? default`.)
  *
  * @api
  */
@@ -65,7 +66,13 @@ class ConfigSupport
                 return get_config(self::pluginName());
             }
 
-            return get_config(self::pluginName(), $name);
+            $value = get_config(self::pluginName(), $name);
+
+            // Moodle's get_config() yields false (never null) for an absent
+            // key. Normalise that to null so an absent key is distinguishable
+            // from a read failure (which returns false via the catch below),
+            // matching the documented contract (see class docblock).
+            return $value === false ? null : $value;
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 
@@ -84,7 +91,11 @@ class ConfigSupport
     public static function getConfig(string $plugin, ?string $name = null): mixed
     {
         try {
-            return get_config($plugin, $name);
+            $value = get_config($plugin, $name);
+
+            // See get(): normalise the host's false-for-absent into null so
+            // callers can tell an unset key (null) from a read failure (false).
+            return $value === false ? null : $value;
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 

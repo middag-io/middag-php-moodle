@@ -80,6 +80,15 @@ final class ConfigSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetReturnsNullForAnAbsentKey(): void
+    {
+        // get_config() returns false for a key that was never set; the getter
+        // normalises that to null so callers can use `?? $default`, and only a
+        // read failure yields false.
+        self::assertNull(ConfigSupport::get('never_set'));
+    }
+
+    #[Test]
     public function testGetReturnsFalseWhenComponentResolutionThrows(): void
     {
         ComponentContext::reset();
@@ -93,6 +102,12 @@ final class ConfigSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_config']['x'] = 'y';
 
         self::assertSame('y', ConfigSupport::getConfig('local_example', 'x'));
+    }
+
+    #[Test]
+    public function testGetConfigReturnsNullForAnAbsentKey(): void
+    {
+        self::assertNull(ConfigSupport::getConfig('local_example', 'never_set'));
     }
 
     #[Test]
