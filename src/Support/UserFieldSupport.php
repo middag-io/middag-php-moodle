@@ -56,8 +56,12 @@ class UserFieldSupport
         global $DB;
 
         try {
-            if (is_numeric($fieldidorshortname)) {
-                $record = $DB->get_record('user_info_field', ['id' => (int) $fieldidorshortname]);
+            // Disambiguate on the actual PHP type, not is_numeric(): Moodle
+            // allows purely-numeric profile-field shortnames (e.g. '007'), and
+            // is_numeric() would misroute such a string to the id lookup. Only
+            // a real int means "field id".
+            if (is_int($fieldidorshortname)) {
+                $record = $DB->get_record('user_info_field', ['id' => $fieldidorshortname]);
             } else {
                 $record = $DB->get_record('user_info_field', ['shortname' => $fieldidorshortname]);
             }
@@ -240,8 +244,10 @@ class UserFieldSupport
         global $DB;
 
         try {
-            if (is_numeric($fieldidorshortname)) {
-                $shortname = $DB->get_field('user_info_field', 'shortname', ['id' => (int) $fieldidorshortname]);
+            // See getField(): route on the real type, since a numeric-looking
+            // string (e.g. '007') is a valid shortname, not a field id.
+            if (is_int($fieldidorshortname)) {
+                $shortname = $DB->get_field('user_info_field', 'shortname', ['id' => $fieldidorshortname]);
 
                 if ($shortname === false) {
                     return false;

@@ -99,6 +99,18 @@ final class UserFieldSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetFieldTreatsANumericStringAsAShortname(): void
+    {
+        // Moodle allows purely-numeric shortnames ('007'); a numeric-looking
+        // string must be looked up by shortname, not misrouted to an id lookup.
+        $this->db->record = (object) ['id' => 42, 'shortname' => '007', 'name' => 'Agent', 'datatype' => 'text'];
+
+        UserFieldSupport::getField('007');
+
+        self::assertSame(['shortname' => '007'], $this->db->capturedConditions);
+    }
+
+    #[Test]
     public function testGetFieldReturnsNullWhenNotFound(): void
     {
         $this->db->record = false;
@@ -261,6 +273,15 @@ final class UserFieldSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSaveUserDataTreatsANumericStringAsAShortname(): void
+    {
+        // '007' is a shortname, so the value is written under '007' — not
+        // looked up as field id 7 and misfiled under an unrelated field.
+        self::assertTrue(UserFieldSupport::saveUserData(5, '007', 'agent'));
+        self::assertSame([[5, ['007' => 'agent']]], $GLOBALS['__middag_test_saved_profile_fields']);
+    }
+
+    #[Test]
     public function testSaveUserDataReturnsFalseWhenTheLookupThrows(): void
     {
         $this->db->fieldThrow = true;
@@ -324,11 +345,16 @@ final class UserFieldSupportCoverageTest extends TestCase
 
             public bool $fieldThrow = false;
 
-            public function get_record($table, $conditions = null, $fields = '*', $strictness = 0): mixed
+            /** @var null|array<string, mixed> */
+            public ?array $capturedConditions = null;
+
+            public function get_record($table, ?array $conditions = null, $fields = '*', $strictness = 0): mixed
             {
                 if ($this->recordThrow) {
                     throw new dml_exception('db failure');
                 }
+
+                $this->capturedConditions = $conditions;
 
                 return $this->record;
             }
