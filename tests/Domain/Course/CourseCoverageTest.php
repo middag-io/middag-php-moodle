@@ -31,4 +31,16 @@ final class CourseCoverageTest extends TestCase
     {
         $this->assertSame('course', Course::getTable());
     }
+
+    #[Test]
+    public function isVisibleIsTrueWhenTheCourseIsShown(): void
+    {
+        $this->assertTrue(Course::fromRecord(['visible' => 1])->isVisible());
+    }
+
+    #[Test]
+    public function isVisibleIsFalseWhenTheCourseIsHidden(): void
+    {
+        $this->assertFalse(Course::fromRecord(['visible' => 0])->isVisible());
+    }
 }

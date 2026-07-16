@@ -159,6 +159,14 @@ class Course extends AbstractMoodleEntity
     protected ?string $pdfexportfont = null;
 
     /**
+     * Whether the course is visible to students (not hidden).
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible === 1;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public static function getTable(): string
