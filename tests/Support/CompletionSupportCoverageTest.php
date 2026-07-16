@@ -196,6 +196,20 @@ final class CompletionSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetCmTrackingRespectsTheEnablementCascade(): void
+    {
+        // The module still carries completion = 2 (Automatic), but completion is
+        // disabled higher up the cascade (site/course). is_enabled() returns
+        // COMPLETION_DISABLED, so the adapter must report None — not the stale
+        // raw field.
+        $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['completion' => 2]]];
+        $GLOBALS['__middag_test_completion_enabled'] = false;
+
+        self::assertSame(CompletionTracking::None, CompletionSupport::getCmTracking(10, 6));
+        self::assertFalse(CompletionSupport::isEnabledCm(10, 6));
+    }
+
+    #[Test]
     public function testGetCmTrackingReturnsNullWhenModuleAbsent(): void
     {
         $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => []];

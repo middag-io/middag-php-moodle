@@ -151,7 +151,18 @@ class CompletionSupport
             }
 
             $cm = $modinfo->cms[$cmid];
-            $raw = (int) $cm->completion;
+
+            // Respect the full enablement cascade (site -> course -> module) via
+            // completion_info::is_enabled(), not the raw $cm->completion field:
+            // that field stays set (e.g. 2/Automatic) even after completion is
+            // disabled site- or course-wide, so reading it directly would report
+            // tracking as enabled when Moodle considers it disabled.
+            $info = self::infoForCourse($courseid);
+            if (!$info instanceof completion_info) {
+                return null;
+            }
+
+            $raw = (int) $info->is_enabled($cm);
 
             return CompletionTracking::resolve($raw);
         } catch (Throwable $throwable) {

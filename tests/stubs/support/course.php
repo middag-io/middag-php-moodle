@@ -154,7 +154,17 @@ if (!class_exists('completion_info', false)) {
                 throw new \RuntimeException("is_enabled failed");
             }
 
-            return $GLOBALS["__middag_test_completion_enabled"] ?? true;
+            $enabled = $GLOBALS["__middag_test_completion_enabled"] ?? true;
+
+            // Course-level check (no $cm): return the driven enablement flag.
+            if ($cm === null) {
+                return $enabled;
+            }
+
+            // Module-level: mirror real completion_info::is_enabled() —
+            // COMPLETION_DISABLED (0) when the cascade disables completion,
+            // otherwise the cm own completion mode.
+            return $enabled ? (int) ($cm->completion ?? 0) : 0;
         }
 
         public function is_course_complete($userid) {
