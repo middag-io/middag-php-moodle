@@ -41,7 +41,17 @@ class GradeSupport
         global $DB;
 
         try {
-            $sql = "SELECT gg.{$fields}
+            // Qualify EVERY field with the gg. alias, not just the first.
+            // "SELECT gg.{$fields}" only prefixes the first token, so any later
+            // field shared by grade_grades and grade_items (id, hidden, locked,
+            // timecreated, ...) is left unqualified and the DB rejects it as an
+            // ambiguous column. Leave already-qualified tokens and '*' alone.
+            $select = implode(', ', array_map(
+                static fn (string $f): string => str_contains($f, '.') ? $f : 'gg.' . $f,
+                array_map('trim', explode(',', $fields))
+            ));
+
+            $sql = "SELECT {$select}
                     FROM {grade_grades} gg
                     JOIN {grade_items} gi ON gi.id = gg.itemid
                     WHERE gg.userid = :userid AND gi.courseid = :courseid";

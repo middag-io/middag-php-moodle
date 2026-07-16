@@ -130,6 +130,25 @@ final class GradeSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetGradeQualifiesEveryFieldToAvoidAmbiguousColumns(): void
+    {
+        // 'hidden' exists on both grade_grades and grade_items, so a
+        // second-position unqualified field would make the JOIN ambiguous.
+        // Every field must carry the gg. alias, not just the first.
+        $db = $this->createMock(moodle_database::class);
+        $db->expects($this->once())
+            ->method('get_records_sql')
+            ->with($this->logicalAnd(
+                $this->stringContains('gg.itemid'),
+                $this->stringContains('gg.hidden')
+            ))
+            ->willReturn([]);
+        $GLOBALS['DB'] = $db;
+
+        self::assertSame([], GradeSupport::getGrade(10, 7, 'itemid, hidden'));
+    }
+
+    #[Test]
     public function testGetGradeReturnsEmptyArrayWhenTheReadThrows(): void
     {
         $db = $this->createMock(moodle_database::class);
