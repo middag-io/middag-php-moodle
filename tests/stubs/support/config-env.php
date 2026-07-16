@@ -71,7 +71,10 @@ if (!function_exists('complete_user_login')) {
 if (!function_exists('get_admin')) {
     function get_admin(): mixed
     {
-        return $GLOBALS['__middag_test_admin'] ?? null;
+        // Real Moodle returns stdClass|false — false (not null) when there is
+        // no site admin. Default to false so the no-admin branch exercises the
+        // adapter's false-normalisation instead of hiding it (LB-MDL-SUP-002).
+        return $GLOBALS['__middag_test_admin'] ?? false;
     }
 }
 

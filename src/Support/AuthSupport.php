@@ -77,6 +77,12 @@ class AuthSupport
      */
     public static function getAdmin(): ?stdClass
     {
-        return get_admin();
+        // get_admin() returns stdClass|false (false when $CFG->siteadmins is
+        // empty — during install before an admin exists, or transiently in unit
+        // tests), never null. Returning that false straight through a ?stdClass
+        // signature raises a TypeError in the caller, so normalise it to null.
+        $admin = get_admin();
+
+        return $admin instanceof stdClass ? $admin : null;
     }
 }

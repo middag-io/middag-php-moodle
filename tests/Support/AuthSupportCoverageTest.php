@@ -113,4 +113,15 @@ final class AuthSupportCoverageTest extends TestCase
     {
         self::assertNull(AuthSupport::getAdmin());
     }
+
+    #[Test]
+    public function testGetAdminNormalisesTheHostFalseIntoNull(): void
+    {
+        // get_admin() returns false (not null) when there is no site admin.
+        // Passing that straight through the ?stdClass signature would raise a
+        // TypeError; getAdmin() must normalise it to null.
+        $GLOBALS['__middag_test_admin'] = false;
+
+        self::assertNull(AuthSupport::getAdmin());
+    }
 }
