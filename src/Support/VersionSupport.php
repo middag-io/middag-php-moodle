@@ -50,7 +50,7 @@ final class VersionSupport
      * @return string Normalized version in x.y.z format.
      *
      * @example
-     * if (moodle_versions::version_semver() === '4.4.0') { /* ... *\/ }
+     * if (VersionSupport::versionSemver() === '4.4.0') { /* ... *\/ }
      */
     public static function versionSemver(): string
     {
@@ -73,7 +73,7 @@ final class VersionSupport
      * @return int current branch (major*100 + minor)
      *
      * @example
-     * [$major, $minor] = moodle_versions::major_minor(); // [4, 4]
+     * [$major, $minor] = VersionSupport::majorMinor(); // [4, 4]
      */
     public static function branch(): int
     {
@@ -111,8 +111,8 @@ final class VersionSupport
      *                                version_compare() operator
      *
      * @example
-     * moodle_versions::compare('>=', '4.2');   // true/false
-     * moodle_versions::compare('<',  '4.5.0'); // true/false
+     * VersionSupport::compare('>=', '4.2');   // true/false
+     * VersionSupport::compare('<',  '4.5.0'); // true/false
      */
     public static function compare(string $operator, string $constraint): bool
     {
@@ -140,7 +140,7 @@ final class VersionSupport
      * @return bool True if at least the specified version
      *
      * @example
-     * if (moodle_versions::at_least('4.1')) {
+     * if (VersionSupport::atLeast('4.1')) {
      * }
      */
     public static function atLeast(MoodleVersion|string $min): bool
@@ -161,7 +161,7 @@ final class VersionSupport
      * @return bool True if within range
      *
      * @example
-     * if (moodle_versions::between('4.0', '4.2')) {
+     * if (VersionSupport::between('4.0', '4.2')) {
      * }
      */
     public static function between(MoodleVersion|string $min, MoodleVersion|string $max): bool
@@ -188,7 +188,7 @@ final class VersionSupport
      * @throws MoodleAdapterException if the current version is less than the minimum
      *
      * @example
-     * moodle_versions::assert_min('4.0'); // throws MoodleAdapterException if < 4.0
+     * VersionSupport::assertMin('4.0'); // throws MoodleAdapterException if < 4.0
      */
     public static function assertMin(string $min, ?string $msg = null): void
     {
@@ -218,7 +218,7 @@ final class VersionSupport
      *     'legacy_renderer' => ['until' => '4.2'],
      *     'cool_api'        => ['since' => '4.2', 'until' => '4.5'],
      * ];
-     * if (moodle_versions::supports('cool_api', $matrix)) {
+     * if (VersionSupport::supports('cool_api', $matrix)) {
      * }
      */
     public static function supports(string $feature, array $matrix): bool
