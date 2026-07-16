@@ -50,7 +50,12 @@ class LockSupport
      *                                   value lets a long job's lock expire mid-run and a
      *                                   concurrent call re-acquire it — size it to the job
      *
-     * @return null|T callback return value, or null if the lock could not be acquired
+     * @return null|T callback return value, or null if the lock could not be
+     *                acquired. CAVEAT: null is overloaded — a callback whose T
+     *                legitimately includes null is indistinguishable from
+     *                "skipped, lock busy". Callers needing to disambiguate must
+     *                use a non-nullable T (e.g. wrap the result), or acquire()/
+     *                release() manually and branch on the lock handle.
      */
     public static function execute(string $resource, callable $callback, int $timeout = 0, int $maxlifetime = 86400): mixed
     {
