@@ -90,6 +90,16 @@ final class LangSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetStringDefaultsToCoreNotThePluginWhenComponentOmitted(): void
+    {
+        // Intentional divergence from get(): getString() is Moodle-native, so an
+        // omitted component stays '' (core), whereas get() resolves it via
+        // ComponentContext to the plugin. Core-string call sites rely on this.
+        self::assertSame('[/id]', LangSupport::getString('id'));
+        self::assertSame('[local_example/id]', LangSupport::get('id'));
+    }
+
+    #[Test]
     public function testGetStringOrIdentifierReturnsTheStringWhenItExists(): void
     {
         $GLOBALS['__middag_test_string_exists'] = static fn (): bool => true;

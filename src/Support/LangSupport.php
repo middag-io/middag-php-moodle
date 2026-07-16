@@ -53,10 +53,16 @@ class LangSupport
     }
 
     /**
-     * Retrieves a localized string (alias for get).
+     * Retrieves a core (Moodle-native) localized string.
+     *
+     * This is NOT an alias for {@see get()}: get() defaults an omitted component
+     * to the plugin (via ComponentContext), whereas getString() leaves it '',
+     * which Moodle normalises to core. Use getString() for core strings; for a
+     * plugin-defined string pass the component explicitly, or use get().
      *
      * @param string $identifier the string identifier
-     * @param string $component  Component name
+     * @param string $component  Component name; defaults to '' (core). Pass a
+     *                           plugin component (or use get()) for plugin strings
      * @param mixed  $a          variable to replace in the string
      * @param bool   $lazyload   whether to return a lang_string object
      *
