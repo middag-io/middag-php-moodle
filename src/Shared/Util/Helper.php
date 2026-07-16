@@ -24,26 +24,6 @@ use Exception;
 class Helper
 {
     /**
-     * Merges two arrays, giving precedence to non-null values from the new array.
-     *
-     * @param array $default  the base array with default values
-     * @param array $newarray the array with new values to be merged
-     *
-     * @return array the resulting merged array
-     */
-    public static function customArrayMerge(array $default, array $newarray): array
-    {
-        foreach ($newarray as $key => $value) {
-            // If the key doesn't exist in the default array or the new value is not null/false, update it.
-            if (!array_key_exists($key, $default) || !is_null($value)) {
-                $default[$key] = $value;
-            }
-        }
-
-        return $default;
-    }
-
-    /**
      * Logs a message during plugin installation or upgrade process, using Moodle notifications.
      *
      * @param string $message Message to log

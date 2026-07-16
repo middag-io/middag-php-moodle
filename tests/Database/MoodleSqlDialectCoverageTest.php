@@ -22,8 +22,10 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test MoodleSqlDialect.
  *
- * Emits Moodle-flavoured SQL fragments. inClause()/compareText() delegate to the
- * moodle_database stub (tests/bootstrap.php); the rest is pure string logic.
+ * Covers the Moodle-specific overrides only: table() bracing and the
+ * inClause()/compareText() delegations to the moodle_database stub
+ * (tests/bootstrap.php). The inherited MySQL idioms (limitOffset/lockClause/
+ * upsertClause) live in and are covered by the framework MysqlSqlDialect.
  *
  * @internal
  */
@@ -62,63 +64,6 @@ final class MoodleSqlDialectCoverageTest extends TestCase
     public function compareTextDelegatesToDbHelper(): void
     {
         $this->assertSame('CAST(col AS TEXT)', $this->dialect->compareText('col'));
-    }
-
-    #[Test]
-    public function limitOffsetWithNeitherReturnsEmpty(): void
-    {
-        $this->assertSame('', $this->dialect->limitOffset(null, null));
-    }
-
-    #[Test]
-    public function limitOffsetWithLimitOnly(): void
-    {
-        $this->assertSame(' LIMIT 25', $this->dialect->limitOffset(25, null));
-    }
-
-    #[Test]
-    public function limitOffsetWithOffsetOnlyUsesMaxRowSentinel(): void
-    {
-        $this->assertSame(' LIMIT 18446744073709551615 OFFSET 10', $this->dialect->limitOffset(null, 10));
-    }
-
-    #[Test]
-    public function limitOffsetWithBoth(): void
-    {
-        $this->assertSame(' LIMIT 25 OFFSET 50', $this->dialect->limitOffset(25, 50));
-    }
-
-    #[Test]
-    public function lockClauseShareEmitsForShare(): void
-    {
-        $this->assertSame(' FOR SHARE', $this->dialect->lockClause('share'));
-    }
-
-    #[Test]
-    public function lockClauseDefaultEmitsForUpdate(): void
-    {
-        $this->assertSame(' FOR UPDATE', $this->dialect->lockClause('exclusive'));
-    }
-
-    #[Test]
-    public function upsertClauseWithUpdatesEmitsValuesAssignments(): void
-    {
-        $this->assertSame(
-            ' ON DUPLICATE KEY UPDATE a = VALUES(a), b = VALUES(b)',
-            $this->dialect->upsertClause(['id'], ['a', 'b'])
-        );
-    }
-
-    #[Test]
-    public function upsertClauseWithNoUpdatesNoOpsThePkColumn(): void
-    {
-        $this->assertSame(' ON DUPLICATE KEY UPDATE id = id', $this->dialect->upsertClause(['id'], []));
-    }
-
-    #[Test]
-    public function upsertClauseWithNoUpdatesAndNoUniqueKeyIsEmpty(): void
-    {
-        $this->assertSame('', $this->dialect->upsertClause([], []));
     }
 
     #[Test]

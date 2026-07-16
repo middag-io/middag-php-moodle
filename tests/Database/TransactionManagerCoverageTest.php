@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Database;
 
 use Error;
-use Middag\Moodle\Database\Contract\TransactionManagerInterface;
+use Middag\Framework\Database\Contract\TransactionManagerInterface;
 use Middag\Moodle\Database\TransactionManager;
 use moodle_database;
 use moodle_transaction;

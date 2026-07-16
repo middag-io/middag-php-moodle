@@ -16,6 +16,7 @@ use core\message\message as core_message;
 use core\url as moodle_url;
 use core\user as core_user;
 use core_message\api;
+use Middag\Moodle\Config\ComponentContext;
 use stdClass;
 use stored_file;
 
@@ -91,7 +92,10 @@ class MessageSupport
      */
     public static function createTempAttachment(stored_file $file): array
     {
-        $dir = make_temp_directory('middag/mtool_automessage');
+        // Component-scoped temp subdir resolved from the composition-root seam,
+        // so the OSS adapter carries no hard-coded product brand or legacy
+        // subplugin slug. Yields e.g. `local_middag/message_attachments`.
+        $dir = make_temp_directory(ComponentContext::name() . '/message_attachments');
         $filename = $file->get_filename();
         $path = $dir . '/' . $filename;
         file_put_contents($path, $file->get_content());

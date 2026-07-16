@@ -22,12 +22,12 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * Helper carries two static utilities. customArrayMerge() is pure array logic
- * covered against every branch of its null/existence guard. installOrUpgradeLog()
- * renders a Moodle notification through the active renderer; it is exercised for
- * both renderer-resolution paths (global $OUTPUT already a core_renderer vs. the
+ * Helper carries a single static utility: installOrUpgradeLog() renders a Moodle
+ * notification through the active renderer. It is exercised for both
+ * renderer-resolution paths (global $OUTPUT already a core_renderer vs. the
  * $PAGE->get_renderer('core') fallback), for the default success type, and for
- * the catch branch when rendering throws.
+ * the catch branch when rendering throws. The former customArrayMerge() moved
+ * to the framework Arr::mergePreferNonNull() and is covered there.
  *
  * Debug::resetRuntime() runs in setUp so the trace sink is quiescent: with no
  * configured debug mode, Helper's catch branch delegate (debug::traceException)
@@ -77,67 +77,6 @@ final class HelperCoverageTest extends TestCase
         );
 
         Debug::resetRuntime();
-    }
-
-    // --- customArrayMerge() ---------------------------------------------------
-
-    #[Test]
-    public function customArrayMergeAddsMissingKeyWithNonNullValue(): void
-    {
-        self::assertSame(
-            ['a' => 1, 'b' => 2],
-            Helper::customArrayMerge(['a' => 1], ['b' => 2]),
-        );
-    }
-
-    #[Test]
-    public function customArrayMergeAddsMissingKeyEvenWhenTheNewValueIsNull(): void
-    {
-        // Key absent from default => the !array_key_exists short-circuit adds it
-        // regardless of the null value.
-        self::assertSame(
-            ['a' => 1, 'b' => null],
-            Helper::customArrayMerge(['a' => 1], ['b' => null]),
-        );
-    }
-
-    #[Test]
-    public function customArrayMergeOverwritesExistingKeyWithNonNullValue(): void
-    {
-        self::assertSame(
-            ['a' => 9],
-            Helper::customArrayMerge(['a' => 1], ['a' => 9]),
-        );
-    }
-
-    #[Test]
-    public function customArrayMergeKeepsExistingValueWhenTheNewValueIsNull(): void
-    {
-        // Key present AND new value null => both guard clauses fail, so the
-        // default value is preserved.
-        self::assertSame(
-            ['a' => 1],
-            Helper::customArrayMerge(['a' => 1], ['a' => null]),
-        );
-    }
-
-    #[Test]
-    public function customArrayMergeOverwritesWithFalseBecauseOnlyNullIsSkipped(): void
-    {
-        // The guard tests is_null only, so a false value (unlike null) is merged.
-        self::assertSame(
-            ['flag' => false],
-            Helper::customArrayMerge(['flag' => true], ['flag' => false]),
-        );
-    }
-
-    #[Test]
-    public function customArrayMergeReturnsTheDefaultUnchangedForAnEmptyNewArray(): void
-    {
-        self::assertSame(
-            ['a' => 1, 'b' => 2],
-            Helper::customArrayMerge(['a' => 1, 'b' => 2], []),
-        );
     }
 
     // --- installOrUpgradeLog() ------------------------------------------------

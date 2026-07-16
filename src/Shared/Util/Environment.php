@@ -50,9 +50,12 @@ final class Environment extends BaseEnvironment
         // Dynamic constant lookup: the moodle-stubs 4.5 series types the
         // DEBUG_DEVELOPER literal in a way PHPStan can prove always-false
         // against $CFG->debug; constant() keeps the comparison opaque to the
-        // analyser and the defined() guard keeps no-host runs safe. 32767 is
-        // Moodle's DEBUG_DEVELOPER value on every supported branch.
-        $developerLevel = \defined('DEBUG_DEVELOPER') ? (int) \constant('DEBUG_DEVELOPER') : 32767;
+        // analyser and the defined() guard keeps no-host runs safe.
+        // DEBUG_DEVELOPER is defined as E_ALL on every supported Moodle branch
+        // (4.5–5.2), so E_ALL is the correct no-host fallback — it tracks the
+        // running PHP (e.g. 30719 on PHP 8.4, 32767 before) instead of a stale
+        // magic number.
+        $developerLevel = \defined('DEBUG_DEVELOPER') ? (int) \constant('DEBUG_DEVELOPER') : E_ALL;
 
         if (isset($CFG->debug) && (int) $CFG->debug === $developerLevel) {
             return self::ENV_DEVELOPMENT;

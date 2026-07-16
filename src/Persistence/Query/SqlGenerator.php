@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Persistence\Query;
 
 use core\exception\coding_exception;
+use Middag\Framework\Persistence\Contract\ConditionCompilerInterface;
 use Middag\Framework\Shared\Enum\Operator;
 use Middag\Moodle\Support\DbSupport;
 
@@ -20,11 +21,13 @@ use Middag\Moodle\Support\DbSupport;
  * SQL generator for query conditions.
  *
  * Translates abstract Query Conditions (field + operator + value) into Moodle-compatible SQL fragments.
- * Table-agnostic and reusable across repositories.
+ * Table-agnostic and reusable across repositories. Implements the framework
+ * {@see ConditionCompilerInterface} port directly (the port is OSS, so no
+ * core-side binding subclass is needed).
  *
  * @internal
  */
-class SqlGenerator
+class SqlGenerator implements ConditionCompilerInterface
 {
     /**
      * Compile a single SQL condition based on Operator Enum.

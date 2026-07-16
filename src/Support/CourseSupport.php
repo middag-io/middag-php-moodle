@@ -299,13 +299,7 @@ class CourseSupport
      */
     public static function isCourseVisible(int $courseid): bool
     {
-        $course = self::getCourse($courseid);
-
-        if (!$course instanceof Course) {
-            return false;
-        }
-
-        return $course->visible === 1;
+        return self::getCourse($courseid)?->isVisible() ?? false;
     }
 
     /**

@@ -14,7 +14,7 @@ namespace Middag\Moodle\Database;
 
 use core\exception\moodle_exception;
 use Exception;
-use Middag\Moodle\Database\Contract\TransactionManagerInterface;
+use Middag\Framework\Database\Contract\TransactionManagerInterface;
 use Middag\Moodle\Support\DbSupport;
 use Throwable;
 
