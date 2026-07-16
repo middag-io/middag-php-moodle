@@ -77,8 +77,14 @@ class LockSupport
      */
     public static function acquire(string $resource, int $timeout = 0, int $maxlifetime = 600): ?lock
     {
+        // Resolve the component (ComponentContext) and lock factory OUTSIDE the
+        // try. A MoodleConfigurationException (adapter not configured) or a
+        // coding_exception (bad $CFG->lock_factory) is misconfiguration that
+        // must fail loud, not be swallowed into the same null as ordinary lock
+        // contention. Only the acquisition itself may degrade to null.
+        $factory = lock_config::get_lock_factory(self::lockType());
+
         try {
-            $factory = lock_config::get_lock_factory(self::lockType());
             $lock = $factory->get_lock($resource, $timeout, $maxlifetime);
 
             return $lock !== false ? $lock : null;

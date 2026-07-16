@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Support;
 
 use core\lock\lock;
+use Exception;
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Middag\Moodle\Support\LockSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -97,11 +99,27 @@ final class LockSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testAcquireReturnsNullWhenTheFactoryThrows(): void
+    public function testAcquirePropagatesWhenTheLockFactoryIsMisconfigured(): void
     {
+        // A failing get_lock_factory() is misconfiguration (e.g. a bad
+        // $CFG->lock_factory), not lock contention — it must fail loud instead
+        // of being swallowed into the same null as an unavailable lock.
         $GLOBALS['__middag_test_lock_factory_throws'] = true;
 
-        self::assertNull(LockSupport::acquire('job_42'));
+        $this->expectException(Exception::class);
+        LockSupport::acquire('job_42');
+    }
+
+    #[Test]
+    public function testAcquirePropagatesWhenComponentContextIsUnconfigured(): void
+    {
+        // Not configuring the adapter is a bootstrap error. ComponentContext's
+        // MoodleConfigurationException must propagate instead of being caught
+        // and reported as an ordinary unavailable lock (fail-loud contract).
+        ComponentContext::reset();
+
+        $this->expectException(MoodleConfigurationException::class);
+        LockSupport::acquire('job_42');
     }
 
     #[Test]
