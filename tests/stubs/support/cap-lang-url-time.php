@@ -77,6 +77,14 @@ if (!function_exists('set_user_preference')) {
             throw new RuntimeException('pref set failed');
         }
 
+        // Mirror moodlelib.php: a null $value DELETES the preference
+        // (delegates to unset_user_preference) instead of storing anything.
+        if ($value === null) {
+            unset($GLOBALS['__middag_test_preferences'][$name]);
+
+            return true;
+        }
+
         $GLOBALS['__middag_test_preferences'][$name] = $value;
 
         return true;

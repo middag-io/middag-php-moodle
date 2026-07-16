@@ -85,7 +85,11 @@ class PreferenceSupport
      * Sets a single user preference.
      *
      * @param string   $name   the preference key
-     * @param mixed    $value  the value to store (will be cast to string by Moodle)
+     * @param mixed    $value  the value to store (will be cast to string by
+     *                         Moodle). CAVEAT: null does NOT store anything —
+     *                         Moodle's set_user_preference() treats null as
+     *                         "delete current value" and delegates to
+     *                         unset_user_preference().
      * @param null|int $userid target user ID (null = current user)
      *
      * @return bool true on success, false on failure

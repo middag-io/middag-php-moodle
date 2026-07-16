@@ -119,6 +119,18 @@ final class PreferenceSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testSetWithNullDeletesThePreference(): void
+    {
+        // Moodle's set_user_preference() treats null as "delete current
+        // value" — a meaningfully different side effect from storing. Pinned
+        // here so the behaviour is intentional, not incidental.
+        $GLOBALS['__middag_test_preferences']['theme'] = 'dark';
+
+        self::assertTrue(PreferenceSupport::set('theme', null));
+        self::assertArrayNotHasKey('theme', $GLOBALS['__middag_test_preferences']);
+    }
+
+    #[Test]
     public function testSetManyStoresEveryValueAndReturnsTrue(): void
     {
         self::assertTrue(PreferenceSupport::setMany(['theme' => 'dark', 'lang' => 'en'], 7));
