@@ -76,10 +76,13 @@ class EventSupport
      */
     public function getEventsByLevel(int $level = base::LEVEL_PARTICIPATING): array
     {
-        return array_filter(
+        // array_values(): array_filter() preserves the original keys, so without
+        // reindexing a caller that json_encode()s the result gets a JSON object
+        // ({"0":...,"2":...}) instead of an array whenever an event is filtered out.
+        return array_values(array_filter(
             $this->getAllEvents(),
             fn (EventDto $e): bool => $e->edulevel === $level
-        );
+        ));
     }
 
     /**

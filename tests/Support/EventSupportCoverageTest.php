@@ -191,11 +191,14 @@ final class EventSupportCoverageTest extends TestCase
 
         $teaching = $support->getEventsByLevel(base::LEVEL_TEACHING);
         self::assertCount(2, $teaching);
+        // Keys must be reindexed sequentially (dropping 'b' at index 1 must not
+        // leave a gap), so the result json_encode()s to an array, not an object.
+        self::assertSame([0, 1], array_keys($teaching));
 
         // Default argument is LEVEL_PARTICIPATING.
         $participating = $support->getEventsByLevel();
         self::assertCount(1, $participating);
-        self::assertSame('b', array_values($participating)[0]->fqcn);
+        self::assertSame('b', $participating[0]->fqcn);
     }
 
     #[Test]
