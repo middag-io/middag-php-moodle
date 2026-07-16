@@ -75,6 +75,13 @@ if (!function_exists('is_enrolled')) {
     }
 }
 
+if (!function_exists('user_has_role_assignment')) {
+    function user_has_role_assignment(int $userid, int $roleid, int $contextid = 0): bool
+    {
+        return !empty($GLOBALS['__middag_test_user_has_role']);
+    }
+}
+
 if (!function_exists('course_get_format')) {
     function course_get_format(mixed $courseorid): object
     {

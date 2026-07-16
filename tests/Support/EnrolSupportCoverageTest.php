@@ -56,6 +56,7 @@ final class EnrolSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_enrol_plugin'],
             $GLOBALS['__middag_test_enrol_instances'],
             $GLOBALS['__middag_test_is_enrolled'],
+            $GLOBALS['__middag_test_user_has_role'],
         );
     }
 
@@ -68,6 +69,7 @@ final class EnrolSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_enrol_plugin'],
             $GLOBALS['__middag_test_enrol_instances'],
             $GLOBALS['__middag_test_is_enrolled'],
+            $GLOBALS['__middag_test_user_has_role'],
         );
     }
 
@@ -153,19 +155,43 @@ final class EnrolSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testEnrolUserReturnsTrueWhenAlreadyEnrolledOnAnExistingManualInstance(): void
+    public function testEnrolUserSkipsOnlyWhenTheManualEnrolmentAndRoleBothExist(): void
     {
-        $this->db->recordExistsMap = ['course' => true, 'user' => true];
+        // Skip the enrolment call only when the specific requested outcome
+        // already holds: enrolled on the manual instance AND the role assigned.
+        $this->db->recordExistsMap = ['course' => true, 'user' => true, 'user_enrolments' => true];
         $plugin = $this->makePlugin();
         $GLOBALS['__middag_test_enrol_plugin'] = $plugin;
         $GLOBALS['__middag_test_enrol_instances'] = [
             (object) ['id' => 60, 'enrol' => 'self'],
             (object) ['id' => 77, 'enrol' => 'manual'],
         ];
-        $GLOBALS['__middag_test_is_enrolled'] = true;
+        $GLOBALS['__middag_test_user_has_role'] = true;
 
         self::assertTrue(EnrolSupport::enrolUser(3, 50, 5));
         self::assertSame([], $plugin->enrolCalls);
+        self::assertSame([], $this->db->insertCalls);
+    }
+
+    #[Test]
+    public function testEnrolUserGrantsTheRoleWhenEnrolledWithoutIt(): void
+    {
+        // The user already has a manual enrolment but not the requested role.
+        // is_enrolled() would wrongly short-circuit; the specific check must
+        // still call enrol_user() so the role gets assigned.
+        $this->db->recordExistsMap = ['course' => true, 'user' => true, 'user_enrolments' => true];
+        $plugin = $this->makePlugin();
+        $GLOBALS['__middag_test_enrol_plugin'] = $plugin;
+        $GLOBALS['__middag_test_enrol_instances'] = [
+            (object) ['id' => 77, 'enrol' => 'manual'],
+        ];
+        $GLOBALS['__middag_test_user_has_role'] = false;
+
+        self::assertTrue(EnrolSupport::enrolUser(3, 50, 5));
+        self::assertCount(1, $plugin->enrolCalls);
+        self::assertSame(77, $plugin->enrolCalls[0][0]->id);
+        self::assertSame(50, $plugin->enrolCalls[0][1]);
+        self::assertSame(5, $plugin->enrolCalls[0][2]);
         self::assertSame([], $this->db->insertCalls);
     }
 
@@ -179,7 +205,6 @@ final class EnrolSupportCoverageTest extends TestCase
         $plugin = $this->makePlugin();
         $GLOBALS['__middag_test_enrol_plugin'] = $plugin;
         $GLOBALS['__middag_test_enrol_instances'] = [];
-        $GLOBALS['__middag_test_is_enrolled'] = false;
 
         self::assertTrue(EnrolSupport::enrolUser(3, 50, 7));
 

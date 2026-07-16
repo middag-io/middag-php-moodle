@@ -29,10 +29,16 @@ class EnrolSupport
     /**
      * Retrieves a user's enrolment record in a specific course.
      *
+     * A user may hold several concurrent enrolments in the same course (e.g. a
+     * manual and a cohort-sync instance). This returns only ONE of them — the
+     * earliest by user_enrolments.id. The ORDER BY makes that pick deterministic
+     * (get_record_sql + IGNORE_MULTIPLE would otherwise return an arbitrary row).
+     * Callers that must act on a specific enrolment method should not rely on it.
+     *
      * @param int $courseid Course ID
      * @param int $userid   User ID
      *
-     * @return null|UserEnrolment the user enrolment entity or null if not found
+     * @return null|UserEnrolment the earliest user enrolment entity, or null if none
      *
      * @throws dml_exception if a database error occurs
      */
@@ -43,7 +49,8 @@ class EnrolSupport
         $sql = 'SELECT ue.*
                 FROM {user_enrolments} ue
                 JOIN {enrol} e ON e.id = ue.enrolid
-                WHERE e.courseid = :courseid AND ue.userid = :userid';
+                WHERE e.courseid = :courseid AND ue.userid = :userid
+                ORDER BY ue.id ASC';
 
         $record = $DB->get_record_sql($sql, ['courseid' => $courseid, 'userid' => $userid], IGNORE_MULTIPLE);
 
@@ -148,7 +155,18 @@ class EnrolSupport
             $manualinstance = $DB->get_record('enrol', ['id' => $instanceid]);
         }
 
-        if (is_enrolled(context_course::instance($courseid), $userid)) {
+        // is_enrolled() reports true for ANY enrolment in the course — even a
+        // different method or role — so it would skip the specific manual
+        // enrolment + role the caller asked for whenever the user already holds
+        // some other enrolment. Check the exact requested outcome instead.
+        $context = context_course::instance($courseid);
+        $alreadyenrolled = $DB->record_exists('user_enrolments', [
+            'enrolid' => $manualinstance->id,
+            'userid' => $userid,
+        ]);
+        $hasrole = user_has_role_assignment($userid, $roleid, $context->id);
+
+        if ($alreadyenrolled && $hasrole) {
             return true;
         }
 
