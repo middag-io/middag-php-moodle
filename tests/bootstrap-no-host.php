@@ -24,6 +24,13 @@ use Middag\Moodle\Config\ComponentContext;
  * them dead. Only the Composer autoloader and the component seam are set up.
  */
 
+// Neutralize ambient environment hints so Environment resolution stays
+// deterministic under any runner (see tests/bootstrap.php for the rationale:
+// MIDDAG_ENV/APP_ENV are resolution step 2, above the $CFG host hook).
+putenv('MIDDAG_ENV');
+putenv('APP_ENV');
+unset($_ENV['MIDDAG_ENV'], $_ENV['APP_ENV'], $_SERVER['MIDDAG_ENV'], $_SERVER['APP_ENV']);
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Mirror the product composition root (same seam as tests/bootstrap.php).

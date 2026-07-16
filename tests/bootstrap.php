@@ -21,6 +21,16 @@ use Middag\Moodle\Config\ComponentContext;
  * without a full Moodle runtime. Tests control return values via $GLOBALS.
  */
 
+// Neutralize ambient environment hints so Environment resolution is driven
+// solely by each test's explicit $CFG signals (Environment::detectHostEnvironment).
+// getEnvironment() reads MIDDAG_ENV/APP_ENV (resolution step 2) ABOVE the
+// $CFG-based host hook (step 3); a container/CI MIDDAG_ENV=development would
+// otherwise override the tests' intended environment and break the
+// production-mode cache-path assertions (FacadeLoader / EventSupport).
+putenv('MIDDAG_ENV');
+putenv('APP_ENV');
+unset($_ENV['MIDDAG_ENV'], $_ENV['APP_ENV'], $_SERVER['MIDDAG_ENV'], $_SERVER['APP_ENV']);
+
 // Moodle constants required by source code
 if (!defined('MOODLE_INTERNAL')) {
     define('MOODLE_INTERNAL', true);
