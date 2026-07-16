@@ -99,6 +99,16 @@ final class LockSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testAcquireForwardsTheSafeDefaultMaxlifetime(): void
+    {
+        // Default 86400 (24h) errs safe on db_record_lock_factory, where a
+        // too-small lifetime lets a long job's lock expire mid-run.
+        LockSupport::acquire('job_42');
+
+        self::assertSame(86400, $GLOBALS['__middag_test_lock_maxlifetime']);
+    }
+
+    #[Test]
     public function testAcquirePropagatesWhenTheLockFactoryIsMisconfigured(): void
     {
         // A failing get_lock_factory() is misconfiguration (e.g. a bad
@@ -161,6 +171,7 @@ final class LockSupportCoverageTest extends TestCase
             '__middag_test_lock_factory_throws',
             '__middag_test_lock_get_throws',
             '__middag_test_lock_release_throws',
+            '__middag_test_lock_maxlifetime',
         ] as $key) {
             unset($GLOBALS[$key]);
         }

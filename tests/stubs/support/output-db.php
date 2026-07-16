@@ -191,11 +191,14 @@ if (!class_exists('core\lock\lock_config', false)) {
                 }
 
                 return new class {
-                    public function get_lock($resource, $timeout, $maxlifetime = 600)
+                    public function get_lock($resource, $timeout, $maxlifetime = 86400)
                     {
                         if (!empty($GLOBALS['__middag_test_lock_get_throws'])) {
                             throw new \Exception('get_lock failed');
                         }
+
+                        $GLOBALS['__middag_test_lock_maxlifetime'] = $maxlifetime;
+
                         if (!empty($GLOBALS['__middag_test_lock_unavailable'])) {
                             return false;
                         }

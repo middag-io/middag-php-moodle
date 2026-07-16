@@ -44,11 +44,15 @@ class LockSupport
      * @param string        $resource    unique resource identifier (e.g. 'job_processing_42')
      * @param callable(): T $callback    the work to execute while holding the lock
      * @param int           $timeout     seconds to wait for lock acquisition (0 = fail immediately)
-     * @param int           $maxlifetime maximum seconds to hold the lock
+     * @param int           $maxlifetime seconds before the lock is treated as stale
+     *                                   (default 86400 = 24h, erring safe). A no-op except
+     *                                   under db_record_lock_factory, where too small a
+     *                                   value lets a long job's lock expire mid-run and a
+     *                                   concurrent call re-acquire it — size it to the job
      *
      * @return null|T callback return value, or null if the lock could not be acquired
      */
-    public static function execute(string $resource, callable $callback, int $timeout = 0, int $maxlifetime = 600): mixed
+    public static function execute(string $resource, callable $callback, int $timeout = 0, int $maxlifetime = 86400): mixed
     {
         $lock = self::acquire($resource, $timeout, $maxlifetime);
 
@@ -71,11 +75,13 @@ class LockSupport
      *
      * @param string $resource    unique resource identifier
      * @param int    $timeout     seconds to wait for lock acquisition (0 = fail immediately)
-     * @param int    $maxlifetime maximum seconds to hold the lock
+     * @param int    $maxlifetime seconds before the lock is treated as stale (default
+     *                            86400 = 24h, erring safe); a no-op except under
+     *                            db_record_lock_factory (see execute())
      *
      * @return null|lock the lock handle, or null if acquisition failed
      */
-    public static function acquire(string $resource, int $timeout = 0, int $maxlifetime = 600): ?lock
+    public static function acquire(string $resource, int $timeout = 0, int $maxlifetime = 86400): ?lock
     {
         // Resolve the component (ComponentContext) and lock factory OUTSIDE the
         // try. A MoodleConfigurationException (adapter not configured) or a
