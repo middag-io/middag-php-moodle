@@ -178,13 +178,13 @@ class TaskSupport
      */
     public function resetScheduledTasks(string $component): void
     {
-        $tasks = core_task_manager::get_all_scheduled_tasks();
-        foreach ($tasks as $task) {
-            if ($task->get_component() === $component) {
-                $task->set_minute($task->get_minute());
-                core_task_manager::configure_scheduled_task($task);
-            }
-        }
+        // Delegate to the real host API. The previous loop re-persisted each
+        // task's CURRENT schedule (set_minute(get_minute()) is an identity
+        // write), never reading db/tasks.php, so a plugin upgrade that changed
+        // a task's cron never took effect and admin-customised tasks were
+        // touched. reset_scheduled_tasks_for_component() loads defaults from
+        // db/tasks.php, respects customisations, and upserts/deletes correctly.
+        core_task_manager::reset_scheduled_tasks_for_component($component);
     }
 
     /* ============================================================================

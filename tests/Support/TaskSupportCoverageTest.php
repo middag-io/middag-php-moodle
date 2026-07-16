@@ -46,6 +46,7 @@ final class TaskSupportCoverageTest extends TestCase
             '__middag_test_run_from_cli',
             '__middag_test_ran_adhoc_cli',
             '__middag_test_configured',
+            '__middag_test_reset_component',
             '__middag_test_adhoc_summary',
             '__middag_test_running_tasks',
             '__middag_test_running_sort',
@@ -212,18 +213,14 @@ final class TaskSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testResetScheduledTasksOnlyReconfiguresMatchingComponent(): void
+    public function testResetScheduledTasksDelegatesToTheHostApi(): void
     {
-        $GLOBALS['__middag_test_all_scheduled_tasks'] = [
-            $this->scheduledTask(['component' => 'local_example', 'minute' => '7']),
-            $this->scheduledTask(['component' => 'other_plugin', 'minute' => '9']),
-        ];
-
+        // Must delegate to core\task\manager::reset_scheduled_tasks_for_component,
+        // which loads db/tasks.php defaults and respects admin customisations —
+        // not re-persist the current DB schedule with an identity write.
         $this->support->resetScheduledTasks('local_example');
 
-        self::assertArrayHasKey('__middag_test_configured', $GLOBALS);
-        self::assertCount(1, $GLOBALS['__middag_test_configured']);
-        self::assertSame('local_example', $GLOBALS['__middag_test_configured'][0]->get_component());
+        self::assertSame('local_example', $GLOBALS['__middag_test_reset_component'] ?? null);
     }
 
     #[Test]

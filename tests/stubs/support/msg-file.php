@@ -447,6 +447,7 @@ if (!class_exists('core\task\manager', false)) {
         public static function run_from_cli($task) { return $GLOBALS["__middag_test_run_from_cli"] ?? true; }
         public static function run_adhoc_from_cli($taskid) { $GLOBALS["__middag_test_ran_adhoc_cli"] = $taskid; }
         public static function configure_scheduled_task($task) { $GLOBALS["__middag_test_configured"][] = $task; }
+        public static function reset_scheduled_tasks_for_component($componentname) { $GLOBALS["__middag_test_reset_component"] = $componentname; }
         public static function get_adhoc_tasks_summary() { return $GLOBALS["__middag_test_adhoc_summary"] ?? []; }
         public static function get_running_tasks($sort = "") { $GLOBALS["__middag_test_running_sort"] = $sort; return $GLOBALS["__middag_test_running_tasks"] ?? []; }
     }');
