@@ -109,7 +109,9 @@ final class OutputSupportCoverageTest extends TestCase
     #[Test]
     public function testNotificationUsesTheDefaultTypeWhenOmitted(): void
     {
-        self::assertSame('note:Hi|notifyinfo', OutputSupport::notification('Hi'));
+        // Default must be 'info' (a type Moodle maps to INFO), not the
+        // unrecognised 'notifyinfo' which falls through to error styling.
+        self::assertSame('note:Hi|info', OutputSupport::notification('Hi'));
     }
 
     private function makeOutput(): object

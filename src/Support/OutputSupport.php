@@ -113,7 +113,10 @@ class OutputSupport
      *
      * @return string Rendered notification HTML
      */
-    public static function notification(string $message, string $type = 'notifyinfo'): string
+    // 'info' is the real NOTIFY_INFO value; 'notifyinfo' is NOT a type Moodle
+    // recognises (it falls through to the error template + styling), so the
+    // default must be 'info' for an omitted $type to render as an info notice.
+    public static function notification(string $message, string $type = 'info'): string
     {
         global $OUTPUT;
 
