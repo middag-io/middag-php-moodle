@@ -72,20 +72,25 @@ final class PreferenceSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testGetAllReturnsThePreferenceObject(): void
+    public function testGetAllReturnsThePreferencesAsAnObject(): void
     {
-        $GLOBALS['__middag_test_preferences_all'] = (object) ['theme' => 'dark', 'lang' => 'en'];
+        // Real Moodle returns a plain array (with an internal _lastloaded
+        // cache-freshness key), never a stdClass.
+        $GLOBALS['__middag_test_preferences_all'] = ['theme' => 'dark', 'lang' => 'en', '_lastloaded' => 1737000000];
 
         $result = PreferenceSupport::getAll();
 
         self::assertInstanceOf(stdClass::class, $result);
         self::assertSame('dark', $result->theme);
+        self::assertSame('en', $result->lang);
+        // The internal cache key must not leak as a fake preference.
+        self::assertObjectNotHasProperty('_lastloaded', $result);
     }
 
     #[Test]
-    public function testGetAllReturnsNullWhenTheResultIsNotAnObject(): void
+    public function testGetAllReturnsNullWhenTheResultIsNeitherArrayNorObject(): void
     {
-        $GLOBALS['__middag_test_preferences_all'] = ['not', 'an', 'object'];
+        $GLOBALS['__middag_test_preferences_all'] = false;
 
         self::assertNull(PreferenceSupport::getAll());
     }

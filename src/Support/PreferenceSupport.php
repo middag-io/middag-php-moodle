@@ -63,6 +63,16 @@ class PreferenceSupport
             $user = $userid ?? null;
             $result = get_user_preferences(null, null, $user);
 
+            // get_user_preferences(null, ...) returns a plain array (never a
+            // stdClass), so the old is_object() check made this always return
+            // null. Convert the array — stripping the internal _lastloaded
+            // cache-freshness key so it does not leak as a fake preference.
+            if (is_array($result)) {
+                unset($result['_lastloaded']);
+
+                return (object) $result;
+            }
+
             return is_object($result) ? $result : null;
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
