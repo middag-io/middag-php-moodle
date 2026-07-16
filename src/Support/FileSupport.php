@@ -607,7 +607,11 @@ class FileSupport
             $record->sortorder = $file->get_sortorder();
 
             return StoredFile::fromRecord($record);
-        } catch (Throwable) {
+        } catch (Throwable $throwable) {
+            // Trace like every other method in this class: a mapping/version-drift
+            // failure must be observable, not indistinguishable from 'not found'.
+            Debug::traceException($throwable);
+
             return null;
         }
     }
@@ -650,7 +654,10 @@ class FileSupport
             }
 
             return $result;
-        } catch (Throwable) {
+        } catch (Throwable $throwable) {
+            // See getFileEntity(): trace instead of silently returning [].
+            Debug::traceException($throwable);
+
             return [];
         }
     }

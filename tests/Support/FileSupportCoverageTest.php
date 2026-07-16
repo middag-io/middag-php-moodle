@@ -19,6 +19,7 @@ use Middag\Moodle\Support\FileSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use stored_file;
 
 /**
@@ -512,6 +513,42 @@ final class FileSupportCoverageTest extends TestCase
     public function testGetAreaFilesTypedReturnsEmptyArrayWhenStorageThrows(): void
     {
         $GLOBALS['__middag_test_throw_area_files'] = true;
+
+        self::assertSame([], FileSupport::getAreaFilesTyped(1, 'local_example', 'area', 0));
+    }
+
+    #[Test]
+    public function testGetFileEntityReturnsNullWhenTheMappingStepFails(): void
+    {
+        // A getter throwing during the record mapping (e.g. a stored_file API
+        // change across a Moodle version) must be traced and degrade to null,
+        // not propagate — and not be silently indistinguishable from 'not found'.
+        $GLOBALS['__middag_test_get_file'] = new class {
+            public function is_directory(): bool
+            {
+                return false;
+            }
+
+            public function get_id(): int
+            {
+                throw new RuntimeException('mapping failed');
+            }
+        };
+
+        self::assertNull(FileSupport::getFileEntity(1, 'local_example', 'area', 0, '/', 'doc.txt'));
+    }
+
+    #[Test]
+    public function testGetAreaFilesTypedReturnsEmptyWhenTheMappingStepFails(): void
+    {
+        $GLOBALS['__middag_test_area_files'] = [
+            'x' => new class {
+                public function get_id(): int
+                {
+                    throw new RuntimeException('mapping failed');
+                }
+            },
+        ];
 
         self::assertSame([], FileSupport::getAreaFilesTyped(1, 'local_example', 'area', 0));
     }
