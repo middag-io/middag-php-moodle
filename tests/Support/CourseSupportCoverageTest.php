@@ -374,12 +374,15 @@ final class CourseSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testGetCourseUrlAddsTheSectionParam(): void
+    public function testGetCourseUrlAddsTheSectionIdParam(): void
     {
         $url = CourseSupport::getCourseUrl(10, 3);
 
         self::assertSame(10, $url->params['id']);
-        self::assertSame(3, $url->params['section']);
+        // The id must ride the `sectionid` key (course/view.php resolves it via
+        // DB), not the raw section-NUMBER `section` key.
+        self::assertSame(3, $url->params['sectionid']);
+        self::assertArrayNotHasKey('section', $url->params);
     }
 
     #[Test]

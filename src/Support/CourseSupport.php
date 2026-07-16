@@ -278,7 +278,11 @@ class CourseSupport
         $params = ['id' => $courseid];
 
         if ($sectionid !== null) {
-            $params['section'] = $sectionid;
+            // course/view.php treats `section` as a raw section NUMBER and
+            // `sectionid` as a course_sections.id it resolves via DB. This
+            // argument is a section id, so it must go through `sectionid`;
+            // using `section` would jump to an unrelated section or 404.
+            $params['sectionid'] = $sectionid;
         }
 
         $url = new moodle_url('/course/view.php', $params);
