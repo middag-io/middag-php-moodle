@@ -127,6 +127,19 @@ final class LangSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetStringOrIdentifierReturnsTheIdentifierWhenComponentContextThrows(): void
+    {
+        // stringExists() resolves an omitted $component via ComponentContext::name()
+        // *before* its own try/catch, so an unconfigured adapter throws
+        // MoodleConfigurationException there — this is the one path that reaches
+        // getStringOrIdentifier()'s own catch (it never comes from get_string()
+        // itself, since get()/getString() always swallow that internally).
+        ComponentContext::reset();
+
+        self::assertSame('id', LangSupport::getStringOrIdentifier('id'));
+    }
+
+    #[Test]
     public function testStringExistsReturnsTrueWhenTheManagerConfirmsIt(): void
     {
         $GLOBALS['__middag_test_string_exists'] = static fn (): bool => true;

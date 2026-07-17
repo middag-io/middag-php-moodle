@@ -226,6 +226,20 @@ final class CompletionSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetCmTrackingReturnsNullWhenCourseInfoUnavailable(): void
+    {
+        // The module exists in modinfo, but infoForCourse() cannot build a
+        // completion_info (the 'course' record read returns false) — a
+        // distinct guard from the "module absent" and "modinfo throws" cases
+        // above, since is_enabled() must never be called without a real
+        // completion_info instance.
+        $GLOBALS['__middag_test_modinfo'] = (object) ['cms' => [6 => (object) ['completion' => 2]]];
+        $GLOBALS['__middag_test_course_record'] = false;
+
+        self::assertNull(CompletionSupport::getCmTracking(10, 6));
+    }
+
+    #[Test]
     public function testIsCourseCompleteReflectsTheCompletionInfo(): void
     {
         $GLOBALS['__middag_test_course_complete'] = true;
