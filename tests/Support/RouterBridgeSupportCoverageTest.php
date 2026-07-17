@@ -102,17 +102,12 @@ final class RouterBridgeSupportCoverageTest extends TestCase
     #[Test]
     public function testProxyRequestReturns500WhenKernelBootFails(): void
     {
-        // With no product container builder registered, Kernel::handle() fails to
-        // boot and throws — proxy_request() must catch it and return a 500 response.
+        // With no product container builder registered, Kernel::handleReturning()
+        // fails to boot and throws — proxy_request() must catch it and return a 500
+        // response.
         $response = $this->makeResponse();
-        $level = ob_get_level();
 
         $result = RouterBridgeSupport::proxyRequest(new stdClass(), $response, 'ping');
-
-        // proxy_request opens an output buffer before Kernel::handle throws; drop it.
-        while (ob_get_level() > $level) {
-            ob_end_clean();
-        }
 
         self::assertSame(500, $response->status);
         self::assertSame('application/json', $response->headers['Content-Type']);
@@ -132,30 +127,26 @@ final class RouterBridgeSupportCoverageTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/local/middag/index.php/api/ping';
         $_SERVER['SCRIPT_NAME'] = '/local/middag/index.php';
         $_SERVER['REQUEST_METHOD'] = 'GET';
+        // The framework kernel only picks the JSON error-rendering path when the
+        // request declares it via Accept — realistic for this proxy, since it only
+        // ever forwards MIDDAG API routes.
+        $_SERVER['HTTP_ACCEPT'] = 'application/json';
 
         $this->bootInjectedKernel();
 
-        // Baseline the SAPI status so http_response_code() has a defined prior read.
-        http_response_code(200);
-
         $response = $this->makeResponse();
-        $level = ob_get_level();
 
         $result = RouterBridgeSupport::proxyRequest(new stdClass(), $response, 'ping');
 
-        while (ob_get_level() > $level) {
-            ob_end_clean();
-        }
-
         // The kernel matches against an empty route collection, so its HttpKernel
-        // renders a 404 ("Route not found"). Capturing that emitted body proves
-        // proxy_request took the SUCCESS branch (ob_start → Kernel::handle →
-        // getBody()->write), not the catch branch (which writes "Internal
-        // framework error").
+        // renders a 404 ("Route not found"). Getting that body onto $response proves
+        // proxy_request took the SUCCESS branch (Kernel::handleReturning() ->
+        // getBody()->write), not the catch branch (which writes "Internal framework
+        // error").
         self::assertSame($response, $result);
         self::assertSame('application/json', $response->headers['Content-Type']);
         self::assertStringContainsString('Route not found', $response->body);
-        self::assertContains($response->status, [200, 404]);
+        self::assertSame(404, $response->status);
     }
 
     #[Test]
@@ -253,7 +244,11 @@ final class RouterBridgeSupportCoverageTest extends TestCase
 
             public function withHeader(string $name, string $value): static
             {
-                $this->headers[$name] = $value;
+                // Real PSR-7 responses are case-insensitive by header name (per spec);
+                // normalize so a lowercase name from the PSR-7 bridge (e.g.
+                // "content-type") lands under the same key a caller would look up
+                // via the canonical HTTP casing.
+                $this->headers[ucwords($name, '-')] = $value;
 
                 return $this;
             }

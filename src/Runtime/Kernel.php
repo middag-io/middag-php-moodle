@@ -22,6 +22,7 @@ use Middag\Moodle\Http\Inertia\MoodleInertiaBootstrap;
 use Middag\Moodle\Http\MoodleHttpKernel;
 use Middag\Moodle\Http\Routing\MoodleRouter;
 use Middag\Moodle\Shared\Util\Debug;
+use Middag\Moodle\Support\RouterBridgeSupport;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -256,7 +257,7 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * Dispatch the current HTTP request to the appropriate controller.
+     * Dispatch the current HTTP request to the appropriate controller and emit the response.
      *
      * External plugins that delegate routing to MIDDAG pass their own base URL
      * so the UrlMatcher resolves pathInfo correctly for their entry point.
@@ -267,6 +268,24 @@ class Kernel implements KernelInterface
      * @throws RuntimeException
      */
     public static function handle(?string $base_url = null): void
+    {
+        self::emitResponse(self::handleReturning($base_url));
+    }
+
+    /**
+     * Dispatch the current HTTP request and return the response instead of emitting it.
+     *
+     * Same dispatch path as {@see self::handle()}, but for callers that own their own
+     * response pipeline (e.g. a native host router proxying into MIDDAG) and need the
+     * PSR-7 response object back rather than headers/body sent to the current output
+     * buffer. See {@see RouterBridgeSupport::proxyRequest()}.
+     *
+     * @param null|string $base_url Override the base URL (e.g. '/local/yourplugin/index.php').
+     *                              Null uses the default MIDDAG entry point.
+     *
+     * @throws RuntimeException
+     */
+    public static function handleReturning(?string $base_url = null): ResponseInterface
     {
         self::ensureBooted();
 
@@ -287,11 +306,9 @@ class Kernel implements KernelInterface
         $psr17 = new Psr17Factory();
         $psrFactory = new PsrHttpFactory($psr17, $psr17, $psr17, $psr17);
 
-        $response = self::$instance->httpKernel->handle(
+        return self::$instance->httpKernel->handle(
             $psrFactory->createRequest(Request::createFromGlobals())
         );
-
-        self::emitResponse($response);
     }
 
     /**

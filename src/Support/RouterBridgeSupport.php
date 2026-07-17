@@ -76,22 +76,18 @@ final class RouterBridgeSupport
     }
 
     /**
-     * Stub: proxy a PSR-7 request from Moodle's native router to MIDDAG's http_kernel.
+     * Proxy a PSR-7 request from Moodle's native router to MIDDAG's http_kernel.
      *
-     * NOT RELIABLE in 5.0.0 — http_kernel::handle() calls Response::send() internally,
-     * causing header conflicts with Moodle's Slim pipeline. This stub uses output
-     * buffering as best-effort but is NOT production-ready.
-     *
-     * Full implementation requires ADR-208 (Symfony HttpKernel migration) which makes
-     * handle() return Response instead of calling send(). Planned for post-5.0.0.
+     * Uses {@see Kernel::handleReturning()}, which dispatches through the framework's
+     * PSR-15 `HttpKernel::handle()` and hands back a `ResponseInterface` directly — no
+     * output buffering, no header conflicts with Moodle's Slim pipeline.
      *
      * @param object $request  PSR-7 ServerRequestInterface (reserved — required by handler contract)
-     * @param object $response PSR-7 ResponseInterface from Moodle's Slim app
+     * @param object $response PSR-7 ResponseInterface from Moodle's Slim app; its status/headers/body
+     *                         are populated from MIDDAG's response and returned
      * @param string $path     matched route path to forward
      *
      * @return object PSR-7 ResponseInterface
-     *
-     * @todo Implement with PSR-7 ↔ HttpFoundation bridge after ADR-208 migration
      */
     public static function proxyRequest(object $request, object $response, string $path = ''): object
     {
@@ -108,22 +104,24 @@ final class RouterBridgeSupport
                 // @codeCoverageIgnoreEnd
             }
 
-            // Best-effort output buffering.
-            // Limitation: headers sent by Symfony Response::send() via header()
-            // leak directly and conflict with Slim's response pipeline.
-            ob_start();
-            Kernel::handle('/api/' . ltrim($path, '/'));
-            $output = (string) ob_get_clean();
+            $middagResponse = Kernel::handleReturning('/api/' . ltrim($path, '/'));
 
-            if ($output !== '') {
-                $response->getBody()->write($output);
+            $body = (string) $middagResponse->getBody();
+
+            if ($body !== '') {
+                $response->getBody()->write($body);
             }
 
-            $status = http_response_code() ?: 200;
+            // withHeader (not withAddedHeader) — matches the single-value-per-name
+            // shape MIDDAG responses carry today (Content-Type); a header repeated
+            // with multiple values would only keep the last one.
+            foreach ($middagResponse->getHeaders() as $name => $values) {
+                foreach ($values as $value) {
+                    $response = $response->withHeader($name, $value);
+                }
+            }
 
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus($status);
+            return $response->withStatus($middagResponse->getStatusCode());
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 
