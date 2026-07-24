@@ -74,17 +74,18 @@ jobs:
         run: composer test
 
   # LB-CI-01: PHPStan against every supported Moodle stubs series (4.5→5.2).
-  # Informative (continue-on-error) until the per-version compat modelling
-  # (cm_info/modinfo/navigation_node class_alias) lands — the canonical
-  # series stays blocking in the quality job.
+  # Blocking: all four series (4.5 / 5.0 / 5.1 / 5.2) analyse clean at L6, so
+  # the per-version class_alias shims (cm_info/modinfo/navigation_node) are
+  # now backed by matrix evidence rather than manual reasoning. The canonical
+  # series (~5.0) is also enforced in the quality job; keeping it here makes
+  # the per-version coverage explicit.
   stan-matrix:
     name: PHPStan (moodle-stubs ${{ matrix.stubs }})
     runs-on: ubuntu-latest
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        stubs: ['~4.5.0', '~5.1.0', '~5.2.0']
+        stubs: ['~4.5.0', '~5.0.0', '~5.1.0', '~5.2.0']
     steps:
       - uses: actions/checkout@v5
 
