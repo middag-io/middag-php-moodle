@@ -1,5 +1,85 @@
 # Changelog
 
+## [1.10.0](https://github.com/middag-io/middag-php-moodle/compare/v1.9.0...v1.10.0) (2026-07-24)
+
+
+### Features
+
+* **runtime:** expose kernel method to return responses ([d6006af](https://github.com/middag-io/middag-php-moodle/commit/d6006afc53a027eb77054be3f0f9f15e8891b587))
+* **support:** extract brandCssVariable() seam in ThemeSupport ([1ca0980](https://github.com/middag-io/middag-php-moodle/commit/1ca0980bda93ba098a91b608a2416a362cb7ec3c))
+* **support:** extract defaultMessageName() seam in NotificationSupport ([8e1d0a1](https://github.com/middag-io/middag-php-moodle/commit/8e1d0a1866a7b23eda17217199cc4aa40868b935))
+
+
+### Bug Fixes
+
+* **database:** drop xmldb index by field-set so column drop succeeds ([f8ac931](https://github.com/middag-io/middag-php-moodle/commit/f8ac931e26be6bc4d88e25386e877d87ebefa887))
+* **support:** adopt the release patch digit and type bad compare operators ([1efc960](https://github.com/middag-io/middag-php-moodle/commit/1efc9600fd32af72eba822a95965040e3487adbc))
+* **support:** apply role exclusions to course-context role options ([5f75e50](https://github.com/middag-io/middag-php-moodle/commit/5f75e509f00a02b994bd9cb0e3644a3994eea0ac))
+* **support:** correct CohortSupport getCohorts docs and getMembers logging ([608ed3b](https://github.com/middag-io/middag-php-moodle/commit/608ed3b9c570836a717b5ceffe5e8043fb28d00d))
+* **support:** correct CompetencySupport evidence action constants ([173eb0c](https://github.com/middag-io/middag-php-moodle/commit/173eb0cc431057208452df70425346127189091c))
+* **support:** correct notification message format and unread-count scope ([9c85c7f](https://github.com/middag-io/middag-php-moodle/commit/9c85c7f7e30f6ab2ec67702d24b2742051158989))
+* **support:** correct site courseid and default capability check in CalendarSupport ([f5ea23f](https://github.com/middag-io/middag-php-moodle/commit/f5ea23f56d20ac3ba6c89645da9e99db35020a54))
+* **support:** default LockSupport maxlifetime to a safe 24h ([40cb9c1](https://github.com/middag-io/middag-php-moodle/commit/40cb9c19d1c91825b90f11618a3824d4f1262b14))
+* **support:** default OutputSupport::notification to a real info type ([4637e5c](https://github.com/middag-io/middag-php-moodle/commit/4637e5cf93ddf88d4715ef2da44eb4035cbb6479))
+* **support:** degrade gracefully when a category context is missing ([d18312c](https://github.com/middag-io/middag-php-moodle/commit/d18312cc2ef661b9b578a284391a9a7bdd99b904))
+* **support:** delegate resetScheduledTasks to the host reset API ([b0778a2](https://github.com/middag-io/middag-php-moodle/commit/b0778a2aba044e3e59eb0b1cf64bbe58bd8fc197))
+* **support:** disambiguate UserFieldSupport id vs shortname by type ([2edbccd](https://github.com/middag-io/middag-php-moodle/commit/2edbccd0a8aab18b4bb7afe990c072fb2a64940a))
+* **support:** distinguish absent config from read failure in getters ([614cc8f](https://github.com/middag-io/middag-php-moodle/commit/614cc8fb591985eb5f20474aec944c64201a5161))
+* **support:** document and pin null-deletes semantics of PreferenceSupport::set ([3829ca1](https://github.com/middag-io/middag-php-moodle/commit/3829ca1d201359d55b8a14bc1c1ffc9729d67d24))
+* **support:** fall back to server timezone for unresolvable user ids ([a7040c4](https://github.com/middag-io/middag-php-moodle/commit/a7040c441283108ab21976b7be558b79386fe4dd))
+* **support:** guard adminLoadNavigation against missing admin nodes ([8585210](https://github.com/middag-io/middag-php-moodle/commit/8585210399916e5ea5dd85b593dcb8dadcf02b8e))
+* **support:** guard and disambiguate CheckSupport::getCheckResults ([f5f1d09](https://github.com/middag-io/middag-php-moodle/commit/f5f1d096d6dcf5d8694029ab18035b972f5351dd))
+* **support:** guard event get_name() so one bad class can't kill the catalog ([1446183](https://github.com/middag-io/middag-php-moodle/commit/1446183a29455ea5bc66834e5c8ecd8c450d0578))
+* **support:** guard the context lookup in getCourseWithContextidOptions ([0aec76d](https://github.com/middag-io/middag-php-moodle/commit/0aec76d2e82bd00c80d555161f98ee321a31060b))
+* **support:** handle protocol-relative and case-differing URLs ([9c8726c](https://github.com/middag-io/middag-php-moodle/commit/9c8726c1451a153096fb3c0dae1ce3caac56bee9))
+* **support:** honour deleteUser's bool contract for malformed records ([d35b908](https://github.com/middag-io/middag-php-moodle/commit/d35b908a2a4c3c0713dac1479e8174075c65db66))
+* **support:** isolate DI export registration failures per id ([7cb0aa5](https://github.com/middag-io/middag-php-moodle/commit/7cb0aa539e9b6078249893435f07685106bc1585))
+* **support:** keep core events whose static info throws, like plugin events ([18fc560](https://github.com/middag-io/middag-php-moodle/commit/18fc560c5d039ad8c4c7434f1b42b599bdae5c0d))
+* **support:** let LockSupport misconfiguration fail loud ([33a8480](https://github.com/middag-io/middag-php-moodle/commit/33a8480eacef1694f870eaa62f8400bcad9941ec))
+* **support:** make EnrolSupport enrolment selection and role grant correct ([66aabbe](https://github.com/middag-io/middag-php-moodle/commit/66aabbe6e85f272f62fbff28838ed008b248817a))
+* **support:** make GroupSupport isMember unscoped and createGroup safe ([c789a6c](https://github.com/middag-io/middag-php-moodle/commit/c789a6c756e95d79a8503df44c232394c9bea91f))
+* **support:** map completion criteria type int to its Moodle label ([09cc8f5](https://github.com/middag-io/middag-php-moodle/commit/09cc8f57d1976d83664298955fca982f3c81a043))
+* **support:** match teacher roles by archetype in RoleSupport ([cd247be](https://github.com/middag-io/middag-php-moodle/commit/cd247bed6aac579c4ed5b188c1e361c3b113595b))
+* **support:** mirror the nullable delete_records contract in deleteRecords ([a37fa4d](https://github.com/middag-io/middag-php-moodle/commit/a37fa4d618f4481b2fb97d1395b59910b48d80a1))
+* **support:** normalise AuthSupport::getAdmin false into null ([1f7893f](https://github.com/middag-io/middag-php-moodle/commit/1f7893f04686e105f30b906f1fd9b1dfd8b551e4))
+* **support:** normalise int user ids in getConversationId ([d8a4725](https://github.com/middag-io/middag-php-moodle/commit/d8a4725cb4ee74406e0462e91c2d093037338926))
+* **support:** normalise SessionSupport::sesskey false into empty string ([a7482a3](https://github.com/middag-io/middag-php-moodle/commit/a7482a37462215eb02acb990d78822131769408b))
+* **support:** null-coalesce the site id in getSiteInfo ([9333897](https://github.com/middag-io/middag-php-moodle/commit/933389705de3aec109ec9105ff72eea52d1ddc74))
+* **support:** preserve the scheme separator in UrlSupport::get ([3cc3225](https://github.com/middag-io/middag-php-moodle/commit/3cc3225e4244083c7cf56e39251f10fa8634170b))
+* **support:** qualify every field in GradeSupport::getGrade select ([857b272](https://github.com/middag-io/middag-php-moodle/commit/857b272da5d62e18c782baae408ad6c44c30c90a))
+* **support:** read/write all custom fields regardless of visibility ([b18f5c0](https://github.com/middag-io/middag-php-moodle/commit/b18f5c069d3d5c6b4e495af56d080a92c1c6a88c))
+* **support:** reindex getEventsByLevel so it stays a JSON array ([ca6c094](https://github.com/middag-io/middag-php-moodle/commit/ca6c0942b1a30aa35b5743b0ac44c622cae5f78a))
+* **support:** replace hardcoded framework-&gt;core remap with extension-alias seam ([301045e](https://github.com/middag-io/middag-php-moodle/commit/301045eaf3a6407b7b26132e4dcc45998f3b0f17))
+* **support:** report only configured exports from DiBridgeSupport ([4a25608](https://github.com/middag-io/middag-php-moodle/commit/4a25608fd32cb45c17c5ac0f0e9315baa8403963))
+* **support:** report partial bulk-cache failures from setMany/deleteMany ([e7077f9](https://github.com/middag-io/middag-php-moodle/commit/e7077f92120a857b8417134d8761671bbb3ddb78))
+* **support:** resolve getStringOrIdentifier component from context ([98175e1](https://github.com/middag-io/middag-php-moodle/commit/98175e183d03fda731231386105e249507fda601))
+* **support:** respect the completion enablement cascade in getCmTracking ([8f04a45](https://github.com/middag-io/middag-php-moodle/commit/8f04a4593109e4c71f72ef1e847e34ebd1c8e326))
+* **support:** return real preferences from PreferenceSupport::getAll ([04e04e3](https://github.com/middag-io/middag-php-moodle/commit/04e04e3d11e6e917cf679ec624d50da2d94e314b))
+* **support:** return stored false/null from the PSR-16 cache adapter ([53989df](https://github.com/middag-io/middag-php-moodle/commit/53989df7c36126c1d7a5fce57023a4799a494254))
+* **support:** return the logged-in user from completeUserLogin ([998bdbb](https://github.com/middag-io/middag-php-moodle/commit/998bdbbe5914b42473b681f6ba6c3206926fe3c9))
+* **support:** reuse a disabled manual enrol instance instead of duplicating ([0af923e](https://github.com/middag-io/middag-php-moodle/commit/0af923e40e1d367f0cb0fa6b5dc8a15b1df807fe))
+* **support:** route CourseSupport::getCourseUrl id through sectionid ([b237e99](https://github.com/middag-io/middag-php-moodle/commit/b237e9952166ac46d4ff8b2d196f0728748cdd37))
+* **support:** serve stored falsy values from CacheSupport helpers ([2e749a2](https://github.com/middag-io/middag-php-moodle/commit/2e749a2169e1d62590cf3375d8c090162d56395c))
+* **support:** set the calendar repeat flag so recurring events persist ([7a14ccb](https://github.com/middag-io/middag-php-moodle/commit/7a14ccbca9d24c3c0b267e10c347cb725b15e735))
+* **support:** stop over-stripping trailing s in capability suffix ([314a5d3](https://github.com/middag-io/middag-php-moodle/commit/314a5d3c4746c0ba2842cf32a55635c5d5396e98))
+* **support:** trace mapping failures in FileSupport typed getters ([b30129c](https://github.com/middag-io/middag-php-moodle/commit/b30129c46c3d11079f2eaaf9cd58841e5b64bc48))
+* **support:** validate the theme brand color before CSS interpolation ([dd97dbf](https://github.com/middag-io/middag-php-moodle/commit/dd97dbfec6d0ddc1b5d8f4ae9d2e4dd3fb946235))
+
+
+### Refactoring
+
+* **support:** reference Moodle DI classes via strings in DiBridgeSupport ([117f1d7](https://github.com/middag-io/middag-php-moodle/commit/117f1d70248ce3f14ed4e40b373e8bd7a333deec))
+
+
+### Documentation
+
+* reformat MDL-001..019 to MADR-compact, extract REF to docs-middag-dev ([0ca992e](https://github.com/middag-io/middag-php-moodle/commit/0ca992e7d8a6d3e5d369536d23dd64441f27fb32))
+* **support:** call out the overloaded null return of LockSupport::execute ([e29c7cc](https://github.com/middag-io/middag-php-moodle/commit/e29c7cc943c317ca44c16b17070d2a7d83512835))
+* **support:** correct the buildUserSubquery docblock parameters ([fb3275f](https://github.com/middag-io/middag-php-moodle/commit/fb3275f01b3dff4150a25a80f14fa4e26c3c1fc1))
+* **support:** document getString's core default, distinct from get() ([5d52755](https://github.com/middag-io/middag-php-moodle/commit/5d527558788f68b851b603e481c4d129613ee879))
+* **support:** stop overclaiming a live codegen caller in TaskDefinitionBuilder ([19a7ff1](https://github.com/middag-io/middag-php-moodle/commit/19a7ff1e2ed78fb7059a64c54117a4516e374ddf))
+* **support:** update VersionSupport examples to the real API ([b9d744a](https://github.com/middag-io/middag-php-moodle/commit/b9d744a9b8e788fdb98b34fef693a8f8db98944d))
+
 ## [1.9.0](https://github.com/middag-io/middag-php-moodle/compare/v1.8.0...v1.9.0) (2026-07-16)
 
 
