@@ -153,11 +153,17 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
         }
     }
 
-    public function dropIndex(string $table_name, string $index_name): void
+    public function dropIndex(string $table_name, string $index_name, array $fields = []): void
     {
         try {
             $table = new xmldb_table($table_name);
-            $idx = new xmldb_index($index_name);
+            // Moodle resolves the physical index via find_index_name(), which
+            // matches on the field-set — the xmldb_index name is arbitrary and
+            // NOT the auto-generated DB identifier. A name-only xmldb_index makes
+            // find_index_name() fail, so drop_index() throws and the index
+            // survives. Fall back to [$index_name] only when the caller could
+            // not supply fields (single-column legacy usage).
+            $idx = new xmldb_index($index_name, XMLDB_INDEX_NOTUNIQUE, $fields !== [] ? $fields : [$index_name]);
             $this->dbman->drop_index($table, $idx);
         } catch (Throwable $throwable) {
             throw new MiddagPersistenceException(

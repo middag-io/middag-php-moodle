@@ -7,6 +7,12 @@ parameters:
 			path: src/Database/Schema/XmldbSchemaAdapter.php
 
 		-
+			message: '#^Parameter \#2 \$type of class xmldb_index constructor expects string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Database/Schema/XmldbSchemaAdapter.php
+
+		-
 			message: '#^Parameter \#2 \$type of method xmldb_table\:\:add_index\(\) expects int, bool given\.$#'
 			identifier: argument.type
 			count: 1

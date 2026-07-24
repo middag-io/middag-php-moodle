@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use xmldb_index;
 
 /**
  * Test XmldbSchemaAdapter.
@@ -191,6 +192,40 @@ final class XmldbSchemaAdapterCoverageTest extends TestCase
         $this->dbman->expects($this->once())->method('drop_index');
 
         $this->adapter->dropIndex('mdl_items', 'ix');
+    }
+
+    #[Test]
+    public function dropIndexPassesFieldsToXmldbIndexSoMoodleCanLocateIt(): void
+    {
+        // Regression: Moodle resolves the physical index by field-set
+        // (find_index_name), not by the xmldb_index name. A name-only index
+        // silently fails to drop and a dependent column drop then blows up on
+        // Postgres. The adapter must forward $fields onto the xmldb_index.
+        $captured = null;
+        $this->dbman->expects($this->once())->method('drop_index')
+            ->willReturnCallback(function ($table, $index) use (&$captured): void {
+                $captured = $index;
+            });
+
+        $this->adapter->dropIndex('mdl_middag_audit_log', 'userid', ['userid']);
+
+        self::assertInstanceOf(xmldb_index::class, $captured);
+        self::assertSame([XMLDB_INDEX_NOTUNIQUE, ['userid']], $captured->ctor_args);
+    }
+
+    #[Test]
+    public function dropIndexFallsBackToNameAsFieldWhenNoFieldsGiven(): void
+    {
+        $captured = null;
+        $this->dbman->expects($this->once())->method('drop_index')
+            ->willReturnCallback(function ($table, $index) use (&$captured): void {
+                $captured = $index;
+            });
+
+        $this->adapter->dropIndex('mdl_items', 'ix');
+
+        self::assertInstanceOf(xmldb_index::class, $captured);
+        self::assertSame([XMLDB_INDEX_NOTUNIQUE, ['ix']], $captured->ctor_args);
     }
 
     #[Test]

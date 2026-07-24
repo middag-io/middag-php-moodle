@@ -480,7 +480,7 @@ if (!class_exists('xmldb_field', false)) {
     eval('class xmldb_field { public function __construct(public string $name = "", ...$args) {} }');
 }
 if (!class_exists('xmldb_index', false)) {
-    eval('class xmldb_index { public function __construct(public string $name = "", ...$args) {} }');
+    eval('class xmldb_index { public array $ctor_args; public function __construct(public string $name = "", ...$args) { $this->ctor_args = $args; } }');
 }
 
 // Stub: database_manager — the DDL executor. Concrete stand-in so tests can mock
