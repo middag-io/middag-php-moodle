@@ -28,7 +28,10 @@ use Middag\Moodle\Runtime\ContainerFactory;
  * to wire it, so a misconfiguration fails loud instead of silently scoping
  * config/cache/lang/file access to a wrong (or non-existent) component.
  *
- * @internal
+ * Public surface: it is a documented composition-root seam, and the host glue
+ * layered above this lib resolves the running component through {@see self::name()}.
+ *
+ * @api
  */
 final class ComponentContext
 {

@@ -25,7 +25,12 @@ use Middag\Moodle\Support\DbSupport;
  * {@see ConditionCompilerInterface} port directly (the port is OSS, so no
  * core-side binding subclass is needed).
  *
- * @internal
+ * Public surface: consumers type-hint this concrete so their DI container
+ * autowires it — nothing binds `ConditionCompilerInterface` on Moodle, so the
+ * class name is the wiring. Its WordPress counterpart is `@api` for the same
+ * reason.
+ *
+ * @api
  */
 class SqlGenerator implements ConditionCompilerInterface
 {

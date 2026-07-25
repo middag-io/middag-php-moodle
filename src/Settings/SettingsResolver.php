@@ -22,7 +22,10 @@ use Middag\Moodle\Support\LangSupport;
  * (default: the MIDDAG `mdg_` prefix) so a client plugin on the same host
  * can run its own resolver without colliding with the product's keys.
  *
- * @internal
+ * Public surface: the rest of the `Settings/` family is `@api`, and consumers
+ * type-hint the resolver when they build a settings tree of their own.
+ *
+ * @api
  */
 class SettingsResolver
 {

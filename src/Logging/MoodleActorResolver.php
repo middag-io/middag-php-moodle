@@ -18,7 +18,10 @@ use Middag\Framework\Logging\Contract\ActorResolverInterface;
  * Moodle-flavored actor resolver. Reads `$USER` (or `CLI_SCRIPT` sentinel)
  * to label log lines emitted through the framework LoggerFactory.
  *
- * @internal
+ * Public surface: the consumer's composition root registers this concrete for
+ * the framework `ActorResolverInterface`.
+ *
+ * @api
  */
 final readonly class MoodleActorResolver implements ActorResolverInterface
 {

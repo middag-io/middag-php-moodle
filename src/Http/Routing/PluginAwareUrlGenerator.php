@@ -28,7 +28,13 @@ use Symfony\Component\Routing\RouteCollection;
  * This allows plugins like `local_yourplugin` to have their routes generate URLs
  * under their own entry point instead of the running host plugin's default.
  *
- * @internal
+ * Public surface for one narrow reason: {@see MoodleRouter} instantiates it
+ * itself, but its constructor takes a `RouteCollection` and a `RequestContext`,
+ * so a consumer that auto-discovers this package's `src/` cannot autowire it and
+ * has to name the class to exclude it (e.g. registering it as a synthetic
+ * service). Nothing else about it is a contract — do not extend or type-hint it.
+ *
+ * @api
  */
 class PluginAwareUrlGenerator extends UrlGenerator
 {

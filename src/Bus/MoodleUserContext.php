@@ -20,7 +20,11 @@ use Middag\Framework\Bus\Contract\UserContextResolverInterface;
  * Resolves the current user ID from the Moodle global $USER.
  * Returns null when running in CLI/cron without an authenticated user.
  *
- * @internal
+ * Public surface: the consumer's composition root registers this concrete for
+ * the framework `UserContextResolverInterface` — the adapter ships no container
+ * builder by design (D-FACADE-SEAM), so whoever boots the kernel names the class.
+ *
+ * @api
  */
 final class MoodleUserContext implements UserContextResolverInterface
 {

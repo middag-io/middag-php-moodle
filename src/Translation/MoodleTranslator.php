@@ -30,7 +30,10 @@ use stdClass;
  * developer mode) propagate to the caller — the adapter does not swallow
  * host errors.
  *
- * @internal
+ * Public surface: consumers instantiate it directly outside the container (admin
+ * and settings factories) and register it for the framework `TranslatorInterface`.
+ *
+ * @api
  */
 final readonly class MoodleTranslator implements TranslatorInterface
 {

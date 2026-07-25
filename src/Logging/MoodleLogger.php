@@ -36,7 +36,10 @@ use Throwable;
  * Can be instantiated without the container (no constructor dependencies),
  * making it safe to use as a boot logger during kernel initialization.
  *
- * @internal
+ * Public surface: consumers instantiate it as a boot logger before a container
+ * exists, and register it for PSR-3 `LoggerInterface`.
+ *
+ * @api
  */
 class MoodleLogger extends AbstractLogger
 {

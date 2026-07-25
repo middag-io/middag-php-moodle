@@ -36,7 +36,11 @@ use ReflectionClass;
  * with a null root (resolved through Kernel::hostDirectory()), not a vendor
  * package root.
  *
- * @internal
+ * Public surface: the facade mechanism is OSS-generic and bootless by design
+ * (D-FACADE-SEAM) — a third-party plugin instantiates the loader itself, with a
+ * null root, to scan its own `/facade` directory.
+ *
+ * @api
  *
  * @see FacadeLoaderInterface
  */

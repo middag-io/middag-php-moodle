@@ -20,7 +20,10 @@ use Middag\Framework\Database\Contract\VersionTrackerInterface;
  * Each lib registers its own tracker with a distinct config key so versions
  * are stored independently (e.g. 'schema_core_version', 'schema_framework_version').
  *
- * @internal
+ * Public surface: each consumer instantiates its own tracker with a distinct
+ * config key (see above), so the constructor is the contract.
+ *
+ * @api
  */
 class VersionTracker implements VersionTrackerInterface
 {
