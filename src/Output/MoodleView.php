@@ -19,7 +19,10 @@ use navigation_node;
 /**
  * Adapter that provides View rendering using Moodle's native $PAGE and $OUTPUT.
  *
- * @internal
+ * Public surface: the consumer's composition root registers this concrete for the
+ * `@api` {@see ViewAdapterInterface}.
+ *
+ * @api
  */
 class MoodleView implements ViewAdapterInterface
 {

@@ -29,7 +29,11 @@ use xmldb_table;
  * Descriptor type strings → XMLDB_TYPE_* constants:
  *   int → INTEGER, char → CHAR, text → TEXT, float → FLOAT, number → NUMBER, binary → BINARY
  *
- * @internal
+ * Public surface: install/migration flows above this lib instantiate it with the
+ * host {@see database_manager}; a `SchemaBuilderAdapterInterface` cannot be
+ * obtained without naming the concrete.
+ *
+ * @api
  */
 class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
 {

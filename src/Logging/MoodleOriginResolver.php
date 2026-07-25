@@ -19,7 +19,10 @@ use Middag\Framework\Logging\Contract\OriginResolverInterface;
  * remote IP via Moodle's `getremoteaddr()` helper, or `system` when no
  * remote address is available.
  *
- * @internal
+ * Public surface: the consumer's composition root registers this concrete for
+ * the framework `OriginResolverInterface`.
+ *
+ * @api
  */
 final readonly class MoodleOriginResolver implements OriginResolverInterface
 {

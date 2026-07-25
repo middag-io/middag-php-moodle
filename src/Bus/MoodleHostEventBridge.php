@@ -28,6 +28,13 @@ use Middag\Framework\Kernel\Contract\HostEventBridgeInterface;
  * This is the basic host eventing seam — distinct from the premium signal layer
  * (the SignalDispatcher/hook-bridge/outbox stack in the non-OSS MIDDAG layer),
  * which maps typed Moodle core events onto MIDDAG signals.
+ *
+ * Public surface: the consumer's composition root registers this concrete for the
+ * framework `HostEventBridgeInterface`. It carried no stability tag at all until
+ * now — the only `@api` above is prose about the interface — which made it
+ * implicitly internal under this package's own policy.
+ *
+ * @api
  */
 final readonly class MoodleHostEventBridge implements HostEventBridgeInterface
 {

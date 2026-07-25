@@ -20,7 +20,10 @@ use Middag\Moodle\Config\ComponentContext;
  * for the running plugin so framework-side policies can classify
  * `{component}\extensions\{slug}\...` FQCNs as native vs third-party.
  *
- * @internal
+ * Public surface: the consumer's composition root instantiates it and registers
+ * it for the framework `ComponentNameResolverInterface`.
+ *
+ * @api
  */
 final readonly class MoodleComponentNameResolver implements ComponentNameResolverInterface
 {

@@ -48,7 +48,11 @@ use Throwable;
  * procedural global execution flow with the plugin's Object-Oriented Domain.
  * It ensures the massive ContainerBuilder is compiled exactly once per request.
  *
- * @internal
+ * Public surface: the adapter's front door — consumers drive the boot/shutdown
+ * lifecycle and resolve host paths and routing through it
+ * ({@see self::hostDirectory()}, {@see self::routing()}).
+ *
+ * @api
  *
  * @see KernelInterface
  */

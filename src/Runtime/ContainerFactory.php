@@ -30,7 +30,11 @@ use Throwable;
  * adapter remain free of any non-OSS MIDDAG dependency while still exposing a
  * stable boot contract.
  *
- * @internal
+ * Public surface: this *is* the documented composition seam — whoever starts the
+ * kernel calls {@see self::setBuilder()} (and, for caching builders,
+ * {@see self::registerResetCallback()}) to plug its own container in.
+ *
+ * @api
  */
 final class ContainerFactory
 {

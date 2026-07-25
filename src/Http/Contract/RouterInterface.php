@@ -25,7 +25,11 @@ use Symfony\Component\Routing\RouteCollection;
  * adapter's {@see MoodleRouter} exposes and that the kernel,
  * controllers, settings tree and Inertia bootstrap type against.
  *
- * @internal
+ * Public surface: this is the router type consumers type-hint —
+ * {@see Kernel::routing()} returns it. The {@see MoodleRouter} concrete behind it
+ * is not public: the kernel constructs it, nobody outside needs its class name.
+ *
+ * @api
  */
 interface RouterInterface
 {

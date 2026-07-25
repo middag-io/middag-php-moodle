@@ -33,13 +33,38 @@ consumer-facing API — the `Domain\*` entities, DTOs and enums; the domain
 contracts; `Http\Contract\MoodleControllerInterface`; the `Support\Moodle`
 façade and the public `Support\*` Moodle API wrappers; the adapter-specific
 `Exception\*` types; the `Output\Table` helpers; and the `WebService\AbstractExternal`
-extension base a plugin's external classes subclass. The concrete
-implementations of the framework's host-bridge contracts
-(`MoodleConnectionAdapter`, `MoodleSqlDialect`, `MoodleTranslator`,
-`MoodleConfigResolver`, `MoodleUserContext`, `MoodleMaintenanceGate`,
-`MoodleBootstrap`) and the internal HTTP / kernel / support wiring are
-`@internal`: consumers depend on the **framework** contract these fulfil, not on
-the Moodle concrete.
+extension base a plugin's external classes subclass.
+
+**Composition-root concretes are public too.** This adapter deliberately ships
+no container builder (D-FACADE-SEAM): whoever starts the kernel supplies its own
+via `Runtime\ContainerFactory::setBuilder()`. A consumer therefore *has* to name
+the host-bridge concretes it registers or instantiates at boot, so those are
+`@api` — `Runtime\Kernel`, `Runtime\ContainerFactory`,
+`Runtime\MoodleComponentNameResolver`, `Runtime\Loader\FacadeLoader`,
+`Config\ComponentContext`, `Bus\MoodleUserContext`, `Bus\MoodleHostEventBridge`,
+`Logging\MoodleLogger`,
+`Logging\MoodleActorResolver`, `Logging\MoodleOriginResolver`,
+`Translation\MoodleTranslator`, `Output\MoodleView`,
+`Database\Schema\XmldbSchemaAdapter`, `Persistence\VersionTracker`,
+`Persistence\Query\SqlGenerator`, `Settings\SettingsResolver` and
+`Http\Contract\RouterInterface`. Prefer the **framework** contract as the type in
+your own code — the concrete is public because you must *name* it when wiring,
+not because you should depend on its shape. (`SqlGenerator` is the exception that
+proves the rule: nothing binds `ConditionCompilerInterface` on Moodle, so a
+container autowires the concrete off the type-hint itself.)
+
+`Http\Routing\PluginAwareUrlGenerator` is `@api` for a narrower reason still: the
+router instantiates it, but its constructor takes a `RouteCollection` and a
+`RequestContext`, so a consumer that auto-discovers this package's `src/` has to
+name the class in order to *exclude* it from autowiring. Naming it is the whole
+contract — do not extend or type-hint it.
+
+What stays `@internal` is the wiring a consumer never names: the remaining
+host-bridge concretes (`MoodleConnectionAdapter`, `MoodleSqlDialect`,
+`MoodleConfigResolver`, `MoodleMaintenanceGate`, `MoodleBootstrap`), and the
+internal HTTP / kernel / support plumbing — including `Http\Routing\MoodleRouter`,
+which the kernel builds and hands out as `Http\Contract\RouterInterface`; depend
+on the interface instead.
 
 `Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder`,
 `Support\DiBridgeSupport`, and `Support\RouterBridgeSupport` remain internal
