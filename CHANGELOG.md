@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/middag-io/middag-php-moodle/compare/v1.10.0...v1.11.0) (2026-07-25)
+
+
+### Features
+
+* **api:** promote the composition-root symbols core consumes to [@api](https://github.com/api) ([5fc30d9](https://github.com/middag-io/middag-php-moodle/commit/5fc30d9ee0f1898ad760646186e209e89d457c78)), closes [#45](https://github.com/middag-io/middag-php-moodle/issues/45)
+
 ## [1.10.0](https://github.com/middag-io/middag-php-moodle/compare/v1.9.0...v1.10.0) (2026-07-24)
 
 
