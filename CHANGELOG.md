@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.1](https://github.com/middag-io/middag-php-moodle/compare/v1.11.0...v1.11.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* **inertia:** drenar o FlashBag do framework e corrigir a URL de arquivo ([#50](https://github.com/middag-io/middag-php-moodle/issues/50)) ([6a4313a](https://github.com/middag-io/middag-php-moodle/commit/6a4313a438901be095b186e7a754f9ce3afee8ef))
+
+
+### Refactoring
+
+* aplica as regras novas do rector 2.5.8 ([#51](https://github.com/middag-io/middag-php-moodle/issues/51)) ([64e5fa3](https://github.com/middag-io/middag-php-moodle/commit/64e5fa3ee2f95ec50215d63318f7e4e459572fe6))
+
 ## [1.11.0](https://github.com/middag-io/middag-php-moodle/compare/v1.10.0...v1.11.0) (2026-07-25)
 
 
