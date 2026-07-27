@@ -22,6 +22,7 @@ use Middag\Moodle\Support\CourseSupport;
 use Middag\Moodle\Support\HtmlWriterSupport;
 use Middag\Moodle\Support\LangSupport;
 use Middag\Moodle\Support\MessageSupport;
+use Middag\Moodle\Support\NotificationSupport;
 use Middag\Moodle\Support\UrlSupport;
 use Middag\Moodle\Support\UserSupport;
 use stored_file;
@@ -37,7 +38,14 @@ use stored_file;
  */
 class MessageService implements MessageServiceInterface
 {
-    public const NAME = 'middagsender';
+    /**
+     * Message provider name used as the Moodle message provider component
+     * key. Value-free default: a host whose product registers a
+     * differently named provider in its `db/messages.php` overrides this
+     * constant in a subclass (mirrors
+     * {@see NotificationSupport::defaultMessageName()}).
+     */
+    public const NAME = 'system_message';
 
     /**
      * Component name used as the message provider component.
