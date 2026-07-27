@@ -368,10 +368,10 @@ if (!function_exists('get_file_storage')) {
 if (!class_exists('calendar_event', false)) {
     class calendar_event
     {
-        public mixed $id = null;
+        public mixed $id;
 
         /** @var array<string, mixed> */
-        public array $props = [];
+        public array $props;
 
         /**
          * @param array<string, mixed>|object $props

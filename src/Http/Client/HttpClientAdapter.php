@@ -36,7 +36,7 @@ class HttpClientAdapter
     private readonly Psr18Client $psrClient;
 
     /** @var array<string, string> */
-    private array $defaultHeaders = [];
+    private array $defaultHeaders;
 
     public function __construct(private readonly string $baseUri = '')
     {

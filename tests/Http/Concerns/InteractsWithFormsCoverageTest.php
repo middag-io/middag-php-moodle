@@ -332,7 +332,7 @@ class InteractsWithFormsFakeForm
     public bool $displayed = false;
 
     /** @var array<int, mixed> */
-    public array $ctorArgs = [];
+    public array $ctorArgs;
 
     public function __construct(mixed $action = null, mixed $customdata = null)
     {
