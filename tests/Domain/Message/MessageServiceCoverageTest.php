@@ -97,7 +97,7 @@ final class MessageServiceCoverageTest extends TestCase
     public function testComponentResolvesFromComponentContext(): void
     {
         self::assertSame('local_example', MessageService::component());
-        self::assertSame('middagsender', MessageService::NAME);
+        self::assertSame('system_message', MessageService::NAME);
     }
 
     #[Test]
@@ -160,7 +160,7 @@ final class MessageServiceCoverageTest extends TestCase
         self::assertInstanceOf(core_message::class, $msg);
         self::assertSame(0, $msg->notification);
         self::assertSame('local_example', $msg->component);
-        self::assertSame('middagsender', $msg->name);
+        self::assertSame('system_message', $msg->name);
         self::assertStringContainsString('<h5>Subject</h5>', $msg->smallmessage);
     }
 
@@ -218,7 +218,7 @@ final class MessageServiceCoverageTest extends TestCase
 
         self::assertInstanceOf(core_message::class, $msg);
         self::assertSame('local_example', $msg->component);
-        self::assertSame('middagsender', $msg->name);
+        self::assertSame('system_message', $msg->name);
         self::assertSame('The subject', $msg->subject);
         self::assertSame('The body', $msg->fullmessage);
         self::assertSame(FORMAT_HTML, $msg->fullmessageformat);
