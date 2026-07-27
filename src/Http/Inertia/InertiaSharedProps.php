@@ -201,7 +201,6 @@ class InertiaSharedProps
         ];
     }
 
-
     /**
      * Mensagens deixadas no FlashBag do framework, normalizadas para o mesmo
      * formato do flash legado. Resolvido pelo container; se o FlashBag não
