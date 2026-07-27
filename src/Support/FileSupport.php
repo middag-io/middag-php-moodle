@@ -395,11 +395,14 @@ class FileSupport
         ?string $preview = null
     ): string {
         try {
+            // Casts: stored_file devolve contextid/itemid como STRING (vêm
+            // direto das colunas), e pluginfile() os declara int — sem isto
+            // qualquer chamada morre com TypeError em modo estrito.
             $url = UrlSupport::pluginfile(
-                $file->get_contextid(),
+                (int) $file->get_contextid(),
                 $file->get_component(),
                 $file->get_filearea(),
-                $file->get_itemid(),
+                (int) $file->get_itemid(),
                 $file->get_filepath(),
                 $file->get_filename(),
                 $forcedownload,

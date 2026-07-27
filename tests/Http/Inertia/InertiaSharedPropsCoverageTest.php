@@ -95,7 +95,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function registerSharesAllSevenPropsWithStaticLocaleAndVersion(): void
+    public function registerSharesAllEightPropsWithStaticLocaleAndVersion(): void
     {
         $GLOBALS['__middag_test_current_language'] = 'pt_br';
 
@@ -104,7 +104,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $shared = InertiaManager::getShared();
 
         self::assertSame(
-            ['navigation', 'auth', 'theme', 'scope', 'flash', 'locale', 'version'],
+            ['navigation', 'auth', 'theme', 'scope', 'flash', 'errors', 'locale', 'version'],
             array_keys($shared),
         );
 

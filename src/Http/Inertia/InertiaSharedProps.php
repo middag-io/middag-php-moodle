@@ -15,6 +15,7 @@ namespace Middag\Moodle\Http\Inertia;
 use core\context\system;
 use core\output\user_picture;
 use Middag\Framework\Http\Inertia\InertiaManager;
+use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Support\ThemeSupport;
@@ -56,6 +57,9 @@ class InertiaSharedProps
 
         // Flash — one-shot messages from session.
         InertiaManager::share('flash', fn (): ?array => self::buildFlash());
+
+        // Erros de validação do kernel, no formato que useForm().errors espera.
+        InertiaManager::share('errors', fn (): array => self::buildErrors());
 
         // Locale + version (static, no closure needed).
         InertiaManager::share('locale', fn (): string => current_language());
@@ -197,6 +201,60 @@ class InertiaSharedProps
         ];
     }
 
+
+    /**
+     * Mensagens deixadas no FlashBag do framework, normalizadas para o mesmo
+     * formato do flash legado. Resolvido pelo container; se o FlashBag não
+     * estiver ligado, devolve vazio e o flash legado segue funcionando sozinho.
+     *
+     * @return array<string, string>
+     */
+    private static function pullFrameworkFlash(): array
+    {
+        $bag = self::flashBag();
+        if (!$bag instanceof FlashBag) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($bag->pull() as $key => $value) {
+            if (is_string($value) && $value !== '') {
+                $out[(string) $key] = $value;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Mapa campo => erros da última validação recusada.
+     *
+     * @return array<string, mixed>
+     */
+    private static function buildErrors(): array
+    {
+        $bag = self::flashBag();
+
+        return $bag instanceof FlashBag ? $bag->pullErrors() : [];
+    }
+
+    /** FlashBag do container, ou null quando não registrado. */
+    private static function flashBag(): ?FlashBag
+    {
+        try {
+            $container = Kernel::container();
+            if (!$container->has(FlashBag::class)) {
+                return null;
+            }
+            $bag = $container->get(FlashBag::class);
+
+            return $bag instanceof FlashBag ? $bag : null;
+        } catch (Throwable) {
+            // Boot parcial / CLI: sem container não há flash a drenar.
+            return null;
+        }
+    }
+
     /**
      * Build flash messages from session.
      *
@@ -206,7 +264,13 @@ class InertiaSharedProps
     {
         global $SESSION;
 
-        $flash = [];
+        // Drena PRIMEIRO o FlashBag do framework. São dois stores distintos: o
+        // kernel escreve as recusas de domínio ali (createValidationResponse →
+        // 303 + mensagens) usando $_SESSION['_middag_flash'], enquanto os
+        // controllers legados usam $SESSION->middag_flash_*. Sem esta drenagem a
+        // mensagem era gravada num store e lida do outro — o usuário recebia a
+        // página de volta sem nenhuma explicação do porquê da recusa.
+        $flash = self::pullFrameworkFlash();
 
         if (!empty($SESSION->middag_flash_success)) {
             $flash['success'] = $SESSION->middag_flash_success;
