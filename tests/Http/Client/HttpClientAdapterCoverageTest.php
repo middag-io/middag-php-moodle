@@ -47,7 +47,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[CoversClass(HttpClientAdapter::class)]
 final class HttpClientAdapterCoverageTest extends TestCase
 {
-    /** @var list<array{method: string, url: string, headers: array<int, string>, body: string}> */
+    /** @var list<array{method: string, url: string, headers: array<int, string>, body: string, timeout: float}> */
     private array $captured = [];
 
     private mixed $prevCfg = null;
@@ -159,6 +159,18 @@ final class HttpClientAdapterCoverageTest extends TestCase
         $adapter->get('https://api.test/doc');
 
         self::assertRequestHeaderSent('Content-Type: application/xml');
+    }
+
+    #[Test]
+    public function testSetTimeoutIsFluentAndOverridesTheRequestTimeout(): void
+    {
+        $adapter = $this->makeInjectedAdapter($this->recording(new MockResponse('ok', ['http_code' => 200])));
+
+        self::assertSame($adapter, $adapter->setTimeout(120));
+
+        $adapter->get('https://api.test/slow');
+
+        self::assertSame(120.0, $this->lastRequest()['timeout']);
     }
 
     // ---- GET + URL building ------------------------------------------------
@@ -432,6 +444,7 @@ final class HttpClientAdapterCoverageTest extends TestCase
                 'url' => $url,
                 'headers' => $options['headers'] ?? [],
                 'body' => is_string($body) ? $body : '',
+                'timeout' => $options['timeout'],
             ];
 
             return $response;
@@ -439,7 +452,7 @@ final class HttpClientAdapterCoverageTest extends TestCase
     }
 
     /**
-     * @return array{method: string, url: string, headers: array<int, string>, body: string}
+     * @return array{method: string, url: string, headers: array<int, string>, body: string, timeout: float}
      */
     private function lastRequest(): array
     {
