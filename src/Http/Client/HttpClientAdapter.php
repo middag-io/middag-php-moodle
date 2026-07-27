@@ -33,7 +33,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class HttpClientAdapter
 {
-    private readonly Psr18Client $psrClient;
+    private Psr18Client $psrClient;
 
     /** @var array<string, string> */
     private array $defaultHeaders;
@@ -87,6 +87,17 @@ class HttpClientAdapter
     public function setContentType(string $content_type): self
     {
         return $this->setHeader('Content-Type', $content_type);
+    }
+
+    /**
+     * Overrides the total request timeout (seconds), replacing the 30s default.
+     * Use for slow upstreams (e.g. TTS synthesis).
+     */
+    public function setTimeout(int $seconds): self
+    {
+        $this->psrClient = $this->psrClient->withOptions(['timeout' => $seconds]);
+
+        return $this;
     }
 
     public function get(string $uri, array $query = []): mixed
