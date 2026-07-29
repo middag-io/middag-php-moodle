@@ -192,12 +192,40 @@ final class SqlGeneratorCoverageTest extends TestCase
         $this->generator->compileCondition('col', Operator::Is, 'nope', null, 'px');
     }
 
+    /**
+     * The verbatim operator is gone from the enum, so this compiler has no arm for it
+     * and the match stays exhaustive (core#132).
+     *
+     * Asserted as an ABSENCE because that is the only thing left to assert: a test
+     * calling `compileCondition(..., Operator::Raw, ...)` would not compile.
+     */
     #[Test]
-    public function rawReturnsValueVerbatim(): void
+    public function thereIsNoVerbatimOperatorToCompile(): void
     {
-        [$sql, $params] = $this->generator->compileCondition('ignored', Operator::Raw, '1 = 1', null, 'px');
+        $this->assertNull(Operator::tryFrom('RAW'));
 
-        $this->assertSame('1 = 1', $sql);
-        $this->assertSame([], $params);
+        foreach (Operator::cases() as $case) {
+            [$sql] = $this->generator->compileCondition(
+                'col',
+                $case,
+                $case === Operator::Between ? 1 : ($this->needsNullOrBool($case) ? null : 'v'),
+                $case === Operator::Between ? 2 : null,
+                'px',
+            );
+
+            $this->assertNotSame('v', $sql, sprintf(
+                'operator %s returned the bound value as SQL, which is what Raw did',
+                $case->value,
+            ));
+        }
+    }
+
+    /**
+     * `IS` and `IS NOT` refuse anything that is not NULL or a boolean, so the sweep above
+     * has to hand them one — otherwise the loop fails on an unrelated guard.
+     */
+    private function needsNullOrBool(Operator $case): bool
+    {
+        return $case === Operator::Is || $case === Operator::IsNot;
     }
 }
