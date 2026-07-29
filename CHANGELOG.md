@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.12.0](https://github.com/middag-io/middag-php-moodle/compare/v1.11.1...v1.12.0) (2026-07-29)
+
+
+### Features
+
+* **persistence:** SqlGenerator perde o braco do operador verbatim ([8bc2092](https://github.com/middag-io/middag-php-moodle/commit/8bc209283218ec454e4a3990e2055f89ca054366))
+* **persistence:** SqlGenerator perde o braço do operador verbatim (core[#132](https://github.com/middag-io/middag-php-moodle/issues/132)) — PASSO 2 ([3660a6c](https://github.com/middag-io/middag-php-moodle/commit/3660a6c6761d65a1a0dafd9f10cae3be2fb77306))
+
+
+### Bug Fixes
+
+* **http:** expõe setTimeout() no HttpClientAdapter ([#53](https://github.com/middag-io/middag-php-moodle/issues/53)) ([cde3023](https://github.com/middag-io/middag-php-moodle/commit/cde3023a074ce01b32a67fee5af82aa9b128e540)), closes [#46](https://github.com/middag-io/middag-php-moodle/issues/46)
+* **messaging:** remove hardcoded brand string from MessageService::NAME ([#55](https://github.com/middag-io/middag-php-moodle/issues/55)) ([f785195](https://github.com/middag-io/middag-php-moodle/commit/f78519501c2a92b70a3d7f5b985d9b6a0cd71b39))
+
+
+### Documentation
+
+* **decisions:** adiciona MDL-020 — política bundled×vendor ([#54](https://github.com/middag-io/middag-php-moodle/issues/54)) ([8bb1191](https://github.com/middag-io/middag-php-moodle/commit/8bb11916a002a42d84f02356362642e553dd826b)), closes [#63](https://github.com/middag-io/middag-php-moodle/issues/63)
+
+
+### Miscellaneous
+
+* **build:** cache do phpstan por repo, em vez do diretorio global da maquina ([47fecbf](https://github.com/middag-io/middag-php-moodle/commit/47fecbf5605f6a7f9601097040d380ae0383e1ad))
+* sync develop para main — release 1.12.0 ([e1a891d](https://github.com/middag-io/middag-php-moodle/commit/e1a891dcbbc697942a1ee07ed5c6d6a69edacc6c))
+
 ## [1.11.1](https://github.com/middag-io/middag-php-moodle/compare/v1.11.0...v1.11.1) (2026-07-27)
 
 
