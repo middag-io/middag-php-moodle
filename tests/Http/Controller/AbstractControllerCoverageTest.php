@@ -26,6 +26,7 @@ use Middag\Framework\Http\Contract\CapabilityDefinitionInterface;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Moodle\Domain\Context\Enum\ContextLevel;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Controller\AbstractController;
 use Middag\Moodle\Runtime\Kernel;
@@ -1194,6 +1195,43 @@ final class AbstractControllerCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testContainerReturnsTheInjectedContainer(): void
+    {
+        $container = $this->makeContainer([]);
+        $controller = new CoverageController();
+        $controller->setContainer($container);
+
+        self::assertSame($container, $controller->callContainer());
+    }
+
+    #[Test]
+    public function testContainerSaysWhatToDoWhenItWasNeverSet(): void
+    {
+        // Reading the typed property directly raises "must not be accessed before
+        // initialization", which names a property and leaves the reader guessing.
+        // The accessor names the cause (built outside the router) and the fix.
+        $controller = new CoverageController();
+
+        $this->expectException(MoodleConfigurationException::class);
+        $this->expectExceptionMessage('was constructed outside the router');
+
+        $controller->callContainer();
+    }
+
+    #[Test]
+    public function testGetServiceRefusesToHideAMissingContainer(): void
+    {
+        // getService() answers null for "no such service". A controller with no
+        // container at all is a different failure, and answering null for it would
+        // turn a wiring mistake into a silently absent service.
+        $controller = new CoverageController();
+
+        $this->expectException(MoodleConfigurationException::class);
+
+        $controller->callGetService('svc');
+    }
+
+    #[Test]
     public function testAuthenticationResolvesAdapterFromContainer(): void
     {
         $auth = $this->makeAuth();
@@ -1697,6 +1735,11 @@ class CoverageController extends AbstractController
     public function callRedirectToRoute(string $route, array $parameters = [], int $status = Response::HTTP_FOUND): RedirectResponse
     {
         return $this->redirectToRoute($route, $parameters, $status);
+    }
+
+    public function callContainer(): ContainerInterface
+    {
+        return $this->container();
     }
 
     public function callGetService(string $serviceName): mixed

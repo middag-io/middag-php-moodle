@@ -204,17 +204,23 @@ final class SqlGeneratorCoverageTest extends TestCase
     {
         $this->assertNull(Operator::tryFrom('RAW'));
 
+        // The value is a SQL fragment rather than a scalar, and the assertion is
+        // "does not appear anywhere in the text" rather than "is not the whole
+        // text". Raw's leak was `col = i.status = m.value`: the value pasted INTO
+        // the SQL, never equal to it. An identity check would call that clean.
+        $verbatim = 'i.status = m.value';
+
         foreach (Operator::cases() as $case) {
             [$sql] = $this->generator->compileCondition(
                 'col',
                 $case,
-                $case === Operator::Between ? 1 : ($this->needsNullOrBool($case) ? null : 'v'),
+                $case === Operator::Between ? 1 : ($this->needsNullOrBool($case) ? null : $verbatim),
                 $case === Operator::Between ? 2 : null,
                 'px',
             );
 
-            $this->assertNotSame('v', $sql, sprintf(
-                'operator %s returned the bound value as SQL, which is what Raw did',
+            $this->assertStringNotContainsString($verbatim, $sql, sprintf(
+                'operator %s pasted the value into the SQL instead of binding it, which is what Raw did',
                 $case->value,
             ));
         }

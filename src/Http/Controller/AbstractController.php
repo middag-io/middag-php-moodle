@@ -24,6 +24,7 @@ use Middag\Framework\Http\Auth\CapabilityRequirement;
 use Middag\Framework\Http\Inertia\InertiaAdapter;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Domain\Context\Enum\ContextLevel;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Middag\Moodle\Http\Contract\MoodleControllerInterface;
 use Middag\Moodle\Output\Widget;
 use Middag\Moodle\Runtime\Kernel;
@@ -355,6 +356,37 @@ abstract class AbstractController implements MoodleControllerInterface
         } catch (Exception) {
             $this->pageUrl = null;
         }
+    }
+
+    /**
+     * The container, or an error that says what to do about its absence.
+     *
+     * `$container` is typed with no default, so before `setContainer()` it is not
+     * null — it is uninitialized, and reading it raises `Typed property
+     * Middag\Moodle\Http\Controller\AbstractController::$container must not be
+     * accessed before initialization`. That message names a property and stops
+     * there. Whoever reads it built the controller by hand instead of letting the
+     * router resolve it, and the one thing they need told is that the container was
+     * never handed over.
+     *
+     * The property keeps its non-nullable type on purpose: subclasses reach for
+     * `$this->container` directly, and widening it to `?ContainerInterface` would
+     * make every one of those reads possibly-null for static analysis without
+     * making a single one of them safer.
+     *
+     * @throws MoodleConfigurationException when the controller was built outside the router
+     */
+    protected function container(): ContainerInterface
+    {
+        if (!isset($this->container)) {
+            throw new MoodleConfigurationException(sprintf(
+                '%s has no service container: it was constructed outside the router, which is what calls '
+                . 'setContainer(). Resolve it through the router, or call setContainer() before using it.',
+                static::class,
+            ));
+        }
+
+        return $this->container;
     }
 
     /**
@@ -892,8 +924,10 @@ abstract class AbstractController implements MoodleControllerInterface
     protected function getService(string $service_name): mixed
     {
         try {
-            if ($this->container->has($service_name)) {
-                return $this->container->get($service_name);
+            $container = $this->container();
+
+            if ($container->has($service_name)) {
+                return $container->get($service_name);
             }
         } catch (ContainerExceptionInterface $containerException) {
             if (class_exists(Debug::class)) {
@@ -913,7 +947,7 @@ abstract class AbstractController implements MoodleControllerInterface
      */
     protected function authentication(): AuthenticationInterface
     {
-        return $this->container->get(AuthenticationInterface::class);
+        return $this->container()->get(AuthenticationInterface::class);
     }
 
     /**
@@ -953,7 +987,7 @@ abstract class AbstractController implements MoodleControllerInterface
      */
     private function capability(): CapabilityInterface
     {
-        return $this->container->get(CapabilityInterface::class);
+        return $this->container()->get(CapabilityInterface::class);
     }
 
     /**
