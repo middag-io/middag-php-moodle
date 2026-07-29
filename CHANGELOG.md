@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.12.1](https://github.com/middag-io/middag-php-moodle/compare/v1.12.0...v1.12.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **http:** diz o que fazer quando o controller não tem container ([08acb9e](https://github.com/middag-io/middag-php-moodle/commit/08acb9ee80de4b1bb030423af60711e69bb09f43))
+
+
+### Miscellaneous
+
+* promove develop para main ([da57832](https://github.com/middag-io/middag-php-moodle/commit/da57832781ffe3c3d91500af31ac2c450f9f5c4c))
+
 ## [1.12.0](https://github.com/middag-io/middag-php-moodle/compare/v1.11.1...v1.12.0) (2026-07-29)
 
 
