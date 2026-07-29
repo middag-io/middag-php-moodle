@@ -66,7 +66,6 @@ class SqlGenerator implements ConditionCompilerInterface
             Operator::In, Operator::NotIn => $this->compileInList($column, $op, $value, $param_prefix),
             Operator::Between => $this->compileBetween($column, $value, $value2, $param_prefix),
             Operator::Is, Operator::IsNot => $this->compileNullOrBool($column, $op, $value),
-            Operator::Raw => [(string) $value, []],
         };
     }
 
