@@ -100,7 +100,16 @@ class UserSupport
 
         require_once $CFG->dirroot . '/user/lib.php';
 
-        return user_create_user($userobj, $updatepassword, $triggerevent);
+        $id = user_create_user($userobj, $updatepassword, $triggerevent);
+
+        // `user_create_user()` writes the `user` table and silently ignores every
+        // `profile_field_<shortname>` property on the object — those live in
+        // `user_info_data` and only `profile_save_data()` puts them there. Without this the
+        // caller sets seven profile fields, gets an id back, no error anywhere, and the
+        // fields are simply not on the account.
+        self::saveProfileFields($userobj, $id);
+
+        return $id;
     }
 
     /**
@@ -117,6 +126,9 @@ class UserSupport
         require_once $CFG->dirroot . '/user/lib.php';
 
         user_update_user($userobj, $updatepassword, $triggerevent);
+
+        // Same gap as on create: `user_update_user()` never touches `user_info_data`.
+        self::saveProfileFields($userobj, (int) ($userobj->id ?? 0));
     }
 
     /**
@@ -213,5 +225,49 @@ class UserSupport
         }
 
         return $return;
+    }
+
+    /**
+     * Persist the custom profile fields carried on a user object, if any.
+     *
+     * Moodle keeps custom profile fields in `user_info_data`, reached only through
+     * `profile_save_data()`, which reads `profile_field_<shortname>` properties off the object
+     * and needs the id already on it. Both write paths above hand their object here so a caller
+     * can set a profile field the same way it sets a core column, which is what every consumer
+     * of this class already assumed.
+     *
+     * Does nothing when the object carries no profile field — the common case, and the reason
+     * this does not cost a file include on every user write.
+     */
+    private static function saveProfileFields(stdClass $userobj, int $id): void
+    {
+        global $CFG;
+
+        if ($id <= 0) {
+            return;
+        }
+
+        $hasProfileField = false;
+
+        foreach (get_object_vars($userobj) as $property => $ignored) {
+            if (str_starts_with($property, 'profile_field_')) {
+                $hasProfileField = true;
+
+                break;
+            }
+        }
+
+        if (!$hasProfileField) {
+            return;
+        }
+
+        require_once $CFG->dirroot . '/user/profile/lib.php';
+
+        // A clone, because `profile_save_data()` writes back onto the object it is given and the
+        // caller's object is not this method's to mutate.
+        $target = clone $userobj;
+        $target->id = $id;
+
+        profile_save_data($target);
     }
 }
