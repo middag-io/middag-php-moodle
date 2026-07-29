@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.2](https://github.com/middag-io/middag-php-moodle/compare/v1.12.1...v1.12.2) (2026-07-29)
+
+
+### Bug Fixes
+
+* **user:** gravar os campos customizados de perfil ao criar e ao atualizar usuario ([2b44dbe](https://github.com/middag-io/middag-php-moodle/commit/2b44dbed9e91daac7ea462a88301bcb68921246c))
+* **user:** gravar os campos customizados de perfil ao criar e ao atualizar usuário ([af2c590](https://github.com/middag-io/middag-php-moodle/commit/af2c5908e3542b83b7e7723731919c375c6da1ce))
+
 ## [1.12.1](https://github.com/middag-io/middag-php-moodle/compare/v1.12.0...v1.12.1) (2026-07-29)
 
 
