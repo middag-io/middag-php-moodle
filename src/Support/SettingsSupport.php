@@ -23,7 +23,8 @@ use ReflectionEnum;
  * Accepts a string-backed enum whose class name follows the convention
  * `{slug}_config` — the slug is extracted automatically to resolve the
  * canonical key via the {@see SettingsNamingPolicy} (pass a custom policy to
- * read/write keys under a non-MIDDAG prefix). PascalCase
+ * read/write keys under a different prefix than the library's neutral
+ * default). PascalCase
  * spellings (e.g. `FrameworkConfig`) are normalised to snake_case before
  * the slug is derived; an enum whose name cannot be mapped onto
  * `{slug}_config` is rejected instead of silently resolving a dead key.
@@ -41,7 +42,7 @@ class SettingsSupport
      * Read a setting value.
      *
      * @param BackedEnum                $key    a string-backed enum case from a {slug}_config enum
-     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = library default `mdglib_`)
      *
      * @return mixed the stored value, or false if not found
      */
@@ -59,7 +60,7 @@ class SettingsSupport
      *
      * @param BackedEnum                $key    a string-backed enum case
      * @param mixed                     $value  the value to store
-     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = library default `mdglib_`)
      *
      * @return bool true on success
      */
@@ -77,7 +78,7 @@ class SettingsSupport
      * Remove a setting value.
      *
      * @param BackedEnum                $key    a string-backed enum case
-     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = library default `mdglib_`)
      *
      * @return bool true on success
      */

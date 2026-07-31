@@ -274,7 +274,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     #[Test]
     public function themeClosureReturnsBrandColorWhenInheritanceEnabled(): void
     {
-        $GLOBALS['__middag_test_config'] = ['mdg_core_inherit_theme_colors' => '1'];
+        $GLOBALS['__middag_test_config'] = ['mdglib_core_inherit_theme_colors' => '1'];
         $GLOBALS['PAGE'] = (object) [
             'theme' => (object) ['settings' => (object) ['brandcolor' => '#0f6cbf']],
         ];

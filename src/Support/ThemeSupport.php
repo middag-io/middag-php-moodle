@@ -60,9 +60,11 @@ class ThemeSupport
      * Check if theme color inheritance is enabled.
      *
      * Reads the `inherit_theme_colors` setting from core extension config
-     * (canonical key under the default policy: mdg_core_inherit_theme_colors).
+     * (canonical key under the library's default policy:
+     * mdglib_core_inherit_theme_colors — a real product overrides this via
+     * its own policy, see MDL-021).
      *
-     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = MIDDAG default `mdg_`)
+     * @param null|SettingsNamingPolicy $policy naming policy for the config key (null = library default `mdglib_`)
      *
      * @return bool
      */

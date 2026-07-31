@@ -79,7 +79,7 @@ final class AbstractSettingCoverageTest extends TestCase
     #[Test]
     public function resolveConfigNameDelegatesToResolver(): void
     {
-        $this->assertSame('mdg_ecommerce_apikey', $this->makeSetting()->resolveConfigName('ecommerce'));
+        $this->assertSame('mdglib_ecommerce_apikey', $this->makeSetting()->resolveConfigName('ecommerce'));
     }
 
     #[Test]

@@ -19,8 +19,10 @@ use Middag\Moodle\Support\LangSupport;
  * Translates framework settings to Moodle admin_setting instances.
  *
  * Key naming is delegated to the injected {@see SettingsNamingPolicy}
- * (default: the MIDDAG `mdg_` prefix) so a client plugin on the same host
- * can run its own resolver without colliding with the product's keys.
+ * (default: the library's neutral `mdglib_` prefix — a real product such as
+ * MIDDAG injects its own prefix explicitly, see MDL-021) so a client plugin
+ * on the same host can run its own resolver without colliding with another
+ * consumer's keys.
  *
  * Public surface: the rest of the `Settings/` family is `@api`, and consumers
  * type-hint the resolver when they build a settings tree of their own.

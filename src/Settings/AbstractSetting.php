@@ -35,8 +35,8 @@ abstract class AbstractSetting
      * Adopt the naming policy of the resolver materialising this setting.
      *
      * Injected by {@see SettingsResolver::resolveExtensionPages()} right
-     * before {@see self::toMoodleSetting()}; when never injected, the MIDDAG
-     * default policy applies.
+     * before {@see self::toMoodleSetting()}; when never injected, the
+     * library's neutral default policy applies.
      */
     public function useNamingPolicy(SettingsNamingPolicy $policy): void
     {
@@ -82,7 +82,7 @@ abstract class AbstractSetting
 
     /**
      * Resolve the canonical config key for this setting under the adopted
-     * naming policy (MIDDAG default when none was injected).
+     * naming policy (library's neutral default when none was injected).
      *
      * @internal
      */

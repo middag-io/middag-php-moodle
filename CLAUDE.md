@@ -115,7 +115,9 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
    the consumer plugin. There are no package-relative monolith fallbacks.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
-   short name** (with a `framework → core` special case → `mdg_core_*` keys).
+   short name** (with a `framework → core` special case → `mdglib_core_*`
+   keys under the library's neutral default policy; a real product such as
+   MIDDAG injects its own prefix explicitly, see MDL-021).
    PascalCase spellings are normalised to snake_case first, and an enum whose
    name cannot be mapped onto `{slug}_config` is rejected with
    `InvalidArgumentException` — it never silently resolves a dead key. The

@@ -23,8 +23,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test SettingsResolver.
  *
- * Canonicalises config keys (mdg_{ext}_{name}) and turns the typed Page/Setting
- * DSL into Moodle admin_settingpage objects (stubbed in tests/bootstrap.php).
+ * Canonicalises config keys (mdglib_{ext}_{name} under the library's neutral
+ * default) and turns the typed Page/Setting DSL into Moodle admin_settingpage
+ * objects (stubbed in tests/bootstrap.php).
  *
  * @internal
  */
@@ -34,13 +35,13 @@ final class SettingsResolverCoverageTest extends TestCase
     #[Test]
     public function resolveConfigKeyPrependsCanonicalPrefix(): void
     {
-        $this->assertSame('mdg_core_apikey', SettingsResolver::resolveConfigKey('apikey', 'core'));
+        $this->assertSame('mdglib_core_apikey', SettingsResolver::resolveConfigKey('apikey', 'core'));
     }
 
     #[Test]
     public function resolveConfigKeyIsIdempotentForAlreadyPrefixedNames(): void
     {
-        $this->assertSame('mdg_core_apikey', SettingsResolver::resolveConfigKey('mdg_core_apikey', 'core'));
+        $this->assertSame('mdglib_core_apikey', SettingsResolver::resolveConfigKey('mdglib_core_apikey', 'core'));
     }
 
     #[Test]

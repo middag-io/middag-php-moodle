@@ -25,8 +25,8 @@ use stdClass;
 #[CoversClass(ThemeSupport::class)]
 final class ThemeSupportCoverageTest extends TestCase
 {
-    /** The canonical config key ThemeSupport reads for the inheritance toggle. */
-    private const INHERIT_KEY = 'mdg_core_inherit_theme_colors';
+    /** The canonical config key ThemeSupport reads for the inheritance toggle (library's neutral default). */
+    private const INHERIT_KEY = 'mdglib_core_inherit_theme_colors';
 
     private mixed $prevPage;
 
