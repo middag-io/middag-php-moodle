@@ -158,6 +158,8 @@ final class MoodleInertiaBootstrapCoverageTest extends TestCase
     {
         $json = '{"component":"Home","props":[],"url":"/","version":"dev"}';
 
+        $this->shipStylesheets('local/example');
+
         $response = MoodleInertiaBootstrap::htmlBootstrap('local_example/inertia_app', ['component' => 'Home'], $json, 'ignored-attr');
 
         self::assertInstanceOf(Response::class, $response);
@@ -196,8 +198,7 @@ final class MoodleInertiaBootstrapCoverageTest extends TestCase
     {
         // A non-"local" plugin type must not double a "/local/" prefix: the web
         // base comes from the component directory relative to dirroot verbatim.
-        $GLOBALS['CFG']->dirroot = '/var/www/html/moodle';
-        $GLOBALS['__middag_test_component_dir'] = '/var/www/html/moodle/mod/unidade';
+        $this->shipStylesheets('mod/unidade');
 
         MoodleInertiaBootstrap::htmlBootstrap('mod_unidade/inertia_app', [], '{}', '');
 
@@ -205,6 +206,65 @@ final class MoodleInertiaBootstrapCoverageTest extends TestCase
             ['/mod/unidade/styles/middag-app.css', '/mod/unidade/styles/isolation.css'],
             $GLOBALS['PAGE']->requires->css,
         );
+    }
+
+    #[Test]
+    public function testHtmlBootstrapSkipsStylesheetsTheConsumerDoesNotShip(): void
+    {
+        // `styles/` is a convention, not a requirement — a consumer whose CSS is
+        // emitted elsewhere ships neither file. Linking them anyway would put a
+        // 404 per sheet on every Inertia page it serves, with no way to opt out.
+        // Nothing is created under the temp dirroot here, so both are absent.
+        $this->tmpRoot = sys_get_temp_dir() . '/middag_inertia_' . uniqid('', true);
+        mkdir($this->tmpRoot . '/local/example', 0o777, true);
+
+        $GLOBALS['CFG']->dirroot = $this->tmpRoot;
+        $GLOBALS['__middag_test_component_dir'] = $this->tmpRoot . '/local/example';
+
+        $response = MoodleInertiaBootstrap::htmlBootstrap('local_example/inertia_app', [], '{}', '');
+
+        self::assertSame([], $GLOBALS['PAGE']->requires->css);
+        // The rest of the bootstrap is unaffected — only the <link>s are skipped.
+        self::assertSame([['local_example/inertia_app', 'init']], $GLOBALS['PAGE']->requires->amd);
+        self::assertStringContainsString('class="middag-root"', (string) $response->getContent());
+    }
+
+    #[Test]
+    public function testHtmlBootstrapLinksOnlyTheStylesheetThatExists(): void
+    {
+        // Per-sheet check, not all-or-nothing: a consumer shipping one of the two
+        // gets that one linked and no 404 for the other.
+        $this->tmpRoot = sys_get_temp_dir() . '/middag_inertia_' . uniqid('', true);
+        mkdir($this->tmpRoot . '/local/example/styles', 0o777, true);
+        file_put_contents($this->tmpRoot . '/local/example/styles/isolation.css', '/* isolation */');
+
+        $GLOBALS['CFG']->dirroot = $this->tmpRoot;
+        $GLOBALS['__middag_test_component_dir'] = $this->tmpRoot . '/local/example';
+
+        MoodleInertiaBootstrap::htmlBootstrap('local_example/inertia_app', [], '{}', '');
+
+        self::assertSame(['/local/example/styles/isolation.css'], $GLOBALS['PAGE']->requires->css);
+    }
+
+    /**
+     * Materialises both conventional stylesheets under a temp dirroot and points
+     * $CFG/the component directory at it, so the is_readable() guard in
+     * htmlBootstrap() sees real files.
+     *
+     * @param string $relBase component directory relative to dirroot, e.g. `local/example`
+     */
+    private function shipStylesheets(string $relBase): void
+    {
+        $this->tmpRoot = sys_get_temp_dir() . '/middag_inertia_' . uniqid('', true);
+        $stylesDir = $this->tmpRoot . '/' . $relBase . '/styles';
+        mkdir($stylesDir, 0o777, true);
+
+        foreach (['middag-app.css', 'isolation.css'] as $sheet) {
+            file_put_contents($stylesDir . '/' . $sheet, '/* ' . $sheet . ' */');
+        }
+
+        $GLOBALS['CFG']->dirroot = $this->tmpRoot;
+        $GLOBALS['__middag_test_component_dir'] = $this->tmpRoot . '/' . $relBase;
     }
 
     private function resetInertiaStatics(): void
