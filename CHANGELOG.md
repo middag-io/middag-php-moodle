@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.13.0](https://github.com/middag-io/middag-php-moodle/compare/v1.12.2...v1.13.0) (2026-08-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **settings:** SettingsNamingPolicy::DEFAULT_PREFIX muda de 'mdg_' para 'mdglib_'. Qualquer consumidor que não injeta um prefixo explícito passa a produzir/ler config keys sob 'mdglib_*' em vez de 'mdg_*'.
+
+### Bug Fixes
+
+* **inertia:** linka os stylesheets convencionais só quando existem ([0df9388](https://github.com/middag-io/middag-php-moodle/commit/0df9388ec3afd1abbb1803b39c6b9fa655ac3f4e))
+* **inertia:** linka os stylesheets convencionais só quando existem ([028c175](https://github.com/middag-io/middag-php-moodle/commit/028c175631ed79aa0289edc6ccf6cafd0d22f85e))
+* **settings:** prefixo default de SettingsNamingPolicy deixa de ser a marca MIDDAG ([58a4c77](https://github.com/middag-io/middag-php-moodle/commit/58a4c773eeddb8f5fcf1c409c13700347483e83d))
+
+
+### Documentation
+
+* canonical AGENTS.md, CLAUDE.md symlink (ADR-017) ([18a2ec8](https://github.com/middag-io/middag-php-moodle/commit/18a2ec81c182a9ab4f3351be14de2c03659f8aec))
+
 ## [1.12.2](https://github.com/middag-io/middag-php-moodle/compare/v1.12.1...v1.12.2) (2026-07-29)
 
 
