@@ -84,11 +84,27 @@ final class MoodleInertiaBootstrap
      */
     public static function htmlBootstrap(string $amdModule, array $page, string $json, string $attr): Response
     {
-        global $PAGE;
+        global $CFG, $PAGE;
         $webBase = self::componentWebBase();
         $PAGE->requires->js_call_amd($amdModule, 'init');
-        $PAGE->requires->css($webBase . '/styles/middag-app.css');
-        $PAGE->requires->css($webBase . '/styles/isolation.css');
+
+        // These two paths are a CONVENTION, not a guarantee: nothing requires a
+        // consumer to build its CSS into `styles/`, and a consumer that emits it
+        // elsewhere — as a bundled asset, say — would get a `<link>` to a file it
+        // never ships, i.e. a 404 per page with no way to opt out.
+        //
+        // A file check rather than a config flag: the convention keeps working
+        // untouched for whoever does ship the files, and no consumer has to declare
+        // anything. Costs one is_readable() per sheet per page.
+        //
+        // Note the base is the component that owns the CONTEXT, not the plugin
+        // serving the request (see componentWebBase) — a consumer routing pages
+        // through another component's context resolves these against that one.
+        foreach (['/styles/middag-app.css', '/styles/isolation.css'] as $sheet) {
+            if (is_readable($CFG->dirroot . $webBase . $sheet)) {
+                $PAGE->requires->css($webBase . $sheet);
+            }
+        }
 
         // Blocking appearance script — toggles .dark on <html> before React mount
         // to prevent flash of wrong theme (~200 bytes, runs synchronously).
