@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.13.1](https://github.com/middag-io/middag-php-moodle/compare/v1.13.0...v1.13.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* **ci:** PHPUnitSetList::PHPUNIT_120 removido no rector 2.6, usa COMPOSER_BASED ([50a5988](https://github.com/middag-io/middag-php-moodle/commit/50a5988a84e2e50832c84dd6e6ed306e85ae96d6))
+* **http:** lê conteúdo do resource antes de concatenar no body multipart ([62b550e](https://github.com/middag-io/middag-php-moodle/commit/62b550e6935bbb18b1d4264be007380591754d83))
+* **http:** lê conteúdo do resource antes de concatenar no body multipart ([7b95e3d](https://github.com/middag-io/middag-php-moodle/commit/7b95e3df4bea37158211ffd46028e68c41be0762))
+
 ## [1.13.0](https://github.com/middag-io/middag-php-moodle/compare/v1.12.2...v1.13.0) (2026-08-06)
 
 
