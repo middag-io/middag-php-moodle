@@ -57,7 +57,7 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
         SetList::EARLY_RETURN,
         SetList::INSTANCEOF,
-        PHPUnitSetList::PHPUNIT_120,
+        PHPUnitSetList::COMPOSER_BASED,
     ])
     ->withSkip([
         // PHPStan symbol stubs (scanFiles) are not real code — leave them as-is.
