@@ -186,7 +186,14 @@ class HttpClientAdapter
                 }
             }
 
-            $body .= "\r\n" . $field['contents'] . "\r\n";
+            $contents = $field['contents'];
+            if (is_resource($contents)) {
+                $stream = $contents;
+                $contents = stream_get_contents($stream);
+                fclose($stream);
+            }
+
+            $body .= "\r\n" . $contents . "\r\n";
         }
 
         return $body . "--{$boundary}--\r\n";
