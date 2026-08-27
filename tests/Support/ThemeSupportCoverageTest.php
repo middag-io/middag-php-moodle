@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Support;
 
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 use Middag\Moodle\Support\ThemeSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -108,6 +109,23 @@ final class ThemeSupportCoverageTest extends TestCase
         $GLOBALS['__middag_test_config'][self::INHERIT_KEY] = 1;
 
         self::assertTrue(ThemeSupport::isInheritanceEnabled());
+    }
+
+    #[Test]
+    public function testThemeMethodsAcceptAnExplicitNamingPolicy(): void
+    {
+        $GLOBALS['__middag_test_config']['mdg_core_inherit_theme_colors'] = 1;
+        $GLOBALS['PAGE'] = $this->pageWithBrand('#123456');
+        $policy = new SettingsNamingPolicy('mdg_');
+
+        self::assertSame(
+            ':root { --brand: #123456; }',
+            ThemeSupport::getCssInjection($policy),
+        );
+        self::assertSame(
+            ['brandColor' => '#123456', 'inherit' => true],
+            ThemeSupport::buildTheme($policy),
+        );
     }
 
     #[Test]
