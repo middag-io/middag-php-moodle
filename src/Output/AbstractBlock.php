@@ -128,10 +128,7 @@ abstract class AbstractBlock
         // Prepare data using get_content() to leverage memoization
         $data = $this->getContent();
 
-        // Ensure title is available in data if the template needs it
-        if (!isset($data['title'])) {
-            $data['title'] = $this->getTitle();
-        }
+        $data['title'] ??= $this->getTitle();
 
         // We wrap the data in the widget class responsible for the '{component}/widget' structure
         $widget = new Widget(static::TEMPLATE, ['data' => $data]);
