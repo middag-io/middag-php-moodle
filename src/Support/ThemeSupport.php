@@ -83,9 +83,9 @@ class ThemeSupport
      *
      * @return null|string CSS rule like ":root { --brand: #0f6cbf; }"
      */
-    public static function getCssInjection(): ?string
+    public static function getCssInjection(?SettingsNamingPolicy $policy = null): ?string
     {
-        if (!self::isInheritanceEnabled()) {
+        if (!self::isInheritanceEnabled($policy)) {
             return null;
         }
 
@@ -102,11 +102,13 @@ class ThemeSupport
      *
      * @return array{brandColor: ?string, inherit: bool}
      */
-    public static function buildTheme(): array
+    public static function buildTheme(?SettingsNamingPolicy $policy = null): array
     {
+        $inherit = self::isInheritanceEnabled($policy);
+
         return [
-            'brandColor' => self::isInheritanceEnabled() ? self::getBrandColor() : null,
-            'inherit' => self::isInheritanceEnabled(),
+            'brandColor' => $inherit ? self::getBrandColor() : null,
+            'inherit' => $inherit,
         ];
     }
 

@@ -18,6 +18,7 @@ use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 use Middag\Moodle\Support\ThemeSupport;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +39,19 @@ use Throwable;
  */
 class InertiaSharedProps
 {
+    private static ?SettingsNamingPolicy $themePolicy = null;
+
+    /**
+     * Configure the naming policy used by the default theme shared prop.
+     *
+     * Consumers with product-owned settings should inject their explicit
+     * prefix here; null preserves the library-neutral default.
+     */
+    public static function configureThemePolicy(?SettingsNamingPolicy $policy): void
+    {
+        self::$themePolicy = $policy;
+    }
+
     /**
      * Register all default shared props.
      */
@@ -176,7 +190,7 @@ class InertiaSharedProps
      */
     private static function buildTheme(): array
     {
-        $theme = ThemeSupport::buildTheme();
+        $theme = ThemeSupport::buildTheme(self::$themePolicy);
 
         return [
             'strings' => [],
