@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.13.2](https://github.com/middag-io/middag-php-moodle/compare/v1.13.1...v1.13.2) (2026-08-27)
+
+
+### Bug Fixes
+
+* **support:** stop mapping Schedule::exclusive to a blocking key ([4d761e5](https://github.com/middag-io/middag-php-moodle/commit/4d761e599321a2889d11d4e24bbe58b54d96b3e4))
+* **support:** stop mapping Schedule::exclusive to a blocking key ([e669f7e](https://github.com/middag-io/middag-php-moodle/commit/e669f7ed9492a2e0748a02a8495cf6f95634f96e))
+
 ## [1.13.1](https://github.com/middag-io/middag-php-moodle/compare/v1.13.0...v1.13.1) (2026-08-20)
 
 
