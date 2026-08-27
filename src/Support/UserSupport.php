@@ -87,16 +87,9 @@ class UserSupport
     {
         global $CFG;
 
-        // Enforce essential defaults if missing
-        if (!isset($userobj->auth)) {
-            $userobj->auth = 'manual';
-        }
-        if (!isset($userobj->confirmed)) {
-            $userobj->confirmed = 1;
-        }
-        if (!isset($userobj->mnethostid)) {
-            $userobj->mnethostid = ConfigSupport::getConfig('core', 'mnet_localhost_id');
-        }
+        $userobj->auth ??= 'manual';
+        $userobj->confirmed ??= 1;
+        $userobj->mnethostid ??= ConfigSupport::getConfig('core', 'mnet_localhost_id');
 
         require_once $CFG->dirroot . '/user/lib.php';
 

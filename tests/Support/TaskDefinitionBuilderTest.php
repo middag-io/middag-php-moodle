@@ -38,7 +38,7 @@ final class TaskDefinitionBuilderTest extends TestCase
         $definition = TaskDefinitionBuilder::build($schedule, '\App\Task\SyncTask');
 
         $this->assertSame('\App\Task\SyncTask', $definition['classname']);
-        $this->assertSame(0, $definition['blocking']);
+        $this->assertArrayNotHasKey('blocking', $definition);
         $this->assertSame('*/5', $definition['minute']);
         $this->assertSame('3', $definition['hour']);
         $this->assertSame('1', $definition['day']);
@@ -53,7 +53,7 @@ final class TaskDefinitionBuilderTest extends TestCase
         $definition = TaskDefinitionBuilder::build(new Schedule(), '\App\Task\DefaultTask');
 
         $this->assertSame('\App\Task\DefaultTask', $definition['classname']);
-        $this->assertSame(0, $definition['blocking']);
+        $this->assertArrayNotHasKey('blocking', $definition);
         $this->assertSame('*', $definition['minute']);
         $this->assertSame('*', $definition['hour']);
         $this->assertSame('*', $definition['day']);
@@ -70,11 +70,14 @@ final class TaskDefinitionBuilderTest extends TestCase
     }
 
     #[Test]
-    public function buildIncludesBlocking(): void
+    public function buildDoesNotEmitBlockingRegardlessOfExclusive(): void
     {
+        // `task_scheduled.blocking` was removed from Moodle core in 4.4
+        // (MDL-67667) and the value is ignored, so the builder no longer
+        // maps `Schedule::$exclusive` to a `blocking` key.
         $definition = TaskDefinitionBuilder::build(new Schedule(exclusive: true), 'Task');
 
-        $this->assertSame(1, $definition['blocking']);
+        $this->assertArrayNotHasKey('blocking', $definition);
     }
 
     #[Test]
@@ -82,7 +85,7 @@ final class TaskDefinitionBuilderTest extends TestCase
     {
         $definition = TaskDefinitionBuilder::build(new Schedule(), 'Task');
 
-        $requiredKeys = ['classname', 'blocking', 'minute', 'hour', 'day', 'month', 'dayofweek', 'disabled'];
+        $requiredKeys = ['classname', 'minute', 'hour', 'day', 'month', 'dayofweek', 'disabled'];
 
         foreach ($requiredKeys as $key) {
             $this->assertArrayHasKey($key, $definition, sprintf('Missing key: %s', $key));

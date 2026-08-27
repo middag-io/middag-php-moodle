@@ -186,9 +186,7 @@ class PageSupport
     {
         global $PAGE, $OUTPUT;
 
-        if (is_null($context)) {
-            $context = context_system::instance();
-        }
+        $context ??= context_system::instance();
 
         $PAGE->set_context($context);
 
