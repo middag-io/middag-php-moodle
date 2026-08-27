@@ -43,7 +43,6 @@ final readonly class TaskDefinitionBuilder
     {
         return [
             'classname' => $task_classname,
-            'blocking' => $schedule->exclusive ? 1 : 0,
             'minute' => $schedule->minute,
             'hour' => $schedule->hour,
             'day' => $schedule->day,
