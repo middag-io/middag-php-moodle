@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.0](https://github.com/middag-io/middag-php-moodle/compare/v1.13.2...v1.14.0) (2026-08-28)
+
+
+### Features
+
+* **bus:** serialize adhoc transport envelope via CommandSerializer ([6034e77](https://github.com/middag-io/middag-php-moodle/commit/6034e7725823933a6e7c442e41363c6e070ac440))
+* **bus:** use CommandSerializer in MoodleAdhocTransport ([d9a31d2](https://github.com/middag-io/middag-php-moodle/commit/d9a31d219cbd9056ac5f5b30e019046b37495e94))
+
 ## [1.13.2](https://github.com/middag-io/middag-php-moodle/compare/v1.13.1...v1.13.2) (2026-08-27)
 
 
