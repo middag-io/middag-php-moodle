@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.0](https://github.com/middag-io/middag-php-moodle/compare/v1.14.0...v1.15.0) (2026-08-28)
+
+
+### Features
+
+* **cron:** expose worker user-context lifecycle hooks ([1a95b18](https://github.com/middag-io/middag-php-moodle/commit/1a95b1844dec51e9fd56ba232950ee2bfd847e70))
+* **cron:** expose worker user-context lifecycle hooks ([14d5f72](https://github.com/middag-io/middag-php-moodle/commit/14d5f727983ecc8972f7e98df7c606ec42043490))
+
 ## [1.14.0](https://github.com/middag-io/middag-php-moodle/compare/v1.13.2...v1.14.0) (2026-08-28)
 
 
