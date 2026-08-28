@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Bus;
 
 use core\task\adhoc_task;
 use LogicException;
+use Middag\Framework\Bus\Command\CommandSerializer;
 use Middag\Framework\Bus\Contract\CommandInterface;
 use Middag\Moodle\Bus\MoodleAdhocTransport;
 use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
@@ -21,10 +22,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\BusNameStamp;
 
 /**
- * send() queues the command as an adhoc task with {command_class, payload}
- * custom data; the receive side belongs to Moodle cron and throws.
+ * send() queues the command as an adhoc task carrying the
+ * {@see CommandSerializer}-encoded envelope
+ * (`body`+`headers`, plus whitelisted stamp headers) as custom data; the
+ * receive side belongs to Moodle cron and throws.
  *
  * @internal
  */
@@ -33,7 +37,7 @@ final class MoodleAdhocTransportTest extends TestCase
 {
     private const TASK_CLASS = FakeAsyncTask::class;
 
-    public function testSendQueuesAdhocTaskWithCommandClassAndPayload(): void
+    public function testSendQueuesAdhocTaskWithSerializedEnvelope(): void
     {
         $command = new TransportRecordedCommand(42);
         $task = new FakeAsyncTask();
@@ -42,8 +46,8 @@ final class MoodleAdhocTransportTest extends TestCase
         $adhoc->expects(self::once())
             ->method('create')
             ->with(self::TASK_CLASS, [
-                'command_class' => TransportRecordedCommand::class,
-                'payload' => ['transaction_id' => 42],
+                'body' => '{"transaction_id":42}',
+                'headers' => ['type' => TransportRecordedCommand::class],
             ])
             ->willReturn($task);
         $adhoc->expects(self::once())
@@ -54,6 +58,34 @@ final class MoodleAdhocTransportTest extends TestCase
         $transport = new MoodleAdhocTransport($adhoc, self::TASK_CLASS);
 
         $envelope = new Envelope($command);
+
+        self::assertSame($envelope, $transport->send($envelope));
+    }
+
+    public function testSendPreservesWhitelistedStampsAsHeaders(): void
+    {
+        $command = new TransportRecordedCommand(42);
+        $task = new FakeAsyncTask();
+
+        $adhoc = $this->createMock(AdhocServiceInterface::class);
+        $adhoc->expects(self::once())
+            ->method('create')
+            ->with(self::TASK_CLASS, [
+                'body' => '{"transaction_id":42}',
+                'headers' => [
+                    'type' => TransportRecordedCommand::class,
+                    'X-Message-Stamp-' . BusNameStamp::class => '[{"busName":"command_bus"}]',
+                ],
+            ])
+            ->willReturn($task);
+        $adhoc->expects(self::once())
+            ->method('queue')
+            ->with($task)
+            ->willReturn(true);
+
+        $transport = new MoodleAdhocTransport($adhoc, self::TASK_CLASS);
+
+        $envelope = new Envelope($command, [new BusNameStamp('command_bus')]);
 
         self::assertSame($envelope, $transport->send($envelope));
     }
