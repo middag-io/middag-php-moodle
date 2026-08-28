@@ -91,6 +91,14 @@ if (!class_exists('core\session\manager', false)) {
     }');
 }
 
+if (!class_exists('core\cron', false)) {
+    eval('namespace core; class cron {
+        public static function setup_user($user = null) { $GLOBALS["__middag_test_cron_user"] = $user; }
+        public static function prepare_core_renderer($restore = false) { $GLOBALS["__middag_test_cron_renderer"][] = $restore; }
+        public static function reset_user_cache() { $GLOBALS["__middag_test_cron_reset"] = true; }
+    }');
+}
+
 // --- Page / output functions (PageSupport) ---
 
 if (!function_exists('markdown_to_html')) {
