@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Domain\Task;
 
 use core\task\adhoc_task;
+use Middag\Framework\Kernel\Contract\ComponentNameResolverInterface;
 use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
 use Middag\Moodle\Support\TaskSupport;
 
@@ -26,14 +27,30 @@ class AdhocService implements AdhocServiceInterface
     /**
      * Constructor.
      *
-     * @param TaskSupport $taskSupport
+     * @param TaskSupport                    $taskSupport
+     * @param ComponentNameResolverInterface $componentResolver resolves the consuming plugin's own
+     *                                                          frankenstyle component (e.g. "local_middag")
      */
     public function __construct(
-        private readonly TaskSupport $taskSupport
+        private readonly TaskSupport $taskSupport,
+        private readonly ComponentNameResolverInterface $componentResolver,
     ) {}
 
     /**
      * Create a new adhoc task instance for a given class.
+     *
+     * Every generic task class this library ships (e.g. AsyncCommandTask)
+     * lives under a shared MIDDAG namespace, not the consuming Moodle
+     * plugin's own — adhoc_task::get_component()'s namespace-based
+     * auto-detection never matches it, so Moodle's task manager calls
+     * debugging() on every queue/dispatch ("Component not set and the class
+     * namespace does not match a valid component"). Setting it explicitly
+     * to the resolved consumer component (same mechanism the framework
+     * already uses to classify native vs third-party code) fixes the
+     * attribution and removes the noise — the plugin-deprecation check in
+     * core\task\manager::task_component_is_deprecated() reads this same
+     * value, so it now points at the plugin actually responsible instead of
+     * silently resolving to no plugin at all.
      *
      * @param class-string<adhoc_task> $classname Fully-qualified adhoc task class name
      * @param array<string, mixed>     $data      Custom task data
@@ -45,6 +62,7 @@ class AdhocService implements AdhocServiceInterface
     {
         /** @var adhoc_task $task */
         $task = new $classname();
+        $task->set_component($this->componentResolver->nativeComponent());
         $task->set_custom_data($data);
         $task->set_userid($userid);
 

@@ -178,7 +178,7 @@ if (!class_exists('moodle_url', false)) {
 
 // Stub: core\task\adhoc_task (base class for Moodle adhoc tasks)
 if (!class_exists('core\task\adhoc_task', false)) {
-    eval('namespace core\task; abstract class adhoc_task { private $customdata = null; private $userid = null; public function set_custom_data($customdata): void { $this->customdata = json_encode($customdata); } public function get_custom_data() { return $this->customdata === null ? null : json_decode($this->customdata); } public function set_userid($userid): void { $this->userid = $userid; } public function get_userid() { return $this->userid; } }');
+    eval('namespace core\task; abstract class adhoc_task { private $customdata = null; private $userid = null; private $component = null; public function set_custom_data($customdata): void { $this->customdata = json_encode($customdata); } public function get_custom_data() { return $this->customdata === null ? null : json_decode($this->customdata); } public function set_userid($userid): void { $this->userid = $userid; } public function get_userid() { return $this->userid; } public function set_component($component): void { $this->component = $component; } public function get_component() { return $this->component; } }');
 }
 
 // Stub: core\component — get_component_directory() returns the path from
