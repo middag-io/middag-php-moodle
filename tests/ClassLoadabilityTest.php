@@ -82,7 +82,7 @@ final class ClassLoadabilityTest extends TestCase
      */
     public static function classProvider(): array
     {
-        $src = dirname(__DIR__) . '/src';
+        $src = __DIR__ . '/../src';
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($src, FilesystemIterator::SKIP_DOTS),
         );
@@ -114,7 +114,7 @@ final class ClassLoadabilityTest extends TestCase
     #[Test]
     public function hostOnlyExclusionsStillExistInSrc(): void
     {
-        $src = dirname(__DIR__) . '/src';
+        $src = __DIR__ . '/../src';
 
         foreach (array_keys(self::REQUIRES_MOODLE_HOST) as $fqcn) {
             $relative = str_replace('\\', '/', substr((string) $fqcn, \strlen('Middag\Moodle\\')));

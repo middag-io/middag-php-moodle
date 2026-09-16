@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Domain\Task;
 
 use core\task\adhoc_task;
+use Middag\Framework\Kernel\Contract\ComponentNameResolverInterface;
 use Middag\Moodle\Domain\Task\AdhocService;
 use Middag\Moodle\Domain\Task\AdhocTaskDto;
 use Middag\Moodle\Support\TaskSupport;
@@ -36,7 +37,7 @@ final class AdhocServiceCoverageTest extends TestCase
     #[Test]
     public function testCreateBuildsTheTaskWithCustomDataAndUserid(): void
     {
-        $service = new AdhocService($this->createStub(TaskSupport::class));
+        $service = new AdhocService($this->createStub(TaskSupport::class), $this->componentResolver());
 
         $task = $service->create('middag_test_adhoc_task', ['foo' => 'bar'], 42);
 
@@ -48,12 +49,40 @@ final class AdhocServiceCoverageTest extends TestCase
     #[Test]
     public function testCreateDefaultsToEmptyDataAndNullUserid(): void
     {
-        $service = new AdhocService($this->createStub(TaskSupport::class));
+        $service = new AdhocService($this->createStub(TaskSupport::class), $this->componentResolver());
 
         $task = $service->create('middag_test_adhoc_task');
 
         self::assertNull($task->get_userid());
         self::assertSame([], $task->get_custom_data());
+    }
+
+    /**
+     * Found live: every AsyncCommandTask dispatch triggered Moodle's
+     * "Component not set and the class namespace does not match a valid
+     * component" debugging() call — nothing ever called set_component() on
+     * the queued task. create() now resolves the consuming plugin's own
+     * frankenstyle component via ComponentNameResolverInterface (the same
+     * mechanism the framework already uses to classify native vs
+     * third-party code) and sets it before the task is queued.
+     *
+     * middag_test_adhoc_task overrides get_component() to return its own
+     * fixture property, so this uses a plain adhoc_task subclass that
+     * inherits the real (stubbed) set_component()/get_component() pair —
+     * see tests/bootstrap.php.
+     */
+    #[Test]
+    public function testCreateSetsTheComponentFromTheResolver(): void
+    {
+        if (!class_exists('middag_test_plain_adhoc_task', false)) {
+            eval('class middag_test_plain_adhoc_task extends \core\task\adhoc_task { public function execute(): void {} public function get_name(): string { return "plain"; } }');
+        }
+
+        $service = new AdhocService($this->createStub(TaskSupport::class), $this->componentResolver('local_middag'));
+
+        $task = $service->create('middag_test_plain_adhoc_task');
+
+        self::assertSame('local_middag', $task->get_component());
     }
 
     #[Test]
@@ -67,7 +96,7 @@ final class AdhocServiceCoverageTest extends TestCase
             ->with($task, true)
             ->willReturn(true);
 
-        $service = new AdhocService($support);
+        $service = new AdhocService($support, $this->componentResolver());
 
         self::assertTrue($service->queue($task, true));
     }
@@ -83,7 +112,7 @@ final class AdhocServiceCoverageTest extends TestCase
             ->with($task, false)
             ->willReturn(false);
 
-        $service = new AdhocService($support);
+        $service = new AdhocService($support, $this->componentResolver());
 
         self::assertFalse($service->queue($task));
     }
@@ -98,7 +127,7 @@ final class AdhocServiceCoverageTest extends TestCase
             ->method('rescheduleOrQueue')
             ->with($task);
 
-        $service = new AdhocService($support);
+        $service = new AdhocService($support, $this->componentResolver());
 
         $service->rescheduleOrQueue($task);
     }
@@ -114,7 +143,7 @@ final class AdhocServiceCoverageTest extends TestCase
             ->with('some_class', true)
             ->willReturn([$dto]);
 
-        $service = new AdhocService($support);
+        $service = new AdhocService($support, $this->componentResolver());
 
         self::assertSame([$dto], $service->list('some_class', true));
     }
@@ -128,8 +157,16 @@ final class AdhocServiceCoverageTest extends TestCase
             ->with('some_class', false)
             ->willReturn([]);
 
-        $service = new AdhocService($support);
+        $service = new AdhocService($support, $this->componentResolver());
 
         self::assertSame([], $service->list('some_class'));
+    }
+
+    private function componentResolver(string $component = 'local_test'): ComponentNameResolverInterface
+    {
+        $resolver = $this->createStub(ComponentNameResolverInterface::class);
+        $resolver->method('nativeComponent')->willReturn($component);
+
+        return $resolver;
     }
 }

@@ -46,7 +46,7 @@ final class MformRendererCoverageTest extends TestCase
         // MformRenderer require_once's $CFG->libdir . '/formslib.php' at file
         // scope; point it at the stub before the class is referenced below.
         $GLOBALS['CFG'] ??= new stdClass();
-        $GLOBALS['CFG']->libdir = \dirname(__DIR__) . '/stubs';
+        $GLOBALS['CFG']->libdir = __DIR__ . '/../stubs';
     }
 
     #[Test]
