@@ -541,7 +541,7 @@ foreach (glob(__DIR__ . '/stubs/areas/*.php') ?: [] as $areaStub) {
 require_once __DIR__ . '/stubs/external-api-stubs.php';
 
 // Composer autoloader (loads moodle-stubs + framework deps)
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Configure the adapter component seam for the test runtime (mirrors the product
 // composition root). Adapter helpers resolve the running component via

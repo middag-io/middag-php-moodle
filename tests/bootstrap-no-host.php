@@ -31,7 +31,7 @@ putenv('MIDDAG_ENV');
 putenv('APP_ENV');
 unset($_ENV['MIDDAG_ENV'], $_ENV['APP_ENV'], $_SERVER['MIDDAG_ENV'], $_SERVER['APP_ENV']);
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Mirror the product composition root (same seam as tests/bootstrap.php).
 ComponentContext::configure('local_example', 'local_example_autoload');
