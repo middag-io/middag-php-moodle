@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.15.1](https://github.com/middag-io/middag-php-moodle/compare/v1.15.0...v1.15.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* **task:** set component on adhoc tasks to stop debugging() noise ([26808d0](https://github.com/middag-io/middag-php-moodle/commit/26808d019d699f42d3ca1dff99fa90439b7407cf))
+* **task:** set component on adhoc tasks to stop debugging() noise ([2da578d](https://github.com/middag-io/middag-php-moodle/commit/2da578d6db71a7dad16cc9c81e773a7b34df1bef))
+
+
+### Miscellaneous
+
+* **style:** fix dirname(__DIR__) pattern flagged by rector 2.6.7 ([1d8881b](https://github.com/middag-io/middag-php-moodle/commit/1d8881baace8adb25b41ded34a0f02e0a4d4cc04))
+
 ## [1.15.0](https://github.com/middag-io/middag-php-moodle/compare/v1.14.0...v1.15.0) (2026-08-28)
 
 
