@@ -17,4 +17,4 @@ enforced_by:
 
 # MDL-012: Config schema for setting keys
 
-Withdrawn on 2026-11-04: merged into MDL-011 (typed setting keys are part of settings as code; the per-extension config schema is a downstream concern). Spec: docs-middag-dev:docs/framework/reference/adapters/moodle/config-schema-inventory.md (downstream).
+Withdrawn on 2026-11-04: merged into MDL-011 (typed setting keys are part of settings as code; the per-extension config schema is a downstream concern). Spec: docs-middag-dev:docs/framework/reference/adapters/moodle/settings-and-config-keys.md; downstream schema: docs-middag-dev:docs/framework/reference/adapters/moodle/config-schema-inventory.md.

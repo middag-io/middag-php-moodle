@@ -19,7 +19,7 @@ enforced_by:
 
 ## Context
 
-Moodle 5.1 adds a native router with friendly URLs and its own OpenAPI listing. The framework already routes every controller through its own kernel, with attribute routes, authorization and middleware that work the same on every host. The question is how the two routers coexist.
+Moodle ships a native router (`r.php`, `core\router`) with friendly URLs and its own OpenAPI listing; a Moodle 5.0 build already contains it. The adapter gates its bridge to that router at Moodle 5.1. The framework already routes every controller through its own kernel, with attribute routes, authorization and middleware that work the same on every host. The question is how the two routers coexist.
 
 ## Considered Options
 
@@ -36,7 +36,7 @@ Every controller is routed by the framework router through the adapter's HTTP ke
 - (+) Controllers are written once and behave the same on every Moodle version.
 - (+) On Moodle 5.1+ the consumer's API can appear in Moodle's native route and OpenAPI listings.
 - (−) A request through the native router passes through two routing layers.
-- (−) Automatic discovery of the native proxy class waits on a route-controller trait that Moodle core does not ship yet, so that class stays inert.
+- (−) The native proxy class `MiddagProxy` is still inert. The adapter has not adopted `core\router\route_controller`, which Moodle core already ships, and the 5.1 gate may be stale.
 - (−) The forwarding path is covered by tests with stubs, not against a real Moodle 5.1 router.
 
 ## Enforcement

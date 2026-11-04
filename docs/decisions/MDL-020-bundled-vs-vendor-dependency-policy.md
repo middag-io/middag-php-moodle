@@ -44,6 +44,6 @@ The adapter declares its Composer dependencies with their normal namespaces, wit
 
 | Decision clause | Verification | State |
 |---|---|---|
-| Overlapping namespaces and the known version gaps | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/shared-namespace-dependencies.md` | planned |
+| Overlapping namespaces and the known version gaps | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/shared-namespace-dependencies.md` | coded |
 | Major check of overlapping packages before a bump | CI diff against Moodle's bundled namespace map | planned |
 | No unused overlapping dependency | dependency-usage check | planned |

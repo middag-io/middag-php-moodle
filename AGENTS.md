@@ -42,7 +42,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
 | `Settings/` | Settings-as-code family: root keeps the mechanism (`AbstractSetting`, `Page`, `SettingsNamingPolicy`, `SettingsResolver`, `Enum/SettingType`); `Settings/Type/` holds the 22 DSL classes mirroring Moodle's `admin_setting_*` types |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
-| `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
+| `Support/` | 42 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
 | `Translation/` | `MoodleTranslator` (framework `TranslatorInterface` → `get_string`) |
 | `WebService/` | `AbstractExternal` (Moodle external API base) |
 
@@ -115,9 +115,9 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
    the consumer plugin. There are no package-relative monolith fallbacks.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
-   short name** (with a `framework → core` special case → `mdglib_core_*`
-   keys under the library's neutral default policy; a real product such as
-   MIDDAG injects its own prefix explicitly, see MDL-011).
+   short name** (keys use the library's neutral default policy; a real
+   product such as MIDDAG injects its own prefix explicitly, see MDL-011).
+   Consumers can remap derived slugs by overriding `extensionAliases()`.
    PascalCase spellings are normalised to snake_case first, and an enum whose
    name cannot be mapped onto `{slug}_config` is rejected with
    `InvalidArgumentException` — it never silently resolves a dead key. The

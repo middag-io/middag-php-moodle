@@ -17,4 +17,4 @@ enforced_by:
 
 # MDL-015: Inbound and outbound Moodle event observation
 
-Withdrawn on 2026-11-04: merged into MDL-016 (outbound events are typed definitions rendered into plugin static files) and MDL-001 (inbound Moodle events reach the framework through the host event bridge port). Spec: docs-middag-dev:docs/framework/reference/adapters/moodle/event-observation-detail.md.
+Withdrawn on 2026-11-04: merged into MDL-016 (outbound events are typed definitions rendered into plugin static files) and MDL-001 (this adapter ships only the generic host event seam and the `#[MoodleEvent]` attribute; observing Moodle core events and turning them into signals is a downstream concern). Spec: docs-middag-dev:docs/framework/reference/adapters/moodle/event-observation-detail.md.
