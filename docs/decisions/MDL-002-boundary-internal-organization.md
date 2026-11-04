@@ -1,63 +1,50 @@
 ---
-id: MDL-002
-title: 'Organize the Boundary by Technical Type, Not by Moodle Subsystem'
+title: 'The Moodle host domain is adapter-local surface'
 status: accepted
 date: 2026-03-29
+last-updated: 2026-11-04
 lang: en
-domains: [moodle, boundary]
-deciders: ['PENDING — original decider not recorded during the legacy-vault reconstruction; confirm with Michael Meneses before ratifying']
-related: [MDL-001, MDL-003]
+domains: [boundary, api]
+deciders: [leadership]
+decision: 'Typed Moodle host types live in Domain/<Subsystem> with local contracts and @api, never promoted to framework ports.'
+related: [MDL-001, MDL-003, MDL-004, MDL-005, middag-php-framework:FW-015]
 supersedes: []
 superseded_by: null
 enforced_by:
   mdgstan: []
   docs: []
-decision: 'The boundary is organized by technical type (adapter, contract, service, definition, dto, entity, enum, settings, form, support), never by Moodle''s own subsystem taxonomy, admitting a new subdirectory only when it represents a genuinely distinct native Moodle mechanism.'
 ---
 
-# MDL-002: Organize the Boundary by Technical Type, Not by Moodle Subsystem
-
-> [!NOTE]
-> **Provenance.** Reconstructed from the `moodle-local_middag` legacy vault (`ADR-202`, decided 2026-03-29). This is an archaeology pass, not a new decision — dates and rationale are historical.
+# MDL-002: The Moodle host domain is adapter-local surface
 
 ## Context
 
-Once the Moodle boundary was physically consolidated ([MDL-001](./MDL-001-boundary-consolidation-whitelist.md)), the boundary directory itself needed an internal shape. Mirroring Moodle's own subsystem taxonomy (courses, users, files, …) inside the boundary would let the folder tree reflect a domain that is not MIDDAG's own — Moodle's internal categorization is not something this project owns or controls, and it changes on Moodle's release cadence, not this project's.
+Consumers work with Moodle's own objects: users, courses, enrolments, grades, groups, files, tasks and more. Moodle hands them out as untyped records. They need a typed and stable form, but they are Moodle concepts, not concepts every host shares. The question is where these types live and what status they have.
 
 ## Considered Options
 
-1. **Mirror Moodle's own subsystem taxonomy** inside the boundary (folders named after Moodle domains: courses, users, files, …) — rejected: this taxonomy is not owned or controlled by this project and reshuffles on Moodle's release cadence, not this project's.
-2. **Organize by technical type** (`adapter/`, `contract/`, `service/`, `definition/`, `dto/`, `entity/`, `enum/`, `settings/`, `form/`, `support/`) — chosen; see Decision.
-3. **Admit a new subdirectory by file count** (a mechanical growth threshold, e.g. "split once a folder has N files") — rejected: file count is never the admission criterion.
-4. **Admit a new subdirectory only when it represents a genuinely distinct native Moodle mechanism** — chosen; a judgment call rather than a mechanical rule.
+1. Promote each Moodle subsystem to a host-neutral framework port.
+2. Return Moodle's untyped records and let each consumer type them.
+3. Keep entities, DTOs and services in flat folders by technical type, with no grouping by Moodle subsystem.
+4. A typed Moodle host domain inside the adapter, grouped by Moodle subsystem, where each subsystem has its own local contracts and its entities and DTOs are public API by default, with explicit internal opt-outs. ← chosen
 
 ## Decision
 
-The boundary is organized **by technical type**, not by Moodle micro-domain: `adapter/`, `contract/`, `service/`, `definition/`, `dto/`, `entity/`, `enum/`, `settings/`, `form/`, `support/` (see table below). A new subdirectory is admitted only when it represents a **distinct native Moodle mechanism** that does not fit an existing one — file count is never the admission criterion.
-
-| Subdirectory  | Purpose                                                                                                                                                       |
-|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `adapter/`    | OO implementations of boundary contracts and DI bridges (`authentication`, `capability`, `logger`, `authorizer`, `transaction_manager`, `translator`, `view`) |
-| `contract/`   | Boundary contracts — extension providers (`activity_feed_renderer`, `privacy_provider`, etc.) plus adapter/service contracts                                  |
-| `service/`    | Moodle-specific services orchestrating 2+ supports (`auth_service`, `message_service`, `user_service`, `adhoc_service`, `scheduled_service`)                  |
-| `definition/` | Typed definitions for Moodle static generation (`cache`, `capability`, `service`, `message`, `hook` — MDL-016)                                                |
-| `dto/`        | Boundary transport objects — Group A (public API) by default                                                                                                  |
-| `entity/`     | Typed representations of Moodle objects (`stdClass` → typed) — Group A by default                                                                             |
-| `enum/`       | Typed enums for Moodle constants (contexts, risks, modes, permissions)                                                                                        |
-| `settings/`   | Typed classes for admin settings (`page`, `text`, `password`, `select`, etc.)                                                                                 |
-| `form/`       | Adapters for Moodle Forms (MoodleQuickForm) — a distinct mechanism                                                                                            |
-| `support/`    | Static wrappers — one `*_support` class per subsystem (MDL-003)                                                                                               |
+The Moodle host domain is surface of this adapter. Each Moodle subsystem the adapter covers is a folder under `Domain/` with its entities, DTOs, enums and services. Services implement interfaces in that subsystem's local `Contract/` folder. Those interfaces are not framework ports: the framework never sees them, and another host has no equivalent. Entities and DTOs are public API (`@api`) by default, because consumers use them directly. A class that only serves the adapter's own infrastructure opts out with `@internal`.
 
 ## Consequences
 
-- The folder tree never has to be reshuffled when Moodle reorganizes its own internal subsystems — it tracks technical role (adapter vs support vs entity), which is stable regardless of Moodle's own taxonomy.
-- New contributors orient by "what kind of thing is this" rather than "which Moodle subsystem does this touch," which matches how the whitelist enforcement (MDL-001) already reasons about the boundary.
-- Admission of a new subdirectory requires a judgment call ("is this a genuinely distinct mechanism?") rather than a mechanical rule — accepted as the right tradeoff over a rigid, ever-growing taxonomy.
-- This ADR fixes the technical-type taxonomy itself, not the internal contract of any one subdirectory — the `support/` subdirectory specifically (naming, statelessness, facade consumption) has its own dedicated rules in [MDL-003](./MDL-003-support-layer-pattern.md). The current mapping of subdirectories to actual codebase contents is tracked in the project's `CLAUDE.md` (`../../CLAUDE.md`), not duplicated here.
+- (+) Consumers get typed Moodle objects with a stable contract instead of records whose shape is unchecked.
+- (+) The framework port set stays host-neutral; Moodle-only concepts do not leak into it.
+- (−) Code that depends on these types is tied to Moodle. A product that needs the same behaviour on another host must put its own port in front of them.
+- (−) Public by default means every entity and DTO falls under the package's API stability policy (`API-STABILITY.md`), so a rename needs a deprecation.
+- (−) The package has two axes: top-level folders by technical role, and subsystem folders inside `Domain/`.
 
 ## Enforcement
 
-| Decision clause                                                                                     | Verification                                                                                          | State   |
-|-------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|---------|
-| Only the ten listed technical-type subdirectories may hold boundary code                              | Mechanically enforced by the same physical whitelist that consolidates the boundary — see [MDL-001](./MDL-001-boundary-consolidation-whitelist.md) | coded   |
-| A new subdirectory is admitted only for a genuinely distinct native Moodle mechanism (not by file count) | No automated check — judgment call reviewed at PR time                                                  | planned |
+| Decision clause | Verification | State |
+|---|---|---|
+| Layout of host-domain folders and local `Contract/` folders | doc `docs-middag-dev:docs/framework/reference/module-layout-convention.md` | coded |
+| Covered subsystems and the `@api`/`@internal` classification of their types | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/api-coverage-inventory.md` | coded |
+| Every type carries an `@api` or `@internal` tag | governance gate run from outside the package | planned |
+| Local `Contract/` interfaces are never framework ports | review | planned |

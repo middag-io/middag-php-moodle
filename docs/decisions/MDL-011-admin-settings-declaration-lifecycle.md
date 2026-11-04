@@ -1,68 +1,52 @@
 ---
-id: MDL-011
-title: 'Admin Settings: Typed DSL Is the Only Interface, Never admin_setting_* Directly'
+title: 'Settings as code, resolved at runtime'
 status: accepted
 date: 2026-04-05
+last-updated: 2026-11-04
 lang: en
-domains: [moodle, settings]
-deciders: ['PENDING — original decider not recorded during the legacy-vault reconstruction; confirm with Michael Meneses before ratifying']
-related: [MDL-012]
+domains: [settings]
+deciders: [leadership]
+decision: 'Settings are a typed DSL bridged to Moodle by one resolver; key prefixes come from an injectable neutral policy.'
+related: [MDL-001, MDL-012, MDL-016, MDL-021, middag-php-framework:FW-015]
 supersedes: []
 superseded_by: null
 enforced_by:
   mdgstan: []
   docs: []
-decision: 'Extensions declare admin settings only through a typed DSL (inline or dedicated-file mode), never by instantiating admin_setting_* classes directly; settings_resolver is the sole bridge to Moodle''s admin_setting_* API.'
 ---
 
-# MDL-011: Admin Settings — Typed DSL Is the Only Interface, Never `admin_setting_*` Directly
-
-> [!NOTE]
-> **Provenance.** Reconstructed from the `moodle-local_middag` legacy vault (`ADR-311`, decided 2026-04-05, no REF companion — `ref-312-01` is the practical inventory for the companion MDL-012). This is an archaeology pass, not a new decision — dates and rationale are historical.
+# MDL-011: Settings as code, resolved at runtime
 
 ## Context
 
-Moodle admin settings are declared through `admin_setting_*` classes with their own construction conventions. Letting extensions instantiate those directly would scatter Moodle-specific setting wiring across every extension and leave naming and config-key conventions unenforced.
+Moodle admin settings are built from `admin_setting_*` classes, each with its own constructor conventions, and stored under config keys that every plugin on the site shares a namespace for. Consumers need to declare settings without wiring Moodle classes by hand, and two consumers on one site must not collide or inherit each other's brand. The question is how settings are declared, how they reach Moodle and who decides their keys.
 
 ## Considered Options
 
-1. **Let each extension instantiate `admin_setting_*` directly** — rejected: scatters Moodle-specific setting wiring across every extension and leaves naming/config-key conventions unenforced.
-2. **A single, undifferentiated declaration mechanism for all extensions regardless of settings count** — rejected implicitly by the dual-mode design: a single inline mechanism would strain under complex, multi-page, conditional settings, while forcing every extension into a dedicated-file shape would over-structure the common few-settings case.
-3. **Typed DSL abstraction with kernel-side mode auto-detection (chosen)** — a typed abstraction lives in the boundary's `settings/` subdirectory, with inline and dedicated-file modes chosen by complexity and consumed transparently by `settings_resolver`.
+1. Each consumer builds `admin_setting_*` objects directly.
+2. Generate the settings file at build time, like the other plugin static files.
+3. A typed DSL with a fixed, product-branded key prefix.
+4. A typed DSL that is the only way to declare settings, turned into Moodle settings at runtime by one resolver, with key prefixes coming from an injectable naming policy whose default is neutral. ← chosen
 
 ## Decision
 
-A typed abstraction lives in the boundary's `settings/` subdirectory. Extensions declare settings in one of two modes, chosen by complexity:
+Consumers declare admin settings with the adapter's typed settings classes and pages, never by building `admin_setting_*` objects. One resolver turns those declarations into Moodle settings pages when Moodle loads its admin tree; settings are not generated at build time. Runtime reads and writes go through the settings support with typed keys.
 
-| Mode           | When to use                                               | Mechanism                                                         |
-|----------------|-----------------------------------------------------------|-------------------------------------------------------------------|
-| Inline         | Extension with few settings (up to ~10)                   | `get_settings()`/`get_settings_pages()` in `{slug}_extension.php` |
-| Dedicated file | Complex settings (>10, multiple pages, conditional logic) | `{slug}_settings.php` at the extension's root directory           |
-
-The kernel **auto-detects** whether `{slug}_settings.php` exists and uses it instead of `get_settings_pages()` — `settings_resolver` consumes both modes transparently. Naming is fixed:
-
-| Artifact                  | Convention                                              |
-|---------------------------|---------------------------------------------------------|
-| Settings page identifier  | `middag_{slug}_{page_name}`                             |
-| Setting name (config key) | `mdg_{slug}_{setting_name}`                             |
-| Setting lang string       | `settings_{setting_name}` in `lang/en/local_middag.php` |
-| Dedicated file            | `extensions/{slug}/{slug}_settings.php`                 |
-
-The `mdg_` prefix is a fixed framework constant, not adaptable per plugin. Legacy keys without the prefix were migrated via `db/upgrade.php` version `2026040900`. `settings_resolver` bridges the typed DSL to `admin_setting_*`: it receives declared pages, creates `admin_settingpage`, converts each typed setting into its `admin_setting_*` counterpart, and registers it under the MIDDAG `admin_category`. **Boundary rule**: extensions never instantiate `admin_setting_*` directly — the typed DSL is the only interface; runtime reads use `config_support::get()` via facade, never `get_config()` directly. Settings are **not** generated by the static-generation pipeline ([MDL-016](./MDL-016-moodle-statics-generation.md)) — they are registered during the **settings boot phase**, which is temporally distinct from the extension register/boot/compile lifecycle.
+Config key names come from a naming policy that the consumer injects. The policy's default prefix belongs to no product: it marks keys of a consumer that configured nothing. A real product injects its own prefix at its composition root, so a third party never inherits another company's brand in its keys.
 
 ## Consequences
 
-- Every admin setting, regardless of extension, reaches Moodle through the same typed pipeline — no extension hand-rolls `admin_setting_*` wiring.
-- The dual inline/dedicated-file mode covers both the common case (few settings) and the complex case (many, multi-page) without forcing either into the other's shape.
-- The settings-boot-vs-extension-lifecycle distinction is a sequencing nuance that can produce subtle bugs if a new extension author assumes settings register during the normal boot/compile cycle.
-- The config-key schema (`{slug}_config` enum, `config_schema_interface`, lazy-option resolution) that formalizes what this ADR leaves implicit is out of scope here — see [MDL-012](./MDL-012-config-schema-settings-support.md).
-- The full DSL type inventory (22 setting types, only 8 with an implemented class) is documented separately as MDL-012's extracted reference doc (`framework/reference/adapters/moodle/config-schema-inventory` in `docs-middag-dev`), not for this ADR — see [CLAUDE.md](../../CLAUDE.md) for the current implementation map (`src/Settings/`, `Settings/Type/`).
+- (+) Every setting reaches Moodle through one typed path, and `admin_setting_*` wiring lives in one place.
+- (+) No product brand leaks into the keys of a consumer that configures nothing.
+- (−) A consumer that forgets to inject its prefix silently reads and writes keys under the neutral default. Changing the default from a branded prefix was a breaking change inside the `1.x` line.
+- (−) The static key helper `SettingsResolver::resolveConfigKey()`, and the supports when called without a policy, always use the default policy and ignore the one the consumer injected (`src/Settings/SettingsResolver.php:65`).
+- (−) Settings are resolved at runtime while the other plugin static files are generated (MDL-016), so declarations follow two mechanisms.
 
 ## Enforcement
 
 | Decision clause | Verification | State |
 |---|---|---|
-| Extensions never instantiate `admin_setting_*` directly | No MDG-Stan rule exists yet to flag direct `admin_setting_*` instantiation outside `settings_resolver` | planned |
-| Runtime config reads use `config_support::get()`, never `get_config()` directly | No MDG-Stan rule exists yet to flag direct `get_config()` calls | planned |
-| Config-key naming (`mdg_{slug}_{setting_name}`) is fixed and non-adaptable per plugin | No automated check; enforced by code review | planned |
-| Config-key schema formalization (out of scope here) | See [MDL-012](./MDL-012-config-schema-settings-support.md) | n/a |
+| Neutral default prefix, and an injected policy overrides it | test `tests/Settings/SettingsNamingPolicyTest.php` | coded |
+| The resolver turns typed pages into Moodle settings pages under its policy | test `tests/Settings/SettingsResolverCoverageTest.php` | coded |
+| Settings types, key shape and the injection points | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/settings-and-config-keys.md` | planned |
+| No `admin_setting_*` object built outside `Settings/` | static-analysis rule | planned |
