@@ -1,4 +1,6 @@
-# CLAUDE.md — middag-io/moodle
+# AGENTS.md — middag-io/moodle
+
+Claude Code and Codex read this file; there is no `CLAUDE.md` in this repository.
 
 Agent guide: conventions and gotchas for working on this repo. Contributor
 setup lives in `README.md` / `CONTRIBUTING.md`.
