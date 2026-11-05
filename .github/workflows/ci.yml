@@ -2,119 +2,59 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # CI uses no private infrastructure and no credentials. This adapter builds on
 # the OSS middag-io/* packages (framework, ui) and the michaelmeneses/moodle-stubs
 # dev dependency, all resolved from public Composer registries (Packagist).
 
 jobs:
-  quality:
-    name: Static analysis & style
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+  # Released php-library-check component of middag-io/actions, pinned by
+  # commit SHA with the tag in a comment. One job per PHP version: the static
+  # checks (composer validate, strict PSR-4, PHPStan on the canonical stubs,
+  # PHP-CS-Fixer and Rector) run on 8.2, the audit and the tests (unit +
+  # no-host) on every version.
+  php-library-check:
+    uses: middag-io/actions/.github/workflows/php-library-check.yml@5e6dc3d595edc2bf6134043a2b17067af5f64c25 # php-library-check-v1.0.0
+    permissions:
+      contents: read
+    with:
+      php-versions: '["8.2", "8.3", "8.4"]'
+      audit-blocking-severities: critical, high
+      timeout-minutes: 30
 
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          coverage: none
-          tools: composer:v2
-
-      - name: Validate composer.json
-        run: composer validate --no-check-publish --no-check-lock
-
-      # No composer.lock is committed here (see the "tests" job note below), so
-      # the vendor cache keys off composer.json instead. Falls back to a
-      # composer.json-only prefix so a PR that only touches source still gets
-      # a warm (if slightly stale) vendor dir to update from.
-      - name: Cache Composer vendor
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-quality-${{ hashFiles('composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-quality-
-
-      - name: Install dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Test namespaces follow PSR-4 (autoload + autoload-dev)
-        run: composer dump-autoload --optimize --strict-psr
-
-      # PHP-CS-Fixer's cache is incremental (per-file content hash), same
-      # shape as the Rector/PHPStan caches below.
-      - name: Cache PHP-CS-Fixer
-        uses: actions/cache@v4
-        with:
-          path: .cache/php-cs-fixer.cache
-          key: ${{ runner.os }}-php-cs-fixer-${{ hashFiles('composer.json', '.php-cs-fixer.dist.php') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-php-cs-fixer-${{ hashFiles('composer.json', '.php-cs-fixer.dist.php') }}-
-
-      # Rector's cache is incremental (per-file AST diff), so the key is
-      # scoped to config + composer.json and refreshed every run (github.sha);
-      # the prefix restore-key still lets a fresh sha reuse the last run's
-      # cache instead of starting cold.
-      - name: Cache Rector
-        uses: actions/cache@v4
-        with:
-          path: .cache/rector
-          key: ${{ runner.os }}-rector-${{ hashFiles('composer.json', '.php-rector.php') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-rector-${{ hashFiles('composer.json', '.php-rector.php') }}-
-
-      # Same incremental-cache shape as Rector above.
-      - name: Cache PHPStan
-        uses: actions/cache@v4
-        with:
-          path: .cache/phpstan
-          key: ${{ runner.os }}-phpstan-${{ hashFiles('composer.json', '.phpstan.neon') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-phpstan-${{ hashFiles('composer.json', '.phpstan.neon') }}-
-
-      - name: PHPStan + PHP-CS-Fixer + Rector (dry-run)
-        run: composer check
-
-  # No composer.lock is committed (library convention): each cell resolves
-  # dependencies on its own PHP line. On 8.2/8.3 Composer must land on the
-  # Symfony 7.x line (Symfony 8.x requires PHP >= 8.4.1); on 8.4 it may pick
-  # Symfony 8.x. Moodle 4.5 hosts cap PHP at 8.3, so the 8.3 cell is what
-  # proves the lib still installs there — the assertions below keep a future
-  # constraint drift from silently masking the ^8.2 floor.
-  tests:
-    name: Tests (PHP ${{ matrix.php }})
-    runs-on: ubuntu-latest
+  # Specific to this repository, so it stays inline. No composer.lock is
+  # committed (library convention): each cell resolves dependencies on its own
+  # PHP line. On 8.2/8.3 Composer must land on the Symfony 7.x line (Symfony
+  # 8.x requires PHP >= 8.4.1); on 8.4 it may pick Symfony 8.x. Moodle 4.5
+  # hosts cap PHP at 8.3, so the 8.3 cell is what proves the lib still installs
+  # there; the assertions keep a future constraint drift from silently masking
+  # the ^8.2 floor.
+  platform:
+    name: Platform requirements (PHP ${{ matrix.php }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         php: ['8.2', '8.3', '8.4']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: shivammathur/setup-php@v2
+      - uses: middag-io/actions/php-composer-setup@6cafdfbcf0f4bb0795b6e267edafb26558f334e8 # php-composer-setup-v1.1.0
         with:
           php-version: ${{ matrix.php }}
-          coverage: none
-          tools: composer:v2
-
-      # No composer.lock is committed (library convention — see the comment
-      # above this job): each PHP cell resolves its own Symfony line, so the
-      # vendor cache is scoped per matrix.php as well as composer.json.
-      - name: Cache Composer vendor
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-tests-${{ matrix.php }}-${{ hashFiles('composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-tests-${{ matrix.php }}-
-
-      - name: Install dependencies
-        uses: ramsey/composer-install@v3
 
       - name: Assert the resolved vendor satisfies this cell's platform
         run: composer check-platform-reqs
@@ -124,61 +64,33 @@ jobs:
         run: |
           composer show symfony/http-foundation | grep -E '^versions +: +\* v?7\.'
 
-      - name: PHPUnit
-        run: composer test
-
-  # LB-CI-01: PHPStan against every supported Moodle stubs series (4.5→5.2).
-  # Blocking: all four series (4.5 / 5.0 / 5.1 / 5.2) analyse clean at L6, so
-  # the per-version class_alias shims (cm_info/modinfo/navigation_node) are
-  # now backed by matrix evidence rather than manual reasoning. The canonical
-  # series (~5.0) is also enforced in the quality job; keeping it here makes
-  # the per-version coverage explicit.
+  # Specific to this repository, so it stays inline. LB-CI-01: PHPStan against
+  # every supported Moodle stubs series (4.5 to 5.2). Blocking: all four series
+  # analyse clean at L6, so the per-version class_alias shims (cm_info,
+  # modinfo, navigation_node) are backed by matrix evidence.
   stan-matrix:
     name: PHPStan (moodle-stubs ${{ matrix.stubs }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         stubs: ['~4.5.0', '~5.0.0', '~5.1.0', '~5.2.0']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: shivammathur/setup-php@v2
+      - uses: middag-io/actions/php-composer-setup@6cafdfbcf0f4bb0795b6e267edafb26558f334e8 # php-composer-setup-v1.1.0
         with:
           php-version: '8.2'
-          coverage: none
-          tools: composer:v2
-
-      # Base vendor cache before the matrix-specific stubs pin below. Not
-      # keyed on matrix.stubs — the pin step always runs and rewrites the
-      # stubs package regardless of what this restores, so cells share one
-      # warm base vendor dir instead of paying for four separate installs.
-      - name: Cache Composer vendor
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-stan-matrix-${{ hashFiles('composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-stan-matrix-
-
-      - name: Install dependencies
-        uses: ramsey/composer-install@v3
 
       - name: Pin moodle-stubs to the matrix series
-        run: composer require --dev "michaelmeneses/moodle-stubs:${{ matrix.stubs }}" --with-all-dependencies --no-interaction
-
-      # LB-CI-01: the phpstan cache MUST include matrix.stubs in its key.
-      # PHPStan's incremental cache records resolved symbol reflections per
-      # scanned file — a cache warmed against the 4.5 stubs and reused for
-      # the 5.2 stubs would serve stale reflections for the same file paths
-      # and silently mask real errors in the other series.
-      - name: Cache PHPStan
-        uses: actions/cache@v4
-        with:
-          path: .cache/phpstan
-          key: ${{ runner.os }}-phpstan-${{ matrix.stubs }}-${{ hashFiles('composer.json', '.phpstan.neon') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-phpstan-${{ matrix.stubs }}-${{ hashFiles('composer.json', '.phpstan.neon') }}-
+        env:
+          STUBS: ${{ matrix.stubs }}
+        run: composer require --dev "michaelmeneses/moodle-stubs:${STUBS}" --with-all-dependencies --no-interaction
 
       - name: PHPStan against the matrix stubs
         run: composer check:stan
