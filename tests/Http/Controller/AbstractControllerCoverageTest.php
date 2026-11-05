@@ -406,8 +406,11 @@ final class AbstractControllerCoverageTest extends TestCase
         self::assertSame([[7, true]], $auth->requireLoginArgs);
     }
 
+    // CSRF assertions moved to CsrfGateTest — requireLogin() no longer verifies
+    // the sesskey; preHandle() does, before the action runs.
+
     #[Test]
-    public function testRequireSesskeyEnforcedOnNonIdempotentMethod(): void
+    public function testRequireLoginNoLongerVerifiesSesskey(): void
     {
         $auth = $this->makeAuth();
         $controller = $this->makeController(new Request(server: ['REQUEST_METHOD' => 'POST']), $this->makeContainer([AuthenticationInterface::class => $auth]));
@@ -415,7 +418,8 @@ final class AbstractControllerCoverageTest extends TestCase
 
         $controller->callRequireLogin();
 
-        self::assertSame(1, $auth->requireSesskeyCalls);
+        self::assertSame(0, $auth->requireSesskeyCalls);
+        self::assertSame([], $auth->confirmSesskeyTokens);
     }
 
     #[Test]
@@ -1318,6 +1322,11 @@ final class AbstractControllerCoverageTest extends TestCase
 
             public int $requireSesskeyCalls = 0;
 
+            /** @var list<string> */
+            public array $confirmSesskeyTokens = [];
+
+            public string $validSesskey = 'sess-ok';
+
             /** @var array<int, array{0: null|int, 1: bool}> */
             public array $requireLoginArgs = [];
 
@@ -1340,6 +1349,13 @@ final class AbstractControllerCoverageTest extends TestCase
             public function requireSesskey(): void
             {
                 ++$this->requireSesskeyCalls;
+            }
+
+            public function confirmSesskey(string $token): bool
+            {
+                $this->confirmSesskeyTokens[] = $token;
+
+                return $token === $this->validSesskey;
             }
         };
     }

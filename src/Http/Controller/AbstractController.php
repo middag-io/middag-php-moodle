@@ -65,6 +65,16 @@ abstract class AbstractController implements MoodleControllerInterface
     // Properties
     // =========================================================================
 
+    /**
+     * Methods that cannot change state, so they never carry a CSRF token.
+     *
+     * Untyped on purpose: the library floor is PHP 8.2 and typed class
+     * constants are 8.3+.
+     *
+     * @var list<string>
+     */
+    protected const IDEMPOTENT_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+
     protected ContainerInterface $container;
 
     protected ?Request $request = null;
@@ -83,7 +93,13 @@ abstract class AbstractController implements MoodleControllerInterface
 
     protected bool $requireLogin = false;
 
-    protected bool $requireSesskey = false;
+    /**
+     * CSRF (sesskey) verification for non-idempotent requests, ON by default.
+     *
+     * Opt out per route or per class with `#[Sesskey(require: false)]`, which
+     * the kernel forwards through {@see self::setRequireSesskey()}.
+     */
+    protected bool $requireSesskey = true;
 
     protected bool $requiredLogin = false;
 
@@ -186,8 +202,15 @@ abstract class AbstractController implements MoodleControllerInterface
      */
     public function preHandle(): void
     {
-        // Empty hook by default. Does not call handle() so it never interferes
-        // with the lazy pattern of page controllers that configure auth in the action.
+        // CSRF is the one check that cannot wait for the lazy pattern: the
+        // kernel calls preHandle() before the action, while handle() only runs
+        // from render()/inertia() — and inertiaRedirect(), the return of every
+        // Inertia mutation, never reaches it. Verifying here is what makes the
+        // default-on gate actually cover POST/PUT/PATCH/DELETE routes.
+        $this->verifyCsrf();
+
+        // Login/capabilities stay lazy: page controllers configure those flags
+        // inside the action and handle() applies them at render time.
     }
 
     // =========================================================================
@@ -402,12 +425,95 @@ abstract class AbstractController implements MoodleControllerInterface
             $this->requiredLogin = true;
         }
 
-        if ($this->requireSesskey && $this->request instanceof Request) {
-            $method = strtoupper($this->request->getMethod());
-            if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
-                $this->authentication()->requireSesskey();
+        // Sesskey is NOT verified here: it moved to preHandle() via
+        // verifyCsrf(), which the kernel always reaches — handle() does not run
+        // on the mutation routes this protects.
+    }
+
+    /**
+     * Verify the CSRF token (Moodle sesskey) for a non-idempotent request.
+     *
+     * Runs from preHandle(), before the action. Skipped for idempotent methods,
+     * when the route opted out via `#[Sesskey(require: false)]`, and for callers
+     * that do not ride a Moodle session (nothing to forge).
+     *
+     * @throws MiddagAuthorizationException (403) when the token is absent or wrong
+     */
+    protected function verifyCsrf(): void
+    {
+        if (!$this->requireSesskey || !$this->request instanceof Request) {
+            return;
+        }
+
+        if (in_array(strtoupper($this->request->getMethod()), self::IDEMPOTENT_METHODS, true)) {
+            return;
+        }
+
+        if (!$this->csrfProtectsCurrentCaller()) {
+            return;
+        }
+
+        $token = $this->csrfTokenFromRequest();
+
+        if ($token === null || !$this->authentication()->confirmSesskey($token)) {
+            throw new MiddagAuthorizationException(
+                LangSupport::getString('invalidsesskey', 'error'),
+            );
+        }
+    }
+
+    /**
+     * Whether the current caller is exposed to CSRF at all.
+     *
+     * Only a request riding a Moodle session cookie can be forged by a third
+     * party, so that is the condition. Guests count: a guest session is still a
+     * session the browser attaches automatically.
+     */
+    protected function csrfProtectsCurrentCaller(): bool
+    {
+        return $this->authentication()->isLoggedIn();
+    }
+
+    /**
+     * Read the CSRF token from the request, in transport order.
+     *
+     * 1. `X-CSRF-Token` — the header the SPA interceptors send.
+     * 2. `X-XSRF-TOKEN` — what axios echoes back from the `XSRF-TOKEN` cookie,
+     *    which is why Inertia visits need no client change.
+     * 3. `sesskey` in the payload/query — Moodle's own transport, posted by
+     *    every formslib form and by links that carry `?sesskey=`.
+     * 4. `_token` in the payload — the framework's host-agnostic field name.
+     *
+     * Moodle's own `require_sesskey()` reads (3) alone, via `required_param()`,
+     * which is why a header or a JSON body never reached it.
+     */
+    protected function csrfTokenFromRequest(): ?string
+    {
+        if (!$this->request instanceof Request) {
+            return null;
+        }
+
+        $header = $this->request->headers->get('X-CSRF-Token');
+
+        if (is_string($header) && trim($header) !== '') {
+            return trim($header);
+        }
+
+        $header = $this->request->headers->get('X-XSRF-TOKEN');
+
+        if (is_string($header) && trim($header) !== '') {
+            return rawurldecode(trim($header));
+        }
+
+        foreach (['sesskey', '_token'] as $field) {
+            $value = $this->payload[$field] ?? $this->request->query->get($field);
+
+            if (is_string($value) && trim($value) !== '') {
+                return trim($value);
             }
         }
+
+        return null;
     }
 
     /**
