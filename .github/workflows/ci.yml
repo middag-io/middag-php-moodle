@@ -33,7 +33,7 @@ jobs:
       # composer.json-only prefix so a PR that only touches source still gets
       # a warm (if slightly stale) vendor dir to update from.
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor
           key: ${{ runner.os }}-composer-quality-${{ hashFiles('composer.json') }}
@@ -49,7 +49,7 @@ jobs:
       # PHP-CS-Fixer's cache is incremental (per-file content hash), same
       # shape as the Rector/PHPStan caches below.
       - name: Cache PHP-CS-Fixer
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/php-cs-fixer.cache
           key: ${{ runner.os }}-php-cs-fixer-${{ hashFiles('composer.json', '.php-cs-fixer.dist.php') }}-${{ github.sha }}
@@ -61,7 +61,7 @@ jobs:
       # the prefix restore-key still lets a fresh sha reuse the last run's
       # cache instead of starting cold.
       - name: Cache Rector
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/rector
           key: ${{ runner.os }}-rector-${{ hashFiles('composer.json', '.php-rector.php') }}-${{ github.sha }}
@@ -70,7 +70,7 @@ jobs:
 
       # Same incremental-cache shape as Rector above.
       - name: Cache PHPStan
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/phpstan
           key: ${{ runner.os }}-phpstan-${{ hashFiles('composer.json', '.phpstan.neon') }}-${{ github.sha }}
@@ -106,7 +106,7 @@ jobs:
       # above this job): each PHP cell resolves its own Symfony line, so the
       # vendor cache is scoped per matrix.php as well as composer.json.
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor
           key: ${{ runner.os }}-composer-tests-${{ matrix.php }}-${{ hashFiles('composer.json') }}
@@ -154,7 +154,7 @@ jobs:
       # stubs package regardless of what this restores, so cells share one
       # warm base vendor dir instead of paying for four separate installs.
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor
           key: ${{ runner.os }}-composer-stan-matrix-${{ hashFiles('composer.json') }}
@@ -173,7 +173,7 @@ jobs:
       # the 5.2 stubs would serve stale reflections for the same file paths
       # and silently mask real errors in the other series.
       - name: Cache PHPStan
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/phpstan
           key: ${{ runner.os }}-phpstan-${{ matrix.stubs }}-${{ hashFiles('composer.json', '.phpstan.neon') }}-${{ github.sha }}
