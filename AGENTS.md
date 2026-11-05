@@ -14,7 +14,7 @@ filesystem, translation, HTTP/Inertia — plus stateless Moodle API wrappers
 (`Support/`), host domain services and DTOs (`Domain/`), declarative plugin
 definitions (`Definition/`), and admin settings types (`Settings/`).
 
-- **Depends on** `middag-io/framework` (`^1.0.2`) and `middag-io/ui` (`^1.2`;
+- **Depends on** `middag-io/framework` (`^1.15`) and `middag-io/ui` (`^1.3`;
   `Form/` implements the ui form contracts).
 - **Consumed by** a Moodle host plugin (any `local_*`/`mod_*`) that provides
   its own composition root. No plugin is bundled here.
@@ -44,7 +44,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
 | `Settings/` | Settings-as-code family: root keeps the mechanism (`AbstractSetting`, `Page`, `SettingsNamingPolicy`, `SettingsResolver`, `Enum/SettingType`); `Settings/Type/` holds the 22 DSL classes mirroring Moodle's `admin_setting_*` types |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
-| `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
+| `Support/` | 42 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
 | `Translation/` | `MoodleTranslator` (framework `TranslatorInterface` → `get_string`) |
 | `WebService/` | `AbstractExternal` (Moodle external API base) |
 
@@ -117,13 +117,13 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
    the consumer plugin. There are no package-relative monolith fallbacks.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
-   short name** (with a `framework → core` special case → `mdglib_core_*`
-   keys under the library's neutral default policy; a real product such as
-   MIDDAG injects its own prefix explicitly, see MDL-021).
+   short name** (keys use the library's neutral default policy; a real
+   product such as MIDDAG injects its own prefix explicitly, see MDL-011).
+   Consumers can remap derived slugs by overriding `extensionAliases()`.
    PascalCase spellings are normalised to snake_case first, and an enum whose
    name cannot be mapped onto `{slug}_config` is rejected with
    `InvalidArgumentException` — it never silently resolves a dead key. The
-   adapter no longer ships a `framework_config` enum: those framework-tier keys
+   adapter no longer ships a `framework_config` enum: those framework-level keys
    are owned by the consumer product (e.g. `Middag\Core\Config\FrameworkConfig`);
    this lib only provides the generic resolution mechanism.
 3. **`Settings/Type/Storedfile` vs `Domain/File/StoredFile`** differ only by
@@ -177,6 +177,20 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
     `route_not_found` missing). Callbacks are keyed (idempotent) and survive
     `reset()`, like the builder itself.
 
+## Decision records
+
+Architecture decisions live in [`docs/decisions/`](docs/decisions/) as `MDL-NNN` records in the
+MIDDAG-MADR compact format (`docs-middag-ops` ADR-014): frontmatter, then Context → Considered Options
+→ Decision → Consequences → Enforcement. A record states **why** (the choice, the alternatives, the
+consequences); specification (class lists, inventories, flows, naming tables) lives in the reference
+docs its Enforcement table points to, at docs.middag.dev (`docs-middag-dev`,
+`docs/framework/reference/adapters/moodle/`). Ids are never reused; a record merged into another
+stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `deciders` is a role id
+(`leadership`), never a person.
+
+**`domains` vocabulary** (a record uses only these): `adapters`, `boundary`, `runtime`, `api`,
+`versioning`, `di`, `settings`, `codegen`, `files`, `routing`, `dependencies`, `persistence`.
+
 ## Composer scripts
 
 - `composer check` — `check:style` → `check:rector` → `check:stan`
@@ -190,8 +204,8 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 
 ## Releases
 
-Managed by release-please from Conventional Commits merged to `main` (work
-lands on `develop` first). **Never create git tags manually.** Versioning
+Managed by release-please from Conventional Commits merged to `main` (pull
+requests target `main`; there is no `develop` branch). **Never create git tags manually.** Versioning
 follows the family-wide `1.x` policy (framework
 [`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
 during `1.x` a minor may carry a breaking change, always explicitly marked

@@ -17,6 +17,7 @@ use Middag\Framework\Persistence\Contract\EntityInterface;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionType;
 use ReflectionUnionType;
 use stdClass;
 
@@ -275,7 +276,7 @@ abstract class AbstractMoodleEntity implements EntityInterface
 
         $type = $reflection->getType();
 
-        if ($type === null) {
+        if (!$type instanceof ReflectionType) {
             return $value;
         }
 
