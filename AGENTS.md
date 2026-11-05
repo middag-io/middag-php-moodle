@@ -206,12 +206,27 @@ stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `
 
 Managed by release-please from Conventional Commits merged to `main` (pull
 requests target `main`; there is no `develop` branch). **Never create git tags manually.** Versioning
-follows the family-wide `1.x` policy (framework
-[`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
-during `1.x` a minor may carry a breaking change, always explicitly marked
-(`feat!` / `BREAKING CHANGE:` footer, surfaced in the CHANGELOG's breaking
-section) and cut deliberately via a `Release-As` footer — never in a patch.
-Strict semver (breaking only in majors) starts at `2.0`. A major release is
-**never cut automatically**: it requires an explicit maintainer decision,
-taken only when the break genuinely impacts Composer consumers; a release PR
-proposing a major bump is not merged without that sign-off.
+follows the `middag-php-*` version family policy: ADR-032 of the internal
+`docs-middag-ops` (amends ADR-003 for the libs), stated for this lib in [`API-STABILITY.md`](API-STABILITY.md).
+
+- **On `1.x` (now):** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
+  break, shipped as `feat:` (never `fix:`, so never in a patch) with the break
+  and migration in the commit body — never `!` or a `BREAKING CHANGE:` footer (release-please would cut
+  `2.0.0` in this lib alone). From 2026-12-01 no break lands on `1.x`.
+- **From `2.0.0`:** the 8 `middag-php-*` libs share `MAJOR.MINOR`; patch is
+  fix-only per lib; `feat:` waits for a family minor window; a break waits for
+  a family major window after a deprecation (runtime notice) in an earlier
+  minor. Family minor/major = a coordinated `Release-As: X.Y.0` in every lib.
+  The **product owner** decides every family minor and major.
+- **Window check:** `.github/workflows/family-window.yml` runs
+  `php-version-family-check / check` on the PR title and every non-merge commit
+  against the organization variable `PHP_LIBS_OPEN_RELEASE` (empty = closed,
+  `X.Y` = minor window, `X.0` = major window). A held PR stays open, kept
+  current by merging `main` (never rebase/force-push); re-run the check when
+  the window opens. Do not add a `Release-As:` footer outside a window. A
+  window counts as open only when it is ahead of this lib's version; while one
+  is open, merge the Release PR only at the coordinated `X.Y.0`. After the
+  `2.0.0` cut, a PR opened before it must merge `main` in.
+- **Consumers** declare one `^2.N` for every `middag-io/*` sibling from `2.0.0`.
+- Do not change `release-please-config.json` versioning or the sibling ranges in
+  `composer.json` ahead of the cut; that is part of the coordinated `2.0.0` cut.

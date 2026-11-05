@@ -71,14 +71,26 @@ must remain consumable on its own.
   `build`, `ci`, `revert`.
 - Keep pull requests focused. Update tests and docs alongside code.
 - Releases are automated by [release-please](https://github.com/googleapis/release-please)
-  from commits merged to `main`. Versioning follows the family-wide `1.x` policy
-  documented in this package's own [API-STABILITY.md](API-STABILITY.md) (which
-  mirrors the framework's
+  from commits merged to `main`. Versioning follows the `middag-php-*` family
+  policy in this package's [API-STABILITY.md](API-STABILITY.md) (decided in
+  ADR-032 of the internal `docs-middag-ops`, mirrored
+  in the framework's
   [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
-  a `1.x` minor may carry an explicitly marked breaking change (`feat!` /
-  `BREAKING CHANGE:` footer) cut deliberately via a `Release-As` footer; a major
-  (`2.0`) is never cut automatically — only by explicit maintainer decision when
-  the break genuinely impacts Composer consumers.
+  - **On `1.x`:** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
+    break, shipped as `feat:` (never `fix:`, so never in a patch) with the
+    break described in the commit body. Never use `!` or a `BREAKING CHANGE:` footer: that would cut `2.0.0`
+    in this lib alone. From 2026-12-01 no break lands on `1.x`.
+  - **From `2.0.0`:** the libraries share `MAJOR.MINOR`. A patch carries fixes
+    only, a `feat:` waits for a family minor window, and a break waits for a
+    family major window after a deprecation in an earlier minor. The product
+    owner decides every family minor and major.
+  - **The check:** `php-version-family-check / check` reads the PR title and
+    every non-merge commit against the organization variable
+    `PHP_LIBS_OPEN_RELEASE` (empty = closed, `X.Y` = family minor window,
+    `X.0` = family major window). A held feature PR stays open and is kept
+    current by merging `main` into it (never rebase or force-push). Re-run the
+    check once the window opens. See
+    [API-STABILITY.md](API-STABILITY.md#the-version-family-check).
 
 > Historical note: `1.1.1` shipped the audit-consolidation breaking changes
 > (the batch-A renames, the framework Translation port replacing the local
