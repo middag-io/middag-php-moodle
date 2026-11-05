@@ -202,7 +202,7 @@ class Kernel implements KernelInterface
     {
         self::ensureBooted();
 
-        if (self::$instance->container === null) {
+        if (!self::$instance->container instanceof ContainerInterface) {
             throw new RuntimeException('Kernel booted but container is null. Critical initialization failure.');
         }
 
@@ -293,7 +293,7 @@ class Kernel implements KernelInterface
     {
         self::ensureBooted();
 
-        if (!self::$instance->httpKernel || !self::$instance->router) {
+        if (!self::$instance->httpKernel instanceof MoodleHttpKernel || !self::$instance->router instanceof RouterInterface) {
             throw new RuntimeException('Kernel components (HttpKernel or Router) not initialized correctly.');
         }
 
@@ -378,7 +378,7 @@ class Kernel implements KernelInterface
     {
         self::ensureBooted();
 
-        if (!self::$instance->router) {
+        if (!self::$instance->router instanceof RouterInterface) {
             throw new RuntimeException('Router not initialized.');
         }
 
