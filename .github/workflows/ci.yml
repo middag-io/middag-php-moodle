@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-composer-quality-
 
       - name: Install dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Test namespaces follow PSR-4 (autoload + autoload-dev)
         run: composer dump-autoload --optimize --strict-psr
@@ -114,7 +114,7 @@ jobs:
             ${{ runner.os }}-composer-tests-${{ matrix.php }}-
 
       - name: Install dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Assert the resolved vendor satisfies this cell's platform
         run: composer check-platform-reqs
@@ -162,7 +162,7 @@ jobs:
             ${{ runner.os }}-composer-stan-matrix-
 
       - name: Install dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Pin moodle-stubs to the matrix series
         run: composer require --dev "michaelmeneses/moodle-stubs:${{ matrix.stubs }}" --with-all-dependencies --no-interaction
