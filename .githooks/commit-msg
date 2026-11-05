@@ -13,13 +13,10 @@
 #   * an OPTIONAL "!" breaking-change marker before the colon,
 #   * ": " then a description of at least 3 chars.
 #
-# Breaking changes: mark them with "!" (e.g. feat!: / feat(kernel)!:) OR a
-# "BREAKING CHANGE:" footer in the body. release-please picks up either.
-#
-# Versioning (see CONTRIBUTING.md "Versioning"): while the package is < 1.0.0,
-# release-please-config.json sets bump-minor-pre-major + bump-patch-for-minor-
-# pre-major, so feat/fix bump PATCH and a breaking change bumps MINOR. A MAJOR
-# (1.0.0) release is cut deliberately — it is NOT produced by "!" alone while 0.x.
+# Breaking changes: "!" (e.g. feat!: / feat(kernel)!:) or a "BREAKING CHANGE:"
+# footer. The hook accepts both, but the version family check in CI refuses
+# them unless a family MAJOR window is open. On 1.x a break ships as feat:/fix:
+# with the break described in the body (see API-STABILITY.md).
 
 MSG=$(head -1 "$1")
 

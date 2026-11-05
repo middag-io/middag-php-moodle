@@ -117,6 +117,11 @@ Types: feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert
 Releases are managed by [release-please](https://github.com/googleapis/release-please).
 Conventional commits merged to `main` open a Release PR automatically.
 
+This library is on `1.x`. From `2.0.0` it joins the `middag-php-*` version
+family: every library shares `MAJOR.MINOR`, a minor never breaks, and a consumer
+declares one `^2.N` range for all of them. See [API-STABILITY.md](API-STABILITY.md)
+for the policy and the version family check that every pull request passes.
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE). See [`NOTICE`](NOTICE) for
