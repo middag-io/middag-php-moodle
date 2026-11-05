@@ -81,9 +81,8 @@ manual tags. On `1.x` the version comes from the commit type (`fix:` → patch,
 minor or major comes from a coordinated `Release-As: X.Y.0` footer in every
 library of the family (see below).
 
-The policy below is decided in MIDDAG's
-[ADR-032](https://github.com/middag-io/docs-middag-ops/blob/main/internal/decisions/ADR-032-php-library-version-family.md)
-(internal; it amends ADR-003 for the `middag-php-*` libraries) and mirrored in
+The policy below is decided in ADR-032 of the internal `docs-middag-ops`
+(it amends ADR-003 for the `middag-php-*` libraries) and mirrored in
 the framework's
 [`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md).
 
@@ -97,8 +96,9 @@ During the `1.x` line the API is **still consolidating**:
   parameters, promoting an `@internal` symbol to `@api`), cut by release-please
   from `feat:`. Until **2026-11-30** a minor may also carry a breaking `@api`
   change, under a recorded exception that ends on that date and is not renewed.
-  The break ships as `feat:` or `fix:` with the break and the migration
-  described in the commit body, so it still appears in the CHANGELOG.
+  The break ships as `feat:` (so it cuts a minor, never a patch) with the break
+  and the migration described in the commit body, so it still appears in the
+  CHANGELOG. It never ships as `fix:`, `refactor:` or `chore:`.
 - **Never** `!` before the colon or a `BREAKING CHANGE:` footer on `1.x`:
   release-please would cut `2.0.0` in this library alone, and the
   [version family check](#the-version-family-check) refuses it.
@@ -137,20 +137,29 @@ Every pull request runs the check `php-version-family-check / check`
 (`.github/workflows/family-window.yml`). It reads the pull request title and
 every non-merge commit (the header type, and any `BREAKING CHANGE:` or
 `BREAKING-CHANGE:` footer) against the window in the organization variable
-`PHP_LIBS_OPEN_RELEASE`. The product owner sets and clears that variable. When
+`PHP_LIBS_OPEN_RELEASE`, set and cleared on the order of the product owner. When
 it is empty the window is closed, `X.Y` with `Y > 0` opens a family minor
 window, and `X.0` opens a family major window. The `2.0.0` cut is window `2.0`.
 
 | Change | Passes when |
 |---|---|
 | `fix:`, `docs:`, `refactor:`, … | always |
-| `feat:` | this library is below `2.0.0` (on `1.x`), or any window is open |
+| `feat:` | this library is below `2.0.0` (on `1.x`), or a window is open |
 | `!` or a `BREAKING CHANGE:` footer | a family major window is open |
 | `Release-As:` footer | a window is open and the footer names its `X.Y.0` |
 
 To pass with a held feature, leave the pull request open and keep it current by
 merging `main` into it (never rebase or force-push). Once the window opens,
 re-run the check.
+
+- A window counts as open only when it is ahead of this library's current
+  version and the pull request targets `main`; a value left set after its
+  family release reads as closed.
+- While a window is open, this library's Release PR is merged only at the
+  coordinated `X.Y.0`.
+- A re-run reads the base of the original event. After the `2.0.0` cut, a pull
+  request opened before the cut must merge `main` into it so that the check
+  reads the new version.
 
 > Historical note: `1.1.1` shipped the audit-consolidation breaking changes (the
 > batch-A renames, the framework Translation port replacing the local interface,

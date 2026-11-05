@@ -73,12 +73,12 @@ must remain consumable on its own.
 - Releases are automated by [release-please](https://github.com/googleapis/release-please)
   from commits merged to `main`. Versioning follows the `middag-php-*` family
   policy in this package's [API-STABILITY.md](API-STABILITY.md) (decided in
-  MIDDAG's internal [ADR-032](https://github.com/middag-io/docs-middag-ops/blob/main/internal/decisions/ADR-032-php-library-version-family.md), mirrored
+  ADR-032 of the internal `docs-middag-ops`, mirrored
   in the framework's
   [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
   - **On `1.x`:** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
-    break, shipped as `feat:`/`fix:` with the break described in the commit
-    body. Never use `!` or a `BREAKING CHANGE:` footer: that would cut `2.0.0`
+    break, shipped as `feat:` (never `fix:`, so never in a patch) with the
+    break described in the commit body. Never use `!` or a `BREAKING CHANGE:` footer: that would cut `2.0.0`
     in this lib alone. From 2026-12-01 no break lands on `1.x`.
   - **From `2.0.0`:** the libraries share `MAJOR.MINOR`. A patch carries fixes
     only, a `feat:` waits for a family minor window, and a break waits for a
