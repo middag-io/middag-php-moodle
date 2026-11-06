@@ -42,6 +42,20 @@ interface AuthenticationInterface
 
     /**
      * Require a valid sesskey for the current request (CSRF protection).
+     *
+     * Reads the token from the request parameters only (Moodle's
+     * `required_param('sesskey')`), so it never sees a token sent as a header
+     * or inside a JSON body. Prefer {@see self::confirmSesskey()} for the
+     * transport-agnostic check.
      */
     public function requireSesskey(): void;
+
+    /**
+     * Compare a caller-supplied token against the current session's sesskey.
+     *
+     * Transport-agnostic: the caller decides where the token came from (header,
+     * body, query). Comparison is constant-time. Returns false when there is no
+     * session sesskey yet, so a missing token never passes.
+     */
+    public function confirmSesskey(string $token): bool;
 }

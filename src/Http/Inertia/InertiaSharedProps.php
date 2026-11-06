@@ -19,6 +19,7 @@ use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Settings\SettingsNamingPolicy;
+use Middag\Moodle\Support\SessionSupport;
 use Middag\Moodle\Support\ThemeSupport;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,6 +75,12 @@ class InertiaSharedProps
 
         // Erros de validação do kernel, no formato que useForm().errors espera.
         InertiaManager::share('errors', fn (): array => self::buildErrors());
+
+        // CSRF — the Moodle sesskey, under the name the @middag-io/react
+        // shared-props contract already declares. Clients that cannot read the
+        // XSRF-TOKEN cookie (plain fetch) take the token from here and send it
+        // as X-CSRF-Token.
+        InertiaManager::share('csrf_token', fn (): string => SessionSupport::sesskey());
 
         // Locale + version (static, no closure needed).
         InertiaManager::share('locale', fn (): string => current_language());

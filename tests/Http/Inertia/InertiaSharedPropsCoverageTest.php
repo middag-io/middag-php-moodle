@@ -95,7 +95,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function registerSharesAllEightPropsWithStaticLocaleAndVersion(): void
+    public function registerSharesAllNinePropsWithStaticLocaleAndVersion(): void
     {
         $GLOBALS['__middag_test_current_language'] = 'pt_br';
 
@@ -104,7 +104,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $shared = InertiaManager::getShared();
 
         self::assertSame(
-            ['navigation', 'auth', 'theme', 'scope', 'flash', 'errors', 'locale', 'version'],
+            ['navigation', 'auth', 'theme', 'scope', 'flash', 'errors', 'csrf_token', 'locale', 'version'],
             array_keys($shared),
         );
 
@@ -114,6 +114,9 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         self::assertInstanceOf(Closure::class, $shared['theme']);
         self::assertInstanceOf(Closure::class, $shared['scope']);
         self::assertInstanceOf(Closure::class, $shared['flash']);
+
+        // csrf_token stays lazy too: it is the Moodle sesskey, read per request.
+        self::assertInstanceOf(Closure::class, $shared['csrf_token']);
 
         // locale resolves through the lazy closure to the current language.
         self::assertSame('pt_br', ($shared['locale'])());

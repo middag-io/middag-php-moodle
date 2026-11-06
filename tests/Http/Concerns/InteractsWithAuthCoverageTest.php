@@ -308,6 +308,13 @@ final class InteractsWithAuthCoverageTest extends TestCase
             {
                 $this->calls[] = ['requireSesskey'];
             }
+
+            public function confirmSesskey(string $token): bool
+            {
+                $this->calls[] = ['confirmSesskey', $token];
+
+                return true;
+            }
         };
     }
 

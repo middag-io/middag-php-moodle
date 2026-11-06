@@ -55,6 +55,11 @@ class Authorizer implements AuthorizerInterface
         $this->authentication->requireSesskey();
     }
 
+    public function confirmSesskey(string $token): bool
+    {
+        return $this->authentication->confirmSesskey($token);
+    }
+
     public function can(string $capability, ContextLevel $contextlevel = ContextLevel::System, int $instanceid = 0, ?int $userid = null): bool
     {
         return $this->capability->can($capability, $contextlevel, $instanceid, $userid);

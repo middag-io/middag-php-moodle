@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Security;
 
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
+use Middag\Moodle\Security\ValueObject\Sesskey;
 use Middag\Moodle\Support\AuthSupport;
 use Middag\Moodle\Support\SessionSupport;
 
@@ -43,5 +44,14 @@ class Authentication implements AuthenticationInterface
     public function requireSesskey(): void
     {
         SessionSupport::requireSesskey();
+    }
+
+    public function confirmSesskey(string $token): bool
+    {
+        if ($token === '') {
+            return false;
+        }
+
+        return (new Sesskey(SessionSupport::sesskey()))->matches($token);
     }
 }

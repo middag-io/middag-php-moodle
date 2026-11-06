@@ -14,14 +14,11 @@ namespace Middag\Moodle\Http\Controller;
 
 use core\session\manager;
 use Middag\Framework\Exception\MiddagAuthenticationException;
-use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Moodle\Support\DbSupport;
 use Middag\Moodle\Support\LangSupport;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 
 /**
  * Base API Controller.
@@ -36,6 +33,16 @@ abstract class AbstractApiController extends AbstractController
 {
     /** Set by the kernel when the route carries #[auth(login: false)]. */
     private bool $publicRoute = false;
+
+    /**
+     * True once this request was authenticated by a web-service token.
+     *
+     * The CSRF gate keys off this, NOT off {@see self::isWsRequest()}: that one
+     * only reports that an `Authorization`/`wstoken` value is present, so a
+     * session-authenticated request carrying any junk Bearer header would
+     * exempt itself from the check.
+     */
+    private bool $authenticatedByToken = false;
 
     /**
      * Signals to the controller that this route is public.
@@ -63,6 +70,10 @@ abstract class AbstractApiController extends AbstractController
             $this->authenticateApiRequest();
         }
 
+        // After authentication (so the wstoken exemption is known), before the
+        // action (so a rejected request never reaches the service layer).
+        $this->verifyCsrf();
+
         $this->handle();
     }
 
@@ -86,6 +97,26 @@ abstract class AbstractApiController extends AbstractController
     }
 
     /**
+     * API exemptions on top of the base gate.
+     *
+     * - Public routes (`requiresAuthentication() === false`): webhook receivers
+     *   and token endpoints. They carry no Moodle session, and their real gate
+     *   is their own HMAC/shared-secret check. Note this is the hook that works:
+     *   `#[Auth(login: false)]` alone only reaches controllers implementing
+     *   PublicRouteAwareInterface.
+     * - Requests authenticated by wstoken: no session cookie is involved, so
+     *   there is nothing for a third-party page to ride.
+     */
+    protected function verifyCsrf(): void
+    {
+        if (!$this->requiresAuthentication() || $this->authenticatedByToken) {
+            return;
+        }
+
+        parent::verifyCsrf();
+    }
+
+    /**
      * Check if the request expects a JSON response.
      * Always true for API controllers to force JSON logic.
      */
@@ -103,7 +134,8 @@ abstract class AbstractApiController extends AbstractController
      * instead of letting Moodle redirect or die.
      *
      * - Not logged in / guest → MiddagAuthenticationException (401)
-     * - Invalid sesskey       → MiddagAuthorizationException (403)
+     *
+     * CSRF is not checked here: see preHandle() / verifyCsrf().
      */
     protected function requireLogin(): void
     {
@@ -116,19 +148,8 @@ abstract class AbstractApiController extends AbstractController
             $this->requiredLogin = true;
         }
 
-        if ($this->requireSesskey && $this->request instanceof Request) {
-            $method = strtoupper($this->request->getMethod());
-            if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)
-                && !$this->isWsRequest()) {
-                try {
-                    $this->authentication()->requireSesskey();
-                } catch (Throwable) {
-                    throw new MiddagAuthorizationException(
-                        LangSupport::getString('invalidsesskey', 'error'),
-                    );
-                }
-            }
-        }
+        // Sesskey moved to preHandle()/verifyCsrf(). The old branch here was
+        // exempted by isWsRequest() — header presence, not authentication.
     }
 
     /**
@@ -156,11 +177,10 @@ abstract class AbstractApiController extends AbstractController
             return;
         }
 
-        // Fallback: Moodle session
+        // Fallback: Moodle session. No sesskey wiring here — it used to live
+        // below an early `return` taken by every logged-in request, so it never
+        // ran; the gate is now unconditional in preHandle() via verifyCsrf().
         $this->setRequireLogin();
-        if ($this->request->getMethod() !== 'GET') {
-            $this->setRequireSesskey();
-        }
     }
 
     /**
@@ -224,6 +244,8 @@ abstract class AbstractApiController extends AbstractController
         }
 
         manager::set_user($user);
+
+        $this->authenticatedByToken = true;
     }
 
     /**

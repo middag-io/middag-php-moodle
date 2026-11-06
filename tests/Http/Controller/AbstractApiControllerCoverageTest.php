@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Http\Controller;
 
 use Middag\Framework\Exception\MiddagAuthenticationException;
-use Middag\Framework\Exception\MiddagAuthorizationException;
 use Middag\Moodle\Http\Controller\AbstractApiController;
 use Middag\Moodle\Security\Contract\AuthenticationInterface;
 use moodle_database;
@@ -231,26 +230,13 @@ final class AbstractApiControllerCoverageTest extends TestCase
         $controller->exposeRequireLogin();
     }
 
-    #[Test]
-    public function testRequireSesskeyEnforcedOnPostRequests(): void
-    {
-        $auth = $this->makeAuth();
-        $auth->loggedIn = true;
-
-        $controller = $this->makeController(
-            $this->request(['REQUEST_METHOD' => 'POST']),
-            $this->makeContainer([AuthenticationInterface::class => $auth]),
-        );
-        $controller->setRequireLogin();
-        $controller->setRequireSesskey();
-
-        $controller->exposeRequireLogin();
-
-        self::assertSame(1, $auth->requireSesskeyCalls);
-    }
+    // The sesskey assertions that lived here moved to CsrfGateTest: the check
+    // is no longer reached from requireLogin() (which handle() runs lazily, and
+    // handle() never runs on Inertia mutations) but from preHandle(), which the
+    // kernel always calls before the action.
 
     #[Test]
-    public function testRequireSesskeySkippedOnGetRequests(): void
+    public function testRequireLoginNoLongerTouchesSesskeyOnPost(): void
     {
         $auth = $this->makeAuth();
         $auth->loggedIn = true;
@@ -265,47 +251,6 @@ final class AbstractApiControllerCoverageTest extends TestCase
         $controller->exposeRequireLogin();
 
         self::assertSame(0, $auth->requireSesskeyCalls);
-    }
-
-    #[Test]
-    public function testRequireSesskeySkippedForWebserviceRequest(): void
-    {
-        $auth = $this->makeAuth();
-        $auth->loggedIn = true;
-
-        $controller = $this->makeController(
-            $this->request(['REQUEST_METHOD' => 'POST'], ['wstoken' => 'tok']),
-            $this->makeContainer([AuthenticationInterface::class => $auth]),
-        );
-        $controller->setRequireLogin();
-        $controller->setRequireSesskey();
-
-        $controller->exposeRequireLogin();
-
-        self::assertSame(0, $auth->requireSesskeyCalls);
-    }
-
-    #[Test]
-    public function testRequireSesskeyThrowsAuthorizationOnInvalidKey(): void
-    {
-        $auth = $this->makeAuth();
-        $auth->loggedIn = true;
-        $auth->sesskeyThrows = true;
-
-        $controller = $this->makeController(
-            $this->request(['REQUEST_METHOD' => 'POST']),
-            $this->makeContainer([AuthenticationInterface::class => $auth]),
-        );
-        $controller->setRequireLogin();
-        $controller->setRequireSesskey();
-
-        // The invalid-sesskey path resolves its message via
-        // LangSupport::getString('invalidsesskey', 'error') — the bootstrap
-        // get_string() stub echoes the deterministic "[component/identifier]"
-        // marker, so the observable message is "[error/invalidsesskey]".
-        $this->expectException(MiddagAuthorizationException::class);
-        $this->expectExceptionMessage('[error/invalidsesskey]');
-        $controller->exposeRequireLogin();
     }
 
     // =========================================================================
@@ -358,7 +303,10 @@ final class AbstractApiControllerCoverageTest extends TestCase
         $controller->exposeAuthenticateApiRequest();
 
         self::assertTrue($controller->isRequireLoginFlag());
-        self::assertFalse($controller->isRequireSesskeyFlag());
+        // The flag is ON by default now and no longer set per method here: the
+        // old wiring sat below an early return that every logged-in request
+        // took, so it never ran. Method filtering lives in verifyCsrf().
+        self::assertTrue($controller->isRequireSesskeyFlag());
     }
 
     #[Test]
@@ -707,6 +655,11 @@ final class AbstractApiControllerCoverageTest extends TestCase
 
             public int $requireSesskeyCalls = 0;
 
+            /** @var list<string> */
+            public array $confirmSesskeyTokens = [];
+
+            public string $validSesskey = 'sess-ok';
+
             public function requireLogin(?int $courseid = null, bool $autologinguest = true): void
             {
                 ++$this->requireLoginCalls;
@@ -728,6 +681,13 @@ final class AbstractApiControllerCoverageTest extends TestCase
                 if ($this->sesskeyThrows) {
                     throw new RuntimeException('bad sesskey');
                 }
+            }
+
+            public function confirmSesskey(string $token): bool
+            {
+                $this->confirmSesskeyTokens[] = $token;
+
+                return $token === $this->validSesskey;
             }
         };
     }
