@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.16.0](https://github.com/middag-io/middag-php-moodle/compare/v1.15.1...v1.16.0) (2026-11-06)
+
+
+### Features
+
+* **http:** verifica sesskey por padrao em rotas nao idempotentes ([2837948](https://github.com/middag-io/middag-php-moodle/commit/283794852d5dae4e198a62fe4d255d3237d187dd))
+* **http:** verifica sesskey por padrão em rotas não idempotentes ([7b61a1c](https://github.com/middag-io/middag-php-moodle/commit/7b61a1cf04cac5c027cdb0b7a746587c2765ebfd))
+
+
+### Documentation
+
+* align the versioning policy with the version family (ADR-032) ([de0eec9](https://github.com/middag-io/middag-php-moodle/commit/de0eec93332bd56755e809656c9ff4578d5bb30b))
+* align the versioning policy with the version family (ADR-032) ([2a4ae4a](https://github.com/middag-io/middag-php-moodle/commit/2a4ae4a2817f6be64e2302806092ce2b908afc9f))
+* **decisions:** correct MDL-017, MDL-015 and settings claims against code ([619afc5](https://github.com/middag-io/middag-php-moodle/commit/619afc5d3d0cab233690f3540d6fc0a7dc56d336))
+* **decisions:** rewrite MDL records as architecture decisions ([3c2e9d4](https://github.com/middag-io/middag-php-moodle/commit/3c2e9d45ab44ce1d3d3a95c1949672a4a101dc5e))
+* **decisions:** rewrite MDL records as architecture decisions ([c585f6b](https://github.com/middag-io/middag-php-moodle/commit/c585f6b9d0db6d33a3f12f32eea86f99ac27a9ee))
+* tighten the 1.x break rule and the window notes ([2dcf70b](https://github.com/middag-io/middag-php-moodle/commit/2dcf70b7adf40b1014034b0b05489af5e9701b4d))
+
 ## [1.15.1](https://github.com/middag-io/middag-php-moodle/compare/v1.15.0...v1.15.1) (2026-09-16)
 
 
