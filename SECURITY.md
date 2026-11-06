@@ -2,11 +2,16 @@
 
 ## Supported versions
 
-This library is on the `1.x` release line, versioned per the family-wide policy
-in the framework's
-[API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md).
+This library is on the `1.x` release line, versioned per the `middag-php-*`
+family policy in [API-STABILITY.md](API-STABILITY.md) (mirrored in the
+framework's
+[API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)).
 Security fixes land on the latest released minor version; only the most recent
 tagged release is supported.
+
+From `2.0.0` the libraries share one version family. When a new family major
+ships, the last minor of the previous major receives security fixes only, for 6
+months.
 
 ## Reporting a vulnerability
 

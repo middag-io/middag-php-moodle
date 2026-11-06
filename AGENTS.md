@@ -1,4 +1,6 @@
-# CLAUDE.md — middag-io/moodle
+# AGENTS.md — middag-io/moodle
+
+Claude Code and Codex read this file; there is no `CLAUDE.md` in this repository.
 
 Agent guide: conventions and gotchas for working on this repo. Contributor
 setup lives in `README.md` / `CONTRIBUTING.md`.
@@ -12,7 +14,7 @@ filesystem, translation, HTTP/Inertia — plus stateless Moodle API wrappers
 (`Support/`), host domain services and DTOs (`Domain/`), declarative plugin
 definitions (`Definition/`), and admin settings types (`Settings/`).
 
-- **Depends on** `middag-io/framework` (`^1.0.2`) and `middag-io/ui` (`^1.2`;
+- **Depends on** `middag-io/framework` (`^1.15`) and `middag-io/ui` (`^1.3`;
   `Form/` implements the ui form contracts).
 - **Consumed by** a Moodle host plugin (any `local_*`/`mod_*`) that provides
   its own composition root. No plugin is bundled here.
@@ -42,7 +44,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Security/` | `Authentication`, `Authorizer`, `Capability` (+ `Contract/`, `Enum/`, `ValueObject/`, `Attribute/Sesskey`) |
 | `Settings/` | Settings-as-code family: root keeps the mechanism (`AbstractSetting`, `Page`, `SettingsNamingPolicy`, `SettingsResolver`, `Enum/SettingType`); `Settings/Type/` holds the 22 DSL classes mirroring Moodle's `admin_setting_*` types |
 | `Shared/` | Closed vocabulary: `Concerns/`, `Enum/`, `Util/` only |
-| `Support/` | 45 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
+| `Support/` | 42 stateless Moodle API wrappers, named `*Support` + `Moodle` (static aggregator facade), `TaskDefinitionBuilder`, `CrudConventionResolver`, `CacheSupportPsr16` (PSR-16) |
 | `Translation/` | `MoodleTranslator` (framework `TranslatorInterface` → `get_string`) |
 | `WebService/` | `AbstractExternal` (Moodle external API base) |
 
@@ -115,13 +117,13 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
    `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
    the consumer plugin. There are no package-relative monolith fallbacks.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
-   short name** (with a `framework → core` special case → `mdglib_core_*`
-   keys under the library's neutral default policy; a real product such as
-   MIDDAG injects its own prefix explicitly, see MDL-021).
+   short name** (keys use the library's neutral default policy; a real
+   product such as MIDDAG injects its own prefix explicitly, see MDL-011).
+   Consumers can remap derived slugs by overriding `extensionAliases()`.
    PascalCase spellings are normalised to snake_case first, and an enum whose
    name cannot be mapped onto `{slug}_config` is rejected with
    `InvalidArgumentException` — it never silently resolves a dead key. The
-   adapter no longer ships a `framework_config` enum: those framework-tier keys
+   adapter no longer ships a `framework_config` enum: those framework-level keys
    are owned by the consumer product (e.g. `Middag\Core\Config\FrameworkConfig`);
    this lib only provides the generic resolution mechanism.
 3. **`Settings/Type/Storedfile` vs `Domain/File/StoredFile`** differ only by
@@ -175,6 +177,20 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
     `route_not_found` missing). Callbacks are keyed (idempotent) and survive
     `reset()`, like the builder itself.
 
+## Decision records
+
+Architecture decisions live in [`docs/decisions/`](docs/decisions/) as `MDL-NNN` records in the
+MIDDAG-MADR compact format (`docs-middag-ops` ADR-014): frontmatter, then Context → Considered Options
+→ Decision → Consequences → Enforcement. A record states **why** (the choice, the alternatives, the
+consequences); specification (class lists, inventories, flows, naming tables) lives in the reference
+docs its Enforcement table points to, at docs.middag.dev (`docs-middag-dev`,
+`docs/framework/reference/adapters/moodle/`). Ids are never reused; a record merged into another
+stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `deciders` is a role id
+(`leadership`), never a person.
+
+**`domains` vocabulary** (a record uses only these): `adapters`, `boundary`, `runtime`, `api`,
+`versioning`, `di`, `settings`, `codegen`, `files`, `routing`, `dependencies`, `persistence`.
+
 ## Composer scripts
 
 - `composer check` — `check:style` → `check:rector` → `check:stan`
@@ -188,14 +204,29 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 
 ## Releases
 
-Managed by release-please from Conventional Commits merged to `main` (work
-lands on `develop` first). **Never create git tags manually.** Versioning
-follows the family-wide `1.x` policy (framework
-[`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
-during `1.x` a minor may carry a breaking change, always explicitly marked
-(`feat!` / `BREAKING CHANGE:` footer, surfaced in the CHANGELOG's breaking
-section) and cut deliberately via a `Release-As` footer — never in a patch.
-Strict semver (breaking only in majors) starts at `2.0`. A major release is
-**never cut automatically**: it requires an explicit maintainer decision,
-taken only when the break genuinely impacts Composer consumers; a release PR
-proposing a major bump is not merged without that sign-off.
+Managed by release-please from Conventional Commits merged to `main` (pull
+requests target `main`; there is no `develop` branch). **Never create git tags manually.** Versioning
+follows the `middag-php-*` version family policy: ADR-032 of the internal
+`docs-middag-ops` (amends ADR-003 for the libs), stated for this lib in [`API-STABILITY.md`](API-STABILITY.md).
+
+- **On `1.x` (now):** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
+  break, shipped as `feat:` (never `fix:`, so never in a patch) with the break
+  and migration in the commit body — never `!` or a `BREAKING CHANGE:` footer (release-please would cut
+  `2.0.0` in this lib alone). From 2026-12-01 no break lands on `1.x`.
+- **From `2.0.0`:** the 8 `middag-php-*` libs share `MAJOR.MINOR`; patch is
+  fix-only per lib; `feat:` waits for a family minor window; a break waits for
+  a family major window after a deprecation (runtime notice) in an earlier
+  minor. Family minor/major = a coordinated `Release-As: X.Y.0` in every lib.
+  The **product owner** decides every family minor and major.
+- **Window check:** `.github/workflows/family-window.yml` runs
+  `php-version-family-check / check` on the PR title and every non-merge commit
+  against the organization variable `PHP_LIBS_OPEN_RELEASE` (empty = closed,
+  `X.Y` = minor window, `X.0` = major window). A held PR stays open, kept
+  current by merging `main` (never rebase/force-push); re-run the check when
+  the window opens. Do not add a `Release-As:` footer outside a window. A
+  window counts as open only when it is ahead of this lib's version; while one
+  is open, merge the Release PR only at the coordinated `X.Y.0`. After the
+  `2.0.0` cut, a PR opened before it must merge `main` in.
+- **Consumers** declare one `^2.N` for every `middag-io/*` sibling from `2.0.0`.
+- Do not change `release-please-config.json` versioning or the sibling ranges in
+  `composer.json` ahead of the cut; that is part of the coordinated `2.0.0` cut.
