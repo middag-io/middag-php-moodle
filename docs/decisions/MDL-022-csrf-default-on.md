@@ -1,18 +1,18 @@
 ---
-id: MDL-022
 title: 'CSRF: sesskey verification on by default, verified in preHandle()'
 status: accepted
 date: 2026-11-05
+last-updated: 2026-11-05
 lang: en
 domains: [moodle, http, security]
-deciders: ['Gabriel Sousa']
+deciders: [leadership]
+decision: 'Non-idempotent requests riding a Moodle session must carry a valid sesskey. The check runs in preHandle() before the action, accepts the token from a header, the payload or the query, and is waived only for public routes, wstoken-authenticated requests and routes marked #[Sesskey(require: false)].'
 related: [MDL-017, MDL-019]
 supersedes: []
 superseded_by: null
 enforced_by:
   mdgstan: []
   docs: []
-decision: 'Non-idempotent requests riding a Moodle session must carry a valid sesskey. The check runs in preHandle() before the action, accepts the token from a header, the payload or the query, and is waived only for public routes, wstoken-authenticated requests and routes marked #[Sesskey(require: false)].'
 ---
 
 # MDL-022: CSRF default-on in the controller base classes
