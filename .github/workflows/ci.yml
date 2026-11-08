@@ -16,13 +16,13 @@ concurrency:
 # dev dependency, all resolved from public Composer registries (Packagist).
 
 jobs:
-  # Released php-library-check component of middag-io/actions, pinned by
-  # commit SHA with the tag in a comment. One job per PHP version: the static
+  # Released php-library-check component of middag-io/actions, called by its
+  # major tag. One job per PHP version: the static
   # checks (composer validate, strict PSR-4, PHPStan on the canonical stubs,
   # PHP-CS-Fixer and Rector) run on 8.2, the audit and the tests (unit +
   # no-host) on every version.
   php-library-check:
-    uses: middag-io/actions/.github/workflows/php-library-check.yml@5e6dc3d595edc2bf6134043a2b17067af5f64c25 # php-library-check-v1.0.0
+    uses: middag-io/actions/.github/workflows/php-library-check.yml@php-library-check-v1
     permissions:
       contents: read
     with:
@@ -52,7 +52,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: middag-io/actions/php-composer-setup@6cafdfbcf0f4bb0795b6e267edafb26558f334e8 # php-composer-setup-v1.1.0
+      - uses: middag-io/actions/php-composer-setup@php-composer-setup-v1
         with:
           php-version: ${{ matrix.php }}
 
@@ -83,7 +83,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: middag-io/actions/php-composer-setup@6cafdfbcf0f4bb0795b6e267edafb26558f334e8 # php-composer-setup-v1.1.0
+      - uses: middag-io/actions/php-composer-setup@php-composer-setup-v1
         with:
           php-version: '8.2'
 
