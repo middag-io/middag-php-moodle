@@ -65,9 +65,14 @@ jobs:
           composer show symfony/http-foundation | grep -E '^versions +: +\* v?7\.'
 
   # Specific to this repository, so it stays inline. LB-CI-01: PHPStan against
-  # every supported Moodle stubs series (4.5 to 5.2). Blocking: all four series
+  # every supported Moodle stubs series (4.5 to 5.3). Blocking: all five series
   # analyse clean at L6, so the per-version class_alias shims (cm_info,
   # modinfo, navigation_node) are backed by matrix evidence.
+  #
+  # The series tracked here follow `supported` of the consumer plugin, which
+  # since local_middag#188 is declared once in its `.moodle-support.json`. The
+  # rule from that issue: cover every branch of the range for which
+  # moodle-stubs exists. 5.3 exists as v5.3.0.
   stan-matrix:
     name: PHPStan (moodle-stubs ${{ matrix.stubs }})
     runs-on: ubuntu-24.04
@@ -77,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        stubs: ['~4.5.0', '~5.0.0', '~5.1.0', '~5.2.0']
+        stubs: ['~4.5.0', '~5.0.0', '~5.1.0', '~5.2.0', '~5.3.0']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
