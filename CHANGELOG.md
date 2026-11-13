@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.0](https://github.com/middag-io/middag-php-moodle/compare/v1.16.1...v1.17.0) (2026-11-13)
+
+
+### Features
+
+* **deps:** drop the unused firebase/php-jwt requirement ([eb30618](https://github.com/middag-io/middag-php-moodle/commit/eb30618ee02a5dffeab99abd71aca26f61bd8c62))
+* **deps:** remover o firebase/php-jwt não usado (framework[#110](https://github.com/middag-io/middag-php-moodle/issues/110)) ([d5ce3a8](https://github.com/middag-io/middag-php-moodle/commit/d5ce3a8453423bd5f7634f1e881f3d6319076d8c))
+
 ## [1.16.1](https://github.com/middag-io/middag-php-moodle/compare/v1.16.0...v1.16.1) (2026-11-13)
 
 
