@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/middag-io/middag-php-moodle/compare/v1.16.0...v1.16.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **phpstan:** isentar a identidade perdida de admin_setting nos stubs 5.3 ([e5fe5fe](https://github.com/middag-io/middag-php-moodle/commit/e5fe5fe525ac09aa49550204131bd8cff26d381e)), closes [#106](https://github.com/middag-io/middag-php-moodle/issues/106)
+
 ## [1.16.0](https://github.com/middag-io/middag-php-moodle/compare/v1.15.1...v1.16.0) (2026-11-06)
 
 
