@@ -44,3 +44,32 @@ parameters:
             message: "#expects moodle_url, core\\\\url given#"
             identifier: argument.type
             path: src/Support/HtmlWriterSupport.php
+        # Same mechanism as the two above, one version later and with a much
+        # bigger surface. Moodle 5.3 moved the admin settings out of
+        # `lib/adminlib.php` (407 KB on 5.2, 47 KB on 5.3) into `core_admin\*`
+        # and kept every global name through class_alias(). The stubs re-emit
+        # each class_alias() as a subclass declaration, so on the 5.3 stubs the
+        # legacy names are SIBLINGS instead of parent and child:
+        #
+        #     namespace core_admin               { abstract class setting }
+        #     namespace core_admin\setting\setting { class configtext extends \core_admin\setting }
+        #     namespace {
+        #         abstract class admin_setting             extends \core_admin\setting
+        #         class admin_setting_configtext           extends \core_admin\setting\setting\configtext
+        #     }
+        #
+        # At runtime class_alias() makes each pair the same class and every
+        # `instanceof admin_setting` holds, which is why the PHPUnit matrix of
+        # the consuming plugin is green on 5.3. Statically the identity cannot
+        # be expressed — same limitation as `context` and `moodle_url` above.
+        #
+        # Up to the 5.2 stubs the declaration is literally
+        # `class admin_setting_configtext extends admin_setting`, so this never
+        # matches there; `reportUnmatchedIgnoredErrors: false` above keeps those
+        # columns clean. Narrowing the return type of `toMoodleSetting()` is not
+        # an option: the common ancestor is `admin_setting` up to 5.2 and
+        # `core_admin\setting` from 5.3, and no name spans both.
+        -
+            message: "#::toMoodleSetting\\(\\) should return admin_setting but returns admin_setting_#"
+            identifier: return.type
+            path: src/Settings/Type/*.php
