@@ -31,7 +31,9 @@ use Throwable;
  * - Uses VersionSupport::supports() + VersionSupport::symbolExists() to avoid
  *   fatal errors on Moodle < 5.1
  * - References Moodle 5.1 classes via strings, never via use statements
- * - Compatible with PHP 8.1+ (no PHP 8.2+ features)
+ *
+ * Internal and outside the supported surface: the routing decision and the
+ * bridge's maturity are recorded in MDL-017.
  *
  * @internal
  */

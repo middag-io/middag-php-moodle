@@ -68,8 +68,8 @@ abstract class AbstractController implements MoodleControllerInterface
     /**
      * Methods that cannot change state, so they never carry a CSRF token.
      *
-     * Untyped on purpose: the library floor is PHP 8.2 and typed class
-     * constants are 8.3+.
+     * Untyped on purpose: a subclass may redeclare it, and typing it here
+     * would make an untyped redeclaration a fatal error.
      *
      * @var list<string>
      */
