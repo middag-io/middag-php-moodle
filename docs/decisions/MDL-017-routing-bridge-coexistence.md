@@ -38,6 +38,8 @@ Every controller is routed by the framework router through the adapter's HTTP ke
 - (−) A request through the native router passes through two routing layers.
 - (−) The native proxy class `MiddagProxy` is still inert. The adapter has not adopted `core\router\route_controller`, which Moodle core already ships, and the 5.1 gate may be stale.
 - (+) Forwarding carries the whole request (method, query, headers, cookies, body, uploaded files, attributes) and relays the whole response (status, every header value, body). Round-trip tests drive real PSR-7 objects through the real kernel.
+- (−) Moodle's router validates the request before the proxy runs. It drops undeclared query params and empties an undeclared body; the proxy rebuilds the query from the URI and re-parses a url-encoded body (multipart POST falls back to `$_POST`/`$_FILES`). It also decodes the path; the proxy forwards the raw path so the framework decodes it once.
+- (−) On `r.php`, Moodle core intercepts `Authorization: Bearer`, so token clients must call the plugin's own endpoint. Moodle also sets `Access-Control-Allow-Origin: *` and the native route has no OPTIONS method, so a CORS preflight never reaches the framework and its CORS rules do not apply there.
 - (−) Forwarding is not yet tested against a real Moodle 5.1 router.
 
 ## Enforcement

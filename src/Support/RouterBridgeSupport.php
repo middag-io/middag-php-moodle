@@ -35,6 +35,20 @@ use Throwable;
  * keeps ownership of request handling: the same controllers, authorization and
  * middleware run whichever router the request came through.
  *
+ * Moodle's router changes the request before the proxy sees it; the proxy
+ * undoes what it can. It rebuilds the query params Moodle drops, re-parses a
+ * form body Moodle empties and forwards the path still encoded (see
+ * {@see self::proxyRequest()}).
+ *
+ * Limits on r.php that the proxy cannot lift:
+ * - Moodle core intercepts `Authorization: Bearer` on r.php, so the header
+ *   never reaches MIDDAG. Token clients must call the plugin's own endpoint
+ *   (`<plugin>/index.php/api/...`) instead.
+ * - Moodle adds `Access-Control-Allow-Origin: *` itself, and the native route
+ *   declares no OPTIONS method, so a CORS preflight never reaches MIDDAG and
+ *   MIDDAG's CORS rules do not apply. Cross-origin clients that need them must
+ *   call the plugin's own endpoint.
+ *
  * Safety:
  * - Uses VersionSupport::supports() + VersionSupport::symbolExists() to avoid
  *   fatal errors on Moodle < 5.1
