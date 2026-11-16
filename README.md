@@ -40,8 +40,8 @@ role.
 | Database engines | PostgreSQL and MySQL, as supported by the Moodle version |
 
 The `DbSupport` `sql*` helpers are tested against real databases: the
-[Engines workflow](.github/workflows/engines.yml) installs each Moodle version
-above on PostgreSQL, MySQL and MariaDB and executes the SQL of every helper
+[Engines workflow](.github/workflows/engines.yml) installs Moodle 4.5, 5.1, 5.2
+and 5.3 on PostgreSQL, MySQL and MariaDB and executes the SQL of every helper
 ([`tests/Integration/Engine`](tests/Integration/Engine)). SQL Server is not
 tested. Oracle is not tested yet.
 
