@@ -305,12 +305,14 @@ final class RouterBridgeSupport
     /**
      * The still-encoded form of $path, as the client sent it.
      *
-     * Slim decodes the URI path once before handing $path to the route, and
-     * the framework router decodes again when it matches. Forwarding the
-     * decoded $path would decode twice (`%2541` would become `A`, not `%41`).
-     * So the matching raw tail of the request URI path is used: the shortest
-     * run of trailing segments that decodes to $path. When the URI does not end
-     * with $path, each segment of $path is encoded again instead.
+     * Moodle's Slim decodes the URI path before handing $path to the route
+     * (twice on Moodle 5.3: once while resolving the route, once for the route
+     * arguments), and the framework router decodes again when it matches.
+     * Forwarding the decoded $path would decode it once too often (`%2541`
+     * would become `A`, not `%41`). So the matching raw tail of the request URI
+     * path is used: the shortest run of trailing segments that decodes, once or
+     * twice, to $path. When the URI does not end with $path, each segment of
+     * $path is encoded again instead.
      */
     private static function rawPathTail(ServerRequestInterface $request, string $path): string
     {
@@ -325,7 +327,7 @@ final class RouterBridgeSupport
         for ($start = \count($segments) - 1; $start >= 0; --$start) {
             $tail = implode('/', \array_slice($segments, $start));
 
-            if (rawurldecode($tail) === $decoded) {
+            if (rawurldecode($tail) === $decoded || rawurldecode(rawurldecode($tail)) === $decoded) {
                 return $tail;
             }
         }

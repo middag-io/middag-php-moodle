@@ -411,6 +411,39 @@ final class RouterBridgeSupportProxyTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('doublyDecodedPathProvider')]
+    public function decodesOnceWhenSlimDecodedThePathTwice(string $rawTail, string $expectedId): void
+    {
+        $slimPath = rawurldecode(rawurldecode($rawTail));
+
+        $response = $this->proxy($this->slimRequest('GET', $rawTail), $slimPath);
+
+        self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+        self::assertSame($expectedId, (string) $response->getBody());
+    }
+
+    /**
+     * Moodle 5.3's Slim decodes the matched path twice (once while resolving
+     * the route, once for the route arguments). The framework router must
+     * still decode the raw URI path exactly once.
+     *
+     * @return iterable<string, array{string, string}>
+     */
+    public static function doublyDecodedPathProvider(): iterable
+    {
+        // raw URI tail, id the controller must see (native endpoint result)
+        yield 'encoded percent before 73' => ['item/segments/field%2573', 'segments/field%73'];
+
+        yield 'encoded percent before 2F' => ['item/segments%252Ffields', 'segments%2Ffields'];
+
+        yield 'encoded slash inside a parameter' => ['item/segments/fields/a%252Fb/options', 'segments/fields/a%2Fb/options'];
+
+        yield 'encoded slash' => ['item/a%2Fb', 'a/b'];
+
+        yield 'encoded letter' => ['item/a%41', 'aA'];
+    }
+
+    #[Test]
     public function encodesThePathWhenTheUriDoesNotCarryIt(): void
     {
         $request = $this->psr17->createServerRequest('GET', 'https://moodle.test/r.php/elsewhere');
