@@ -77,10 +77,11 @@ internal HTTP / kernel / support plumbing — including `Http\Routing\MoodleRout
 which the kernel builds and hands out as `Http\Contract\RouterInterface`; depend
 on the interface instead.
 
-`Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder` and
-`Support\RouterBridgeSupport` remain internal wiring/convention helpers. Static
-`db/*.php` generation belongs to internal development tooling; it is not
-runtime API of this adapter.
+`Support\CrudConventionResolver` and `Support\TaskDefinitionBuilder` remain
+internal wiring/convention helpers. `Support\RouterBridgeSupport` is `@api`:
+route proxy classes call it to forward Moodle's native router requests to the
+kernel. Static `db/*.php` generation belongs to internal development tooling;
+it is not runtime API of this adapter.
 
 ## Versioning
 

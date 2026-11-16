@@ -12,9 +12,15 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use InvalidArgumentException;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Shared\Util\Debug;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\FileBag;
 use Throwable;
 
 /**
@@ -24,18 +30,34 @@ use Throwable;
  * - MIDDAG endpoints accessible via r.php (friendly URLs)
  * - MIDDAG OpenAPI spec visible in /admin/swaggerui.php
  *
- * The bridge is a thin proxy: Moodle Slim routes delegate to MIDDAG's
- * http_kernel. MIDDAG retains full ownership of request handling.
+ * The bridge is a thin proxy: Moodle Slim routes delegate to MIDDAG's HTTP
+ * kernel with the full incoming request, and relay its full response. MIDDAG
+ * keeps ownership of request handling: the same controllers, authorization and
+ * middleware run whichever router the request came through.
+ *
+ * Moodle's router changes the request before the proxy sees it; the proxy
+ * undoes what it can. It rebuilds the query params Moodle drops, re-parses a
+ * form body Moodle empties and forwards the path still encoded (see
+ * {@see self::proxyRequest()}).
+ *
+ * Limits on r.php that the proxy cannot lift:
+ * - Moodle core intercepts `Authorization: Bearer` on r.php, so the header
+ *   never reaches MIDDAG. Token clients must call the plugin's own endpoint
+ *   (`<plugin>/index.php/api/...`) instead.
+ * - Moodle adds `Access-Control-Allow-Origin: *` itself, and the native route
+ *   declares no OPTIONS method, so a CORS preflight never reaches MIDDAG and
+ *   MIDDAG's CORS rules do not apply. Cross-origin clients that need them must
+ *   call the plugin's own endpoint.
  *
  * Safety:
  * - Uses VersionSupport::supports() + VersionSupport::symbolExists() to avoid
  *   fatal errors on Moodle < 5.1
  * - References Moodle 5.1 classes via strings, never via use statements
  *
- * Internal and outside the supported surface: the routing decision and the
- * bridge's maturity are recorded in MDL-017.
+ * Public API: consumers call it from their route proxy classes, directly or
+ * through {@see Moodle::routerBridge()}.
  *
- * @internal
+ * @api
  */
 final class RouterBridgeSupport
 {
@@ -45,6 +67,15 @@ final class RouterBridgeSupport
     private const array FEATURE_MATRIX = [
         'moodle_router' => ['since' => '5.1'],
     ];
+
+    /**
+     * Path prefix of MIDDAG API routes in the framework router.
+     */
+    private const string API_PREFIX = '/api/';
+
+    private const string MEDIA_TYPE_URLENCODED = 'application/x-www-form-urlencoded';
+
+    private const string MEDIA_TYPE_MULTIPART = 'multipart/form-data';
 
     /**
      * Check if the Moodle native router is available.
@@ -62,7 +93,7 @@ final class RouterBridgeSupport
      *
      * Moodle auto-discovers routes from the consumer plugin's `route\api\*` and
      * `route\controller\*` namespaces. Proxy classes in those namespaces delegate
-     * to proxy_request() which forwards to the framework's http_kernel.
+     * to proxyRequest() which forwards to the framework's HTTP kernel.
      */
     public static function register(): void
     {
@@ -72,68 +103,52 @@ final class RouterBridgeSupport
 
         // Moodle 5.1+ route discovery is automatic via namespace convention.
         // Proxy classes in classes/route/api/ carry `route` attributes
-        // and delegate to proxy_request().
+        // and delegate to proxyRequest().
         // No programmatic registration needed — Moodle's route_loader
         // scans the namespace at boot time.
     }
 
     /**
-     * Proxy a PSR-7 request from Moodle's native router to MIDDAG's http_kernel.
+     * Proxy a PSR-7 request from Moodle's native router to MIDDAG's HTTP kernel.
      *
-     * Uses {@see Kernel::handleReturning()}, which dispatches through the framework's
-     * PSR-15 `HttpKernel::handle()` and hands back a `ResponseInterface` directly — no
-     * output buffering, no header conflicts with Moodle's Slim pipeline.
+     * The incoming request is forwarded whole: method, query string, headers,
+     * cookies, parsed and raw body, uploaded files, attributes, protocol version
+     * and server params. The URI path changes to `/api/<path>`, so the framework
+     * router matches the MIDDAG API route. The entry-script server params change
+     * with it: SCRIPT_NAME and SCRIPT_FILENAME are emptied, PHP_SELF is set to
+     * the forwarded path and ORIG_SCRIPT_NAME is removed, so the framework
+     * derives no base path from `r.php` and matches the forwarded path as is.
      *
-     * @param object $request  PSR-7 ServerRequestInterface (reserved — required by handler contract)
-     * @param object $response PSR-7 ResponseInterface from Moodle's Slim app; its status/headers/body
-     *                         are populated from MIDDAG's response and returned
-     * @param string $path     matched route path to forward
+     * The kernel's response is copied onto `$response`: status code and reason
+     * phrase, every value of every header (a header the kernel sets replaces the
+     * host's header of the same name; other host headers are kept) and the body
+     * stream. A failure inside the kernel yields a generic 500 JSON body; details
+     * go to the debug trace, never to the client.
      *
-     * @return object PSR-7 ResponseInterface
+     * @param object $request  the PSR-7 ServerRequestInterface Moodle's router passes to the route
+     * @param object $response the PSR-7 ResponseInterface Moodle's router passes to the route
+     * @param string $path     the MIDDAG API path to forward to, relative to `/api/`
+     *
+     * @throws InvalidArgumentException when $request or $response is not the PSR-7 type above
      */
-    public static function proxyRequest(object $request, object $response, string $path = ''): object
+    public static function proxyRequest(object $request, object $response, string $path = ''): ResponseInterface
     {
+        if (!$request instanceof ServerRequestInterface) {
+            throw new InvalidArgumentException(sprintf('RouterBridgeSupport::proxyRequest() expects $request to implement %s, %s given.', ServerRequestInterface::class, $request::class));
+        }
+
+        if (!$response instanceof ResponseInterface) {
+            throw new InvalidArgumentException(sprintf('RouterBridgeSupport::proxyRequest() expects $response to implement %s, %s given.', ResponseInterface::class, $response::class));
+        }
+
         try {
-            if (!class_exists(Kernel::class)) {
-                // @codeCoverageIgnoreStart — the framework Kernel is a hard
-                // dependency of this library and always autoloadable inside the
-                // suite; the guard only matters for broken installs (R-05).
-                $response->getBody()->write(json_encode(['error' => 'Framework not available'], JSON_THROW_ON_ERROR));
+            $middagResponse = Kernel::handleRequest(self::forwardedRequest($request, $path));
 
-                return $response
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withStatus(503);
-                // @codeCoverageIgnoreEnd
-            }
-
-            $middagResponse = Kernel::handleReturning('/api/' . ltrim($path, '/'));
-
-            $body = (string) $middagResponse->getBody();
-
-            if ($body !== '') {
-                $response->getBody()->write($body);
-            }
-
-            // withHeader (not withAddedHeader) — matches the single-value-per-name
-            // shape MIDDAG responses carry today (Content-Type); a header repeated
-            // with multiple values would only keep the last one.
-            foreach ($middagResponse->getHeaders() as $name => $values) {
-                foreach ($values as $value) {
-                    $response = $response->withHeader($name, $value);
-                }
-            }
-
-            return $response->withStatus($middagResponse->getStatusCode());
+            return self::copyResponse($middagResponse, $response);
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 
-            $response->getBody()->write(json_encode([
-                'error' => 'Internal framework error',
-            ], JSON_THROW_ON_ERROR));
-
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(500);
+            return self::errorResponse($response);
         }
     }
 
@@ -157,5 +172,216 @@ final class RouterBridgeSupport
         global $CFG;
 
         return $CFG->wwwroot . ComponentContext::baseUrlPath() . '/index.php/api/openapi.yaml';
+    }
+
+    /**
+     * Build the request the kernel sees: the incoming one at `/api/<path>`.
+     */
+    private static function forwardedRequest(ServerRequestInterface $request, string $path): ServerRequestInterface
+    {
+        $uri = $request->getUri()->withPath(self::API_PREFIX . self::rawPathTail($request, $path));
+
+        $serverParams = array_replace($request->getServerParams(), [
+            'SCRIPT_NAME' => '',
+            'SCRIPT_FILENAME' => '',
+            'PHP_SELF' => $uri->getPath(),
+        ]);
+        unset($serverParams['ORIG_SCRIPT_NAME']);
+
+        $forwarded = (new Psr17Factory())
+            ->createServerRequest($request->getMethod(), $uri, $serverParams)
+            ->withProtocolVersion($request->getProtocolVersion())
+            ->withCookieParams($request->getCookieParams())
+            ->withQueryParams(self::queryParams($request))
+            ->withParsedBody($request->getParsedBody())
+            ->withUploadedFiles($request->getUploadedFiles())
+            ->withBody($request->getBody());
+
+        foreach ($request->getHeaders() as $name => $values) {
+            $forwarded = $forwarded->withHeader((string) $name, $values);
+        }
+
+        foreach ($request->getAttributes() as $name => $value) {
+            $forwarded = $forwarded->withAttribute((string) $name, $value);
+        }
+
+        return self::withRecoveredFormBody($forwarded);
+    }
+
+    /**
+     * Restore a form body Moodle's request validator emptied.
+     *
+     * The validator sets the parsed body to [] when the native route declares
+     * no body. A url-encoded form (any method, PUT and PATCH included) is then
+     * parsed again from the raw stream. A multipart POST has no raw stream to
+     * parse (PHP consumed it), so it falls back to $_POST and $_FILES, and only
+     * when they hold data. A non-empty parsed body is never replaced.
+     */
+    private static function withRecoveredFormBody(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $parsedBody = $request->getParsedBody();
+
+        if ($parsedBody !== null && $parsedBody !== []) {
+            return $request;
+        }
+
+        $mediaType = strtolower(trim(explode(';', $request->getHeaderLine('Content-Type'))[0]));
+
+        if ($mediaType === self::MEDIA_TYPE_URLENCODED) {
+            $body = $request->getBody();
+
+            if ($body->isSeekable()) {
+                $body->rewind();
+            }
+
+            $raw = $body->getContents();
+            parse_str($raw, $form);
+
+            return $request
+                ->withParsedBody($form)
+                ->withBody((new Psr17Factory())->createStream($raw));
+        }
+
+        if ($mediaType === self::MEDIA_TYPE_MULTIPART && $request->getMethod() === 'POST') {
+            if ($_POST !== []) {
+                $request = $request->withParsedBody($_POST);
+            }
+
+            if ($request->getUploadedFiles() === [] && $_FILES !== []) {
+                $request = $request->withUploadedFiles(self::uploadedFilesFromGlobals());
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * PSR-7 uploaded files built from $_FILES (nested field names included).
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function uploadedFilesFromGlobals(): array
+    {
+        return self::toPsrUploadedFiles((new FileBag($_FILES))->all(), new Psr17Factory());
+    }
+
+    /**
+     * @param array<array-key, mixed> $files
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function toPsrUploadedFiles(array $files, Psr17Factory $factory): array
+    {
+        $converted = [];
+
+        foreach ($files as $key => $file) {
+            if (\is_array($file)) {
+                $converted[$key] = self::toPsrUploadedFiles($file, $factory);
+
+                continue;
+            }
+
+            if (!$file instanceof UploadedFile) {
+                continue;
+            }
+
+            $path = $file->getPathname();
+            $stream = $file->getError() === UPLOAD_ERR_OK && is_file($path)
+                ? $factory->createStreamFromFile($path)
+                : $factory->createStream();
+
+            $converted[$key] = $factory->createUploadedFile(
+                $stream,
+                $file->getSize() ?: null,
+                $file->getError(),
+                $file->getClientOriginalName(),
+                $file->getClientMimeType(),
+            );
+        }
+
+        return $converted;
+    }
+
+    /**
+     * The still-encoded form of $path, as the client sent it.
+     *
+     * Moodle's Slim decodes the URI path before handing $path to the route
+     * (twice on Moodle 5.3: once while resolving the route, once for the route
+     * arguments), and the framework router decodes again when it matches.
+     * Forwarding the decoded $path would decode it once too often (`%2541`
+     * would become `A`, not `%41`). So the matching raw tail of the request URI
+     * path is used: the shortest run of trailing segments that decodes, once or
+     * twice, to $path. When the URI does not end with $path, each segment of
+     * $path is encoded again instead.
+     */
+    private static function rawPathTail(ServerRequestInterface $request, string $path): string
+    {
+        $decoded = ltrim($path, '/');
+
+        if ($decoded === '') {
+            return '';
+        }
+
+        $segments = explode('/', $request->getUri()->getPath());
+
+        for ($start = \count($segments) - 1; $start >= 0; --$start) {
+            $tail = implode('/', \array_slice($segments, $start));
+
+            if (rawurldecode($tail) === $decoded || rawurldecode(rawurldecode($tail)) === $decoded) {
+                return $tail;
+            }
+        }
+
+        return implode('/', array_map(rawurlencode(...), explode('/', $decoded)));
+    }
+
+    /**
+     * Query params parsed from the raw URI query string.
+     *
+     * Moodle's request validator removes every query param the native route
+     * does not declare, so getQueryParams() arrives empty for a proxy route.
+     * The URI keeps the full query string, so the params are rebuilt from it,
+     * the same way PHP fills $_GET.
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function queryParams(ServerRequestInterface $request): array
+    {
+        parse_str($request->getUri()->getQuery(), $query);
+
+        return $query;
+    }
+
+    /**
+     * Copy status, reason phrase, every header value and the body stream.
+     */
+    private static function copyResponse(ResponseInterface $from, ResponseInterface $to): ResponseInterface
+    {
+        foreach ($from->getHeaders() as $name => $values) {
+            $to = $to->withHeader((string) $name, $values);
+        }
+
+        $body = $from->getBody();
+
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+
+        return $to
+            ->withBody($body)
+            ->withStatus($from->getStatusCode(), $from->getReasonPhrase());
+    }
+
+    /**
+     * The generic 500 returned when the kernel fails; it carries no detail.
+     */
+    private static function errorResponse(ResponseInterface $response): ResponseInterface
+    {
+        $body = (new Psr17Factory())->createStream(json_encode(['error' => 'Internal framework error'], JSON_THROW_ON_ERROR));
+
+        return $response
+            ->withBody($body)
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(500);
     }
 }
