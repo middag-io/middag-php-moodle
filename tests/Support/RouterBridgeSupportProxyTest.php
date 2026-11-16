@@ -131,6 +131,23 @@ final class RouterBridgeSupportProxyTest extends TestCase
     }
 
     #[Test]
+    public function rebuildsQueryParamsMoodleStripsFromTheRequest(): void
+    {
+        // Moodle's request validator drops every query param the route does not
+        // declare, so the route handler receives empty query params while the
+        // URI still carries the full query string.
+        $request = $this->slimRequest('GET', 'echo?type=course&sesskey=abc&wstoken=t0k&tags%5B%5D=a&tags%5B%5D=b')
+            ->withQueryParams([]);
+
+        $echo = $this->echo($this->proxy($request, 'echo'));
+
+        self::assertSame(
+            ['type' => 'course', 'sesskey' => 'abc', 'wstoken' => 't0k', 'tags' => ['a', 'b']],
+            $echo['query'],
+        );
+    }
+
+    #[Test]
     public function forwardsTheRawJsonBody(): void
     {
         $json = '{"name":"Ada","tags":["x","y"]}';

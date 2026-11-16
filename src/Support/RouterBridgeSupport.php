@@ -172,7 +172,7 @@ final class RouterBridgeSupport
             ->createServerRequest($request->getMethod(), $uri, $serverParams)
             ->withProtocolVersion($request->getProtocolVersion())
             ->withCookieParams($request->getCookieParams())
-            ->withQueryParams($request->getQueryParams())
+            ->withQueryParams(self::queryParams($request))
             ->withParsedBody($request->getParsedBody())
             ->withUploadedFiles($request->getUploadedFiles())
             ->withBody($request->getBody());
@@ -186,6 +186,23 @@ final class RouterBridgeSupport
         }
 
         return $forwarded;
+    }
+
+    /**
+     * Query params parsed from the raw URI query string.
+     *
+     * Moodle's request validator removes every query param the native route
+     * does not declare, so getQueryParams() arrives empty for a proxy route.
+     * The URI keeps the full query string, so the params are rebuilt from it,
+     * the same way PHP fills $_GET.
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function queryParams(ServerRequestInterface $request): array
+    {
+        parse_str($request->getUri()->getQuery(), $query);
+
+        return $query;
     }
 
     /**
