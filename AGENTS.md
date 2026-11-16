@@ -15,7 +15,7 @@ filesystem, translation, HTTP/Inertia — plus stateless Moodle API wrappers
 (`Support/`), host domain services and DTOs (`Domain/`), declarative plugin
 definitions (`Definition/`), and admin settings types (`Settings/`).
 
-- **Depends on** `middag-io/framework` (`^1.20`) and `middag-io/ui` (`^1.8`;
+- **Depends on** `middag-io/framework` (`^1.20.4`) and `middag-io/ui` (`^1.10.1`;
   `Form/` implements the ui form contracts).
 - **Consumed by** a Moodle host plugin (any `local_*`/`mod_*`) that provides
   its own composition root. No plugin is bundled here.
