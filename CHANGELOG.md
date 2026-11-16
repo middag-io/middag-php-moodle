@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/middag-io/middag-php-moodle/compare/v1.17.0...v1.17.1) (2026-11-16)
+
+
+### Documentation
+
+* align versioning docs with the family rules and add help ([12dde4b](https://github.com/middag-io/middag-php-moodle/commit/12dde4b83faf9e15a15f0e11a8d880bccdb9a62e))
+
 ## [1.17.0](https://github.com/middag-io/middag-php-moodle/compare/v1.16.1...v1.17.0) (2026-11-16)
 
 
