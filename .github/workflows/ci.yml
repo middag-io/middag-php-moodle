@@ -50,6 +50,8 @@ jobs:
         symfony/dependency-injection:8
         symfony/http-client:8
         symfony/http-foundation:8
+        symfony/messenger:8
+        symfony/psr-http-message-bridge:8
         symfony/routing:8
       composer-validate: false
       strict-psr: false

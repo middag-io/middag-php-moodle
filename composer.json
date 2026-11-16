@@ -32,6 +32,8 @@
     "symfony/event-dispatcher-contracts": "^3.0",
     "symfony/http-client": "^7.4 || ^8.1",
     "symfony/http-foundation": "^7.4 || ^8.1",
+    "symfony/messenger": "^7.4 || ^8.1",
+    "symfony/psr-http-message-bridge": "^7.4 || ^8.1",
     "symfony/routing": "^7.4 || ^8.1"
   },
   "require-dev": {
