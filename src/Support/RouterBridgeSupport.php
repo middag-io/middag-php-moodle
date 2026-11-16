@@ -165,7 +165,7 @@ final class RouterBridgeSupport
      */
     private static function forwardedRequest(ServerRequestInterface $request, string $path): ServerRequestInterface
     {
-        $uri = $request->getUri()->withPath(self::API_PREFIX . ltrim($path, '/'));
+        $uri = $request->getUri()->withPath(self::API_PREFIX . self::rawPathTail($request, $path));
 
         $serverParams = array_replace($request->getServerParams(), [
             'SCRIPT_NAME' => '',
@@ -286,6 +286,37 @@ final class RouterBridgeSupport
         }
 
         return $converted;
+    }
+
+    /**
+     * The still-encoded form of $path, as the client sent it.
+     *
+     * Slim decodes the URI path once before handing $path to the route, and
+     * the framework router decodes again when it matches. Forwarding the
+     * decoded $path would decode twice (`%2541` would become `A`, not `%41`).
+     * So the matching raw tail of the request URI path is used: the shortest
+     * run of trailing segments that decodes to $path. When the URI does not end
+     * with $path, each segment of $path is encoded again instead.
+     */
+    private static function rawPathTail(ServerRequestInterface $request, string $path): string
+    {
+        $decoded = ltrim($path, '/');
+
+        if ($decoded === '') {
+            return '';
+        }
+
+        $segments = explode('/', $request->getUri()->getPath());
+
+        for ($start = \count($segments) - 1; $start >= 0; --$start) {
+            $tail = implode('/', \array_slice($segments, $start));
+
+            if (rawurldecode($tail) === $decoded) {
+                return $tail;
+            }
+        }
+
+        return implode('/', array_map(rawurlencode(...), explode('/', $decoded)));
     }
 
     /**

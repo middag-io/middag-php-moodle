@@ -380,6 +380,48 @@ final class RouterBridgeSupportProxyTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('encodedPathProvider')]
+    public function decodesTheForwardedPathOnlyOnce(string $rawTail, string $slimPath, string $expectedId): void
+    {
+        $response = $this->proxy($this->slimRequest('GET', $rawTail), $slimPath);
+
+        self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+        self::assertSame($expectedId, (string) $response->getBody());
+    }
+
+    /**
+     * Moodle's router hands the proxy a path Slim already decoded once; the
+     * framework router must decode the raw URI path exactly once, as on the
+     * plugin's native endpoint.
+     *
+     * @return iterable<string, array{string, string, string}>
+     */
+    public static function encodedPathProvider(): iterable
+    {
+        // raw URI tail, path as Slim decodes it, id the controller must see
+        yield 'encoded slash' => ['item/a%2Fb', 'item/a/b', 'a/b'];
+
+        yield 'encoded percent before 2F' => ['item/a%252Fb', 'item/a%2Fb', 'a%2Fb'];
+
+        yield 'double-encoded percent' => ['item/segments%25252Ffields', 'item/segments%252Ffields', 'segments%252Ffields'];
+
+        yield 'encoded percent before 41' => ['item/a%2541', 'item/a%41', 'a%41'];
+
+        yield 'encoded letter' => ['item/a%41', 'item/aA', 'aA'];
+    }
+
+    #[Test]
+    public function encodesThePathWhenTheUriDoesNotCarryIt(): void
+    {
+        $request = $this->psr17->createServerRequest('GET', 'https://moodle.test/r.php/elsewhere');
+
+        $response = $this->proxy($request, 'item/a%41 b');
+
+        self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+        self::assertSame('a%41 b', (string) $response->getBody());
+    }
+
+    #[Test]
     public function returnsTheKernel404ForAnUnknownRoute(): void
     {
         $request = $this->slimRequest('GET', 'missing')->withHeader('Accept', 'application/json');
@@ -707,6 +749,7 @@ final class RouterBridgeSupportProxyTest extends TestCase
         $routes->add('status', new Route('/api/status/{code}', ['_controller' => ['test.proxy_controller', 'status']], ['code' => '\d{3}']));
         $routes->add('multi', new Route('/api/multi', ['_controller' => ['test.proxy_controller', 'multi']]));
         $routes->add('bytes', new Route('/api/bytes', ['_controller' => ['test.proxy_controller', 'bytes']]));
+        $routes->add('item', new Route('/api/item/{id}', ['_controller' => ['test.proxy_controller', 'item']], ['id' => '.+']));
         $routes->add('fail', new Route('/api/fail', ['_controller' => ['test.proxy_controller', 'fail']]));
 
         $httpKernel = new MoodleHttpKernel(
@@ -783,6 +826,11 @@ final class RouterBridgeSupportProxyTest extends TestCase
                     'files' => $files,
                     'file_contents' => $fileContents,
                 ]);
+            }
+
+            public function item(Request $request): Response
+            {
+                return new Response((string) $request->attributes->get('id'));
             }
 
             public function onlyPost(): Response
