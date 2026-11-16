@@ -12,9 +12,13 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use InvalidArgumentException;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Shared\Util\Debug;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -24,16 +28,18 @@ use Throwable;
  * - MIDDAG endpoints accessible via r.php (friendly URLs)
  * - MIDDAG OpenAPI spec visible in /admin/swaggerui.php
  *
- * The bridge is a thin proxy: Moodle Slim routes delegate to MIDDAG's
- * http_kernel. MIDDAG retains full ownership of request handling.
+ * The bridge is a thin proxy: Moodle Slim routes delegate to MIDDAG's HTTP
+ * kernel with the full incoming request, and relay its full response. MIDDAG
+ * keeps ownership of request handling: the same controllers, authorization and
+ * middleware run whichever router the request came through.
  *
  * Safety:
  * - Uses VersionSupport::supports() + VersionSupport::symbolExists() to avoid
  *   fatal errors on Moodle < 5.1
  * - References Moodle 5.1 classes via strings, never via use statements
  *
- * Internal and outside the supported surface: the routing decision and the
- * bridge's maturity are recorded in MDL-017.
+ * Wiring helper, outside the supported public surface; consumers reach it
+ * through their generated route proxy classes.
  *
  * @internal
  */
@@ -45,6 +51,11 @@ final class RouterBridgeSupport
     private const array FEATURE_MATRIX = [
         'moodle_router' => ['since' => '5.1'],
     ];
+
+    /**
+     * Path prefix of MIDDAG API routes in the framework router.
+     */
+    private const string API_PREFIX = '/api/';
 
     /**
      * Check if the Moodle native router is available.
@@ -62,7 +73,7 @@ final class RouterBridgeSupport
      *
      * Moodle auto-discovers routes from the consumer plugin's `route\api\*` and
      * `route\controller\*` namespaces. Proxy classes in those namespaces delegate
-     * to proxy_request() which forwards to the framework's http_kernel.
+     * to proxyRequest() which forwards to the framework's HTTP kernel.
      */
     public static function register(): void
     {
@@ -72,68 +83,51 @@ final class RouterBridgeSupport
 
         // Moodle 5.1+ route discovery is automatic via namespace convention.
         // Proxy classes in classes/route/api/ carry `route` attributes
-        // and delegate to proxy_request().
+        // and delegate to proxyRequest().
         // No programmatic registration needed — Moodle's route_loader
         // scans the namespace at boot time.
     }
 
     /**
-     * Proxy a PSR-7 request from Moodle's native router to MIDDAG's http_kernel.
+     * Proxy a PSR-7 request from Moodle's native router to MIDDAG's HTTP kernel.
      *
-     * Uses {@see Kernel::handleReturning()}, which dispatches through the framework's
-     * PSR-15 `HttpKernel::handle()` and hands back a `ResponseInterface` directly — no
-     * output buffering, no header conflicts with Moodle's Slim pipeline.
+     * The incoming request is forwarded whole: method, query string, headers,
+     * cookies, parsed and raw body, uploaded files, attributes, protocol version
+     * and server params. Only the URI path changes, to `/api/<path>`, so the
+     * framework router matches the MIDDAG API route. The entry-script server
+     * params (SCRIPT_NAME, SCRIPT_FILENAME, PHP_SELF) are cleared so the
+     * framework derives no base path from `r.php` and matches that path as is.
      *
-     * @param object $request  PSR-7 ServerRequestInterface (reserved — required by handler contract)
-     * @param object $response PSR-7 ResponseInterface from Moodle's Slim app; its status/headers/body
-     *                         are populated from MIDDAG's response and returned
-     * @param string $path     matched route path to forward
+     * The kernel's response is copied onto `$response`: status code and reason
+     * phrase, every value of every header (a header the kernel sets replaces the
+     * host's header of the same name; other host headers are kept) and the body
+     * stream. A failure inside the kernel yields a generic 500 JSON body; details
+     * go to the debug trace, never to the client.
      *
-     * @return object PSR-7 ResponseInterface
+     * @param object $request  the PSR-7 ServerRequestInterface Moodle's router passes to the route
+     * @param object $response the PSR-7 ResponseInterface Moodle's router passes to the route
+     * @param string $path     the MIDDAG API path to forward to, relative to `/api/`
+     *
+     * @throws InvalidArgumentException when $request or $response is not the PSR-7 type above
      */
-    public static function proxyRequest(object $request, object $response, string $path = ''): object
+    public static function proxyRequest(object $request, object $response, string $path = ''): ResponseInterface
     {
+        if (!$request instanceof ServerRequestInterface) {
+            throw new InvalidArgumentException(sprintf('RouterBridgeSupport::proxyRequest() expects $request to implement %s, %s given.', ServerRequestInterface::class, $request::class));
+        }
+
+        if (!$response instanceof ResponseInterface) {
+            throw new InvalidArgumentException(sprintf('RouterBridgeSupport::proxyRequest() expects $response to implement %s, %s given.', ResponseInterface::class, $response::class));
+        }
+
         try {
-            if (!class_exists(Kernel::class)) {
-                // @codeCoverageIgnoreStart — the framework Kernel is a hard
-                // dependency of this library and always autoloadable inside the
-                // suite; the guard only matters for broken installs (R-05).
-                $response->getBody()->write(json_encode(['error' => 'Framework not available'], JSON_THROW_ON_ERROR));
+            $middagResponse = Kernel::handleRequest(self::forwardedRequest($request, $path));
 
-                return $response
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withStatus(503);
-                // @codeCoverageIgnoreEnd
-            }
-
-            $middagResponse = Kernel::handleReturning('/api/' . ltrim($path, '/'));
-
-            $body = (string) $middagResponse->getBody();
-
-            if ($body !== '') {
-                $response->getBody()->write($body);
-            }
-
-            // withHeader (not withAddedHeader) — matches the single-value-per-name
-            // shape MIDDAG responses carry today (Content-Type); a header repeated
-            // with multiple values would only keep the last one.
-            foreach ($middagResponse->getHeaders() as $name => $values) {
-                foreach ($values as $value) {
-                    $response = $response->withHeader($name, $value);
-                }
-            }
-
-            return $response->withStatus($middagResponse->getStatusCode());
+            return self::copyResponse($middagResponse, $response);
         } catch (Throwable $throwable) {
             Debug::traceException($throwable);
 
-            $response->getBody()->write(json_encode([
-                'error' => 'Internal framework error',
-            ], JSON_THROW_ON_ERROR));
-
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(500);
+            return self::errorResponse($response);
         }
     }
 
@@ -157,5 +151,72 @@ final class RouterBridgeSupport
         global $CFG;
 
         return $CFG->wwwroot . ComponentContext::baseUrlPath() . '/index.php/api/openapi.yaml';
+    }
+
+    /**
+     * Build the request the kernel sees: the incoming one at `/api/<path>`.
+     */
+    private static function forwardedRequest(ServerRequestInterface $request, string $path): ServerRequestInterface
+    {
+        $uri = $request->getUri()->withPath(self::API_PREFIX . ltrim($path, '/'));
+
+        $serverParams = array_replace($request->getServerParams(), [
+            'SCRIPT_NAME' => '',
+            'SCRIPT_FILENAME' => '',
+            'PHP_SELF' => $uri->getPath(),
+        ]);
+        unset($serverParams['ORIG_SCRIPT_NAME']);
+
+        $forwarded = (new Psr17Factory())
+            ->createServerRequest($request->getMethod(), $uri, $serverParams)
+            ->withProtocolVersion($request->getProtocolVersion())
+            ->withCookieParams($request->getCookieParams())
+            ->withQueryParams($request->getQueryParams())
+            ->withParsedBody($request->getParsedBody())
+            ->withUploadedFiles($request->getUploadedFiles())
+            ->withBody($request->getBody());
+
+        foreach ($request->getHeaders() as $name => $values) {
+            $forwarded = $forwarded->withHeader((string) $name, $values);
+        }
+
+        foreach ($request->getAttributes() as $name => $value) {
+            $forwarded = $forwarded->withAttribute((string) $name, $value);
+        }
+
+        return $forwarded;
+    }
+
+    /**
+     * Copy status, reason phrase, every header value and the body stream.
+     */
+    private static function copyResponse(ResponseInterface $from, ResponseInterface $to): ResponseInterface
+    {
+        foreach ($from->getHeaders() as $name => $values) {
+            $to = $to->withHeader((string) $name, $values);
+        }
+
+        $body = $from->getBody();
+
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+
+        return $to
+            ->withBody($body)
+            ->withStatus($from->getStatusCode(), $from->getReasonPhrase());
+    }
+
+    /**
+     * The generic 500 returned when the kernel fails; it carries no detail.
+     */
+    private static function errorResponse(ResponseInterface $response): ResponseInterface
+    {
+        $body = (new Psr17Factory())->createStream(json_encode(['error' => 'Internal framework error'], JSON_THROW_ON_ERROR));
+
+        return $response
+            ->withBody($body)
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(500);
     }
 }

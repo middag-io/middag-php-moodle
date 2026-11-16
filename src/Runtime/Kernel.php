@@ -28,6 +28,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -313,6 +314,28 @@ class Kernel implements KernelInterface
         return self::$instance->httpKernel->handle(
             $psrFactory->createRequest(Request::createFromGlobals())
         );
+    }
+
+    /**
+     * Dispatch a given PSR-7 server request and return the response.
+     *
+     * Same dispatch path as {@see self::handleReturning()}, but the request comes
+     * from the caller instead of PHP globals. Meant for callers that already hold
+     * a PSR-7 request, such as a host router forwarding into MIDDAG (see
+     * {@see RouterBridgeSupport::proxyRequest()}). The framework router matches
+     * the request's path info, so the caller shapes the URI and server params.
+     *
+     * @throws RuntimeException when the kernel cannot boot or is not wired
+     */
+    public static function handleRequest(ServerRequestInterface $request): ResponseInterface
+    {
+        self::ensureBooted();
+
+        if (!self::$instance->httpKernel instanceof MoodleHttpKernel) {
+            throw new RuntimeException('Kernel components (HttpKernel or Router) not initialized correctly.');
+        }
+
+        return self::$instance->httpKernel->handle($request);
     }
 
     /**
