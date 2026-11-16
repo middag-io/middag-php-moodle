@@ -1115,6 +1115,42 @@ final class AbstractControllerCoverageTest extends TestCase
         self::assertStringContainsString('&lt;b&gt;trace&lt;/b&gt;', $content);
     }
 
+    #[Test]
+    public function testErrorPageReadsDebugOutputFromTheBody(): void
+    {
+        $controller = $this->makeController(
+            new Request(request: ['debug_output' => 'body trace']),
+            $this->makeContainer([]),
+            new context(1),
+        );
+        $controller->setPageUrl(new moodle_url('/err'));
+
+        ob_start();
+        $response = $controller->callErrorPage('Broke', 422);
+        ob_end_clean();
+
+        self::assertStringContainsString('<pre>body trace</pre>', (string) $response->getContent());
+    }
+
+    #[Test]
+    public function testErrorPagePrefersTheRouteAttributeOverTheQuery(): void
+    {
+        $controller = $this->makeController(
+            new Request(query: ['debug_output' => 'query trace'], attributes: ['debug_output' => 'attribute trace']),
+            $this->makeContainer([]),
+            new context(1),
+        );
+        $controller->setPageUrl(new moodle_url('/err'));
+
+        ob_start();
+        $response = $controller->callErrorPage('Broke', 422);
+        ob_end_clean();
+
+        $content = (string) $response->getContent();
+        self::assertStringContainsString('<pre>attribute trace</pre>', $content);
+        self::assertStringNotContainsString('query trace', $content);
+    }
+
     // =========================================================================
     // redirect() / redirectToRoute()
     // =========================================================================

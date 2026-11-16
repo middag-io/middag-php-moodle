@@ -941,7 +941,7 @@ abstract class AbstractController implements MoodleControllerInterface
         $content = OutputSupport::header();
         $content .= OutputSupport::notification($message, 'notifyproblem');
 
-        if ($this->request && $debug_output = $this->request->get('debug_output')) {
+        if ($this->request && $debug_output = $this->requestInput($this->request, 'debug_output')) {
             $content .= '<pre>' . s($debug_output) . '</pre>';
         }
 
@@ -1054,6 +1054,20 @@ abstract class AbstractController implements MoodleControllerInterface
     protected function authentication(): AuthenticationInterface
     {
         return $this->container()->get(AuthenticationInterface::class);
+    }
+
+    /**
+     * Read a request value from the route attributes, then the query string,
+     * then the body: the lookup order of Request::get(), which Symfony 8
+     * removed.
+     */
+    private function requestInput(Request $request, string $key): mixed
+    {
+        if ($request->attributes->has($key)) {
+            return $request->attributes->get($key);
+        }
+
+        return $request->query->all()[$key] ?? $request->request->all()[$key] ?? null;
     }
 
     /**
