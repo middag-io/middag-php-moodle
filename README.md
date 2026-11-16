@@ -31,7 +31,7 @@ role.
 
 ## Requirements
 
-- PHP `^8.2` (tested on 8.2, 8.3, 8.4)
+- PHP `^8.3` (tested on 8.3, 8.4, 8.5)
 - `ext-json`
 - A Moodle site (the adapter targets Moodle's runtime APIs)
 

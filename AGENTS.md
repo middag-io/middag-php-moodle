@@ -14,7 +14,7 @@ filesystem, translation, HTTP/Inertia — plus stateless Moodle API wrappers
 (`Support/`), host domain services and DTOs (`Domain/`), declarative plugin
 definitions (`Definition/`), and admin settings types (`Settings/`).
 
-- **Depends on** `middag-io/framework` (`^1.15`) and `middag-io/ui` (`^1.3`;
+- **Depends on** `middag-io/framework` (`^1.19`) and `middag-io/ui` (`^1.3`;
   `Form/` implements the ui form contracts).
 - **Consumed by** a Moodle host plugin (any `local_*`/`mod_*`) that provides
   its own composition root. No plugin is bundled here.
@@ -198,7 +198,7 @@ stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `
   re-runs style after rector)
 - `composer test` / `composer test:cov` — PHPUnit (coverage via
   `XDEBUG_MODE=coverage`, text report)
-- `composer lint:php82` — PHP 8.2 parse-level lint (`bin/lint-php82.sh`)
+- `composer lint:php83` — PHP 8.3 parse-level lint (`bin/lint-php83.sh`)
 - Git hooks are registered by `post-install-cmd`/`post-update-cmd`
   (`core.hooksPath .githooks`); `commit-msg` enforces Conventional Commits.
 
