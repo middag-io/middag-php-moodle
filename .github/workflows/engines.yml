@@ -1,0 +1,207 @@
+name: Engines
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: engines-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Proves the DbSupport sql* helpers against real Moodle databases. Each job
+# installs one Moodle version on one engine (service container), installs
+# this library into a Composer project through a path repository, and runs
+# tests/Integration/Engine/run-db-support-probe.php: every public sql* helper
+# builds SQL that is executed against a fixture table and compared with the
+# expected result. Engines: PostgreSQL (pgsql), MySQL (mysqli) and MariaDB
+# (mariadb). SQL Server is not tested; Oracle is not tested yet.
+#
+# Database images satisfy the minimum of every Moodle version in the matrix
+# (admin/environment.xml: PostgreSQL 17, MySQL 8.4 and MariaDB 11.4 for 5.3)
+# and are published for amd64 and arm64. No credentials: the database
+# passwords below exist only inside the job's service container.
+
+jobs:
+  dbsupport:
+    name: DbSupport SQL (Moodle ${{ matrix.moodle }}, ${{ matrix.db }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        moodle: ['4.5', '5.1', '5.2', '5.3']
+        db: [pgsql, mysqli, mariadb]
+        include:
+          # Moodle tag and the highest PHP that both the Moodle version and
+          # this library (^8.3) support.
+          - moodle: '4.5'
+            moodle-tag: v4.5.16
+            php: '8.3'
+          - moodle: '5.1'
+            moodle-tag: v5.1.9
+            php: '8.4'
+          - moodle: '5.2'
+            moodle-tag: v5.2.5
+            php: '8.4'
+          - moodle: '5.3'
+            moodle-tag: v5.3.1
+            php: '8.4'
+          - db: pgsql
+            image: postgres:17
+            port: '5432'
+            health-cmd: pg_isready -U moodle -d moodle
+          - db: mysqli
+            image: mysql:8.4
+            port: '3306'
+            health-cmd: mysqladmin ping -h 127.0.0.1 -umoodle -pmoodle --silent
+          - db: mariadb
+            image: mariadb:11.4
+            port: '3306'
+            health-cmd: healthcheck.sh --connect --innodb_initialized
+    services:
+      db:
+        image: ${{ matrix.image }}
+        env:
+          POSTGRES_USER: moodle
+          POSTGRES_PASSWORD: moodle
+          POSTGRES_DB: moodle
+          MYSQL_ROOT_PASSWORD: moodle
+          MYSQL_DATABASE: moodle
+          MYSQL_USER: moodle
+          MYSQL_PASSWORD: moodle
+          MARIADB_ROOT_PASSWORD: moodle
+          MARIADB_DATABASE: moodle
+          MARIADB_USER: moodle
+          MARIADB_PASSWORD: moodle
+        ports:
+          - ${{ matrix.port }}
+        options: >-
+          --health-cmd "${{ matrix.health-cmd }}"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 40
+    env:
+      DB_TYPE: ${{ matrix.db }}
+      MOODLE_DIR: ${{ github.workspace }}/moodle
+    steps:
+      # The service publishes its port on a random host port.
+      - name: Export the database port and work directories
+        env:
+          MAPPED_PORT: ${{ job.services.db.ports[format('{0}', matrix.port)] }}
+        run: |
+          {
+            echo "DB_PORT=${MAPPED_PORT}"
+            echo "MOODLE_DATA=${RUNNER_TEMP}/moodledata"
+            echo "CONSUMER_DIR=${RUNNER_TEMP}/consumer"
+          } >> "$GITHUB_ENV"
+
+      - name: Check out this library
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: lib
+          persist-credentials: false
+
+      - name: Check out Moodle ${{ matrix.moodle-tag }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: moodle/moodle
+          ref: ${{ matrix.moodle-tag }}
+          path: moodle
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, exif, gd, iconv, intl, mbstring, mysqli, pgsql, soap, sodium, xml, xmlreader, zip
+          ini-values: max_input_vars=5000, memory_limit=512M
+          coverage: none
+          tools: composer:v2
+
+      - name: Pin the MySQL/MariaDB database collation
+        if: matrix.db != 'pgsql'
+        run: >-
+          mysql --protocol=TCP -h 127.0.0.1 -P "$DB_PORT" -uroot -pmoodle
+          -e "ALTER DATABASE moodle CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+      # Moodle 5.1+ manages its third-party libraries with Composer.
+      - name: Install Moodle's Composer dependencies
+        working-directory: moodle
+        run: |
+          if [ -d public ] && [ -f composer.lock ]; then
+            composer install --no-interaction --no-progress --prefer-dist --no-dev
+          else
+            echo "Moodle ${{ matrix.moodle-tag }} bundles its libraries; nothing to install."
+          fi
+
+      - name: Write config.php
+        run: |
+          mkdir -p "$MOODLE_DATA"
+          cat > "$MOODLE_DIR/config.php" <<'PHP'
+          <?php
+          unset($CFG);
+          global $CFG;
+          $CFG = new stdClass();
+          $CFG->dbtype    = getenv('DB_TYPE');
+          $CFG->dblibrary = 'native';
+          $CFG->dbhost    = '127.0.0.1';
+          $CFG->dbname    = 'moodle';
+          $CFG->dbuser    = 'moodle';
+          $CFG->dbpass    = 'moodle';
+          $CFG->prefix    = 'mdl_';
+          $CFG->dboptions = ['dbpersist' => 0, 'dbport' => (int) getenv('DB_PORT'), 'dbsocket' => ''];
+          if ($CFG->dbtype !== 'pgsql') {
+              $CFG->dboptions['dbcollation'] = 'utf8mb4_unicode_ci';
+          }
+          $CFG->wwwroot   = 'http://localhost';
+          $CFG->dataroot  = getenv('MOODLE_DATA');
+          $CFG->admin     = 'admin';
+          $CFG->directorypermissions = 02777;
+          $CFG->debug = E_ALL;
+          $CFG->debugdisplay = 1;
+          // Moodle 5.1+ keeps lib/ under public/.
+          require_once(is_file(__DIR__ . '/lib/setup.php') ? __DIR__ . '/lib/setup.php' : __DIR__ . '/public/lib/setup.php');
+          PHP
+
+      - name: Install Moodle
+        working-directory: moodle
+        run: |
+          script=admin/cli/install_database.php
+          [ -f "$script" ] || script=public/admin/cli/install_database.php
+          php "$script" --agree-license --adminuser=admin --adminpass='Probe-Admin-1' \
+            --adminemail=admin@example.com --fullname='DbSupport probe' --shortname=probe
+
+      - name: Install this library into a Composer project
+        run: |
+          mkdir -p "$CONSUMER_DIR"
+          cat > "$CONSUMER_DIR/composer.json" <<JSON
+          {
+            "name": "probe/consumer",
+            "type": "project",
+            "repositories": [
+              {
+                "type": "path",
+                "url": "${GITHUB_WORKSPACE}/lib",
+                "options": {"symlink": true, "versions": {"middag-io/moodle": "dev-probe"}}
+              }
+            ],
+            "require": {"middag-io/moodle": "dev-probe"},
+            "minimum-stability": "dev",
+            "prefer-stable": true
+          }
+          JSON
+          composer install --working-dir="$CONSUMER_DIR" --no-interaction --no-progress --prefer-dist
+          test "$(readlink -f "$CONSUMER_DIR/vendor/middag-io/moodle")" = "$(readlink -f "$GITHUB_WORKSPACE/lib")"
+
+      - name: Run the DbSupport engine probe
+        run: >-
+          php lib/tests/Integration/Engine/run-db-support-probe.php
+          --config="$MOODLE_DIR/config.php"
+          --autoload="$CONSUMER_DIR/vendor/autoload.php"
