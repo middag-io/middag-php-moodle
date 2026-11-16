@@ -39,7 +39,7 @@ use Middag\Moodle\Support\ConfigSupport;
 final readonly class MoodleHostContext implements HostComponentContextInterface
 {
     /** Stable cache-busting token used when the plugin version is not yet installed/readable. */
-    private const DEFAULT_ASSET_VERSION = '0';
+    private const string DEFAULT_ASSET_VERSION = '0';
 
     public function __construct(
         private string $componentName,

@@ -35,7 +35,7 @@ use stdClass;
 #[CoversClass(FacadeLoader::class)]
 final class FacadeLoaderCoverageTest extends TestCase
 {
-    private const CACHE_KEY = 'facades';
+    private const string CACHE_KEY = 'facades';
 
     private string $root;
 

@@ -38,7 +38,7 @@ use PHPUnit\Framework\TestCase;
 final class CourseSupportCoverageTest extends TestCase
 {
     /** @var list<string> */
-    private const GLOBAL_KEYS = [
+    private const array GLOBAL_KEYS = [
         '__middag_test_records',
         '__middag_test_records_sql',
         '__middag_test_throw_get_record',
@@ -646,8 +646,8 @@ final class CourseSupportCoverageTest extends TestCase
             }
         };
 
-        $GLOBALS['__middag_test_course_format'] = new class($lastSection, $modinfo, $sectionVisible) {
-            public function __construct(private readonly int $last, private readonly object $modinfo, private readonly bool $visible) {}
+        $GLOBALS['__middag_test_course_format'] = new readonly class($lastSection, $modinfo, $sectionVisible) {
+            public function __construct(private int $last, private object $modinfo, private bool $visible) {}
 
             public function get_last_section_number(): int
             {
@@ -668,8 +668,8 @@ final class CourseSupportCoverageTest extends TestCase
 
     private function cm(bool $visibleOnPage): object
     {
-        return new class($visibleOnPage) {
-            public function __construct(private readonly bool $visible) {}
+        return new readonly class($visibleOnPage) {
+            public function __construct(private bool $visible) {}
 
             public function is_visible_on_course_page(): bool
             {

@@ -44,7 +44,7 @@ use Symfony\Component\DependencyInjection\TaggedContainerInterface;
 #[CoversClass(PrivacyProvider::class)]
 final class PrivacyProviderCoverageTest extends TestCase
 {
-    private const TAG = 'middag.privacy_provider';
+    private const string TAG = 'middag.privacy_provider';
 
     private ArrayObject $log;
 

@@ -46,7 +46,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class CsrfGateTest extends TestCase
 {
     /** The sesskey the test bootstrap's stub returns; public so the anonymous doubles can read it. */
-    public const VALID = 'sesskey000';
+    public const string VALID = 'sesskey000';
 
     // =========================================================================
     // Page controllers (Inertia / HTML)

@@ -57,7 +57,7 @@ class CompletionSupport
      *
      * @var array<int, string>
      */
-    private const CRITERIA_LABELS = [
+    private const array CRITERIA_LABELS = [
         1 => 'self',
         2 => 'date',
         3 => 'unenrol',

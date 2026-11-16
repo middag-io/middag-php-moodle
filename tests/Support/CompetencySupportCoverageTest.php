@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 final class CompetencySupportCoverageTest extends TestCase
 {
     /** @var list<string> */
-    private const GLOBAL_KEYS = [
+    private const array GLOBAL_KEYS = [
         '__middag_test_competency_enabled',
         '__middag_test_throw_competency_is_enabled',
         '__middag_test_frameworks',

@@ -35,7 +35,7 @@ use Symfony\Component\Messenger\Stamp\BusNameStamp;
 #[CoversClass(MoodleAdhocTransport::class)]
 final class MoodleAdhocTransportTest extends TestCase
 {
-    private const TASK_CLASS = FakeAsyncTask::class;
+    private const string TASK_CLASS = FakeAsyncTask::class;
 
     public function testSendQueuesAdhocTaskWithSerializedEnvelope(): void
     {

@@ -26,7 +26,7 @@ use Throwable;
  */
 class UpgradeHelper
 {
-    private const STEP_PREFIX = 'upgrade_step_';
+    private const string STEP_PREFIX = 'upgrade_step_';
 
     /**
      * Return true when the named step has already been executed.

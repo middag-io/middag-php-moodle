@@ -31,7 +31,7 @@ use stored_file;
 final class FileServiceCoverageTest extends TestCase
 {
     /** @var array<int, string> */
-    private const KEYS = [
+    private const array KEYS = [
         '__middag_test_area_files',
         '__middag_test_get_file',
         '__middag_test_get_file_by_id',

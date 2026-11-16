@@ -42,7 +42,7 @@ class UserFieldSupport
     /**
      * Parameter prefix for SQL fragments to avoid collisions in caller queries.
      */
-    private const PARAM_PREFIX = 'upf_';
+    private const string PARAM_PREFIX = 'upf_';
 
     /**
      * Resolves a profile field definition by ID or shortname.

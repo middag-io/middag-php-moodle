@@ -40,7 +40,7 @@ final class RouterBridgeSupport
     /**
      * Feature matrix for VersionSupport::supports().
      */
-    private const FEATURE_MATRIX = [
+    private const array FEATURE_MATRIX = [
         'moodle_router' => ['since' => '5.1'],
     ];
 

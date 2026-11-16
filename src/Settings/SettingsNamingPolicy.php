@@ -31,7 +31,7 @@ namespace Middag\Moodle\Settings;
 final readonly class SettingsNamingPolicy
 {
     /** @var string Neutral library default prefix for framework config keys; a product consumer overrides this explicitly (see MDL-021). */
-    public const DEFAULT_PREFIX = 'mdglib_';
+    public const string DEFAULT_PREFIX = 'mdglib_';
 
     public function __construct(
         public string $prefix = self::DEFAULT_PREFIX,

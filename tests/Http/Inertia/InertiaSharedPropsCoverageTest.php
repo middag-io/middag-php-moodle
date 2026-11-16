@@ -368,10 +368,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
      */
     private function routerWith(RouteCollection $routes, ?RequestContext $context): RouterInterface
     {
-        return new class($routes, $context) implements RouterInterface {
+        return new readonly class($routes, $context) implements RouterInterface {
             public function __construct(
-                private readonly RouteCollection $routes,
-                private readonly ?RequestContext $context,
+                private RouteCollection $routes,
+                private ?RequestContext $context,
             ) {}
 
             public function initializeContext(): void {}
@@ -403,8 +403,8 @@ final class InertiaSharedPropsCoverageTest extends TestCase
      */
     private function registry(Closure $build): NavigationRegistryInterface
     {
-        return new class($build) implements NavigationRegistryInterface {
-            public function __construct(private readonly Closure $build) {}
+        return new readonly class($build) implements NavigationRegistryInterface {
+            public function __construct(private Closure $build) {}
 
             public function group(string $key, string $label, ?string $icon = null, int $weight = 50): static
             {
