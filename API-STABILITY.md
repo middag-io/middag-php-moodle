@@ -29,8 +29,10 @@ carries exactly one of the two tags.
 The public surface is the set of `@api`-annotated types: the adapter's
 consumer-facing API — the `Domain\*` entities, DTOs and enums; the domain
 `Contract/` service interfaces; the `Settings\*` and `Definition\*` builders; the
-`Security` value objects and `Contract/` interfaces; the `Privacy` provider
-contracts; `Http\Contract\MoodleControllerInterface`; the `Support\Moodle`
+`Security` value objects and `Contract/` interfaces, plus `Security\Attribute\Sesskey`,
+`Security\Enum\CapabilityRisk` and `Security\Enum\CapabilityType`; the `Privacy` provider
+contracts and `Privacy\PrivacyProvider`; `Output\MoodleRenderer` and
+`Output\Contract\ViewAdapterInterface`; `Http\Contract\MoodleControllerInterface`; the `Support\Moodle`
 façade and the public `Support\*` Moodle API wrappers; the adapter-specific
 `Exception\*` types; the `Output\Table` helpers; `Form\DraftFileValueMapper`,
 which maps the `uploadToken` of a `middag-io/ui` `FileValue` to a Moodle draft
@@ -49,7 +51,11 @@ the host-bridge concretes it registers or instantiates at boot, so those are
 `Logging\MoodleActorResolver`, `Logging\MoodleOriginResolver`,
 `Translation\MoodleTranslator`, `Output\MoodleView`,
 `Database\Schema\XmldbSchemaAdapter`, `Persistence\VersionTracker`,
-`Persistence\Query\SqlGenerator`, `Settings\SettingsResolver` and
+`Persistence\Query\SqlGenerator`, `Persistence\UpgradeHelper`,
+`Runtime\MoodleHostContext`, `Runtime\Loader\MoodleHookfileLoader`,
+`Bus\MoodleAdhocTransport`, `Mail\MoodleMailer`, `Filesystem\MoodledataFilesystem`,
+`Hook\AbstractExtendExtensions`, `Shared\Enum\TextFormat`, `Shared\Util\Debug`,
+`Shared\Util\Environment`, `Settings\SettingsResolver` and
 `Http\Contract\RouterInterface`. Prefer the **framework** contract as the type in
 your own code — the concrete is public because you must *name* it when wiring,
 not because you should depend on its shape. (`SqlGenerator` is the exception that
