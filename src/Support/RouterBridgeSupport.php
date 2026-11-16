@@ -39,7 +39,7 @@ use Throwable;
  * - References Moodle 5.1 classes via strings, never via use statements
  *
  * Wiring helper, outside the supported public surface; consumers reach it
- * through their generated route proxy classes.
+ * through their route proxy classes.
  *
  * @internal
  */
@@ -93,10 +93,11 @@ final class RouterBridgeSupport
      *
      * The incoming request is forwarded whole: method, query string, headers,
      * cookies, parsed and raw body, uploaded files, attributes, protocol version
-     * and server params. Only the URI path changes, to `/api/<path>`, so the
-     * framework router matches the MIDDAG API route. The entry-script server
-     * params (SCRIPT_NAME, SCRIPT_FILENAME, PHP_SELF) are cleared so the
-     * framework derives no base path from `r.php` and matches that path as is.
+     * and server params. The URI path changes to `/api/<path>`, so the framework
+     * router matches the MIDDAG API route. The entry-script server params change
+     * with it: SCRIPT_NAME and SCRIPT_FILENAME are emptied, PHP_SELF is set to
+     * the forwarded path and ORIG_SCRIPT_NAME is removed, so the framework
+     * derives no base path from `r.php` and matches the forwarded path as is.
      *
      * The kernel's response is copied onto `$response`: status code and reason
      * phrase, every value of every header (a header the kernel sets replaces the

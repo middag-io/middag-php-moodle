@@ -283,7 +283,8 @@ class Kernel implements KernelInterface
      * Same dispatch path as {@see self::handle()}, but for callers that own their own
      * response pipeline (e.g. a native host router proxying into MIDDAG) and need the
      * PSR-7 response object back rather than headers/body sent to the current output
-     * buffer. See {@see RouterBridgeSupport::proxyRequest()}.
+     * buffer. A caller that already holds a PSR-7 request uses
+     * {@see self::handleRequest()} instead.
      *
      * @param null|string $base_url Override the base URL (e.g. '/local/yourplugin/index.php').
      *                              Null uses the default MIDDAG entry point.
