@@ -20,7 +20,7 @@ use stdClass;
  *
  * Represents a configured and persistent scheduled task.
  *
- * @internal
+ * @api
  */
 final class ScheduledTaskDto extends AbstractDto
 {

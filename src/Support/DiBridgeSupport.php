@@ -31,7 +31,7 @@ use Throwable;
  * would import those), so the class stays loadable on hosts where the hook
  * does not exist (Moodle < 4.4).
  *
- * @internal
+ * @api
  */
 class DiBridgeSupport
 {

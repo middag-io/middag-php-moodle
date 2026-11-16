@@ -20,7 +20,7 @@ use stdClass;
  *
  * Represents both scheduled and adhoc tasks that are currently executing.
  *
- * @internal
+ * @api
  */
 final class RunningTaskDto extends AbstractDto
 {

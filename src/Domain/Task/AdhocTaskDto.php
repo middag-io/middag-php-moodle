@@ -20,7 +20,7 @@ use stdClass;
  *
  * Represents a snapshot of an adhoc task, independent of the Moodle core API.
  *
- * @internal
+ * @api
  */
 final class AdhocTaskDto extends AbstractDto
 {
