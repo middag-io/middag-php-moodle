@@ -711,6 +711,7 @@ class FileSupport
     public static function prepareDraftArea(int $contextid, string $component, string $filearea, ?int $itemid, array $options = []): int
     {
         $draftitemid = 0;
+        self::requireFileLib();
 
         try {
             file_prepare_draft_area($draftitemid, $contextid, $component, $filearea, $itemid, $options);
@@ -733,6 +734,8 @@ class FileSupport
      */
     public static function saveDraftArea(int $draftitemid, int $contextid, string $component, string $filearea, int $itemid, array $options = []): void
     {
+        self::requireFileLib();
+
         try {
             file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, $options);
         } catch (Throwable $throwable) {
@@ -746,5 +749,22 @@ class FileSupport
     public static function getDraftFileUrl(stored_file $file): string
     {
         return moodle_url::make_draftfile_url((int) $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+    }
+
+    /**
+     * Loads `lib/filelib.php`, which Moodle does not include on every request
+     * and which declares the draft area functions.
+     */
+    private static function requireFileLib(): void
+    {
+        if (function_exists('file_prepare_draft_area')) {
+            return;
+        }
+
+        // @codeCoverageIgnoreStart
+        global $CFG;
+
+        require_once $CFG->libdir . '/filelib.php';
+        // @codeCoverageIgnoreEnd
     }
 }

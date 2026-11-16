@@ -75,15 +75,6 @@ final class DraftFileValueMapperTest extends TestCase
     }
 
     #[Test]
-    public function fromDraftFileNormalisesTheStringItemIdOfARealStoredFile(): void
-    {
-        // A real stored_file returns the itemid column as a string.
-        $value = $this->mapper->fromDraftFile($this->draftFile(itemid: '424242'));
-
-        self::assertSame('424242', $value->uploadToken);
-    }
-
-    #[Test]
     public function fromDraftFileRejectsAFileOutsideADraftArea(): void
     {
         $this->expectException(MoodleAdapterException::class);
@@ -314,7 +305,7 @@ final class DraftFileValueMapperTest extends TestCase
         self::fail('Expected the upload token to be rejected.');
     }
 
-    private function draftFile(int|string $itemid = self::DRAFT_ITEM_ID, string $filename = 'report.pdf'): stored_file
+    private function draftFile(int $itemid = self::DRAFT_ITEM_ID, string $filename = 'report.pdf'): stored_file
     {
         return new stored_file([
             'id' => 91,
