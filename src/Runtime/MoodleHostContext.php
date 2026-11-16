@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Middag\Moodle\Runtime;
 
 use core\component as core_component;
-use LogicException;
 use Middag\Framework\Kernel\Contract\HostComponentContextInterface;
 use Middag\Framework\Kernel\HostContext;
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Middag\Moodle\Support\ConfigSupport;
 
 /**
@@ -55,7 +55,7 @@ final readonly class MoodleHostContext implements HostComponentContextInterface
      * path from {@see core_component}. Called by {@see Kernel::boot()} before any
      * Inertia wiring can read it.
      *
-     * @throws LogicException when the product composition root has not configured {@see ComponentContext}
+     * @throws MoodleConfigurationException when the product composition root has not configured {@see ComponentContext}
      */
     public static function resolve(): self
     {

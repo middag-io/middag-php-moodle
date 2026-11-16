@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Security\ValueObject;
 
-use LogicException;
 use Middag\Framework\Exception\MiddagDomainException;
 use Middag\Moodle\Config\ComponentContext;
+use Middag\Moodle\Exception\MoodleConfigurationException;
 use Stringable;
 
 /**
@@ -75,7 +75,7 @@ final readonly class Capability implements Stringable
      * component configured via {@see ComponentContext} (e.g. 'local/middag:*'
      * when the host is 'local_middag').
      *
-     * @throws LogicException when the adapter component is not configured
+     * @throws MoodleConfigurationException when the adapter component is not configured
      */
     public function isHostComponent(): bool
     {
@@ -104,7 +104,7 @@ final readonly class Capability implements Stringable
      *
      * @param string $name e.g. 'manage', 'view', 'configure'
      *
-     * @throws LogicException when the adapter component is not configured
+     * @throws MoodleConfigurationException when the adapter component is not configured
      */
     public static function forHostComponent(string $name): self
     {

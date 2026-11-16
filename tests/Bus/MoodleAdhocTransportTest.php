@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Bus;
 
 use core\task\adhoc_task;
-use LogicException;
 use Middag\Framework\Bus\Command\CommandSerializer;
 use Middag\Framework\Bus\Contract\CommandInterface;
 use Middag\Moodle\Bus\MoodleAdhocTransport;
 use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
+use Middag\Moodle\Exception\MoodleTransportException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -100,7 +100,7 @@ final class MoodleAdhocTransportTest extends TestCase
 
         $transport = new MoodleAdhocTransport($adhoc, self::TASK_CLASS);
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->send(new Envelope(new stdClass()));
     }
@@ -112,7 +112,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->get();
     }
@@ -124,7 +124,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->ack(new Envelope(new stdClass()));
     }
@@ -136,7 +136,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->reject(new Envelope(new stdClass()));
     }

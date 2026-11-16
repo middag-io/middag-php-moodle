@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Exception;
 
-use InvalidArgumentException;
+use Middag\Framework\Exception\MiddagInfrastructureException;
 
 /**
  * Raised when Moodle version parsing or constraints are invalid.
  *
+ * A host-boundary failure in the framework exception family: the kernel
+ * maps it to HTTP 500, like any other infrastructure failure.
+ *
  * @api
  */
-final class MoodleVersionException extends InvalidArgumentException {}
+final class MoodleVersionException extends MiddagInfrastructureException {}

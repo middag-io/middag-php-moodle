@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Exception;
 
-use LogicException;
+use Middag\Framework\Exception\MiddagInfrastructureException;
 
 /**
  * Raised when a Moodle transport operation is unsupported or invalid.
  *
+ * A host-boundary failure in the framework exception family: the kernel
+ * maps it to HTTP 500, like any other infrastructure failure.
+ *
  * @api
  */
-final class MoodleTransportException extends LogicException {}
+final class MoodleTransportException extends MiddagInfrastructureException {}
