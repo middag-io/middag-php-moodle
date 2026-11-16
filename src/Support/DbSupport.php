@@ -26,6 +26,13 @@ use Traversable;
  * Provides a clean interface for database operations, allowing for better
  * testability and isolation of Moodle's global state.
  *
+ * Engines: the `sql*` helpers return the fragment that Moodle's active
+ * database driver builds (`$DB->sql_*()`), so the SQL follows the site's
+ * engine. The supported engines are PostgreSQL and MySQL, as supported by the
+ * Moodle version in range; MariaDB and SQL Server are outside the supported
+ * range. This package's tests cover the delegation, not the SQL each engine
+ * produces.
+ *
  * @api
  */
 class DbSupport
