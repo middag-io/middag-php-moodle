@@ -70,13 +70,16 @@ final class MoodleAdhocTransportTest extends TestCase
         $adhoc = $this->createMock(AdhocServiceInterface::class);
         $adhoc->expects(self::once())
             ->method('create')
-            ->with(self::TASK_CLASS, [
-                'body' => '{"transaction_id":42}',
-                'headers' => [
-                    'type' => TransportRecordedCommand::class,
-                    'X-Message-Stamp-' . BusNameStamp::class => '[{"busName":"command_bus"}]',
-                ],
-            ])
+            ->with(self::TASK_CLASS, self::callback(static function (array $data): bool {
+                // The framework keys a stamp header by its stable alias
+                // (`bus-name`); assert that key only, so the test does not
+                // depend on whether the serializer also writes the FQCN key.
+                $headers = $data['headers'] ?? [];
+
+                return ($data['body'] ?? null) === '{"transaction_id":42}'
+                    && ($headers['type'] ?? null) === TransportRecordedCommand::class
+                    && ($headers['X-Message-Stamp-bus-name'] ?? null) === '[{"busName":"command_bus"}]';
+            }))
             ->willReturn($task);
         $adhoc->expects(self::once())
             ->method('queue')
