@@ -22,8 +22,8 @@ use Middag\Moodle\Support\DbSupport;
  *
  * Translates abstract Query Conditions (field + operator + value) into Moodle-compatible SQL fragments.
  * Engine-specific parts come from {@see DbSupport}'s `sql*` helpers, so the
- * fragments carry the same engine statement: PostgreSQL and MySQL, as
- * supported by the Moodle version in range.
+ * fragments carry the same engine statement: PostgreSQL, MySQL and MariaDB,
+ * as supported by the Moodle version in range.
  * Table-agnostic and reusable across repositories. Implements the framework
  * {@see ConditionCompilerInterface} port directly (the port is OSS, so no
  * core-side binding subclass is needed).
