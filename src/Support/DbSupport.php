@@ -29,9 +29,11 @@ use Traversable;
  * Engines: the `sql*` helpers return the fragment that Moodle's active
  * database driver builds (`$DB->sql_*()`), so the SQL follows the site's
  * engine. The supported engines are PostgreSQL and MySQL, as supported by the
- * Moodle version in range; MariaDB and SQL Server are outside the supported
- * range. This package's tests cover the delegation, not the SQL each engine
- * produces.
+ * Moodle version in range. The unit tests cover the delegation; the Engines
+ * workflow (tests/Integration/Engine) executes the SQL of every `sql*` helper
+ * on PostgreSQL, MySQL and MariaDB for each Moodle version in range. MariaDB
+ * is tested but stays outside the supported range. SQL Server is not tested;
+ * Oracle is not tested yet.
  *
  * @api
  */
