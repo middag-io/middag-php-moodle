@@ -34,7 +34,7 @@ use PHPUnit\Framework\TestCase;
 final class MoodleHookfileLoaderCoverageTest extends TestCase
 {
     /** Callback name derived from the configured component (ComponentContext = local_example). */
-    private const CALLBACK = 'extend_local_example_hookfiles';
+    private const string CALLBACK = 'extend_local_example_hookfiles';
 
     private mixed $prevCfg;
 

@@ -348,8 +348,8 @@ final class InteractsWithAuthCoverageTest extends TestCase
 
     private function makeContainer(object $auth, object $capability): ContainerInterface
     {
-        return new class($auth, $capability) implements ContainerInterface {
-            public function __construct(private readonly object $auth, private readonly object $capability) {}
+        return new readonly class($auth, $capability) implements ContainerInterface {
+            public function __construct(private object $auth, private object $capability) {}
 
             public function get(string $id): mixed
             {

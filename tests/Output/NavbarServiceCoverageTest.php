@@ -33,7 +33,7 @@ use ReflectionProperty;
 #[CoversClass(NavbarService::class)]
 final class NavbarServiceCoverageTest extends TestCase
 {
-    private const TEMPLATE = 'navbar-usernavigation';
+    private const string TEMPLATE = 'navbar-usernavigation';
 
     private object $output;
 

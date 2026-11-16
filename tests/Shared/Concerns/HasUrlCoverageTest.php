@@ -123,10 +123,10 @@ final class HasUrlCoverageTest extends TestCase
     {
         $this->bootRouter();
 
-        return new class($type, $id) {
+        return new readonly class($type, $id) {
             use HasUrl;
 
-            public function __construct(private readonly string $type, private readonly ?int $id) {}
+            public function __construct(private string $type, private ?int $id) {}
 
             public function getType(): string
             {

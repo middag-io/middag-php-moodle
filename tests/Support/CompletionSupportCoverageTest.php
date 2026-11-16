@@ -37,7 +37,7 @@ use RuntimeException;
 final class CompletionSupportCoverageTest extends TestCase
 {
     /** @var list<string> */
-    private const GLOBAL_KEYS = [
+    private const array GLOBAL_KEYS = [
         '__middag_test_completion_enabled',
         '__middag_test_course_complete',
         '__middag_test_completion_data',

@@ -51,7 +51,7 @@ final class ClassLoadabilityTest extends TestCase
      *
      * @var array<class-string|string, string>
      */
-    private const REQUIRES_MOODLE_HOST = [
+    private const array REQUIRES_MOODLE_HOST = [
         MformRenderer::class => 'require_once $CFG->libdir/formslib.php at file scope',
         AbstractExtendExtensions::class => 'implements core\hook\described_hook',
         MoodleRenderer::class => 'extends core\output\plugin_renderer_base',

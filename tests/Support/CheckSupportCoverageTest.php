@@ -255,8 +255,8 @@ final class CheckSupportCoverageTest extends TestCase
     {
         // get_id() is unique only within a component; two plugins may share it.
         // Keying by get_ref() must keep both instead of one overwriting the other.
-        $make = static fn (string $id, string $ref): object => new class($id, $ref) {
-            public function __construct(private readonly string $id, private readonly string $ref) {}
+        $make = static fn (string $id, string $ref): object => new readonly class($id, $ref) {
+            public function __construct(private string $id, private string $ref) {}
 
             public function get_id(): string
             {

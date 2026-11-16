@@ -36,13 +36,13 @@ use Throwable;
 #[CoversClass(RouteLoader::class)]
 final class RouteLoaderCoverageTest extends TestCase
 {
-    private const HOME = 'local_example\RouteLoaderHomeController';
+    private const string HOME = 'local_example\RouteLoaderHomeController';
 
-    private const WEB = 'local_yourplugin\RouteLoaderWebController';
+    private const string WEB = 'local_yourplugin\RouteLoaderWebController';
 
-    private const API = 'local_yourplugin\RouteLoaderApiController';
+    private const string API = 'local_yourplugin\RouteLoaderApiController';
 
-    private const EXTERNAL = 'App\Controller\RouteLoaderExternalController';
+    private const string EXTERNAL = 'App\Controller\RouteLoaderExternalController';
 
     #[Test]
     public function testNullEmptyAndZeroClassNamesAreIgnored(): void
@@ -169,8 +169,8 @@ final class RouteLoaderCoverageTest extends TestCase
 
     private function makePolicy(bool $skip): LoaderFailurePolicyInterface
     {
-        return new class($skip) implements LoaderFailurePolicyInterface {
-            public function __construct(private readonly bool $skip) {}
+        return new readonly class($skip) implements LoaderFailurePolicyInterface {
+            public function __construct(private bool $skip) {}
 
             public function shouldSkipClass(string $class): bool
             {

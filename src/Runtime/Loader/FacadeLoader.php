@@ -46,9 +46,9 @@ use ReflectionClass;
  */
 class FacadeLoader implements FacadeLoaderInterface
 {
-    private const CACHE_AREA = 'loader';
+    private const string CACHE_AREA = 'loader';
 
-    private const CACHE_KEY = 'facades';
+    private const string CACHE_KEY = 'facades';
 
     /**
      * Map of core subdirectories to scan.
@@ -56,7 +56,7 @@ class FacadeLoader implements FacadeLoaderInterface
      * Matches the current consumer layout: `{root}/facade/*.php` resolving to
      * `{component}\facade\{Basename}` (root = the plugin's `classes/` dir).
      */
-    private const CORE_PATHS = [
+    private const array CORE_PATHS = [
         ['/facade', 'facade'],
     ];
 

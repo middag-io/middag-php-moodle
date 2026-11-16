@@ -31,9 +31,16 @@ role.
 
 ## Requirements
 
-- PHP `^8.2` (tested on 8.2, 8.3, 8.4)
-- `ext-json`
-- A Moodle site (the adapter targets Moodle's runtime APIs)
+| Item | Value |
+|------|-------|
+| PHP | `^8.3`: 8.3, 8.4 and 8.5, within the PHP versions the Moodle version supports; `ext-json` |
+| Symfony | `^7.4 \|\| ^8.1` for every Symfony component it requires (the contracts keep their own ranges) |
+| Sibling libraries | `middag-io/framework` `^1.20` and `middag-io/ui` `^1.8` |
+| Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.3 and 8.4); 5.0 as best effort, with no support promise |
+| Database engines | PostgreSQL and MySQL, as supported by the Moodle version |
+
+The Moodle range follows upstream support. The `1.x` line is pre-stable and
+unsupported; support starts at `2.0.0` (see [API-STABILITY.md](API-STABILITY.md)).
 
 ## Installation
 
@@ -46,6 +53,17 @@ This pulls `middag-io/framework` and `middag-io/ui` automatically.
 > The `middag-io/*` packages are published on [Packagist](https://packagist.org/packages/middag-io/),
 > so they resolve from the default Composer registry with no extra
 > configuration. No manual `repositories` entry is required.
+
+Moodle 4.5 runs up to PHP 8.3: resolve the `vendor/` you ship to it on PHP 8.3
+([Moodle adapter reference](https://docs.middag.dev/framework/reference/adapters/moodle/)).
+
+## Documentation
+
+The architecture and reference of this adapter live on
+[docs.middag.dev](https://docs.middag.dev/framework/reference/adapters/moodle/).
+This repository keeps the README, [`API-STABILITY.md`](API-STABILITY.md), the
+[`CHANGELOG.md`](CHANGELOG.md) and the decision records in
+[`docs/decisions/`](docs/decisions/).
 
 ## Development
 
@@ -92,14 +110,12 @@ framework through a consumer-declared path repository, a **local**
 `composer.lock` can show path or dev references. That is expected local
 development state and **not** a defect in the released package.
 
-Keeping the lock out of the repo is also what makes **per-PHP resolution**
-work: this lib requires `symfony/* ^7.0` and supports PHP `^8.2`, while
-Symfony 8.x requires PHP >= 8.4.1. On PHP 8.2/8.3 Composer resolves the
-Symfony 7.x line; on PHP 8.4 it may pick 8.x. Moodle 4.5 hosts cap PHP at
-8.3, so they need a vendor **resolved on the 8.3 line** — a workstation
-vendor resolved on PHP 8.4 freezes Symfony 8.x and fails `platform_check`
-on an 8.3 host. That is a local artifact, not a support limitation; CI
-asserts the 8.2/8.3 cells resolve Symfony 7.x (see `.github/workflows/ci.yml`).
+The platform is pinned to PHP 8.3 (`config.platform.php` `8.3.0`), so a local
+install resolves the Symfony 7.4 line whatever PHP runs Composer. CI runs the
+checks and the tests on PHP 8.3, 8.4 and 8.5 with the pin, a `highest` job on
+8.4 and 8.5 without it that asserts the Symfony components resolve to 8.x, and
+PHPStan against the Moodle stubs of 4.5, 5.0 (best effort), 5.1, 5.2 and 5.3
+([Platform](https://docs.middag.dev/libraries/reference/platform)).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contributor setup,
 including the dependency-resolution notes.

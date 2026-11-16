@@ -277,6 +277,8 @@ if (!class_exists('stored_file', false)) {
 
         public function delete(): bool
         {
+            $GLOBALS['__middag_test_deleted_files'][] = $this->get_id();
+
             if ($this->throwOnDelete) {
                 throw new Exception('delete');
             }
@@ -291,6 +293,8 @@ if (!class_exists('file_storage', false)) {
     {
         public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = 'sortorder', $includedirs = true, $updatedsince = 0, $limitfrom = 0, $limitnum = 0): array
         {
+            $GLOBALS['__middag_test_area_files_calls'][] = [$contextid, $component, $filearea, $itemid, $includedirs];
+
             if (!empty($GLOBALS['__middag_test_throw_area_files'])) {
                 throw new Exception('get_area_files');
             }
@@ -351,6 +355,35 @@ if (!class_exists('file_storage', false)) {
 
             return $GLOBALS['__middag_test_delete_area_result'] ?? true;
         }
+    }
+}
+
+// file_prepare_draft_area() / file_save_draft_area_files(): record their
+// arguments; the prepare stub hands back $GLOBALS['__middag_test_prepared_draft'].
+if (!function_exists('file_prepare_draft_area')) {
+    function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, ?array $options = null, $text = null)
+    {
+        if (!empty($GLOBALS['__middag_test_throw_draft_api'])) {
+            throw new Exception('file_prepare_draft_area');
+        }
+
+        $GLOBALS['__middag_test_draft_prepare_calls'][] = [$contextid, $component, $filearea, $itemid, $options];
+        $draftitemid = $GLOBALS['__middag_test_prepared_draft'] ?? 0;
+
+        return $text;
+    }
+}
+
+if (!function_exists('file_save_draft_area_files')) {
+    function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, ?array $options = null, $text = null, $forcehttps = false)
+    {
+        if (!empty($GLOBALS['__middag_test_throw_draft_api'])) {
+            throw new Exception('file_save_draft_area_files');
+        }
+
+        $GLOBALS['__middag_test_draft_save_calls'][] = [$draftitemid, $contextid, $component, $filearea, $itemid, $options];
+
+        return $text;
     }
 }
 

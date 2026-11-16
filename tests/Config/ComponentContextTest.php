@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Config;
 
-use LogicException;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Exception\MoodleConfigurationException;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -40,7 +39,7 @@ final class ComponentContextTest extends TestCase
     {
         ComponentContext::reset();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleConfigurationException::class);
 
         ComponentContext::name();
     }
@@ -113,7 +112,7 @@ final class ComponentContextTest extends TestCase
     {
         ComponentContext::reset();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleConfigurationException::class);
 
         ComponentContext::capabilityComponent();
     }
@@ -122,7 +121,7 @@ final class ComponentContextTest extends TestCase
     {
         ComponentContext::reset();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleConfigurationException::class);
 
         ComponentContext::baseUrlPath();
     }

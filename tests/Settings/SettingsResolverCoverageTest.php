@@ -14,6 +14,7 @@ namespace Middag\Moodle\Tests\Settings;
 
 use admin_settingpage;
 use Middag\Moodle\Settings\Page;
+use Middag\Moodle\Settings\SettingsNamingPolicy;
 use Middag\Moodle\Settings\SettingsResolver;
 use Middag\Moodle\Settings\Type\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -33,15 +34,23 @@ use PHPUnit\Framework\TestCase;
 final class SettingsResolverCoverageTest extends TestCase
 {
     #[Test]
-    public function resolveConfigKeyPrependsCanonicalPrefix(): void
+    public function configKeyPrependsTheDefaultPrefix(): void
     {
-        $this->assertSame('mdglib_core_apikey', SettingsResolver::resolveConfigKey('apikey', 'core'));
+        $this->assertSame('mdglib_core_apikey', (new SettingsResolver())->configKey('apikey', 'core'));
     }
 
     #[Test]
-    public function resolveConfigKeyIsIdempotentForAlreadyPrefixedNames(): void
+    public function configKeyIsIdempotentForAlreadyPrefixedNames(): void
     {
-        $this->assertSame('mdglib_core_apikey', SettingsResolver::resolveConfigKey('mdglib_core_apikey', 'core'));
+        $this->assertSame('mdglib_core_apikey', (new SettingsResolver())->configKey('mdglib_core_apikey', 'core'));
+    }
+
+    #[Test]
+    public function configKeyUsesTheInjectedPolicy(): void
+    {
+        $resolver = new SettingsResolver(new SettingsNamingPolicy('clientx_'));
+
+        $this->assertSame('clientx_core_apikey', $resolver->configKey('apikey', 'core'));
     }
 
     #[Test]

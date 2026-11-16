@@ -52,22 +52,6 @@ class SettingsResolver
     }
 
     /**
-     * Default-policy convenience for the static support seams
-     * (`SettingsSupport`, `ThemeSupport`) and DSL fallbacks. Policy-aware
-     * callers construct the resolver with their policy and use
-     * {@see self::configKey()} instead.
-     *
-     * @param string $name      the raw setting name declared in the typed DSL
-     * @param string $extension the extension slug (e.g. "core", "ecommerce")
-     *
-     * @return string the canonical config key under the DEFAULT policy
-     */
-    public static function resolveConfigKey(string $name, string $extension): string
-    {
-        return (new SettingsNamingPolicy())->configKey($name, $extension);
-    }
-
-    /**
      * Resolve extension settings into Moodle admin_settingpage objects.
      *
      * Iterates the settings array. For each page instance, creates an

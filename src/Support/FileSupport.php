@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Support;
 
+use core\url as moodle_url;
 use Exception;
 use file_storage;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Domain\File\StoredFile;
+use Middag\Moodle\Exception\MoodleAdapterException;
 use Middag\Moodle\Shared\Util\Debug;
 use stdClass;
 use stored_file;
@@ -663,5 +665,106 @@ class FileSupport
 
             return [];
         }
+    }
+
+    /**
+     * Lists the files (no directories) of a user's draft area.
+     *
+     * A draft area lives in the user's context, component `user`, file area
+     * `draft`, keyed by the draft itemid. Returns an empty list for a user id
+     * or a draft itemid that is not positive, for an area with no file, and
+     * when the file API fails (the failure is traced).
+     *
+     * @return list<stored_file>
+     */
+    public static function getDraftAreaFiles(int $userid, int $draftitemid): array
+    {
+        if ($userid <= 0 || $draftitemid <= 0) {
+            return [];
+        }
+
+        try {
+            $contextid = (int) ContextSupport::user($userid)->id;
+            $files = self::getStorage()->get_area_files($contextid, 'user', 'draft', $draftitemid, 'sortorder, filepath, filename', false);
+
+            return array_values($files);
+        } catch (Throwable $throwable) {
+            Debug::traceException($throwable);
+
+            return [];
+        }
+    }
+
+    /**
+     * Copies a file area into a new draft area of the current user.
+     *
+     * Wraps `file_prepare_draft_area()`: the files of the area (none when
+     * `$itemid` is null) are copied into a fresh draft itemid, which an edit
+     * form sends back so {@see saveDraftArea()} can store the result.
+     *
+     * @param array<string, mixed> $options file manager options (`subdirs`, `maxfiles`, `maxbytes`, ...)
+     *
+     * @return int the new draft itemid
+     *
+     * @throws MoodleAdapterException when the file API fails
+     */
+    public static function prepareDraftArea(int $contextid, string $component, string $filearea, ?int $itemid, array $options = []): int
+    {
+        $draftitemid = 0;
+        self::requireFileLib();
+
+        try {
+            file_prepare_draft_area($draftitemid, $contextid, $component, $filearea, $itemid, $options);
+        } catch (Throwable $throwable) {
+            throw new MoodleAdapterException('Could not prepare the draft area.', 0, $throwable);
+        }
+
+        return (int) $draftitemid;
+    }
+
+    /**
+     * Stores a draft area of the current user into a file area.
+     *
+     * Wraps `file_save_draft_area_files()`: the target area ends up with
+     * exactly the files of the draft area.
+     *
+     * @param array<string, mixed> $options file manager options (`subdirs`, `maxfiles`, `maxbytes`, ...)
+     *
+     * @throws MoodleAdapterException when the file API fails
+     */
+    public static function saveDraftArea(int $draftitemid, int $contextid, string $component, string $filearea, int $itemid, array $options = []): void
+    {
+        self::requireFileLib();
+
+        try {
+            file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, $options);
+        } catch (Throwable $throwable) {
+            throw new MoodleAdapterException('Could not save the draft area.', 0, $throwable);
+        }
+    }
+
+    /**
+     * Builds the `draftfile.php` URL of a file in a draft area.
+     */
+    public static function getDraftFileUrl(stored_file $file): string
+    {
+        return moodle_url::make_draftfile_url((int) $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+    }
+
+    /**
+     * Loads `lib/filelib.php`, which Moodle does not include on every request
+     * and which declares the draft area functions.
+     */
+    private static function requireFileLib(): void
+    {
+        if (function_exists('file_prepare_draft_area')) {
+            return;
+        }
+
+        // @codeCoverageIgnoreStart
+        global $CFG;
+
+        require_once $CFG->libdir . '/filelib.php';
+        // @codeCoverageIgnoreEnd
     }
 }

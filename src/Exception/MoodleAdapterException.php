@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Exception;
 
-use RuntimeException;
+use Middag\Framework\Exception\MiddagInfrastructureException;
 
 /**
  * Base exception for Moodle adapter-specific failures.
  *
+ * A host-boundary failure in the framework exception family: the kernel
+ * maps it to HTTP 500, like any other infrastructure failure.
+ *
  * @api
  */
-class MoodleAdapterException extends RuntimeException {}
+class MoodleAdapterException extends MiddagInfrastructureException {}

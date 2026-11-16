@@ -230,8 +230,8 @@ final class RouterBridgeSupportCoverageTest extends TestCase
 
             public function getBody(): object
             {
-                return new class($this) {
-                    public function __construct(private readonly object $parent) {}
+                return new readonly class($this) {
+                    public function __construct(private object $parent) {}
 
                     public function write($string): int
                     {

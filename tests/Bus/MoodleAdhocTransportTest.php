@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Bus;
 
 use core\task\adhoc_task;
-use LogicException;
 use Middag\Framework\Bus\Command\CommandSerializer;
 use Middag\Framework\Bus\Contract\CommandInterface;
 use Middag\Moodle\Bus\MoodleAdhocTransport;
 use Middag\Moodle\Domain\Task\Contract\AdhocServiceInterface;
+use Middag\Moodle\Exception\MoodleTransportException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -35,7 +35,7 @@ use Symfony\Component\Messenger\Stamp\BusNameStamp;
 #[CoversClass(MoodleAdhocTransport::class)]
 final class MoodleAdhocTransportTest extends TestCase
 {
-    private const TASK_CLASS = FakeAsyncTask::class;
+    private const string TASK_CLASS = FakeAsyncTask::class;
 
     public function testSendQueuesAdhocTaskWithSerializedEnvelope(): void
     {
@@ -70,13 +70,16 @@ final class MoodleAdhocTransportTest extends TestCase
         $adhoc = $this->createMock(AdhocServiceInterface::class);
         $adhoc->expects(self::once())
             ->method('create')
-            ->with(self::TASK_CLASS, [
-                'body' => '{"transaction_id":42}',
-                'headers' => [
-                    'type' => TransportRecordedCommand::class,
-                    'X-Message-Stamp-' . BusNameStamp::class => '[{"busName":"command_bus"}]',
-                ],
-            ])
+            ->with(self::TASK_CLASS, self::callback(static function (array $data): bool {
+                // The framework keys a stamp header by its stable alias
+                // (`bus-name`); assert that key only, so the test does not
+                // depend on whether the serializer also writes the FQCN key.
+                $headers = $data['headers'] ?? [];
+
+                return ($data['body'] ?? null) === '{"transaction_id":42}'
+                    && ($headers['type'] ?? null) === TransportRecordedCommand::class
+                    && ($headers['X-Message-Stamp-bus-name'] ?? null) === '[{"busName":"command_bus"}]';
+            }))
             ->willReturn($task);
         $adhoc->expects(self::once())
             ->method('queue')
@@ -97,7 +100,7 @@ final class MoodleAdhocTransportTest extends TestCase
 
         $transport = new MoodleAdhocTransport($adhoc, self::TASK_CLASS);
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->send(new Envelope(new stdClass()));
     }
@@ -109,7 +112,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->get();
     }
@@ -121,7 +124,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->ack(new Envelope(new stdClass()));
     }
@@ -133,7 +136,7 @@ final class MoodleAdhocTransportTest extends TestCase
             self::TASK_CLASS,
         );
 
-        $this->expectException(LogicException::class);
+        $this->expectException(MoodleTransportException::class);
 
         $transport->reject(new Envelope(new stdClass()));
     }

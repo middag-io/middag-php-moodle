@@ -46,7 +46,7 @@ class MoodleLogger extends AbstractLogger
     /**
      * PSR-3 level → Moodle debugging level mapping.
      */
-    private const LEVEL_MAP = [
+    private const array LEVEL_MAP = [
         LogLevel::EMERGENCY => DEBUG_NORMAL,
         LogLevel::ALERT => DEBUG_NORMAL,
         LogLevel::CRITICAL => DEBUG_NORMAL,
@@ -60,7 +60,7 @@ class MoodleLogger extends AbstractLogger
     /**
      * PSR-3 levels that always write to PHP error_log(), regardless of Moodle debug config.
      */
-    private const CRITICAL_LEVELS = [
+    private const array CRITICAL_LEVELS = [
         LogLevel::EMERGENCY => true,
         LogLevel::ALERT => true,
         LogLevel::CRITICAL => true,

@@ -43,7 +43,7 @@ use Throwable;
  */
 final class MoodleHookfileLoader extends HookfileLoader
 {
-    private const HOOKFILE_BASENAME = 'middag_hooks.php';
+    private const string HOOKFILE_BASENAME = 'middag_hooks.php';
 
     /**
      * @param null|string $hookPrefix frankenstyle prefix used to derive the plugin

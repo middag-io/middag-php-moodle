@@ -38,7 +38,7 @@ use Symfony\Component\Routing\RouteCollection;
 #[CoversClass(PluginAwareUrlGenerator::class)]
 final class PluginAwareUrlGeneratorCoverageTest extends TestCase
 {
-    private const DEFAULT_BASE = '/local/example/index.php';
+    private const string DEFAULT_BASE = '/local/example/index.php';
 
     #[Test]
     public function testRouteWithoutPluginBaseSwapsToDefaultBaseThenRestores(): void

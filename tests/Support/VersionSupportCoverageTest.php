@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Support;
 
-use InvalidArgumentException;
 use Middag\Moodle\Domain\Platform\MoodleVersion;
 use Middag\Moodle\Exception\MoodleVersionException;
 use Middag\Moodle\Support\VersionSupport;
@@ -109,7 +108,7 @@ final class VersionSupportCoverageTest extends TestCase
     #[Test]
     public function testCompareThrowsOnAnInvalidConstraint(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(MoodleVersionException::class);
 
         VersionSupport::compare('>=', 'not-a-version');
     }

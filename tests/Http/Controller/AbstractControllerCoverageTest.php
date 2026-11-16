@@ -1115,6 +1115,42 @@ final class AbstractControllerCoverageTest extends TestCase
         self::assertStringContainsString('&lt;b&gt;trace&lt;/b&gt;', $content);
     }
 
+    #[Test]
+    public function testErrorPageReadsDebugOutputFromTheBody(): void
+    {
+        $controller = $this->makeController(
+            new Request(request: ['debug_output' => 'body trace']),
+            $this->makeContainer([]),
+            new context(1),
+        );
+        $controller->setPageUrl(new moodle_url('/err'));
+
+        ob_start();
+        $response = $controller->callErrorPage('Broke', 422);
+        ob_end_clean();
+
+        self::assertStringContainsString('<pre>body trace</pre>', (string) $response->getContent());
+    }
+
+    #[Test]
+    public function testErrorPagePrefersTheRouteAttributeOverTheQuery(): void
+    {
+        $controller = $this->makeController(
+            new Request(query: ['debug_output' => 'query trace'], attributes: ['debug_output' => 'attribute trace']),
+            $this->makeContainer([]),
+            new context(1),
+        );
+        $controller->setPageUrl(new moodle_url('/err'));
+
+        ob_start();
+        $response = $controller->callErrorPage('Broke', 422);
+        ob_end_clean();
+
+        $content = (string) $response->getContent();
+        self::assertStringContainsString('<pre>attribute trace</pre>', $content);
+        self::assertStringNotContainsString('query trace', $content);
+    }
+
     // =========================================================================
     // redirect() / redirectToRoute()
     // =========================================================================
@@ -1300,8 +1336,8 @@ final class AbstractControllerCoverageTest extends TestCase
 
     private function makeThrowingContainer(string $id): ContainerInterface
     {
-        return new class($id) implements ContainerInterface {
-            public function __construct(private readonly string $id) {}
+        return new readonly class($id) implements ContainerInterface {
+            public function __construct(private string $id) {}
 
             public function get(string $id): mixed
             {
@@ -1380,8 +1416,8 @@ final class AbstractControllerCoverageTest extends TestCase
 
     private function makeCourse(int $id): object
     {
-        return new class($id) {
-            public function __construct(private readonly int $id) {}
+        return new readonly class($id) {
+            public function __construct(private int $id) {}
 
             public function get_id(): int
             {
@@ -1426,8 +1462,8 @@ final class AbstractControllerCoverageTest extends TestCase
 
     private function makeHtmlRenderer(string $body): FormRendererInterface
     {
-        return new class($body) implements FormRendererInterface {
-            public function __construct(private readonly string $body) {}
+        return new readonly class($body) implements FormRendererInterface {
+            public function __construct(private string $body) {}
 
             public static function target(): RenderTarget
             {
@@ -1443,9 +1479,9 @@ final class AbstractControllerCoverageTest extends TestCase
 
     private function makePropsRenderer(array $props): FormRendererInterface
     {
-        return new class($props) implements FormRendererInterface {
+        return new readonly class($props) implements FormRendererInterface {
             /** @param array<string, mixed> $props */
-            public function __construct(private readonly array $props) {}
+            public function __construct(private array $props) {}
 
             public static function target(): RenderTarget
             {
@@ -1461,8 +1497,8 @@ final class AbstractControllerCoverageTest extends TestCase
 
     private function bootKernelWithRouter(string $generatedUrl): void
     {
-        $router = new class($generatedUrl) implements RouterInterface {
-            public function __construct(private readonly string $generatedUrl) {}
+        $router = new readonly class($generatedUrl) implements RouterInterface {
+            public function __construct(private string $generatedUrl) {}
 
             public function initializeContext(): void {}
 

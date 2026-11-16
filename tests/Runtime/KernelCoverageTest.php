@@ -616,8 +616,8 @@ final class KernelCoverageTest extends TestCase
      */
     private function stubRouter(?RequestContext $context = null): RouterInterface
     {
-        return new class($context ?? new RequestContext()) implements RouterInterface {
-            public function __construct(private readonly RequestContext $context) {}
+        return new readonly class($context ?? new RequestContext()) implements RouterInterface {
+            public function __construct(private RequestContext $context) {}
 
             public function initializeContext(): void {}
 

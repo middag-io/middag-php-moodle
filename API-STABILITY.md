@@ -32,8 +32,11 @@ consumer-facing API — the `Domain\*` entities, DTOs and enums; the domain
 `Security` value objects and `Contract/` interfaces; the `Privacy` provider
 contracts; `Http\Contract\MoodleControllerInterface`; the `Support\Moodle`
 façade and the public `Support\*` Moodle API wrappers; the adapter-specific
-`Exception\*` types; the `Output\Table` helpers; and the `WebService\AbstractExternal`
-extension base a plugin's external classes subclass.
+`Exception\*` types; the `Output\Table` helpers; `Form\DraftFileValueMapper`,
+which maps the `uploadToken` of a `middag-io/ui` `FileValue` to a Moodle draft
+area and back (on save, the submitted list decides which files are kept, and a
+cleared field leaves the stored files in place); and the `WebService\AbstractExternal` extension base a plugin's
+external classes subclass.
 
 **Composition-root concretes are public too.** This adapter deliberately ships
 no container builder (D-FACADE-SEAM): whoever starts the kernel supplies its own

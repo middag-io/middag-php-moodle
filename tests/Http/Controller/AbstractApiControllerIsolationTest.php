@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 final class AbstractApiControllerIsolationTest extends TestCase
 {
-    private const SOURCE_PATH = __DIR__ . '/../../../src/Http/Controller/AbstractApiController.php';
+    private const string SOURCE_PATH = __DIR__ . '/../../../src/Http/Controller/AbstractApiController.php';
 
     public function testSourceFileExists(): void
     {

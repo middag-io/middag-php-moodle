@@ -2,7 +2,7 @@
 title: 'Moodle coupling is confined to this OSS adapter'
 status: accepted
 date: 2026-03-29
-last-updated: 2026-11-04
+last-updated: 2026-11-16
 lang: en
 domains: [adapters, boundary, runtime]
 deciders: [leadership]
@@ -43,7 +43,7 @@ The adapter's entry point is a static Kernel. Moodle reaches a plugin through `l
 - (+) Moodle's mandatory plugin APIs are wrapped once instead of once per product.
 - (−) The Kernel and the configured component are single process-wide slots. Two consumer plugins built on this adapter in the same request share them, and the last configuration wins.
 - (−) The thin-adapter rule for `lib.php` and the other Moodle entry points applies to files in the consumer plugin, which this package cannot check.
-- (−) The adapter's exception classes extend SPL exceptions instead of the framework's exception family (`src/Exception/*.php`).
+- (+) The adapter's exception classes extend the framework's `MiddagInfrastructureException` (FW-010), so the kernel reads their HTTP status like any host-boundary failure (`src/Exception/*.php`).
 
 ## Enforcement
 
@@ -55,4 +55,5 @@ The adapter's entry point is a static Kernel. Moodle reaches a plugin through `l
 | Framework port to Moodle implementation mapping | doc `docs-middag-dev:docs/framework/reference/bridge-contracts.md` | coded |
 | Moodle API whitelist and plugin-API adapters | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/boundary-whitelist.md` | coded |
 | SPA page and theme host bridge | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/frontend-build-detail.md` | coded |
+| Adapter exceptions belong to the framework exception family | test `tests/Exception/AdapterExceptionHierarchyTest.php` | coded |
 | Consumer code calls Moodle only through this adapter | static-analysis rule in consumers | planned |

@@ -17,62 +17,52 @@ concurrency:
 
 jobs:
   # Released php-library-check component of middag-io/actions, called by its
-  # major tag. One job per PHP version: the static
-  # checks (composer validate, strict PSR-4, PHPStan on the canonical stubs,
-  # PHP-CS-Fixer and Rector) run on 8.2, the audit and the tests (unit +
-  # no-host) on every version.
+  # major tag. One job per PHP version, with the platform pin (8.3.0) kept: the
+  # static checks (composer validate, strict PSR-4, PHPStan on the canonical
+  # stubs, PHP-CS-Fixer and Rector) run on 8.3, the floor; the audit and the
+  # tests (unit + no-host) on every version. The tool caches live in .cache.
   php-library-check:
     uses: middag-io/actions/.github/workflows/php-library-check.yml@php-library-check-v1
     permissions:
       contents: read
     with:
-      php-versions: '["8.2", "8.3", "8.4"]'
+      php-versions: '["8.3", "8.4", "8.5"]'
+      tool-cache-paths: .cache
       audit-blocking-severities: critical, high
       timeout-minutes: 30
 
-  # Specific to this repository, so it stays inline. No composer.lock is
-  # committed (library convention): each cell resolves dependencies on its own
-  # PHP line. On 8.2/8.3 Composer must land on the Symfony 7.x line (Symfony
-  # 8.x requires PHP >= 8.4.1); on 8.4 it may pick Symfony 8.x. Moodle 4.5
-  # hosts cap PHP at 8.3, so the 8.3 cell is what proves the lib still installs
-  # there; the assertions keep a future constraint drift from silently masking
-  # the ^8.2 floor.
-  platform:
-    name: Platform requirements (PHP ${{ matrix.php }})
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
+  # Second call of the same component: removes the platform pin and resolves
+  # the highest dependency versions on the PHP of each job, then runs the
+  # tests. Symfony 8.x needs PHP 8.4, so the job runs on 8.4 and 8.5 and
+  # asserts that every Symfony component this adapter requires resolved to
+  # 8.x. The static checks already run in the pinned job.
+  php-library-check-highest:
+    uses: middag-io/actions/.github/workflows/php-library-check.yml@php-library-check-v1
     permissions:
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.2', '8.3', '8.4']
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
+    with:
+      php-versions: '["8.4", "8.5"]'
+      dependency-versions: highest
+      unset-platform-php: true
+      expect-majors: |
+        symfony/dependency-injection:8
+        symfony/http-client:8
+        symfony/http-foundation:8
+        symfony/routing:8
+      composer-validate: false
+      strict-psr: false
+      phpstan-script: ""
+      cs-fixer-script: ""
+      rector-script: ""
+      audit-blocking-severities: critical, high
+      timeout-minutes: 30
 
-      - uses: middag-io/actions/php-composer-setup@php-composer-setup-v1
-        with:
-          php-version: ${{ matrix.php }}
-
-      - name: Assert the resolved vendor satisfies this cell's platform
-        run: composer check-platform-reqs
-
-      - name: Assert Symfony resolved on the 7.x line (PHP 8.2/8.3 floor)
-        if: matrix.php != '8.4'
-        run: |
-          composer show symfony/http-foundation | grep -E '^versions +: +\* v?7\.'
-
-  # Specific to this repository, so it stays inline. LB-CI-01: PHPStan against
-  # every supported Moodle stubs series (4.5 to 5.3). Blocking: all five series
-  # analyse clean at L6, so the per-version class_alias shims (cm_info,
-  # modinfo, navigation_node) are backed by matrix evidence.
-  #
-  # The series tracked here follow `supported` of the consumer plugin, which
-  # since local_middag#188 is declared once in its `.moodle-support.json`. The
-  # rule from that issue: cover every branch of the range for which
-  # moodle-stubs exists. 5.3 exists as v5.3.0.
+  # Specific to this repository, so it stays inline: PHPStan against the
+  # moodle-stubs series of each Moodle version in range. 4.5, 5.1, 5.2 and 5.3
+  # are the supported range (upstream support); 5.0 stays as best effort, with
+  # no support promise. Blocking: every series analyses clean at L6, so the
+  # per-version class_alias shims (cm_info, modinfo, navigation_node) are
+  # backed by matrix evidence.
   stan-matrix:
     name: PHPStan (moodle-stubs ${{ matrix.stubs }})
     runs-on: ubuntu-24.04
@@ -90,7 +80,7 @@ jobs:
 
       - uses: middag-io/actions/php-composer-setup@php-composer-setup-v1
         with:
-          php-version: '8.2'
+          php-version: '8.3'
 
       - name: Pin moodle-stubs to the matrix series
         env:

@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Exception;
 
-use LogicException;
+use Middag\Framework\Exception\MiddagInfrastructureException;
 
 /**
  * Raised when the Moodle adapter composition root is not configured correctly.
  *
+ * A host-boundary failure in the framework exception family: the kernel
+ * maps it to HTTP 500, like any other infrastructure failure.
+ *
  * @api
  */
-final class MoodleConfigurationException extends LogicException {}
+final class MoodleConfigurationException extends MiddagInfrastructureException {}

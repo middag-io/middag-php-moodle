@@ -41,7 +41,7 @@ final class AbstractFacadeCoverageTest extends TestCase
     /**
      * Service id the anonymous facade fixture resolves.
      */
-    private const ACCESSOR = 'middag.tests.abstract_facade.root';
+    private const string ACCESSOR = 'middag.tests.abstract_facade.root';
 
     protected function setUp(): void
     {

@@ -227,8 +227,8 @@ final class CustomFieldSupportCoverageTest extends TestCase
             {
                 $shortname = $this->shortname;
 
-                return new class($shortname) {
-                    public function __construct(private readonly string $shortname) {}
+                return new readonly class($shortname) {
+                    public function __construct(private string $shortname) {}
 
                     public function get(string $key): mixed
                     {

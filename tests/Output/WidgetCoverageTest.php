@@ -48,8 +48,8 @@ final class WidgetCoverageTest extends TestCase
             public function __construct()
             {
                 $parent = $this;
-                $this->requires = new class($parent) {
-                    public function __construct(private readonly object $parent) {}
+                $this->requires = new readonly class($parent) {
+                    public function __construct(private object $parent) {}
 
                     public function js_call_amd(string $module, string $method, array $args): void
                     {

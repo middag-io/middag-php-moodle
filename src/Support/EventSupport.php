@@ -27,9 +27,9 @@ use Throwable;
  */
 class EventSupport
 {
-    private const CACHE_AREA = 'loader';
+    private const string CACHE_AREA = 'loader';
 
-    private const CACHE_KEY = 'events';
+    private const string CACHE_KEY = 'events';
 
     /** @var null|EventDto[] Request-level cache for events. */
     private ?array $cachedEvents = null;
