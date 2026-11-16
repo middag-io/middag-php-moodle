@@ -32,7 +32,13 @@ use stored_file;
  *   decimal string, checks that the draft area holds at least one file of the
  *   current user, and returns the draft itemid.
  *
- * A token that fails either check is rejected with a
+ * The submitted list is authoritative for which files are kept: on save, a
+ * draft file that no submitted entry names by `id` is deleted first. A list
+ * either carries the token on every entry or on none, so an edit form must be
+ * filled with {@see fromFileArea()}, which puts the stored files in the draft
+ * area too.
+ *
+ * A token that fails a check is rejected with a
  * `MiddagValidationException` (HTTP 422): it is client input, never trusted.
  *
  * @api
@@ -99,9 +105,10 @@ final class DraftFileValueMapper
     /**
      * Resolves the draft itemid a submitted file value points to.
      *
-     * A multiple-file field submits a list: every entry that carries a token
-     * must carry the same one. Entries without a token are files already stored
-     * and need no draft area. A list entry that is not a `FileValue` is rejected.
+     * A multiple-file field submits a list: every entry must carry the same
+     * token, or none of them. A list that mixes entries with and without a
+     * token is rejected, because storing the draft area would drop the entries
+     * without one. A list entry that is not a `FileValue` is rejected.
      *
      * @param array<mixed>|FileValue $value the submitted file value(s)
      * @param null|string            $field form field name used as the error key
@@ -115,19 +122,22 @@ final class DraftFileValueMapper
     public function toDraftItemId(array|FileValue $value, ?string $field = null): ?int
     {
         $tokens = [];
+        $hasEntryWithoutToken = false;
 
-        foreach ($value instanceof FileValue ? [$value] : $value as $entry) {
-            if (!$entry instanceof FileValue) {
-                throw $this->invalid($field, 'The submitted value is not a file value.');
-            }
-
-            if ($entry->uploadToken !== null && !in_array($entry->uploadToken, $tokens, true)) {
+        foreach ($this->entries($value, $field) as $entry) {
+            if ($entry->uploadToken === null) {
+                $hasEntryWithoutToken = true;
+            } elseif (!in_array($entry->uploadToken, $tokens, true)) {
                 $tokens[] = $entry->uploadToken;
             }
         }
 
         if ($tokens === []) {
             return null;
+        }
+
+        if ($hasEntryWithoutToken) {
+            throw $this->invalid($field, 'The file values mix stored files with draft area files.');
         }
 
         if (count($tokens) > 1) {
@@ -150,13 +160,24 @@ final class DraftFileValueMapper
     /**
      * Stores the draft area a submitted file value points to into a file area.
      *
+     * The submitted list decides which files are kept. Every entry must name a
+     * file of the draft area by its `id`; a draft file that no entry names is
+     * deleted from the draft area before the save. The target area then ends up
+     * with exactly the submitted files.
+     *
+     * A value without a token, including an empty list, stores nothing: the
+     * method returns false and leaves the target area unchanged. Clearing a file
+     * field therefore does not delete the stored files; when the field is
+     * cleared, the caller deletes them with {@see FileSupport::deleteAreaFiles()}.
+     *
      * @param array<mixed>|FileValue $value   the submitted file value(s), as for {@see toDraftItemId()}
      * @param array<string, mixed>   $options file manager options (`subdirs`, `maxfiles`, `maxbytes`, ...)
      * @param null|string            $field   form field name used as the error key
      *
      * @return bool true when a draft area was stored, false when no entry carries a token
      *
-     * @throws MiddagValidationException when the token is rejected (see {@see toDraftItemId()})
+     * @throws MiddagValidationException when the token is rejected (see {@see toDraftItemId()}),
+     *                                   or when an entry names no file of the draft area
      * @throws MoodleAdapterException    when the file API fails
      */
     public function saveToFileArea(
@@ -174,9 +195,75 @@ final class DraftFileValueMapper
             return false;
         }
 
+        $this->dropUnsubmittedDraftFiles($this->entries($value, $field), $draftItemId, $field);
+
         FileSupport::saveDraftArea($draftItemId, $contextId, $component, $fileArea, $itemId, $options);
 
         return true;
+    }
+
+    /**
+     * Deletes the draft files that no submitted entry names by `id`.
+     *
+     * Every entry is checked against the draft listing before anything is
+     * deleted, so a rejected list leaves the draft area untouched.
+     *
+     * @param list<FileValue> $entries
+     *
+     * @throws MiddagValidationException when an entry names no file of the draft area
+     * @throws MoodleAdapterException    when a draft file cannot be deleted
+     */
+    private function dropUnsubmittedDraftFiles(array $entries, int $draftItemId, ?string $field): void
+    {
+        $draftFiles = [];
+
+        foreach (FileSupport::getDraftAreaFiles(UserSupport::getCurrentUserId(), $draftItemId) as $file) {
+            $draftFiles[(string) (int) $file->get_id()] = $file;
+        }
+
+        $keptIds = [];
+
+        foreach ($entries as $entry) {
+            if ($entry->id === null || !isset($draftFiles[$entry->id])) {
+                throw $this->invalid($field, 'The file value does not name a file of the draft area.');
+            }
+
+            $keptIds[$entry->id] = true;
+        }
+
+        foreach (array_diff_key($draftFiles, $keptIds) as $file) {
+            if (!FileSupport::deleteFile($file)) {
+                throw new MoodleAdapterException('Could not delete a removed file from the draft area.');
+            }
+        }
+    }
+
+    /**
+     * Normalizes the submitted value to a list of `FileValue` entries.
+     *
+     * @param array<mixed>|FileValue $value
+     *
+     * @return list<FileValue>
+     *
+     * @throws MiddagValidationException when a list entry is not a `FileValue`
+     */
+    private function entries(array|FileValue $value, ?string $field): array
+    {
+        if ($value instanceof FileValue) {
+            return [$value];
+        }
+
+        $entries = [];
+
+        foreach ($value as $entry) {
+            if (!$entry instanceof FileValue) {
+                throw $this->invalid($field, 'The submitted value is not a file value.');
+            }
+
+            $entries[] = $entry;
+        }
+
+        return $entries;
     }
 
     /**

@@ -49,6 +49,7 @@ final class DraftFileValueMapperTest extends TestCase
             '__middag_test_draft_prepare_calls',
             '__middag_test_draft_save_calls',
             '__middag_test_throw_draft_api',
+            '__middag_test_deleted_files',
         ] as $key) {
             unset($GLOBALS[$key]);
         }
@@ -134,11 +135,25 @@ final class DraftFileValueMapperTest extends TestCase
 
         $itemId = $this->mapper->toDraftItemId([
             new FileValue(url: '/a', uploadToken: '424242'),
-            new FileValue(url: '/stored', id: '3'),
             new FileValue(url: '/b', uploadToken: '424242'),
         ]);
 
         self::assertSame(self::DRAFT_ITEM_ID, $itemId);
+    }
+
+    #[Test]
+    public function toDraftItemIdRejectsAListMixingStoredAndDraftFiles(): void
+    {
+        // Saving the draft area would drop the stored entry the client kept.
+        $GLOBALS['__middag_test_area_files'] = [$this->draftFile()];
+
+        $exception = $this->captureRejection([
+            new FileValue(url: '/stored', id: '3'),
+            new FileValue(url: '/new', id: '91', uploadToken: '424242'),
+        ], 'attachments');
+
+        self::assertSame(['attachments'], array_keys($exception->errors()));
+        self::assertArrayNotHasKey('__middag_test_area_files_calls', $GLOBALS);
     }
 
     #[Test]
@@ -249,10 +264,86 @@ final class DraftFileValueMapperTest extends TestCase
     {
         $GLOBALS['__middag_test_area_files'] = [$this->draftFile()];
 
-        $saved = $this->mapper->saveToFileArea(new FileValue(url: '/f', uploadToken: '424242'), 30, 'local_example', 'logo', 12, ['maxfiles' => 1]);
+        $saved = $this->mapper->saveToFileArea(new FileValue(url: '/f', id: '91', uploadToken: '424242'), 30, 'local_example', 'logo', 12, ['maxfiles' => 1]);
 
         self::assertTrue($saved);
         self::assertSame([[self::DRAFT_ITEM_ID, 30, 'local_example', 'logo', 12, ['maxfiles' => 1]]], $GLOBALS['__middag_test_draft_save_calls']);
+        self::assertArrayNotHasKey('__middag_test_deleted_files', $GLOBALS);
+    }
+
+    #[Test]
+    public function saveToFileAreaDeletesTheDraftFilesTheClientRemoved(): void
+    {
+        $GLOBALS['__middag_test_area_files'] = [
+            $this->draftFile(id: 91),
+            $this->draftFile(filename: 'removed.pdf', id: 92),
+            $this->draftFile(filename: 'kept.pdf', id: 93),
+        ];
+
+        $saved = $this->mapper->saveToFileArea([
+            new FileValue(url: '/a', id: '91', uploadToken: '424242'),
+            new FileValue(url: '/c', id: '93', uploadToken: '424242'),
+        ], 30, 'local_example', 'attachments', 12);
+
+        self::assertTrue($saved);
+        self::assertSame([92], $GLOBALS['__middag_test_deleted_files']);
+        self::assertCount(1, $GLOBALS['__middag_test_draft_save_calls']);
+    }
+
+    #[Test]
+    #[DataProvider('entriesNamingNoDraftFile')]
+    public function saveToFileAreaRejectsAnEntryThatNamesNoDraftFile(?string $id): void
+    {
+        $GLOBALS['__middag_test_area_files'] = [$this->draftFile(id: 91), $this->draftFile(filename: 'b.pdf', id: 92)];
+
+        try {
+            $this->mapper->saveToFileArea([
+                new FileValue(url: '/a', id: '91', uploadToken: '424242'),
+                new FileValue(url: '/x', id: $id, uploadToken: '424242'),
+            ], 30, 'local_example', 'attachments', 12, [], 'attachments');
+            self::fail('Expected the entry to be rejected.');
+        } catch (MiddagValidationException $middagValidationException) {
+            self::assertSame(['attachments'], array_keys($middagValidationException->errors()));
+        }
+
+        self::assertArrayNotHasKey('__middag_test_deleted_files', $GLOBALS);
+        self::assertArrayNotHasKey('__middag_test_draft_save_calls', $GLOBALS);
+    }
+
+    /**
+     * @return iterable<string, array{null|string}>
+     */
+    public static function entriesNamingNoDraftFile(): iterable
+    {
+        yield 'no id' => [null];
+
+        yield 'id outside the draft area' => ['3'];
+    }
+
+    #[Test]
+    public function saveToFileAreaFailsWhenARemovedDraftFileCannotBeDeleted(): void
+    {
+        $removed = $this->draftFile(filename: 'removed.pdf', id: 92);
+        $removed->deleteResult = false;
+        $GLOBALS['__middag_test_area_files'] = [$this->draftFile(id: 91), $removed];
+
+        try {
+            $this->mapper->saveToFileArea([new FileValue(url: '/a', id: '91', uploadToken: '424242')], 30, 'local_example', 'attachments', 12);
+            self::fail('Expected the failed delete to stop the save.');
+        } catch (MoodleAdapterException) {
+            // Expected.
+        }
+
+        self::assertArrayNotHasKey('__middag_test_draft_save_calls', $GLOBALS);
+    }
+
+    #[Test]
+    public function saveToFileAreaLeavesTheTargetUnchangedWhenTheFieldIsCleared(): void
+    {
+        $saved = $this->mapper->saveToFileArea([], 30, 'local_example', 'attachments', 12);
+
+        self::assertFalse($saved);
+        self::assertArrayNotHasKey('__middag_test_draft_save_calls', $GLOBALS);
     }
 
     #[Test]
@@ -305,10 +396,10 @@ final class DraftFileValueMapperTest extends TestCase
         self::fail('Expected the upload token to be rejected.');
     }
 
-    private function draftFile(int $itemid = self::DRAFT_ITEM_ID, string $filename = 'report.pdf'): stored_file
+    private function draftFile(int $itemid = self::DRAFT_ITEM_ID, string $filename = 'report.pdf', int $id = 91): stored_file
     {
         return new stored_file([
-            'id' => 91,
+            'id' => $id,
             'contextid' => self::USER_ID,
             'component' => 'user',
             'filearea' => 'draft',

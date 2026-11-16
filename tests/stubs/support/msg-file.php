@@ -277,6 +277,8 @@ if (!class_exists('stored_file', false)) {
 
         public function delete(): bool
         {
+            $GLOBALS['__middag_test_deleted_files'][] = $this->get_id();
+
             if ($this->throwOnDelete) {
                 throw new Exception('delete');
             }
