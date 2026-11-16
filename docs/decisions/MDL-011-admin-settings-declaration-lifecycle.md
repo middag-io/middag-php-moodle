@@ -2,7 +2,7 @@
 title: 'Settings as code, resolved at runtime'
 status: accepted
 date: 2026-04-05
-last-updated: 2026-11-04
+last-updated: 2026-11-16
 lang: en
 domains: [settings]
 deciders: [leadership]
@@ -39,7 +39,8 @@ Config key names come from a naming policy that the consumer injects. The policy
 - (+) Every setting reaches Moodle through one typed path, and `admin_setting_*` wiring lives in one place.
 - (+) No product brand leaks into the keys of a consumer that configures nothing.
 - (−) A consumer that forgets to inject its prefix silently reads and writes keys under the neutral default.
-- (−) The static key helper `SettingsResolver::resolveConfigKey()`, and the supports when called without a policy, always use the default policy and ignore the one the consumer injected (`src/Settings/SettingsResolver.php:65`).
+- (+) The resolver has no static key helper: a key comes from `SettingsResolver::configKey()`, under the policy injected into that resolver.
+- (−) `AbstractSetting`, `SettingsSupport` and `ThemeSupport` take the policy as an optional argument and use the default policy when it is omitted. A consumer with its own prefix passes its policy to each call.
 - (−) Settings are resolved at runtime while the other plugin static files are generated (MDL-016), so declarations follow two mechanisms.
 
 ## Enforcement
@@ -47,6 +48,6 @@ Config key names come from a naming policy that the consumer injects. The policy
 | Decision clause | Verification | State |
 |---|---|---|
 | Neutral default prefix, and an injected policy overrides it | test `tests/Settings/SettingsNamingPolicyTest.php` | coded |
-| The resolver turns typed pages into Moodle settings pages under its policy | test `tests/Settings/SettingsResolverCoverageTest.php` | coded |
+| The resolver turns typed pages into Moodle settings pages and keys under its policy | test `tests/Settings/SettingsResolverCoverageTest.php` | coded |
 | Settings types, key shape and the injection points | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/settings-and-config-keys.md` | coded |
 | No `admin_setting_*` object built outside `Settings/` | static-analysis rule | planned |
