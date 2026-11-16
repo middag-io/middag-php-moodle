@@ -54,10 +54,10 @@ use Throwable;
  *   fatal errors on Moodle < 5.1
  * - References Moodle 5.1 classes via strings, never via use statements
  *
- * Wiring helper, outside the supported public surface; consumers reach it
- * through their route proxy classes.
+ * Public API: consumers call it from their route proxy classes, directly or
+ * through {@see Moodle::routerBridge()}.
  *
- * @internal
+ * @api
  */
 final class RouterBridgeSupport
 {
