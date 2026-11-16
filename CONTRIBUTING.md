@@ -76,10 +76,10 @@ must remain consumable on its own.
   ADR-032 of the internal `docs-middag-ops`, mirrored
   in the framework's
   [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
-  - **On `1.x`:** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
-    break, shipped as `feat:` (never `fix:`, so never in a patch) with the
-    break described in the commit body. Never use `!` or a `BREAKING CHANGE:` footer: that would cut `2.0.0`
-    in this lib alone. From 2026-12-01 no break lands on `1.x`.
+  - The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
+  - **On `1.x`:** `feat:` cuts a minor. A minor may carry a break, shipped as
+    `feat:` (never `fix:`, so never in a patch). Never use `!` or a
+    `BREAKING CHANGE:` footer: that would cut `2.0.0` in this lib alone.
   - **From `2.0.0`:** the libraries share `MAJOR.MINOR`. A patch carries fixes
     only, a `feat:` waits for a family minor window, and a break waits for a
     family major window after a deprecation in an earlier minor. The product
