@@ -5,7 +5,6 @@
 
 ### Features
 
-* forward the full request through RouterBridgeSupport::proxyRequest ([1d7031d](https://github.com/middag-io/middag-php-moodle/commit/1d7031d47b1dd63d9949c0f897fba7e8c5853e6f))
 * forward the full request through RouterBridgeSupport::proxyRequest ([e6abd1a](https://github.com/middag-io/middag-php-moodle/commit/e6abd1a2714cdc2f9503f5daf4b5a67f93c98d87))
 
 
