@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.18.0](https://github.com/middag-io/middag-php-moodle/compare/v1.17.2...v1.18.0) (2026-11-16)
+
+
+### Features
+
+* forward the full request through RouterBridgeSupport::proxyRequest ([1d7031d](https://github.com/middag-io/middag-php-moodle/commit/1d7031d47b1dd63d9949c0f897fba7e8c5853e6f))
+* forward the full request through RouterBridgeSupport::proxyRequest ([e6abd1a](https://github.com/middag-io/middag-php-moodle/commit/e6abd1a2714cdc2f9503f5daf4b5a67f93c98d87))
+
+
+### Bug Fixes
+
+* forward the raw path so the framework router decodes it once ([ebe5dc0](https://github.com/middag-io/middag-php-moodle/commit/ebe5dc0a7aaf12db3e36c910afbef3ff954e2655))
+* match the raw path tail when Slim decoded the path twice ([f4a2b04](https://github.com/middag-io/middag-php-moodle/commit/f4a2b04aa2a2608116af147d6f711d15dca07b58))
+* rebuild proxied query params from the raw URI query string ([00f1c7d](https://github.com/middag-io/middag-php-moodle/commit/00f1c7dddfd93b8cd661f708dd9058486c0d3f73))
+* recover form bodies Moodle's router empties before the proxy ([f9c034a](https://github.com/middag-io/middag-php-moodle/commit/f9c034a6fd76e7773d49bb1f6214c9c8f5f76988))
+
+
+### Refactoring
+
+* mark the DTOs and the DI bridge that [@api](https://github.com/api) types expose as [@api](https://github.com/api) ([46b5375](https://github.com/middag-io/middag-php-moodle/commit/46b5375d9be06edf6b1b455dd52606dbc333e9ac))
+* type the container builder seam with RouterInterface ([12435ab](https://github.com/middag-io/middag-php-moodle/commit/12435ab0be7f6757ab555479467dc33fe14689ec))
+
+
+### Documentation
+
+* align the sibling library ranges with composer.json ([631cd86](https://github.com/middag-io/middag-php-moodle/commit/631cd8633455dc56dcec978a1d0bc7a941b66f0b))
+* describe the server params proxyRequest rewrites precisely ([d18155d](https://github.com/middag-io/middag-php-moodle/commit/d18155df76ea76873cd55e3cde7ea0180f570808))
+* drop private references and internal ids from the public repo ([c672491](https://github.com/middag-io/middag-php-moodle/commit/c67249154f2334284a9b064f110137f3b8f76302))
+* list MariaDB among the supported database engines ([91d518a](https://github.com/middag-io/middag-php-moodle/commit/91d518acb11a964a4883b0b65858e8a2b2d58669))
+* mark RouterBridgeSupport as public API ([a29561c](https://github.com/middag-io/middag-php-moodle/commit/a29561cc50c335acadb2e67bacbe9eef7730b7d6))
+* name the Moodle versions the engines matrix installs ([7875699](https://github.com/middag-io/middag-php-moodle/commit/7875699f9b9f0c48a3e05972c51dc14946a65ce8))
+* point security reports to security@middag.io ([85cfad0](https://github.com/middag-io/middag-php-moodle/commit/85cfad0228eeae5028630f2a02a5764a043203d2))
+* state the engines the DbSupport SQL helpers are tested on ([4e7cc2e](https://github.com/middag-io/middag-php-moodle/commit/4e7cc2edca143fc43f902cf9b7a9af890be9f62b))
+* state the r.php limits the router bridge cannot lift ([b40f96d](https://github.com/middag-io/middag-php-moodle/commit/b40f96d74ce4cbe33154ae0d65ac1eea3bde4ed1))
+* translate the remaining Portuguese code comments to English ([11a6892](https://github.com/middag-io/middag-php-moodle/commit/11a68925b8c8e16b9f306a0af4dbb2563fe8c2ee))
+
 ## [1.17.2](https://github.com/middag-io/middag-php-moodle/compare/v1.17.1...v1.17.2) (2026-11-16)
 
 
