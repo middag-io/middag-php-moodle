@@ -3,7 +3,8 @@
 Claude Code and Codex read this file; there is no `CLAUDE.md` in this repository.
 
 Agent guide: conventions and gotchas for working on this repo. Contributor
-setup lives in `README.md` / `CONTRIBUTING.md`.
+setup lives in `README.md` / `CONTRIBUTING.md`. Architecture and reference live
+on [docs.middag.dev](https://docs.middag.dev/framework/reference/adapters/moodle/).
 
 ## What this package is
 
@@ -30,7 +31,7 @@ definitions (`Definition/`), and admin settings types (`Settings/`).
 | `Database/` | `MoodleConnectionAdapter`, `MoodleSqlDialect`, `TransactionManager` (+ local `Contract/`), `Schema/XmldbSchemaAdapter` |
 | `Definition/` | Declarative plugin definitions, all suffixed `*Definition` (Cache, Capability, Check, Event, FileArea, Hook, Message, Service, WebService) + `Contract/DefinitionInterface` |
 | `Domain/` | 16 host capability areas (Backup, Calendar, Completion, Context, Course, CustomField, Enrolment, Event, File, Grade, Group, Message, Platform, Role, Task, User): entities, DTOs, enums, services. Services implement local `*/Contract/` interfaces (host domain, not framework ports). `AbstractMoodleEntity` implements the framework `EntityInterface` |
-| `Exception/` | Adapter-specific exception hierarchy for configuration, transport, version and host failures |
+| `Exception/` | Adapter exceptions for configuration, transport, version and host failures; each extends the framework `MiddagInfrastructureException` (FW-010) |
 | `Filesystem/` | `MoodledataFilesystem` (framework `FilesystemInterface` → dataroot) |
 | `Form/` | `MformRenderer` (ui `FormRendererInterface` → mforms), `MformFieldMapper`, `MformElementSpec` |
 | `Hook/` | `AbstractExtendExtensions` (Moodle hook API base) |
@@ -113,9 +114,9 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 
 1. **Host paths: use `Kernel::hostDirectory()`**, which resolves the consumer
    plugin's directory through Moodle's component registry
-   (`core_component::get_component_directory()`). `Kernel::PROJECT_ROOT` is
-   `@deprecated` — as a Composer dependency it resolves inside `vendor/`, not
-   the consumer plugin. There are no package-relative monolith fallbacks.
+   (`core_component::get_component_directory()`). There is no package-relative
+   root and no monolith fallback: as a Composer dependency this package lives
+   inside `vendor/`, not the consumer plugin.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
    short name** (keys use the library's neutral default policy; a real
    product such as MIDDAG injects its own prefix explicitly, see MDL-011).
