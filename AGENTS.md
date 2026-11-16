@@ -207,14 +207,16 @@ stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `
 
 Managed by release-please from Conventional Commits merged to `main` (pull
 requests target `main`; there is no `develop` branch). **Never create git tags manually.** Versioning
-follows the `middag-php-*` version family policy: ADR-032 of the internal
-`docs-middag-ops` (amends ADR-003 for the libs), stated for this lib in [`API-STABILITY.md`](API-STABILITY.md).
+follows the `middag-php-*` version family rules on
+[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility),
+stated for this lib in [`API-STABILITY.md`](API-STABILITY.md#versioning).
 
-- The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
-- **On `1.x` (now):** `feat:` cuts a minor. A minor may carry a break, shipped
-  as `feat:` (never `fix:`, so never in a patch) — never `!` or a
+- The `1.x` line is pre-stable and unsupported: no compatibility promise, no
+  backports, no security fixes. The move to `2.0.0` is a clean cut.
+- **On `1.x` (now):** `fix:` cuts a patch, `feat:` cuts a minor. A break ships
+  as `feat:` (never `fix:`, `refactor:` or `chore:`) — never `!` or a
   `BREAKING CHANGE:` footer (release-please would cut `2.0.0` in this lib alone).
-- **From `2.0.0`:** the 8 `middag-php-*` libs share `MAJOR.MINOR`; patch is
+- **From `2.0.0`:** the `middag-php-*` libs share `MAJOR.MINOR`; patch is
   fix-only per lib; `feat:` waits for a family minor window; a break waits for
   a family major window after a deprecation (runtime notice) in an earlier
   minor. Family minor/major = a coordinated `Release-As: X.Y.0` in every lib.
@@ -224,10 +226,7 @@ follows the `middag-php-*` version family policy: ADR-032 of the internal
   against the organization variable `PHP_LIBS_OPEN_RELEASE` (empty = closed,
   `X.Y` = minor window, `X.0` = major window). A held PR stays open, kept
   current by merging `main` (never rebase/force-push); re-run the check when
-  the window opens. Do not add a `Release-As:` footer outside a window. A
-  window counts as open only when it is ahead of this lib's version; while one
-  is open, merge the Release PR only at the coordinated `X.Y.0`. After the
-  `2.0.0` cut, a PR opened before it must merge `main` in.
-- **Consumers** declare one `^2.N` for every `middag-io/*` sibling from `2.0.0`.
+  the window opens. Do not add a `Release-As:` footer outside a window.
+- **Consumers** require every `middag-io/*` sibling with the same `^2.N` from `2.0.0`.
 - Do not change `release-please-config.json` versioning or the sibling ranges in
   `composer.json` ahead of the cut; that is part of the coordinated `2.0.0` cut.

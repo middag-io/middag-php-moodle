@@ -68,33 +68,14 @@ must remain consumable on its own.
   Types: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`,
   `build`, `ci`, `revert`.
 - Keep pull requests focused. Update tests and docs alongside code.
-- Releases are automated by [release-please](https://github.com/googleapis/release-please)
-  from commits merged to `main`. Versioning follows the `middag-php-*` family
-  policy in this package's [API-STABILITY.md](API-STABILITY.md) (decided in
-  ADR-032 of the internal `docs-middag-ops`, mirrored
-  in the framework's
-  [API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)):
-  - The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
-  - **On `1.x`:** `feat:` cuts a minor. A minor may carry a break, shipped as
-    `feat:` (never `fix:`, so never in a patch). Never use `!` or a
-    `BREAKING CHANGE:` footer: that would cut `2.0.0` in this lib alone.
-  - **From `2.0.0`:** the libraries share `MAJOR.MINOR`. A patch carries fixes
-    only, a `feat:` waits for a family minor window, and a break waits for a
-    family major window after a deprecation in an earlier minor. The product
-    owner decides every family minor and major.
-  - **The check:** `php-version-family-check / check` reads the PR title and
-    every non-merge commit against the organization variable
-    `PHP_LIBS_OPEN_RELEASE` (empty = closed, `X.Y` = family minor window,
-    `X.0` = family major window). A held feature PR stays open and is kept
-    current by merging `main` into it (never rebase or force-push). Re-run the
-    check once the window opens. See
-    [API-STABILITY.md](API-STABILITY.md#the-version-family-check).
-
-> Historical note: `1.1.1` shipped the audit-consolidation breaking changes
-> (the batch-A renames, the framework Translation port replacing the local
-> interface, and the PDFTk adapter removal) as a patch by explicit maintainer
-> decision, closing the OSS audit before external consumers existed. The
-> policy above applies from that release onward.
+- Releases are cut **exclusively** by
+  [release-please](https://github.com/googleapis/release-please) from commits
+  merged to `main`, never by a manual tag. On `1.x`, `fix:` cuts a patch and
+  `feat:` cuts a minor; a break ships as `feat:`, never with `!` or a
+  `BREAKING CHANGE:` footer. Every PR runs the family-window check
+  `php-version-family-check / check`. The rules are in
+  [`API-STABILITY.md`](API-STABILITY.md#versioning) and on
+  [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
 
 ## Code of conduct
 
