@@ -2,11 +2,14 @@
 
 ## Supported versions
 
-This library is on the `1.x` release line, versioned per the `middag-php-*`
-family policy in [API-STABILITY.md](API-STABILITY.md) (mirrored in the
-framework's
-[API-STABILITY.md](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md)).
-The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
+The `1.x` line is pre-stable and unsupported: it gets no backports or security
+fixes, and the move to `2.0.0` is a clean cut.
+
+From `2.0.0` this library is part of the `middag-php-*` version family (see
+[`API-STABILITY.md`](API-STABILITY.md) and
+[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)).
+The latest family minor is supported. The last minor of the previous family
+major gets security fixes only, for 6 months after the next major ships.
 
 ## Reporting a vulnerability
 

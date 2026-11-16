@@ -40,7 +40,8 @@ role.
 | Database engines | PostgreSQL and MySQL, as supported by the Moodle version |
 
 The Moodle range follows upstream support. The `1.x` line is pre-stable and
-unsupported; support starts at `2.0.0` (see [API-STABILITY.md](API-STABILITY.md)).
+unsupported; support starts at `2.0.0` (see
+[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)).
 
 ## Installation
 
@@ -133,10 +134,23 @@ Types: feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert
 Releases are managed by [release-please](https://github.com/googleapis/release-please).
 Conventional commits merged to `main` open a Release PR automatically.
 
-This library is on `1.x`. From `2.0.0` it joins the `middag-php-*` version
-family: every library shares `MAJOR.MINOR`, a minor never breaks, and a consumer
-declares one `^2.N` range for all of them. See [API-STABILITY.md](API-STABILITY.md)
-for the policy and the version family check that every pull request passes.
+This library is on the pre-stable `1.x` line. From `2.0.0` it joins the
+`middag-php-*` version family: every library shares `MAJOR.MINOR`, a minor
+never breaks, and a consumer declares the same `^2.N` range for all of them.
+See [API-STABILITY.md](API-STABILITY.md#versioning) and
+[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
+
+## Help and status
+
+- **Status:** the `1.x` line is pre-stable and unsupported; support starts at
+  `2.0.0`. See
+  [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
+- **Documentation:** [Reference — Moodle Adapter](https://docs.middag.dev/framework/reference/adapters/moodle/)
+  on docs.middag.dev.
+- **Questions and bugs:** [GitHub issues](https://github.com/middag-io/middag-php-moodle/issues).
+- **Security reports:** see [`SECURITY.md`](SECURITY.md). Do not open a public
+  issue.
+- **Changes:** [`CHANGELOG.md`](CHANGELOG.md).
 
 ## License
 

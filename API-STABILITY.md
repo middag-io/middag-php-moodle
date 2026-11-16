@@ -1,9 +1,9 @@
 # API Stability
 
 This document defines what is public and supported in `middag-io/moodle`, and
-how the public surface may evolve on the current **`1.x`** line and from
-`2.0.0`, so consumers — the Moodle plugins built on top of the adapter, and any
-proprietary layer above it — can depend on it without guessing.
+how the public surface may evolve, so consumers — the Moodle plugins built on
+top of the adapter, and any proprietary layer above it — can depend on it
+without guessing.
 
 `middag-io/moodle` is a **host adapter**: it implements the host-bridge
 contracts defined by `middag-io/framework` (and consumes `middag-io/ui`) against
@@ -20,7 +20,7 @@ Every type carries a class-level annotation that states its stability:
 
 | Annotation | Meaning |
 |---|---|
-| `@api` | **Public, supported surface.** Consumer plugins may implement, extend, type-hint, instantiate and catch these. Changes follow the versioning policy below. |
+| `@api` | **Public, supported surface.** Consumer plugins may implement, extend, type-hint, instantiate and catch these. Changes follow [Versioning](#versioning). |
 | `@internal` | **Implementation detail.** May change or be removed in any release, including patches. Do not depend on these from outside the package. |
 
 If a type has neither annotation, treat it as `@internal`. Every type in `src/`
@@ -39,7 +39,7 @@ cleared field leaves the stored files in place); and the `WebService\AbstractExt
 external classes subclass.
 
 **Composition-root concretes are public too.** This adapter deliberately ships
-no container builder (D-FACADE-SEAM): whoever starts the kernel supplies its own
+no container builder: whoever starts the kernel supplies its own
 via `Runtime\ContainerFactory::setBuilder()`. A consumer therefore *has* to name
 the host-bridge concretes it registers or instantiates at boot, so those are
 `@api` — `Runtime\Kernel`, `Runtime\ContainerFactory`,
@@ -74,130 +74,66 @@ on the interface instead.
 wiring/convention helpers. `Middag\DevTools\Moodle\Statics` owns static
 `db/*.php` generation; it is not runtime API of this adapter.
 
-## How releases are cut
+## Versioning
 
-Releases are cut **exclusively** by
-[release-please](https://github.com/googleapis/release-please) from
-[Conventional Commits](https://www.conventionalcommits.org/). There are no
-manual tags. On `1.x` the version comes from the commit type (`fix:` → patch,
-`feat:` → minor). From `2.0.0`, commit types only produce patches, and a family
-minor or major comes from a coordinated `Release-As: X.Y.0` footer in every
-library of the family (see below).
+The support rules of the `middag-php-*` version family (lifecycle, what a
+patch, minor and major may carry, the supported surface and the compatibility
+matrix) are on
+[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
+The platform and the CI jobs, the family-window check included, are on
+[Platform](https://docs.middag.dev/libraries/reference/platform).
 
-The policy below is decided in ADR-032 of the internal `docs-middag-ops`
-(it amends ADR-003 for the `middag-php-*` libraries) and mirrored in
-the framework's
-[`API-STABILITY.md`](https://github.com/middag-io/middag-php-framework/blob/main/API-STABILITY.md).
+What applies in this repository:
 
-## The `1.x` policy (until the `2.0.0` cut)
-
-The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
-
-During the `1.x` line the API is **still consolidating**:
-
-- **Patch** (`1.y.Z`) — bug fixes and `@internal`-only changes. Never a breaking
-  `@api` change.
-- **Minor** (`1.Y.0`) — additive `@api` changes (new helpers, new optional
-  parameters, promoting an `@internal` symbol to `@api`), cut by release-please
-  from `feat:`. A minor may also carry a breaking `@api` change. The break
-  ships as `feat:` (so it cuts a minor, never a patch), so it still appears in
-  the CHANGELOG. It never ships as `fix:`, `refactor:` or `chore:`.
-- **Never** `!` before the colon or a `BREAKING CHANGE:` footer on `1.x`:
-  release-please would cut `2.0.0` in this library alone, and the
-  [version family check](#the-version-family-check) refuses it.
-
-There is no `1.x` major. The family crosses `2.0.0` together, on a date the
-product owner decides.
-
-## From `2.0.0`: the version family
-
-From `2.0.0`, all `middag-php-*` libraries (`framework`, `core`, `ui`,
-`moodle`, `wordpress`, `licensing`, `dev-tools`, `demo-standalone`) form one
-**version family**:
-
-- **Shared MAJOR.MINOR.** Every library carries the same `MAJOR.MINOR`; the
-  patch number is per library. A family minor or major goes out in every
-  library, changed or not.
-- **Patch** (`2.y.Z`) — fixes only (`fix:`). release-please never cuts a minor
-  or a major by itself.
-- **Minor** (`2.Y.0`) — new features, deprecations and new supported ranges.
-  **A minor never breaks.** A `feat:` waits on its pull request until the
-  product owner opens a family minor window.
-- **Major** (`X.0.0`) — breaking changes, each one deprecated first (with a
-  runtime notice) in an earlier minor. `!` or `BREAKING CHANGE:` is accepted
-  only while a family major window is open.
-- **Who decides.** The product owner decides each family minor (on a new Moodle
-  version to support, a MIDDAG release that needs a feature, a deprecation or a
-  new range, or a new Symfony minor) and every family major.
-
-## The version family check
-
-Every pull request runs the check `php-version-family-check / check`
-(`.github/workflows/family-window.yml`). It reads the pull request title and
-every non-merge commit (the header type, and any `BREAKING CHANGE:` or
-`BREAKING-CHANGE:` footer) against the window in the organization variable
-`PHP_LIBS_OPEN_RELEASE`, set and cleared on the order of the product owner. When
-it is empty the window is closed, `X.Y` with `Y > 0` opens a family minor
-window, and `X.0` opens a family major window. The `2.0.0` cut is window `2.0`.
-
-| Change | Passes when |
-|---|---|
-| `fix:`, `docs:`, `refactor:`, … | always |
-| `feat:` | this library is below `2.0.0` (on `1.x`), or a window is open |
-| `!` or a `BREAKING CHANGE:` footer | a family major window is open |
-| `Release-As:` footer | a window is open and the footer names its `X.Y.0` |
-
-To pass with a held feature, leave the pull request open and keep it current by
-merging `main` into it (never rebase or force-push). Once the window opens,
-re-run the check.
-
-- A window counts as open only when it is ahead of this library's current
-  version and the pull request targets `main`; a value left set after its
-  family release reads as closed.
-- While a window is open, this library's Release PR is merged only at the
-  coordinated `X.Y.0`.
-- A re-run reads the base of the original event. After the `2.0.0` cut, a pull
-  request opened before the cut must merge `main` into it so that the check
-  reads the new version.
-
-> Historical note: `1.1.1` shipped the audit-consolidation breaking changes (the
-> batch-A renames, the framework Translation port replacing the local interface,
-> and the PDFTk adapter removal) as a patch by explicit maintainer decision,
-> closing the OSS audit before external consumers existed. From this document on,
-> a breaking `@api` change never lands in a patch.
+- Releases are cut only by
+  [release-please](https://github.com/googleapis/release-please) from
+  [Conventional Commits](https://www.conventionalcommits.org/). There are no
+  manual tags.
+- **On `1.x`:** `fix:` cuts a patch and `feat:` cuts a minor. A break of the
+  `@api` surface ships as `feat:`, never as `fix:`, `refactor:` or `chore:`,
+  and never with `!` or a `BREAKING CHANGE:` footer (release-please would cut
+  `2.0.0` in this lib alone, and the family-window check refuses both). The
+  1.x line is pre-stable and unsupported, and the move to `2.0.0` is a clean
+  cut.
+- **From `2.0.0`:** every `middag-php-*` library shares `MAJOR.MINOR`. A patch
+  carries fixes only, a minor never breaks, and a major carries the breaks,
+  each one deprecated first in an earlier minor.
+- Every pull request runs the family-window check
+  `php-version-family-check / check` (`.github/workflows/family-window.yml`).
 
 ## The contracts this adapter fulfils
 
 The adapter does not define the host-bridge contracts — it implements the ones
-declared (and frozen) in `middag-io/framework`. Depend on the **framework**
+declared in `middag-io/framework`. Depend on the **framework**
 `@api` interface, not on the Moodle concrete:
 
-| Framework contract (`@api` in framework) | Moodle implementation (`@internal` here) |
-|---|---|
-| `ConnectionAdapterInterface` | `Middag\Moodle\Database\MoodleConnectionAdapter` |
-| `SqlDialectInterface` | `Middag\Moodle\Database\MoodleSqlDialect` |
-| `TranslatorInterface` | `Middag\Moodle\Translation\MoodleTranslator` |
-| `ConfigResolverInterface` | `Middag\Moodle\Config\MoodleConfigResolver` |
-| `UserContextResolverInterface` | `Middag\Moodle\Bus\MoodleUserContext` |
-| `MaintenanceGateInterface` | `Middag\Moodle\Runtime\MoodleMaintenanceGate` |
-| `BootstrapInterface` | `Middag\Moodle\Runtime\MoodleBootstrap` |
+| Framework contract (`@api` in framework) | Moodle implementation | Stability here |
+|---|---|---|
+| `ConnectionAdapterInterface` | `Middag\Moodle\Database\MoodleConnectionAdapter` | `@internal` |
+| `SqlDialectInterface` | `Middag\Moodle\Database\MoodleSqlDialect` | `@internal` |
+| `TranslatorInterface` | `Middag\Moodle\Translation\MoodleTranslator` | `@api` |
+| `ConfigResolverInterface` | `Middag\Moodle\Config\MoodleConfigResolver` | `@internal` |
+| `UserContextResolverInterface` | `Middag\Moodle\Bus\MoodleUserContext` | `@api` |
+| `MaintenanceGateInterface` | `Middag\Moodle\Runtime\MoodleMaintenanceGate` | `@internal` |
+| `BootstrapInterface` | `Middag\Moodle\Runtime\MoodleBootstrap` | `@internal` |
 
-The adapter also implements the framework's frozen bridge seams
+The adapter also implements the framework's bridge seams
 (`MoodleHostContext`, `MoodleHostEventBridge`, `MoodleComponentNameResolver`) and
 the native hookfile loader; the boot-time seams a consumer instantiates and
-registers (e.g. `MoodleHostContext`) are `@api`.
+registers (e.g. `MoodleHostContext`) are `@api`, by the same rule that makes
+the `@api` rows above public. Type-hint the framework contract; name the
+concrete only to wire it.
 
 ## Depending on `middag-io/moodle` safely
 
 - Depend only on `@api` types. If you need behaviour exposed only by an
   `@internal` symbol, open an issue to have it promoted rather than reaching in.
-- **On `1.x`:** pin a caret range (`^1.0`) and read the CHANGELOG entries
-  before crossing a minor; until the `2.0.0` cut a minor may carry a break (see
-  the `1.x` policy above).
-- **From `2.0.0`:** declare one family range (`^2.N`) for every `middag-io/*`
-  library you depend on (`moodle`, `framework`, `ui`, …). Minor upgrades
-  inside the range do not break.
-- **Zero-surprise upgrades:** pin a tilde patch range (for example `~1.2.2`) to
-  receive only patches.
+- **On `1.x`:** the line is pre-stable and unsupported. It carries no
+  compatibility promise, and a `1.x` minor may carry a break (see
+  [Versioning](#versioning)). Support starts at `2.0.0`, and the move from
+  `1.x` is a clean cut.
+- **From `2.0.0`:** declare one `^2.N` range, with the same `N`, for this
+  adapter and every other `middag-php-*` library you depend on (`moodle`,
+  `framework`, `ui`, …).
 - The dependency direction only points downward: the adapter depends on the OSS
   framework's and ui's published `@api` and never imports the proprietary layer.
