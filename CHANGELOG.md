@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.2](https://github.com/middag-io/middag-php-moodle/compare/v1.17.1...v1.17.2) (2026-11-16)
+
+
+### Documentation
+
+* list every [@api](https://github.com/api) type in API-STABILITY ([115aa34](https://github.com/middag-io/middag-php-moodle/commit/115aa34ffb67bf0f43567a403cf0e14b42897ac2))
+
 ## [1.17.1](https://github.com/middag-io/middag-php-moodle/compare/v1.17.0...v1.17.1) (2026-11-16)
 
 
