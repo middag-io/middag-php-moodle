@@ -27,9 +27,9 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * D-FACADE-SEAM proof (LB-MDL-FACADE-01): the facade mechanism is
+ * Facade-seam proof: the facade mechanism is
  * OSS-generic. A THIRD-PARTY plugin built on adapter + framework only —
- * no middag-io/core anywhere — supplies its own container builder through
+ * nothing from MIDDAG's proprietary core — supplies its own container builder through
  * the empty seam (ContainerFactory::setBuilder), registers its own service,
  * and its facade resolves end-to-end via Kernel::get() out of THAT
  * container (not a runtime-instance override).

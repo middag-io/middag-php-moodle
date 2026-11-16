@@ -17,7 +17,7 @@ use Middag\Moodle\Runtime\Facade\AbstractFacade;
 /**
  * Stand-in for a THIRD-PARTY plugin facade: extends the OSS adapter base and
  * points its accessor at a service the plugin itself registered in its own
- * container builder. No middag-io/core anywhere in the chain.
+ * container builder. Nothing from MIDDAG's proprietary core anywhere in the chain.
  *
  * @method static string greet(string $name)
  *

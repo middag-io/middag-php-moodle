@@ -38,7 +38,7 @@ The adapter declares its Composer dependencies with their normal namespaces, wit
 - (+) No build step is added to an OSS library.
 - (−) The winning copy depends on the consumer's bootstrap order, so a major gap can still surface in one hosting layout and not another.
 - (−) The checks are manual.
-- (+) The one package that did sit in `require` without a call site, `firebase/php-jwt`, is gone (middag-io/middag-php-framework#110): it was the clearest case of the clause above, since Moodle bundles a 6.x copy under the same namespace. The packages that do use it — `middag-io/core` and `middag-io/licensing` — require `^7.0` themselves, so nothing in the family resolved it through this adapter.
+- (+) The one package that did sit in `require` without a call site, `firebase/php-jwt`, is gone (middag-io/middag-php-framework#110): it was the clearest case of the clause above, since Moodle bundles a 6.x copy under the same namespace. The downstream proprietary packages that do use it require `^7.0` themselves, so nothing in the family resolved it through this adapter.
 
 ## Enforcement
 

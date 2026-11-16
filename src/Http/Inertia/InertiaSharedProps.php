@@ -35,8 +35,6 @@ use Throwable;
  * Called once during http_kernel boot.
  *
  * @internal
- *
- * @see ADR-807 ref/shell-and-navigation §3-4
  */
 class InertiaSharedProps
 {
@@ -73,7 +71,7 @@ class InertiaSharedProps
         // Flash — one-shot messages from session.
         InertiaManager::share('flash', fn (): ?array => self::buildFlash());
 
-        // Erros de validação do kernel, no formato que useForm().errors espera.
+        // Kernel validation errors, in the shape useForm().errors expects.
         InertiaManager::share('errors', fn (): array => self::buildErrors());
 
         // CSRF — the Moodle sesskey, under the name the @middag-io/react
@@ -95,7 +93,7 @@ class InertiaSharedProps
      * with drill-down support.
      *
      * Navigation items are registered by extensions during boot() via
-     * $this->navigation() (ADR-807). The registry singleton lives in the
+     * $this->navigation(). The registry singleton lives in the
      * DI container, bound by core_extension::register().
      *
      * @return array{tree: array, activeKey: string, footer: array}
@@ -191,7 +189,7 @@ class InertiaSharedProps
     /**
      * Build theme shared prop.
      *
-     * Delegates brand color resolution to ThemeSupport (Theme Bridge, ADR-807 ref-807-06 §3).
+     * Delegates brand color resolution to ThemeSupport (the theme bridge).
      *
      * @return array{strings: array, appearance: null|string, brandColor: null|string, inherit: bool}
      */
@@ -223,9 +221,9 @@ class InertiaSharedProps
     }
 
     /**
-     * Mensagens deixadas no FlashBag do framework, normalizadas para o mesmo
-     * formato do flash legado. Resolvido pelo container; se o FlashBag não
-     * estiver ligado, devolve vazio e o flash legado segue funcionando sozinho.
+     * Messages left in the framework FlashBag, normalised to the same shape
+     * as the legacy flash. Resolved from the container; when no FlashBag is
+     * wired, returns an empty array and the legacy flash keeps working alone.
      *
      * @return array<string, string>
      */
@@ -247,7 +245,7 @@ class InertiaSharedProps
     }
 
     /**
-     * Mapa campo => erros da última validação recusada.
+     * Map of field => errors from the last rejected validation.
      *
      * @return array<string, mixed>
      */
@@ -258,7 +256,7 @@ class InertiaSharedProps
         return $bag instanceof FlashBag ? $bag->pullErrors() : [];
     }
 
-    /** FlashBag do container, ou null quando não registrado. */
+    /** The container's FlashBag, or null when it is not registered. */
     private static function flashBag(): ?FlashBag
     {
         try {
@@ -270,7 +268,7 @@ class InertiaSharedProps
 
             return $bag instanceof FlashBag ? $bag : null;
         } catch (Throwable) {
-            // Boot parcial / CLI: sem container não há flash a drenar.
+            // Partial boot / CLI: without a container there is no flash to drain.
             return null;
         }
     }
@@ -284,12 +282,12 @@ class InertiaSharedProps
     {
         global $SESSION;
 
-        // Drena PRIMEIRO o FlashBag do framework. São dois stores distintos: o
-        // kernel escreve as recusas de domínio ali (createValidationResponse →
-        // 303 + mensagens) usando $_SESSION['_middag_flash'], enquanto os
-        // controllers legados usam $SESSION->middag_flash_*. Sem esta drenagem a
-        // mensagem era gravada num store e lida do outro — o usuário recebia a
-        // página de volta sem nenhuma explicação do porquê da recusa.
+        // Drain the framework FlashBag FIRST. There are two separate stores: the
+        // kernel writes domain rejections there (createValidationResponse ->
+        // 303 + messages) through $_SESSION['_middag_flash'], while legacy
+        // controllers use $SESSION->middag_flash_*. Without this drain the
+        // message was written to one store and read from the other, so the user
+        // got the page back with no explanation of why it was rejected.
         $flash = self::pullFrameworkFlash();
 
         if (!empty($SESSION->middag_flash_success)) {

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Middag\Moodle\Runtime;
 
 use Closure;
-use Middag\Moodle\Http\Routing\MoodleRouter;
+use Middag\Moodle\Http\Contract\RouterInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Throwable;
@@ -42,7 +42,7 @@ final class ContainerFactory
     private static ?ContainerBuilder $container = null;
 
     /**
-     * @var null|Closure(Kernel, MoodleRouter): ContainerBuilder product-supplied builder
+     * @var null|Closure(Kernel, RouterInterface): ContainerBuilder product-supplied builder
      */
     private static ?Closure $builder = null;
 
@@ -62,7 +62,7 @@ final class ContainerFactory
      * the fully-wired container. Keeping the closure here means the adapter never
      * names the non-OSS factory directly.
      *
-     * @param Closure(Kernel, MoodleRouter): ContainerBuilder $builder
+     * @param Closure(Kernel, RouterInterface): ContainerBuilder $builder
      */
     public static function setBuilder(Closure $builder): void
     {
@@ -72,12 +72,12 @@ final class ContainerFactory
     /**
      * Build (or return the cached) container for the given kernel + router.
      *
-     * @param Kernel       $kernel the kernel instance injected into the container
-     * @param MoodleRouter $router the router configured for annotation scanning
+     * @param Kernel          $kernel the kernel instance injected into the container
+     * @param RouterInterface $router the router configured for annotation scanning
      *
      * @throws RuntimeException when no builder has been registered by the product layer
      */
-    public static function getInstance(Kernel $kernel, MoodleRouter $router): ContainerBuilder
+    public static function getInstance(Kernel $kernel, RouterInterface $router): ContainerBuilder
     {
         if (self::$container instanceof ContainerBuilder) {
             return self::$container;

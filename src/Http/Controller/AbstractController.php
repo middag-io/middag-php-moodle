@@ -1077,7 +1077,7 @@ abstract class AbstractController implements MoodleControllerInterface
      * (`contextlevel`/`instanceid`), falling back to the class-wide values set
      * by {@see self::setRequireCapabilities()} and finally to SYSTEM. Requirements
      * that carry no resolvable capability key (definition-class-only, resolved by
-     * the host once LB-2-05 lands) are skipped rather than guessed.
+     * the host once host resolution lands) are skipped rather than guessed.
      *
      * @throws MiddagAuthorizationException
      */

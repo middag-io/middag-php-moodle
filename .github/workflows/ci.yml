@@ -19,8 +19,9 @@ jobs:
   # Released php-library-check component of middag-io/actions, called by its
   # major tag. One job per PHP version, with the platform pin (8.3.0) kept: the
   # static checks (composer validate, strict PSR-4, PHPStan on the canonical
-  # stubs, PHP-CS-Fixer and Rector) run on 8.3, the floor; the audit and the
-  # tests (unit + no-host) on every version. The tool caches live in .cache.
+  # stubs, PHP-CS-Fixer, Rector and the check:lint parse lint) run on 8.3, the
+  # floor; the audit and the tests (unit + no-host) on every version. The tool
+  # caches live in .cache.
   php-library-check:
     uses: middag-io/actions/.github/workflows/php-library-check.yml@php-library-check-v1
     permissions:
@@ -28,6 +29,7 @@ jobs:
     with:
       php-versions: '["8.3", "8.4", "8.5"]'
       tool-cache-paths: .cache
+      lint-script: check:lint
       audit-blocking-severities: critical, high
       timeout-minutes: 30
 
@@ -48,6 +50,8 @@ jobs:
         symfony/dependency-injection:8
         symfony/http-client:8
         symfony/http-foundation:8
+        symfony/messenger:8
+        symfony/psr-http-message-bridge:8
         symfony/routing:8
       composer-validate: false
       strict-psr: false

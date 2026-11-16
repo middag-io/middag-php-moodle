@@ -22,7 +22,7 @@ use Stringable;
  * Abstracts the core plugininfo structure into a serializable, immutable
  * representation for domain/services without leaking Moodle internals.
  *
- * @internal
+ * @api
  */
 final class PluginDto extends AbstractDto implements Stringable
 {

@@ -18,7 +18,7 @@ use Middag\Moodle\Settings\SettingsNamingPolicy;
 use ReflectionEnum;
 
 /**
- * Typed access to admin settings via canonical config keys (ADR-311).
+ * Typed access to admin settings via canonical config keys (MDL-011).
  *
  * Accepts a string-backed enum whose class name follows the convention
  * `{slug}_config` — the slug is extracted automatically to resolve the

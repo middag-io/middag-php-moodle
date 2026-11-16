@@ -55,7 +55,9 @@ the host-bridge concretes it registers or instantiates at boot, so those are
 `Runtime\MoodleHostContext`, `Runtime\Loader\MoodleHookfileLoader`,
 `Bus\MoodleAdhocTransport`, `Mail\MoodleMailer`, `Filesystem\MoodledataFilesystem`,
 `Hook\AbstractExtendExtensions`, `Shared\Enum\TextFormat`, `Shared\Util\Debug`,
-`Shared\Util\Environment`, `Settings\SettingsResolver` and
+`Shared\Util\Environment`, `Settings\SettingsResolver`,
+`Support\DiBridgeSupport` (the composition root lists the services it exports
+to Moodle's DI container with `registerExport()`) and
 `Http\Contract\RouterInterface`. Prefer the **framework** contract as the type in
 your own code — the concrete is public because you must *name* it when wiring,
 not because you should depend on its shape. (`SqlGenerator` is the exception that
@@ -75,11 +77,11 @@ internal HTTP / kernel / support plumbing — including `Http\Routing\MoodleRout
 which the kernel builds and hands out as `Http\Contract\RouterInterface`; depend
 on the interface instead.
 
-`Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder` and
-`Support\DiBridgeSupport` remain internal wiring/convention helpers.
-`Support\RouterBridgeSupport` is `@api`: route proxy classes call it to forward
-Moodle's native router requests to the kernel. `Middag\DevTools\Moodle\Statics` owns static
-`db/*.php` generation; it is not runtime API of this adapter.
+`Support\CrudConventionResolver` and `Support\TaskDefinitionBuilder` remain
+internal wiring/convention helpers. `Support\RouterBridgeSupport` is `@api`:
+route proxy classes call it to forward Moodle's native router requests to the
+kernel. Static `db/*.php` generation belongs to internal development tooling;
+it is not runtime API of this adapter.
 
 ## Versioning
 

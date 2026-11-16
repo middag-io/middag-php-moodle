@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Middag\Moodle\Settings\Enum;
 
 /**
- * Enumeration of supported setting types (ADR-312).
+ * Enumeration of supported setting types (MDL-011).
  *
  * Maps 1:1 to Moodle's native admin_setting_config* classes.
- * Types with a DSL class in this directory can be used in the typed settings DSL (ADR-311).
+ * Types with a DSL class in this directory can be used in the typed settings DSL (MDL-011).
  * Types without a DSL class are registered for schema metadata and future implementation.
  *
  * @api

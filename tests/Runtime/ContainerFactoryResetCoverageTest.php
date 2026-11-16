@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Tests\Runtime;
 
+use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Routing\MoodleRouter;
 use Middag\Moodle\Runtime\ContainerFactory;
 use Middag\Moodle\Runtime\Kernel;
@@ -54,7 +55,7 @@ final class ContainerFactoryResetCoverageTest extends TestCase
 
         $expected = new ContainerBuilder();
         ContainerFactory::setBuilder(
-            static function (Kernel $k, MoodleRouter $r) use (&$received, $expected): ContainerBuilder {
+            static function (Kernel $k, RouterInterface $r) use (&$received, $expected): ContainerBuilder {
                 $received = [$k, $r];
 
                 return $expected;

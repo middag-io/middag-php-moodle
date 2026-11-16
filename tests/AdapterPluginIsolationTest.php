@@ -23,10 +23,10 @@ use RecursiveIteratorIterator;
  *
  * The middag-io/moodle adapter is a generic, reusable Apache-2.0 Moodle package.
  * It must never reference the consumer plugin's namespace ({@code local_middag\...}),
- * the proprietary CORE/Licensing/DevTools namespaces, or hard-code product gold
- * tables. This test source-scans every adapter `src/` file so any regression fails
- * loudly (B2 — TEMP-PROMPT-023 product decouple). Uses source inspection rather
- * than class loading to avoid pulling in a full Moodle runtime.
+ * any MIDDAG namespace outside the OSS packages it builds on, or hard-code product
+ * gold tables. This test source-scans every adapter `src/` file so any regression
+ * fails loudly. Uses source inspection rather than class loading to avoid pulling
+ * in a full Moodle runtime.
  *
  * @internal
  */
@@ -35,20 +35,20 @@ final class AdapterPluginIsolationTest extends TestCase
 {
     private const string SRC_DIR = __DIR__ . '/../src';
 
-    /**
-     * Namespace prefixes the OSS adapter must never reference.
-     *
-     * These literals are intentional enforcement targets — the non-OSS MIDDAG
-     * and consumer-plugin namespaces this guard source-scans for. They are NOT
-     * dependencies of the adapter and exist only so a regression fails loudly;
-     * they are deliberately kept here (and out of the public docs) per the OSS
-     * boundary policy.
-     */
+    /** Consumer-plugin namespace prefixes the OSS adapter must never reference. */
     private const array FORBIDDEN_NAMESPACES = [
         'local_middag\\',
-        'Middag\Core\\',
-        'Middag\Licensing\\',
-        'Middag\DevTools\\',
+    ];
+
+    /**
+     * The only MIDDAG namespaces the adapter may reference: itself and the OSS
+     * packages it depends on. Any other `Middag\*` namespace is a non-OSS
+     * MIDDAG package and fails the guard.
+     */
+    private const array ALLOWED_MIDDAG_NAMESPACES = [
+        'Moodle',
+        'Framework',
+        'Ui',
     ];
 
     /** Gold-table string literals the adapter must not hard-code. */
@@ -72,6 +72,15 @@ final class AdapterPluginIsolationTest extends TestCase
                 $namespace,
                 $source,
                 sprintf('Adapter file must not reference %s — keep the adapter product-agnostic.', $namespace),
+            );
+        }
+
+        preg_match_all('/\bMiddag\\\+(\w+)\\\/', $source, $matches);
+        foreach (array_unique($matches[1]) as $namespace) {
+            self::assertContains(
+                $namespace,
+                self::ALLOWED_MIDDAG_NAMESPACES,
+                sprintf('Adapter file must not reference Middag\%s — only the OSS MIDDAG packages are allowed.', $namespace),
             );
         }
     }

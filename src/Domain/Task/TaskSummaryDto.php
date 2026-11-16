@@ -18,7 +18,7 @@ use stdClass;
 /**
  * Summary of adhoc tasks aggregated by component and classname.
  *
- * @internal
+ * @api
  */
 final class TaskSummaryDto extends AbstractDto
 {

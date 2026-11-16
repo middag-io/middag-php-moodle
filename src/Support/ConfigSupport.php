@@ -27,13 +27,13 @@ use Throwable;
  * enabled) and returns a predictable failure value. By design, config access
  * never propagates a host exception into caller flow.
  *
- * CONTRACT (amends QG-MDL-06): the mixed getters DO distinguish the two failure
+ * CONTRACT: the mixed getters DO distinguish the two failure
  * modes. Moodle's get_config() returns `false` for an absent key; the getters
  * normalise that to `null`, and reserve `false` for a genuine host read failure
  * (the Throwable path). So a single-key read yields the value when present,
  * `null` when the key was never set, and `false` only on error — letting a
  * caller safely write `ConfigSupport::get($k) ?? $default`. The boolean mutators
- * return `false` on failure. (The prior QG-MDL-06 rule collapsed both absent and
+ * return `false` on failure. (An earlier rule collapsed both absent and
  * error into `false`; it was superseded because the normalisation restores the
  * distinction its own consumers assumed via `?? default`.)
  *

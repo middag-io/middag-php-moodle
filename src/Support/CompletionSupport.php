@@ -44,8 +44,8 @@ use Throwable;
  *
  * @api
  *
- * @see ADR-201 Moodle boundary consolidation
- * @see ADR-203 Support layer pattern
+ * @see MDL-001 Moodle boundary consolidation
+ * @see MDL-003 Support layer pattern
  */
 class CompletionSupport
 {

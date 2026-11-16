@@ -78,7 +78,7 @@ class Kernel implements KernelInterface
     private array $runtimeInstances = [];
 
     /**
-     * Registry of extensions that failed during boot, keyed by slug (ADR-609).
+     * Registry of extensions that failed during boot, keyed by slug.
      *
      * @var array<string, array{exception: Throwable, distribution: string, message: string, timestamp: int}>
      */
@@ -133,7 +133,7 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * Register an extension that failed during boot (ADR-609).
+     * Register an extension that failed during boot.
      *
      * Called by loaders when a THIRD_PARTY/CUSTOM extension throws during
      * bootstrap or boot. Native/Pro extensions are not registered here
@@ -356,7 +356,7 @@ class Kernel implements KernelInterface
 
             return $dispatcher->dispatch($event);
         } catch (Throwable $throwable) {
-            // Re-throw or log based on criticality. ADR-701 (reactive model) + ADR-702 (failure isolation).
+            // Re-throw or log based on criticality (reactive model, failure isolation).
             throw new RuntimeException('Dispatch failed: ' . $throwable->getMessage(), 0, $throwable);
         }
     }
