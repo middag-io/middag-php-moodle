@@ -19,6 +19,8 @@ use Middag\Moodle\Shared\Util\Debug;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\FileBag;
 use Throwable;
 
 /**
@@ -56,6 +58,10 @@ final class RouterBridgeSupport
      * Path prefix of MIDDAG API routes in the framework router.
      */
     private const string API_PREFIX = '/api/';
+
+    private const string MEDIA_TYPE_URLENCODED = 'application/x-www-form-urlencoded';
+
+    private const string MEDIA_TYPE_MULTIPART = 'multipart/form-data';
 
     /**
      * Check if the Moodle native router is available.
@@ -185,7 +191,101 @@ final class RouterBridgeSupport
             $forwarded = $forwarded->withAttribute((string) $name, $value);
         }
 
-        return $forwarded;
+        return self::withRecoveredFormBody($forwarded);
+    }
+
+    /**
+     * Restore a form body Moodle's request validator emptied.
+     *
+     * The validator sets the parsed body to [] when the native route declares
+     * no body. A url-encoded form (any method, PUT and PATCH included) is then
+     * parsed again from the raw stream. A multipart POST has no raw stream to
+     * parse (PHP consumed it), so it falls back to $_POST and $_FILES, and only
+     * when they hold data. A non-empty parsed body is never replaced.
+     */
+    private static function withRecoveredFormBody(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $parsedBody = $request->getParsedBody();
+
+        if ($parsedBody !== null && $parsedBody !== []) {
+            return $request;
+        }
+
+        $mediaType = strtolower(trim(explode(';', $request->getHeaderLine('Content-Type'))[0]));
+
+        if ($mediaType === self::MEDIA_TYPE_URLENCODED) {
+            $body = $request->getBody();
+
+            if ($body->isSeekable()) {
+                $body->rewind();
+            }
+
+            $raw = $body->getContents();
+            parse_str($raw, $form);
+
+            return $request
+                ->withParsedBody($form)
+                ->withBody((new Psr17Factory())->createStream($raw));
+        }
+
+        if ($mediaType === self::MEDIA_TYPE_MULTIPART && $request->getMethod() === 'POST') {
+            if ($_POST !== []) {
+                $request = $request->withParsedBody($_POST);
+            }
+
+            if ($request->getUploadedFiles() === [] && $_FILES !== []) {
+                $request = $request->withUploadedFiles(self::uploadedFilesFromGlobals());
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * PSR-7 uploaded files built from $_FILES (nested field names included).
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function uploadedFilesFromGlobals(): array
+    {
+        return self::toPsrUploadedFiles((new FileBag($_FILES))->all(), new Psr17Factory());
+    }
+
+    /**
+     * @param array<array-key, mixed> $files
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function toPsrUploadedFiles(array $files, Psr17Factory $factory): array
+    {
+        $converted = [];
+
+        foreach ($files as $key => $file) {
+            if (\is_array($file)) {
+                $converted[$key] = self::toPsrUploadedFiles($file, $factory);
+
+                continue;
+            }
+
+            if (!$file instanceof UploadedFile) {
+                continue;
+            }
+
+            $path = $file->getPathname();
+            $stream = $file->getError() === UPLOAD_ERR_OK && is_file($path)
+                ? $factory->createStreamFromFile($path)
+                : $factory->createStream();
+
+            $converted[$key] = $factory->createUploadedFile(
+                $stream,
+                $file->getSize() ?: null,
+                $file->getError(),
+                $file->getClientOriginalName(),
+                $file->getClientMimeType(),
+            );
+        }
+
+        return $converted;
     }
 
     /**

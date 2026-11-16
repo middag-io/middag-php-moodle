@@ -65,10 +65,18 @@ final class RouterBridgeSupportProxyTest extends TestCase
     /** @var array<string, mixed> */
     private array $prevGet = [];
 
+    /** @var array<string, mixed> */
+    private array $prevPost = [];
+
+    /** @var array<string, mixed> */
+    private array $prevFiles = [];
+
     protected function setUp(): void
     {
         $this->prevServer = $_SERVER;
         $this->prevGet = $_GET;
+        $this->prevPost = $_POST;
+        $this->prevFiles = $_FILES;
         $this->psr17 = new Psr17Factory();
         Kernel::shutdown();
         $this->bootKernelWithTestRoutes();
@@ -79,6 +87,8 @@ final class RouterBridgeSupportProxyTest extends TestCase
         Kernel::shutdown();
         $_SERVER = $this->prevServer;
         $_GET = $this->prevGet;
+        $_POST = $this->prevPost;
+        $_FILES = $this->prevFiles;
         http_response_code(200);
     }
 
@@ -201,6 +211,95 @@ final class RouterBridgeSupportProxyTest extends TestCase
         self::assertSame(['MoodleSession' => 'sess-1', 'theme' => 'dark'], $echo['cookies']);
         self::assertSame('native.echo', $echo['attribute']);
         self::assertSame('203.0.113.9', $echo['client_ip']);
+    }
+
+    /**
+     * Moodle's request validator empties the parsed body of a route that
+     * declares no body; the raw form stream is still there.
+     */
+    #[Test]
+    #[DataProvider('formMethodProvider')]
+    public function parsesAUrlencodedFormBodyMoodleEmptied(string $method): void
+    {
+        $request = $this->slimRequest($method, 'echo')
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+            ->withBody($this->readStream('sesskey=abc&name=Ada+L&tags%5B%5D=x'))
+            ->withParsedBody([]);
+
+        $echo = $this->echo($this->proxy($request, 'echo'));
+
+        self::assertSame(['sesskey' => 'abc', 'name' => 'Ada L', 'tags' => ['x']], $echo['form']);
+        self::assertSame('sesskey=abc&name=Ada+L&tags%5B%5D=x', $echo['content']);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function formMethodProvider(): iterable
+    {
+        yield 'POST' => ['POST'];
+
+        yield 'PUT' => ['PUT'];
+
+        yield 'PATCH' => ['PATCH'];
+    }
+
+    #[Test]
+    public function fallsBackToPhpGlobalsForAMultipartPostMoodleEmptied(): void
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'mfmup');
+        self::assertIsString($tmp);
+        file_put_contents($tmp, 'file-bytes');
+        $_POST = ['sesskey' => 'abc', 'title' => 'Report'];
+        $_FILES = ['doc' => [
+            'name' => 'report.txt',
+            'type' => 'text/plain',
+            'tmp_name' => $tmp,
+            'error' => UPLOAD_ERR_OK,
+            'size' => 10,
+        ]];
+
+        $request = $this->slimRequest('POST', 'echo')
+            ->withHeader('Content-Type', 'multipart/form-data; boundary=x')
+            ->withParsedBody([]);
+
+        try {
+            $echo = $this->echo($this->proxy($request, 'echo'));
+        } finally {
+            @unlink($tmp);
+        }
+
+        self::assertSame(['sesskey' => 'abc', 'title' => 'Report'], $echo['form']);
+        self::assertSame(['doc' => 'report.txt'], $echo['files']);
+        self::assertSame(['doc' => 'file-bytes'], $echo['file_contents']);
+    }
+
+    #[Test]
+    public function leavesAnEmptyMultipartBodyAloneWhenPhpGlobalsAreEmpty(): void
+    {
+        $_POST = [];
+        $_FILES = [];
+        $request = $this->slimRequest('POST', 'echo')
+            ->withHeader('Content-Type', 'multipart/form-data; boundary=x')
+            ->withParsedBody([]);
+
+        $echo = $this->echo($this->proxy($request, 'echo'));
+
+        self::assertSame([], $echo['form']);
+        self::assertSame([], $echo['files']);
+    }
+
+    #[Test]
+    public function keepsAParsedBodyMoodleAlreadyProvided(): void
+    {
+        $_POST = ['from' => 'globals'];
+        $request = $this->slimRequest('POST', 'echo')
+            ->withHeader('Content-Type', 'multipart/form-data; boundary=x')
+            ->withParsedBody(['from' => 'request']);
+
+        $echo = $this->echo($this->proxy($request, 'echo'));
+
+        self::assertSame(['from' => 'request'], $echo['form']);
     }
 
     #[Test]
@@ -577,6 +676,17 @@ final class RouterBridgeSupportProxyTest extends TestCase
         };
     }
 
+    /**
+     * A body stream positioned at its end, as after a read by the host.
+     */
+    private function readStream(string $contents): StreamInterface
+    {
+        $stream = $this->psr17->createStream($contents);
+        $stream->getContents();
+
+        return $stream;
+    }
+
     private function binaryPayload(): string
     {
         return "\x00\x01\xFF\xFEbinary\r\n\x00tail";
@@ -651,9 +761,11 @@ final class RouterBridgeSupportProxyTest extends TestCase
             public function echo(Request $request): JsonResponse
             {
                 $files = [];
+                $fileContents = [];
 
                 foreach ($request->files->all() as $name => $file) {
                     $files[$name] = $file->getClientOriginalName();
+                    $fileContents[$name] = (string) file_get_contents($file->getPathname());
                 }
 
                 return new JsonResponse([
@@ -669,6 +781,7 @@ final class RouterBridgeSupportProxyTest extends TestCase
                     'attribute' => $request->attributes->get('route_name'),
                     'client_ip' => $request->getClientIp(),
                     'files' => $files,
+                    'file_contents' => $fileContents,
                 ]);
             }
 
