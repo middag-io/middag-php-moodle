@@ -88,22 +88,20 @@ the framework's
 
 ## The `1.x` policy (until the `2.0.0` cut)
 
+The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
+
 During the `1.x` line the API is **still consolidating**:
 
 - **Patch** (`1.y.Z`) — bug fixes and `@internal`-only changes. Never a breaking
   `@api` change.
 - **Minor** (`1.Y.0`) — additive `@api` changes (new helpers, new optional
   parameters, promoting an `@internal` symbol to `@api`), cut by release-please
-  from `feat:`. Until **2026-11-30** a minor may also carry a breaking `@api`
-  change, under a recorded exception that ends on that date and is not renewed.
-  The break ships as `feat:` (so it cuts a minor, never a patch) with the break
-  and the migration described in the commit body, so it still appears in the
-  CHANGELOG. It never ships as `fix:`, `refactor:` or `chore:`.
+  from `feat:`. A minor may also carry a breaking `@api` change. The break
+  ships as `feat:` (so it cuts a minor, never a patch), so it still appears in
+  the CHANGELOG. It never ships as `fix:`, `refactor:` or `chore:`.
 - **Never** `!` before the colon or a `BREAKING CHANGE:` footer on `1.x`:
   release-please would cut `2.0.0` in this library alone, and the
   [version family check](#the-version-family-check) refuses it.
-- **From 2026-12-01**, if the family has not reached `2.0.0`, no break lands on
-  `1.x`: the line is frozen to non-breaking changes until the cut.
 
 There is no `1.x` major. The family crosses `2.0.0` together, on a date the
 product owner decides.
@@ -128,8 +126,6 @@ From `2.0.0`, all `middag-php-*` libraries (`framework`, `core`, `ui`,
 - **Who decides.** The product owner decides each family minor (on a new Moodle
   version to support, a MIDDAG release that needs a feature, a deprecation or a
   new range, or a new Symfony minor) and every family major.
-- **Previous major.** The last minor of the previous major gets security fixes
-  only, for 6 months after the next major ships.
 
 ## The version family check
 
@@ -193,8 +189,8 @@ registers (e.g. `MoodleHostContext`) are `@api`.
 - Depend only on `@api` types. If you need behaviour exposed only by an
   `@internal` symbol, open an issue to have it promoted rather than reaching in.
 - **On `1.x`:** pin a caret range (`^1.0`) and read the CHANGELOG entries
-  before crossing a minor; until the `2.0.0` cut a minor may carry a described
-  break (see the `1.x` policy above).
+  before crossing a minor; until the `2.0.0` cut a minor may carry a break (see
+  the `1.x` policy above).
 - **From `2.0.0`:** declare one family range (`^2.N`) for every `middag-io/*`
   library you depend on (`moodle`, `framework`, `ui`, …). Minor upgrades
   inside the range do not break.

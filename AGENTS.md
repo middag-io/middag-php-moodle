@@ -209,10 +209,10 @@ requests target `main`; there is no `develop` branch). **Never create git tags m
 follows the `middag-php-*` version family policy: ADR-032 of the internal
 `docs-middag-ops` (amends ADR-003 for the libs), stated for this lib in [`API-STABILITY.md`](API-STABILITY.md).
 
-- **On `1.x` (now):** `feat:` cuts a minor. Until 2026-11-30 a minor may carry a
-  break, shipped as `feat:` (never `fix:`, so never in a patch) with the break
-  and migration in the commit body — never `!` or a `BREAKING CHANGE:` footer (release-please would cut
-  `2.0.0` in this lib alone). From 2026-12-01 no break lands on `1.x`.
+- The 1.x line is pre-stable and unsupported: it gets no backports or security fixes, and the move to 2.0.0 is a clean cut.
+- **On `1.x` (now):** `feat:` cuts a minor. A minor may carry a break, shipped
+  as `feat:` (never `fix:`, so never in a patch) — never `!` or a
+  `BREAKING CHANGE:` footer (release-please would cut `2.0.0` in this lib alone).
 - **From `2.0.0`:** the 8 `middag-php-*` libs share `MAJOR.MINOR`; patch is
   fix-only per lib; `feat:` waits for a family minor window; a break waits for
   a family major window after a deprecation (runtime notice) in an earlier
