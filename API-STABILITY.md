@@ -75,9 +75,10 @@ internal HTTP / kernel / support plumbing — including `Http\Routing\MoodleRout
 which the kernel builds and hands out as `Http\Contract\RouterInterface`; depend
 on the interface instead.
 
-`Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder`,
-`Support\DiBridgeSupport`, and `Support\RouterBridgeSupport` remain internal
-wiring/convention helpers. `Middag\DevTools\Moodle\Statics` owns static
+`Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder` and
+`Support\DiBridgeSupport` remain internal wiring/convention helpers.
+`Support\RouterBridgeSupport` is `@api`: route proxy classes call it to forward
+Moodle's native router requests to the kernel. `Middag\DevTools\Moodle\Statics` owns static
 `db/*.php` generation; it is not runtime API of this adapter.
 
 ## Versioning

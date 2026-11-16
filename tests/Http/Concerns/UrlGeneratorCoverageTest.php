@@ -140,7 +140,7 @@ final class UrlGeneratorCoverageTest extends TestCase
      * Inject a pre-booted Kernel singleton whose router records generateUrl()
      * calls and returns whatever $generate yields, then return that router for
      * assertions. Mirrors the reflection recipe in
-     * tests/Support/RouterBridgeSupportCoverageTest.php::bootInjectedKernel.
+     * tests/Support/RouterBridgeSupportProxyTest.php::bootKernelWithTestRoutes.
      */
     private function bootKernelWithRouter(callable $generate): object
     {

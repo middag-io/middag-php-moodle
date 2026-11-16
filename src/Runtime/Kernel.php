@@ -28,6 +28,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -282,7 +283,8 @@ class Kernel implements KernelInterface
      * Same dispatch path as {@see self::handle()}, but for callers that own their own
      * response pipeline (e.g. a native host router proxying into MIDDAG) and need the
      * PSR-7 response object back rather than headers/body sent to the current output
-     * buffer. See {@see RouterBridgeSupport::proxyRequest()}.
+     * buffer. A caller that already holds a PSR-7 request uses
+     * {@see self::handleRequest()} instead.
      *
      * @param null|string $base_url Override the base URL (e.g. '/local/yourplugin/index.php').
      *                              Null uses the default MIDDAG entry point.
@@ -313,6 +315,28 @@ class Kernel implements KernelInterface
         return self::$instance->httpKernel->handle(
             $psrFactory->createRequest(Request::createFromGlobals())
         );
+    }
+
+    /**
+     * Dispatch a given PSR-7 server request and return the response.
+     *
+     * Same dispatch path as {@see self::handleReturning()}, but the request comes
+     * from the caller instead of PHP globals. Meant for callers that already hold
+     * a PSR-7 request, such as a host router forwarding into MIDDAG (see
+     * {@see RouterBridgeSupport::proxyRequest()}). The framework router matches
+     * the request's path info, so the caller shapes the URI and server params.
+     *
+     * @throws RuntimeException when the kernel cannot boot or is not wired
+     */
+    public static function handleRequest(ServerRequestInterface $request): ResponseInterface
+    {
+        self::ensureBooted();
+
+        if (!self::$instance->httpKernel instanceof MoodleHttpKernel) {
+            throw new RuntimeException('Kernel components (HttpKernel or Router) not initialized correctly.');
+        }
+
+        return self::$instance->httpKernel->handle($request);
     }
 
     /**
