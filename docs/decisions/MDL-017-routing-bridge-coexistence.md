@@ -2,7 +2,7 @@
 title: "The framework router is primary; Moodle's native router only gets proxies"
 status: accepted
 date: 2026-04-08
-last-updated: 2026-11-04
+last-updated: 2026-11-16
 lang: en
 domains: [routing]
 deciders: [leadership]
@@ -37,12 +37,13 @@ Every controller is routed by the framework router through the adapter's HTTP ke
 - (+) On Moodle 5.1+ the consumer's API can appear in Moodle's native route and OpenAPI listings.
 - (−) A request through the native router passes through two routing layers.
 - (−) The native proxy class `MiddagProxy` is still inert. The adapter has not adopted `core\router\route_controller`, which Moodle core already ships, and the 5.1 gate may be stale.
-- (−) The forwarding path is covered by tests with stubs, not against a real Moodle 5.1 router.
+- (+) Forwarding carries the whole request (method, query, headers, cookies, body, uploaded files, attributes) and relays the whole response (status, every header value, body). Round-trip tests drive real PSR-7 objects through the real kernel.
+- (−) Forwarding is not yet tested against a real Moodle 5.1 router.
 
 ## Enforcement
 
 | Decision clause | Verification | State |
 |---|---|---|
-| The bridge is off below 5.1, and forwarding relays the kernel's response | test `tests/Support/RouterBridgeSupportCoverageTest.php` | coded |
-| Component-by-component maturity of the bridge | doc `docs-middag-dev:docs/framework/reference/adapters/moodle/routing-bridge-maturity.md` | coded |
+| The bridge is off below 5.1 | test `tests/Support/RouterBridgeSupportCoverageTest.php` | coded |
+| Forwarding keeps the full request and the full response | test `tests/Support/RouterBridgeSupportProxyTest.php` | coded |
 | Forwarding verified against a real Moodle 5.1 router | integration test | planned |
