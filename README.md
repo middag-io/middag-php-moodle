@@ -37,7 +37,13 @@ role.
 | Symfony | `^7.4 \|\| ^8.1` for every Symfony component it requires (the contracts keep their own ranges) |
 | Sibling libraries | `middag-io/framework` `^1.20` and `middag-io/ui` `^1.8` |
 | Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.3 and 8.4); 5.0 as best effort, with no support promise |
-| Database engines | PostgreSQL and MySQL, as supported by the Moodle version |
+| Database engines | PostgreSQL, MySQL and MariaDB, as supported by the Moodle version |
+
+The `DbSupport` `sql*` helpers are tested against real databases: the
+[Engines workflow](.github/workflows/engines.yml) installs Moodle 4.5, 5.1, 5.2
+and 5.3 on PostgreSQL, MySQL and MariaDB and executes the SQL of every helper
+([`tests/Integration/Engine`](tests/Integration/Engine)). SQL Server is not
+tested. Oracle is not tested yet.
 
 The Moodle range follows upstream support. The `1.x` line is pre-stable and
 unsupported; support starts at `2.0.0` (see
