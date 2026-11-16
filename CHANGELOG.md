@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.17.0](https://github.com/middag-io/middag-php-moodle/compare/v1.16.1...v1.17.0) (2026-11-16)
+
+
+### Features
+
+* **deps:** drop the unused firebase/php-jwt requirement ([eb30618](https://github.com/middag-io/middag-php-moodle/commit/eb30618ee02a5dffeab99abd71aca26f61bd8c62))
+* **deps:** remover o firebase/php-jwt não usado (framework[#110](https://github.com/middag-io/middag-php-moodle/issues/110)) ([d5ce3a8](https://github.com/middag-io/middag-php-moodle/commit/d5ce3a8453423bd5f7634f1e881f3d6319076d8c))
+* **form:** map the FileValue upload token to the Moodle draft area ([5c03ba3](https://github.com/middag-io/middag-php-moodle/commit/5c03ba3befd77eead7b33ee1d6c09188b07f0a1c))
+* PHP 8.3 platform, framework exception family and the upload token mapping ([0fd66e5](https://github.com/middag-io/middag-php-moodle/commit/0fd66e596938f3d6b199b27ad3f3b2c0c26cdaf8))
+
+
+### Bug Fixes
+
+* **file:** load filelib before the draft area calls ([ae84f52](https://github.com/middag-io/middag-php-moodle/commit/ae84f5249bfdad3ee9166507bb98e348ce53ad56))
+* **form:** keep only the submitted files when saving a draft area ([b99a59d](https://github.com/middag-io/middag-php-moodle/commit/b99a59dbc53ec4d597fb3dadc7cd637bc350643c))
+* **http:** read the error page debug output without Request::get() ([36c17a6](https://github.com/middag-io/middag-php-moodle/commit/36c17a64d486acbf52a953f052ad2daa065adfca))
+
+
+### Refactoring
+
+* apply the PHP 8.3 Rector set ([f01fc98](https://github.com/middag-io/middag-php-moodle/commit/f01fc98f2d3629843b5ae1e62ebe46fd341e7401))
+* **exception:** re-parent the adapter exceptions onto the framework family ([5acaae4](https://github.com/middag-io/middag-php-moodle/commit/5acaae422e081daa4f5a67cbb2fb7aed31832456)), closes [#86](https://github.com/middag-io/middag-php-moodle/issues/86)
+* **settings:** remove the static SettingsResolver::resolveConfigKey() ([62af2c3](https://github.com/middag-io/middag-php-moodle/commit/62af2c352a55d6b19d7d8798d542cb6733d7cc4e)), closes [#87](https://github.com/middag-io/middag-php-moodle/issues/87)
+
+
+### Documentation
+
+* **db:** state the supported engines on the SQL helpers ([32676fb](https://github.com/middag-io/middag-php-moodle/commit/32676fb2c055a1f26d65848f71b7413e499a46c5)), closes [#65](https://github.com/middag-io/middag-php-moodle/issues/65)
+* drop pre-v2 deadline text and UPGRADING.md ([89cef44](https://github.com/middag-io/middag-php-moodle/commit/89cef442399f0854292b665d3b6b4da4e226c54d))
+* drop pre-v2 deadline text and UPGRADING.md ([b2a911f](https://github.com/middag-io/middag-php-moodle/commit/b2a911f725be9675ce7ed49060c68d063e395c5b))
+* **routing:** point the proxy docblocks at MDL-017 ([5ce5315](https://github.com/middag-io/middag-php-moodle/commit/5ce531508258425697f8c98861d2163b220e33f0)), closes [#88](https://github.com/middag-io/middag-php-moodle/issues/88) [#66](https://github.com/middag-io/middag-php-moodle/issues/66)
+* state the middag-io/ui ^1.8 constraint in AGENTS.md ([7a31b06](https://github.com/middag-io/middag-php-moodle/commit/7a31b06cbbec717b2f7d1c6c6171a59e7fe7aed5))
+* state the supported platform and point to the hub ([704e615](https://github.com/middag-io/middag-php-moodle/commit/704e615d7f10095ee48ab9e6053c2476c7123f4c))
+
 ## [1.16.1](https://github.com/middag-io/middag-php-moodle/compare/v1.16.0...v1.16.1) (2026-11-13)
 
 
