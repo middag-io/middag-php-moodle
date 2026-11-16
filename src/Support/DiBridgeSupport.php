@@ -20,11 +20,11 @@ use Throwable;
  *
  * Listens to \core\hook\di_configuration and registers selected @api services
  * from the framework container into Moodle's DI. This enables:
- * - Moodle-native route controllers (ADR-206) to inject MIDDAG services
+ * - Moodle-native route controllers (MDL-017) to inject MIDDAG services
  * - External plugins to consume MIDDAG services via \core\di::get()
  *
- * Only services classified as @api (ADR-901 Group A) are exposed.
- * The framework container (ADR-601) is not altered.
+ * Only services classified as @api are exposed (MDL-006).
+ * The framework container is not altered.
  *
  * References Moodle DI classes (\core\di, \core\hook\di_configuration) via
  * strings only, never via use statements or docblock @see tags (php-cs-fixer

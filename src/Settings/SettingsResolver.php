@@ -39,7 +39,7 @@ class SettingsResolver
      * Resolve a setting name to its canonical config key under this
      * resolver's naming policy.
      *
-     * Convention: {prefix}{extension}_{name} (ADR-311).
+     * Convention: {prefix}{extension}_{name} (MDL-011).
      *
      * @param string $name      the raw setting name declared in the typed DSL
      * @param string $extension the extension slug (e.g. "core", "ecommerce")

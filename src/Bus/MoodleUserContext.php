@@ -22,7 +22,7 @@ use Middag\Framework\Bus\Contract\UserContextResolverInterface;
  *
  * Public surface: the consumer's composition root registers this concrete for
  * the framework `UserContextResolverInterface` — the adapter ships no container
- * builder by design (D-FACADE-SEAM), so whoever boots the kernel names the class.
+ * builder by design, so whoever boots the kernel names the class.
  *
  * @api
  */

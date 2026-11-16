@@ -22,7 +22,7 @@ use RecursiveIteratorIterator;
 use ReflectionEnum;
 
 /**
- * Architecture guard (LB-ENUM-01, D-ENUM-CASING): every enum case in src/
+ * Architecture guard: every enum case in src/
  * MUST be strict PascalCase (PER-CS 2.0) — starts uppercase, alphanumeric
  * only, and contains at least one lowercase letter (rejects ALLCAPS such as
  * `TEXT`/`NA` as well as snake_case and lowercase names). Backed values are

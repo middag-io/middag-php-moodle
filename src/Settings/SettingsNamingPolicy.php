@@ -15,12 +15,12 @@ namespace Middag\Moodle\Settings;
 /**
  * Naming policy for host-facing config keys.
  *
- * The canonical key shape is `{prefix}{extension}_{name}` (ADR-311). This is
+ * The canonical key shape is `{prefix}{extension}_{name}` (MDL-011). This is
  * an OSS, brand-agnostic library, so the shipped default is a neutral,
  * unbranded prefix — it only marks a key as "produced by an unconfigured
  * consumer of this policy", never any specific product's identity. A real
- * product built on this adapter (e.g. the MIDDAG product, via
- * `middag-io/core`) injects its own real prefix explicitly at its
+ * product built on this adapter (e.g. the MIDDAG product, via MIDDAG's
+ * proprietary core) injects its own real prefix explicitly at its
  * composition root; a third-party plugin sharing the same Moodle host does
  * the same with its own policy (e.g. `new SettingsNamingPolicy('clientx_')`)
  * into {@see SettingsResolver} / the settings supports so its config keys

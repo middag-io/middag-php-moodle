@@ -120,7 +120,7 @@ abstract class AbstractBlock
         if (!class_exists(Widget::class)) {
             // @codeCoverageIgnoreStart — Widget is this library's own class and
             // is always autoloadable inside the suite; the guard only matters
-            // for hosts with a broken installation (R-05).
+            // for hosts with a broken installation.
             return ''; // Fail silently or log error if widget class is missing
             // @codeCoverageIgnoreEnd
         }

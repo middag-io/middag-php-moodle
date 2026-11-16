@@ -337,7 +337,7 @@ final class AbstractControllerCoverageTest extends TestCase
         $controller = $this->makeController(new Request(), $this->makeContainer([CapabilityInterface::class => $cap]));
 
         // A definition-class-only requirement carries no resolvable key yet
-        // (host resolution lands in LB-2-05); it is skipped, not guessed.
+        // (host resolution is not implemented yet); it is skipped, not guessed.
         $controller->setRequireCapabilityRequirements([
             new CapabilityRequirement(definitionClass: FakeCapabilityDefinition::class),
             new CapabilityRequirement(reference: new CapabilityReference('cap/real')),

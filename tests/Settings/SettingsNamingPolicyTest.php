@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The naming policy is the host-extensibility seam of LB-HOST-EXT-01: the
+ * The naming policy is the host-extensibility seam (MDL-011): the
  * library's neutral default keeps producing mdglib_* keys, while a client
  * plugin (or a real product like MIDDAG, via its own composition root) on
  * the same Moodle host injects its own prefix and gets non-colliding keys —

@@ -29,7 +29,7 @@ use Middag\Ui\Shared\ValueObject\RendererOutput;
 use moodleform;
 
 /**
- * Moodle-native (mform) form renderer adapter (ADR-805).
+ * Moodle-native (mform) form renderer adapter.
  *
  * Iterates the form schema, delegates field mapping to MformFieldMapper,
  * builds an anonymous moodleform subclass, captures its HTML output and

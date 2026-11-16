@@ -35,8 +35,6 @@ use Throwable;
  * Called once during http_kernel boot.
  *
  * @internal
- *
- * @see ADR-807 ref/shell-and-navigation §3-4
  */
 class InertiaSharedProps
 {
@@ -95,7 +93,7 @@ class InertiaSharedProps
      * with drill-down support.
      *
      * Navigation items are registered by extensions during boot() via
-     * $this->navigation() (ADR-807). The registry singleton lives in the
+     * $this->navigation(). The registry singleton lives in the
      * DI container, bound by core_extension::register().
      *
      * @return array{tree: array, activeKey: string, footer: array}
@@ -191,7 +189,7 @@ class InertiaSharedProps
     /**
      * Build theme shared prop.
      *
-     * Delegates brand color resolution to ThemeSupport (Theme Bridge, ADR-807 ref-807-06 §3).
+     * Delegates brand color resolution to ThemeSupport (the theme bridge).
      *
      * @return array{strings: array, appearance: null|string, brandColor: null|string, inherit: bool}
      */

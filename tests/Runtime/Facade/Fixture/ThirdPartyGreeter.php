@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Middag\Moodle\Tests\Runtime\Facade\Fixture;
 
 /**
- * Stand-in for a THIRD-PARTY plugin service: plain class, no middag-io/core
- * dependency — only what the adapter + framework already provide.
+ * Stand-in for a THIRD-PARTY plugin service: plain class, no dependency on
+ * MIDDAG's proprietary core — only what the adapter + framework already provide.
  *
  * @internal
  */

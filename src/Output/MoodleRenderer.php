@@ -19,7 +19,7 @@ use core\output\plugin_renderer_base;
  *
  * Plugin extension renderers (e.g. `{component}\output\extensions`) extend
  * this class rather than `plugin_renderer_base` directly. Provides the
- * canonical Mustache rendering entrypoint (ADR-803) and any shared rendering
+ * canonical Mustache rendering entrypoint and any shared rendering
  * helpers needed across extensions.
  *
  * @api

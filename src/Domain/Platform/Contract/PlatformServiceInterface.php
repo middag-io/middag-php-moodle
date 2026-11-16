@@ -20,7 +20,7 @@ use Middag\Moodle\Domain\Platform\PluginDto;
  *
  * Composes version_support + check_support + plugin_support into a single API
  * for version-gated feature decisions. Core to the framework's promise:
- * "don't worry about Moodle updates" (ADR-103).
+ * "don't worry about Moodle updates".
  *
  * @api
  */

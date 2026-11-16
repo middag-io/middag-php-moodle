@@ -7,7 +7,7 @@ lang: en
 domains: [adapters, boundary, runtime]
 deciders: [leadership]
 decision: 'Only this OSS adapter calls Moodle APIs; it implements framework ports and ships no identity or composition root.'
-related: [MDL-002, MDL-003, MDL-006, MDL-011, MDL-016, MDL-017, MDL-020, middag-php-framework:FW-011, middag-php-framework:FW-015, middag-php-framework:FW-016, middag-php-wordpress:WP-002, docs-middag-ops:ADR-020]
+related: [MDL-002, MDL-003, MDL-006, MDL-011, MDL-016, MDL-017, MDL-020, middag-php-framework:FW-011, middag-php-framework:FW-015, middag-php-framework:FW-016, middag-php-wordpress:WP-002]
 supersedes: []
 superseded_by: null
 enforced_by:
@@ -30,7 +30,7 @@ Products that run inside Moodle need its database, capabilities, files, tasks, e
 
 ## Decision
 
-Moodle coupling lives in this package and nowhere else. The adapter implements the framework ports on top of Moodle's runtime APIs, and nothing in it names a proprietary MIDDAG namespace or product data. It is component-agnostic: the consumer plugin configures its frankenstyle component and supplies the container builder at boot, so the adapter has no product identity and no composition root of its own. Concerns that need governance (licensing, entitlement, product data) live in downstream proprietary packages that extend this adapter, never the other way round.
+Moodle coupling lives in this package and nowhere else. The adapter implements the framework ports on top of Moodle's runtime APIs, and nothing in it names a proprietary MIDDAG namespace or product data. It is component-agnostic: the consumer plugin configures its frankenstyle component and supplies the container builder at boot, so the adapter has no product identity and no composition root of its own. Concerns that need governance (entitlement, product data) live in downstream proprietary packages that extend this adapter, never the other way round.
 
 Moodle's mandatory plugin APIs (privacy, backup and restore, file serving, navigation, `lib.php` callbacks) are thin adapters here: they translate Moodle's contract and delegate, and they carry no business logic. The bridge between the SPA page protocol and the Moodle page and theme is a host adapter here as well.
 

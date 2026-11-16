@@ -154,7 +154,7 @@ trait InteractsWithAuth
      * Context level and instance ID come from the requirement's `options`
      * (`contextlevel`/`instanceid`), falling back to the class-wide values and
      * finally to SYSTEM. Requirements with no resolvable capability key
-     * (definition-class-only, resolved by the host once LB-2-05 lands) are skipped.
+     * (definition-class-only, resolved by the host once host resolution lands) are skipped.
      *
      * @throws MiddagAuthorizationException
      */

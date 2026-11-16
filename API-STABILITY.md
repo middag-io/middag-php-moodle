@@ -78,8 +78,9 @@ which the kernel builds and hands out as `Http\Contract\RouterInterface`; depend
 on the interface instead.
 
 `Support\CrudConventionResolver`, `Support\TaskDefinitionBuilder` and
-`Support\RouterBridgeSupport` remain internal wiring/convention helpers. `Middag\DevTools\Moodle\Statics` owns static
-`db/*.php` generation; it is not runtime API of this adapter.
+`Support\RouterBridgeSupport` remain internal wiring/convention helpers. Static
+`db/*.php` generation belongs to internal development tooling; it is not
+runtime API of this adapter.
 
 ## Versioning
 

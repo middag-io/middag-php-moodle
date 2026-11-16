@@ -302,7 +302,7 @@ if (!class_exists('core_competency\api', false)) {
             // ACTION_COMPLETE (2) or ACTION_OVERRIDE (3). Any other value hits
             // the default arm of the real switch and throws, so guard here too
             // — otherwise a wrong CompetencySupport::ACTION_* constant would
-            // pass false-green (LB-MDL-SUP-004).
+            // pass false-green.
             $action = $args[3] ?? null;
             if (!in_array($action, [0, 2, 3], true)) {
                 throw new \RuntimeException("Unexpected action parameter when registering an evidence.");

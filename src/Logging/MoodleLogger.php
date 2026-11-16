@@ -31,7 +31,7 @@ use Throwable;
  * The error_log() fallback ensures that critical failures (boot errors,
  * infrastructure failures) are never silently lost in production where
  * Moodle's debug mode is typically disabled. This is an interim solution
- * until the file-based logger (ADR-924) is implemented.
+ * until a file-based logger is implemented.
  *
  * Can be instantiated without the container (no constructor dependencies),
  * making it safe to use as a boot logger during kernel initialization.
