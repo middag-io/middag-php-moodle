@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.1](https://github.com/middag-io/middag-php-moodle/compare/v1.19.0...v1.19.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **navbar:** host names the settings section, library never guesses ([7e1c735](https://github.com/middag-io/middag-php-moodle/commit/7e1c735c4814bb01da8fd175c447751d030e2e61))
+* **navbar:** host names the settings section, library never guesses ([722bdd8](https://github.com/middag-io/middag-php-moodle/commit/722bdd840565a8fa6b39681048db8d04f6873b59))
+
 ## [1.19.0](https://github.com/middag-io/middag-php-moodle/compare/v1.18.0...v1.19.0) (2026-11-17)
 
 
