@@ -44,22 +44,31 @@ final class NavbarService
      * Health badge data and extension alerts are injected via hooks by the caller
      * (lib.php), which is outside the framework boundary and can access any layer.
      *
-     * @param array  $extra_items  Additional items from hooks (injected by caller)
-     * @param ?array $health_badge Optional health badge data {health_score: int, health_color: string}
+     * @param array   $extra_items      Additional items from hooks (injected by caller)
+     * @param ?array  $health_badge     Optional health badge data {health_score: int, health_color: string}
+     * @param ?string $settings_section Admin tree section id of the host's settings page, as the host
+     *                                  registered it (the same id its AdminTreeIds policy produced).
+     *                                  The library never guesses it: a section it invented would be a
+     *                                  dead link answering `sectionerror`. When null, the Settings item
+     *                                  is left out of the menu.
      *
      * @return string HTML rendered via Mustache template
      *
      * @throws moodle_exception
      */
-    public static function render(array $extra_items = [], ?array $health_badge = null, ?Closure $url_generator = null): string
-    {
+    public static function render(
+        array $extra_items = [],
+        ?array $health_badge = null,
+        ?Closure $url_generator = null,
+        ?string $settings_section = null,
+    ): string {
         global $OUTPUT;
 
         if (!CapabilitySupport::has('moodle/site:config', context_system::instance())) {
             return '';
         }
 
-        $items = array_merge(self::defaultItems($url_generator), $extra_items);
+        $items = array_merge(self::defaultItems($url_generator, $settings_section), $extra_items);
 
         // Sanitize: keep valid items (url+name) and separators.
         $items = array_values(array_filter($items, static fn (array $item): bool => !empty($item['separator']) || (isset($item['url'], $item['name']))));
@@ -95,16 +104,18 @@ final class NavbarService
      * URLs use PATH_INFO style (/local/middag/index.php/{route}) to match
      * the Symfony router.
      *
-     * @param ?Closure $url_generator Optional route-name → URL resolver.
-     *                                When null, falls back to PATH_INFO concatenation.
+     * @param ?Closure $url_generator    Optional route-name → URL resolver.
+     *                                   When null, falls back to PATH_INFO concatenation.
+     * @param ?string  $settings_section admin tree section id supplied by the host; null drops the
+     *                                   Settings item instead of linking a section that may not exist
      *
      * @return array<int, array{url?: string, name?: string, icon?: string, separator?: bool}>
      */
-    private static function defaultItems(?Closure $url_generator = null): array
+    private static function defaultItems(?Closure $url_generator = null, ?string $settings_section = null): array
     {
         $url = $url_generator ?? static fn (string $route): string => UrlSupport::get(ComponentContext::baseUrlPath() . '/index.php/' . $route)->out();
 
-        return [
+        $items = [
             [
                 'url' => $url('admin_home'),
                 'name' => LangSupport::get('overview'),
@@ -137,12 +148,17 @@ final class NavbarService
                 'name' => LangSupport::getStringOrIdentifier('maintenance', ComponentContext::name()),
                 'icon' => 'wrench',
             ],
-            ['separator' => true],
-            [
-                'url' => UrlSupport::get('/admin/settings.php', ['section' => 'middagtabcore'])->out(),
+        ];
+
+        if ($settings_section !== null && $settings_section !== '') {
+            $items[] = ['separator' => true];
+            $items[] = [
+                'url' => UrlSupport::get('/admin/settings.php', ['section' => $settings_section])->out(),
                 'name' => LangSupport::get('settings'),
                 'icon' => 'cog',
-            ],
-        ];
+            ];
+        }
+
+        return $items;
     }
 }

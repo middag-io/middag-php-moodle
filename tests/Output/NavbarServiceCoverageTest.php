@@ -138,6 +138,32 @@ final class NavbarServiceCoverageTest extends TestCase
         $this->assertContains('https://host/r/admin_home', $urls);
     }
 
+    #[Test]
+    public function omitsTheSettingsItemWhenTheHostNamesNoSection(): void
+    {
+        NavbarService::render();
+
+        $urls = array_column($this->lastContext()['actionitems'], 'url');
+        $this->assertNotContains('/admin/settings.php', $urls);
+    }
+
+    #[Test]
+    public function linksSettingsToTheSectionTheHostRegistered(): void
+    {
+        NavbarService::render([], null, null, 'mdg_core');
+
+        $items = $this->lastContext()['actionitems'];
+        $urls = array_column($items, 'url');
+        $this->assertContains('/admin/settings.php', $urls);
+
+        $settings = array_values(array_filter(
+            $items,
+            static fn (array $item): bool => ($item['url'] ?? null) === '/admin/settings.php',
+        ));
+        $this->assertCount(1, $settings);
+        $this->assertSame('cog', $settings[0]['icon']);
+    }
+
     private function setMoodleBranch(int $branch): void
     {
         $GLOBALS['CFG'] = (object) ['branch' => $branch, 'release' => '', 'version' => 2025000000];
