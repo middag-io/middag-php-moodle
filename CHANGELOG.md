@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.0](https://github.com/middag-io/middag-php-moodle/compare/v1.18.0...v1.19.0) (2026-11-17)
+
+
+### Features
+
+* **message:** raise EmailNotSentException when Moodle refuses an e-mail, and stop substituting placeholders in email() ([6cccf88](https://github.com/middag-io/middag-php-moodle/commit/6cccf88fc767f13e88e88182baeaf8db5018596b))
+* **message:** raise EmailNotSentException when Moodle refuses an e-mail, and stop substituting placeholders in email() ([7d6c249](https://github.com/middag-io/middag-php-moodle/commit/7d6c2496eab8ddfe11dfeec0b702d6903ee84d5a))
+
 ## [1.18.0](https://github.com/middag-io/middag-php-moodle/compare/v1.17.2...v1.18.0) (2026-11-16)
 
 
