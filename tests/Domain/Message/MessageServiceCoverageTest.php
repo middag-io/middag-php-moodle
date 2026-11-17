@@ -15,6 +15,7 @@ namespace Middag\Moodle\Tests\Domain\Message;
 use core\message\message as core_message;
 use core\url as moodle_url;
 use Middag\Moodle\Domain\Message\MessageService;
+use Middag\Moodle\Exception\EmailNotSentException;
 use middag_test_message_database;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -101,20 +102,29 @@ final class MessageServiceCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testEmailWithDefaultCourseReplacesTokensAndSends(): void
+    public function testEmailSendsSubjectAndBodyWithoutSubstitutingPlaceholders(): void
     {
-        $GLOBALS['__middag_test_message_course_record'] = (object) ['id' => 1, 'fullname' => 'Course One'];
-
         $service = new MessageService();
-        $service->email($this->makeUser(2), $this->makeUser(20), 'Hello [[firstname]]', 'Body for [[lastname]]');
+        $service->email($this->makeUser(2), $this->makeUser(20), 'Hello [[firstname]]', 'Body for [[sitelink]]');
 
         self::assertArrayHasKey('__middag_test_emails', $GLOBALS);
         self::assertCount(1, $GLOBALS['__middag_test_emails']);
         $sent = $GLOBALS['__middag_test_emails'][0];
-        self::assertSame('Hello John', $sent['subject']);
+        self::assertSame('Hello [[firstname]]', $sent['subject']);
+        self::assertSame('Body for [[sitelink]]', $sent['html']);
         self::assertSame(20, $sent['to']->id);
         self::assertSame('', $sent['attachment']);
         self::assertSame('', $sent['attachname']);
+    }
+
+    #[Test]
+    public function testEmailRaisesWhenTheMailerRefusesIt(): void
+    {
+        $GLOBALS['__middag_test_email_result'] = false;
+
+        $this->expectException(EmailNotSentException::class);
+
+        (new MessageService())->email($this->makeUser(2), $this->makeUser(20), 'Subject', 'Body');
     }
 
     #[Test]

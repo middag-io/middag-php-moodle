@@ -17,6 +17,7 @@ use core\message\message;
 use core\url as moodle_url;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Domain\Message\Contract\MessageServiceInterface;
+use Middag\Moodle\Exception\EmailNotSentException;
 use Middag\Moodle\Support\ConfigSupport;
 use Middag\Moodle\Support\CourseSupport;
 use Middag\Moodle\Support\HtmlWriterSupport;
@@ -59,32 +60,26 @@ class MessageService implements MessageServiceInterface
     }
 
     /**
-     * Send an email message using Moodle's messaging subsystem.
+     * Send an email message using Moodle's mailer.
+     *
+     * The subject and body are sent as given. `[[...]]` placeholders are not
+     * substituted here: a body usually arrives with values from outside already
+     * in it (a form answer, a webhook field), and substituting after that let
+     * such a value pull site data into the message. A caller that wants the
+     * placeholders substitutes them itself, with {@see self::prepareText()},
+     * before it adds any outside value.
      *
      * @param mixed              $from        Sender descriptor (user or address)
      * @param mixed              $to          Recipient descriptor (user or address)
      * @param string             $subject     Email subject
      * @param string             $text        Email body (HTML)
-     * @param int                $courseid    Course context
+     * @param int                $courseid    Unused; kept for the contract's signature
      * @param null|stored_file[] $attachments Optional attachment list
      *
-     * @throws moodle_exception
+     * @throws EmailNotSentException when Moodle's mailer refuses the message
      */
     public function email(mixed $from, mixed $to, string $subject, string $text, int $courseid = 0, ?array $attachments = null): void
     {
-        if ($courseid === 0) {
-            $courseid = ConfigSupport::getSiteId();
-        }
-
-        $course = CourseSupport::getCourse($courseid);
-
-        $data = $this->prepareText($course, $to);
-
-        foreach ($data as $key => $value) {
-            $text = str_replace($key, (string) $value, $text);
-            $subject = str_replace($key, (string) $value, $subject);
-        }
-
         $attachment = '';
         $attachname = '';
 
@@ -96,7 +91,9 @@ class MessageService implements MessageServiceInterface
             }
         }
 
-        MessageSupport::email($to, $from, $subject, $text, HtmlWriterSupport::htmlToText($text), $attachment, $attachname);
+        if (!MessageSupport::email($to, $from, $subject, $text, HtmlWriterSupport::htmlToText($text), $attachment, $attachname)) {
+            throw new EmailNotSentException('Moodle refused to send the e-mail.');
+        }
     }
 
     /**
