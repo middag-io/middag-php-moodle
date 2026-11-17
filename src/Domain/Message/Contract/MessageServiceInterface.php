@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Middag\Moodle\Domain\Message\Contract;
 
+use Middag\Moodle\Exception\EmailNotSentException;
+
 /**
  * Public contract for the message_service facade.
  *
@@ -25,12 +27,17 @@ interface MessageServiceInterface
     /**
      * Send an email message.
      *
+     * The subject and body are sent as given, with no placeholder substitution.
+     * A refusal by the host mailer is raised, never reported as a send.
+     *
      * @param mixed      $from        Sender descriptor (user or address)
      * @param mixed      $to          Recipient descriptor (user or address)
      * @param string     $subject     Email subject
      * @param string     $text        Email body
-     * @param int        $courseid    Course context for messaging
+     * @param int        $courseid    Course context for messaging (unused by the Moodle implementation)
      * @param null|array $attachments Optional list of attachments
+     *
+     * @throws EmailNotSentException when the host mailer refuses the message
      */
     public function email(
         mixed $from,
