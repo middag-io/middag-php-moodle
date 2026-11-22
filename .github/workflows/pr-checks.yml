@@ -1,0 +1,51 @@
+name: PR checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  # One job for the two pull request checks of middag-io/actions, called as
+  # composite actions by their major tags (onda 2, infra-terraform#450 D1).
+  # The job name keeps the required check `php-version-family-check / check`
+  # of the organization ruleset.
+  pr-checks:
+    name: php-version-family-check / check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      # The head commit with the full history: fetch-depth 0 also fetches
+      # every branch and tag, read by both checks.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # The family window is the organization variable PHP_LIBS_OPEN_RELEASE
+      # (empty = closed, X.Y = family MINOR window, X.0 = family MAJOR window).
+      - name: Version family check
+        uses: middag-io/actions/php-version-family-check@php-version-family-check-v1
+        with:
+          window: ${{ vars.PHP_LIBS_OPEN_RELEASE }}
+          family-from: 2.0.0
+          title: ${{ github.event.pull_request.title }}
+          base-sha: ${{ github.event.pull_request.base.sha }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+          base-ref: ${{ github.event.pull_request.base.ref }}
+          window-branch: ${{ github.event.repository.default_branch }}
+
+      # release-please walks main newest committer date first and stops at
+      # the commit of the last release, so a commit dated before that release
+      # is never read. This step fails such a pull request and prints how to
+      # recreate the branch with cherry-pick (never rebase or force-push).
+      - name: Release date check
+        if: ${{ !cancelled() }}
+        uses: middag-io/actions/github-release-date-check@github-release-date-check-v1
+        with:
+          base-ref: ${{ github.event.pull_request.base.ref }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
