@@ -15,6 +15,7 @@ namespace Middag\Moodle\Database\Schema;
 use database_manager;
 use Middag\Framework\Database\Contract\SchemaBuilderAdapterInterface;
 use Middag\Framework\Exception\MiddagPersistenceException;
+use moodle_database;
 use Throwable;
 use xmldb_field;
 use xmldb_index;
@@ -37,8 +38,13 @@ use xmldb_table;
  */
 class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
 {
+    /**
+     * @param null|moodle_database $db connection used for index introspection;
+     *                                 defaults to the host global $DB
+     */
     public function __construct(
         private readonly database_manager $dbman,
+        private readonly ?moodle_database $db = null,
     ) {}
 
     public function createTable(array $descriptor): void
@@ -186,6 +192,50 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
     public function columnExists(string $table_name, string $column_name): bool
     {
         return $this->dbman->field_exists(new xmldb_table($table_name), new xmldb_field($column_name));
+    }
+
+    /**
+     * Compare the ordered column list of every live index of the table.
+     *
+     * database_manager::find_index_name() is not used: it matches the column
+     * set regardless of order, while this contract requires the exact order.
+     *
+     * @param list<string> $columns
+     */
+    public function indexExistsOnColumns(string $table_name, array $columns): bool
+    {
+        if ($columns === [] || !$this->tableExists($table_name)) {
+            return false;
+        }
+
+        try {
+            $indexes = $this->connection()->get_indexes($table_name);
+        } catch (Throwable $throwable) {
+            throw new MiddagPersistenceException(
+                'Failed to read indexes of ' . $table_name . ': ' . $throwable->getMessage(),
+                0,
+                $throwable,
+            );
+        }
+
+        foreach ($indexes as $index) {
+            if (array_values($index['columns'] ?? []) === $columns) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function connection(): moodle_database
+    {
+        if ($this->db instanceof moodle_database) {
+            return $this->db;
+        }
+
+        global $DB;
+
+        return $DB;
     }
 
     /**

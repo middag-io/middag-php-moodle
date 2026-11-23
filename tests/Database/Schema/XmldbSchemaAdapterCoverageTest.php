@@ -16,6 +16,7 @@ use database_manager;
 use Middag\Framework\Database\Contract\SchemaBuilderAdapterInterface;
 use Middag\Framework\Exception\MiddagPersistenceException;
 use Middag\Moodle\Database\Schema\XmldbSchemaAdapter;
+use moodle_database;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -252,6 +253,47 @@ final class XmldbSchemaAdapterCoverageTest extends TestCase
         $this->dbman->method('field_exists')->willReturn(false);
 
         $this->assertFalse($this->adapter->columnExists('mdl_items', 'ghost'));
+    }
+
+    #[Test]
+    public function indexExistsOnColumnsMatchesTheExactOrderedColumnList(): void
+    {
+        $this->dbman->method('table_exists')->willReturn(true);
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_indexes')->with('job')->willReturn([
+            'mdl_job_sta_ix' => ['unique' => false, 'columns' => ['status', 'claimed']],
+            'mdl_job_lan_uix' => ['unique' => true, 'columns' => ['lane']],
+        ]);
+        $adapter = new XmldbSchemaAdapter($this->dbman, $db);
+
+        $this->assertTrue($adapter->indexExistsOnColumns('job', ['status', 'claimed']));
+        $this->assertTrue($adapter->indexExistsOnColumns('job', ['lane']));
+        $this->assertFalse($adapter->indexExistsOnColumns('job', ['claimed', 'status']));
+        $this->assertFalse($adapter->indexExistsOnColumns('job', ['status']));
+    }
+
+    #[Test]
+    public function indexExistsOnColumnsIsFalseForAnAbsentTableOrNoColumns(): void
+    {
+        $this->dbman->method('table_exists')->willReturn(false);
+        $db = $this->createMock(moodle_database::class);
+        $db->expects($this->never())->method('get_indexes');
+        $adapter = new XmldbSchemaAdapter($this->dbman, $db);
+
+        $this->assertFalse($adapter->indexExistsOnColumns('absent', ['a']));
+        $this->assertFalse($adapter->indexExistsOnColumns('absent', []));
+    }
+
+    #[Test]
+    public function indexExistsOnColumnsWrapsFailures(): void
+    {
+        $this->dbman->method('table_exists')->willReturn(true);
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_indexes')->willThrowException(new RuntimeException('x'));
+        $adapter = new XmldbSchemaAdapter($this->dbman, $db);
+
+        $this->expectException(MiddagPersistenceException::class);
+        $adapter->indexExistsOnColumns('job', ['status']);
     }
 
     #[Test]
