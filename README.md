@@ -36,18 +36,20 @@ role.
 | PHP | `^8.3`: 8.3, 8.4 and 8.5, within the PHP versions the Moodle version supports; `ext-json` |
 | Symfony | `^7.4 \|\| ^8.1` for every Symfony component it requires (the contracts keep their own ranges) |
 | Sibling libraries | `middag-io/framework` `^1.20.4` and `middag-io/ui` `^1.10.1` |
-| Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.3 and 8.4); 5.0 as best effort, with no support promise |
-| Database engines | PostgreSQL, MySQL and MariaDB, as supported by the Moodle version |
+| Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.4, tested; PHP 8.3 expected, not tested) |
+| Database engines | PostgreSQL, MySQL and MariaDB, as supported by the Moodle version; SQL Server and Oracle are outside the range |
 
 The `DbSupport` `sql*` helpers are tested against real databases: the
 [Engines workflow](.github/workflows/engines.yml) installs Moodle 4.5, 5.1, 5.2
 and 5.3 on PostgreSQL, MySQL and MariaDB and executes the SQL of every helper
-([`tests/Integration/Engine`](tests/Integration/Engine)). SQL Server is not
-tested. Oracle is not tested yet.
+([`tests/Integration/Engine`](tests/Integration/Engine)).
 
-The Moodle range follows upstream support. The `1.x` line is pre-stable and
-unsupported; support starts at `2.0.0` (see
-[Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)).
+The Moodle range follows upstream support and belongs to this adapter: adding a
+Moodle version is a minor, and dropping one whose upstream support has ended is
+not a breaking change. Moodle 5.0 is outside the range; its stubs stay in the
+PHPStan matrix while 4.5 is in range, with no support promise. The `1.x` line is
+pre-stable and unsupported; support starts at `2.0.0` (see [Versioning and
+compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)).
 
 ## Installation
 
@@ -121,7 +123,7 @@ The platform is pinned to PHP 8.3 (`config.platform.php` `8.3.0`), so a local
 install resolves the Symfony 7.4 line whatever PHP runs Composer. CI runs the
 checks and the tests on PHP 8.3, 8.4 and 8.5 with the pin, a `highest` job on
 8.4 and 8.5 without it that asserts the Symfony components resolve to 8.x, and
-PHPStan against the Moodle stubs of 4.5, 5.0 (best effort), 5.1, 5.2 and 5.3
+PHPStan against the Moodle stubs of 4.5, 5.0 (transition only), 5.1, 5.2 and 5.3
 ([Platform](https://docs.middag.dev/libraries/reference/platform)).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contributor setup,
@@ -141,8 +143,9 @@ Releases are managed by [release-please](https://github.com/googleapis/release-p
 Conventional commits merged to `main` open a Release PR automatically.
 
 This library is on the pre-stable `1.x` line. From `2.0.0` it joins the
-`middag-php-*` version family: every library shares `MAJOR.MINOR`, a minor
-never breaks, and a consumer declares the same `^2.N` range for all of them.
+open-source `middag-php-*` version family, which shares only the MAJOR: a
+minor never breaks, and a consumer requires each package it imports with
+`^2.0`, or with the MINOR whose features it uses.
 See [API-STABILITY.md](API-STABILITY.md#versioning) and
 [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
 
