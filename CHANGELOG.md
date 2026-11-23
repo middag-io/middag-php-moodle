@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/middag-io/middag-php-moodle/compare/v1.22.0...v1.23.0) (2026-11-23)
+
+
+### Features
+
+* adopt ui 1.14 error contracts in the Moodle adapter ([be7bf13](https://github.com/middag-io/middag-php-moodle/commit/be7bf13ec4af08ac3ed204dd8507037548cc5c09))
+
 ## [1.22.0](https://github.com/middag-io/middag-php-moodle/compare/v1.21.1...v1.22.0) (2026-11-23)
 
 
