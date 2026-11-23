@@ -21,7 +21,7 @@ enforced_by:
 
 `AbstractController` and `AbstractApiController` shipped sesskey verification as
 opt-in (`protected bool $requireSesskey = false`), read from the `#[Sesskey]`
-attribute. No consumer opted in: `moodle-local_middag` has 86 session-authenticated
+attribute. No consumer opted in: the main consumer plugin (`local_middag`) has 86 session-authenticated
 mutating routes and zero occurrences of `#[Sesskey]`.
 
 Four mechanics made "just flip the flag" insufficient:
@@ -89,8 +89,8 @@ Four mechanics made "just flip the flag" insufficient:
 
 - Every session-authenticated `POST`/`PUT`/`PATCH`/`DELETE` reaching these base
   classes now needs a token. Consumers that send none get 403 until their client
-  sends one — `moodle-local_middag` (plain `fetch` call sites) and
-  `moodle-local_helico` (two axios instances) both need an interceptor.
+  sends one. A consumer that calls these routes from plain `fetch` call sites or
+  from its own HTTP client instances needs an interceptor that adds the token.
 - The sesskey now also travels in a JS-readable cookie. It is not a new secret:
   Moodle already exposes the same value in page URLs, form fields and
   `M.cfg.sesskey`.
