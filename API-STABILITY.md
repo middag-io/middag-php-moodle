@@ -104,12 +104,40 @@ What applies in this repository:
   `2.0.0` in this lib alone, and the version-family check refuses both). The
   1.x line is pre-stable and unsupported, and the move to `2.0.0` is a clean
   cut.
-- **From `2.0.0`:** every `middag-php-*` library shares `MAJOR.MINOR`. A patch
-  carries fixes only, a minor never breaks, and a major carries the breaks,
-  each one deprecated first in an earlier minor.
-- Every pull request runs the version-family check
-  `php-version-family-check / check` (the `pr-checks` job in
-  `.github/workflows/pr-checks.yml`).
+- **From `2.0.0`:** the open-source `middag-php-*` libraries
+  (`ui`, `framework`, `moodle`, `wordpress` and the `demo-standalone` example)
+  share the MAJOR version. MINOR and PATCH releases are per library. Each
+  library requires its siblings with `^2.N`, where `N` is the lowest MINOR it
+  needs, so Composer installs a compatible set. Require each package you import
+  with `^2.0`, or with the MINOR whose features you use. A PATCH carries fixes
+  only. A MINOR carries additive `@api` changes. A MAJOR carries breaking `@api`
+  changes, following [Deprecation](#deprecation).
+- A platform floor (the lowest PHP version or the lowest Symfony line) rises
+  only in a MAJOR. Support for a new PHP version or a new Symfony LTS line is
+  added in a MINOR.
+- The supported host versions belong to this adapter. Adding a host version is a
+  MINOR. Dropping a host version whose upstream support has ended is not a
+  breaking change and ships in a MINOR.
+- Releases are cut by release-please from Conventional Commits. The contributor
+  rules, the version check included, are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Deprecation
+
+A removal or incompatible change of an `@api` element ships only in a MAJOR.
+Where possible it is announced first in a MINOR of the current MAJOR: the
+element carries `@deprecated` naming its replacement, the changelog lists it,
+and code that still runs emits an `E_USER_DEPRECATED` notice where PHP can raise
+one. A change that cannot be deprecated in place, such as a new abstract method
+on an interface or a changed signature, ships in a MAJOR with an entry in
+`UPGRADING.md`.
+
+## Support
+
+Fixes go to the latest MINOR of the current MAJOR, as PATCH releases. When the
+next MAJOR ships, the last MINOR of the previous MAJOR receives critical and
+high severity security fixes only, from an `N.x` branch opened at the cut, for 6
+months or until the end of life of the PHP or host version that motivated the
+new MAJOR, whichever comes first. Releases before `2.0.0` are unsupported.
 
 ## The contracts this adapter fulfils
 
@@ -142,8 +170,7 @@ concrete only to wire it.
   compatibility promise, and a `1.x` minor may carry a break (see
   [Versioning](#versioning)). Support starts at `2.0.0`, and the move from
   `1.x` is a clean cut.
-- **From `2.0.0`:** declare one `^2.N` range, with the same `N`, for this
-  adapter and every other `middag-php-*` library you depend on (`moodle`,
-  `framework`, `ui`, …).
+- **From `2.0.0`:** require `middag-io/moodle` with `^2.0`, or with the MINOR
+  whose features you use.
 - The dependency direction only points downward: the adapter depends on the OSS
   framework's and ui's published `@api` and never imports the proprietary layer.
