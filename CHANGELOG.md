@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.2](https://github.com/middag-io/middag-php-moodle/compare/v1.21.1...v1.21.2) (2026-11-23)
+
+
+### Documentation
+
+* match the README ranges to framework 1.22 and ui 1.13 ([8d5e93f](https://github.com/middag-io/middag-php-moodle/commit/8d5e93f343d2a54e124e8ef82649ce0f2a5b7993))
+
 ## [1.21.1](https://github.com/middag-io/middag-php-moodle/compare/v1.21.0...v1.21.1) (2026-11-23)
 
 
