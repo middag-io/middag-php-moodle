@@ -19,6 +19,7 @@ use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Moodle\Support\SessionSupport;
+use Middag\Ui\Form\FormErrorBags;
 use Middag\Ui\Form\FormErrors;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Middag\Ui\Navigation\NavigationTree;
@@ -64,8 +65,10 @@ class InertiaSharedProps
         // dropped from the wire when there is nothing to show.
         InertiaManager::share('flash', fn (): array|stdClass|null => self::buildFlash()?->jsonSerialize());
 
-        // Kernel validation errors, in the shape useForm().errors expects.
-        InertiaManager::share('errors', fn (): array|stdClass => self::buildErrors()->jsonSerialize());
+        // Kernel validation errors, in the shape useForm().errors expects: a
+        // flat field map, or a map of bag name to field map when the request
+        // carried X-Inertia-Error-Bag. Always a JSON object.
+        InertiaManager::share('errors', fn (): stdClass => self::buildErrors()->jsonSerialize());
 
         // CSRF — the Moodle sesskey, under the name the @middag-io/react
         // shared-props contract already declares. Clients that cannot read the
@@ -225,12 +228,15 @@ class InertiaSharedProps
         return $out;
     }
 
-    /** Map of field => errors from the last rejected validation. */
-    private static function buildErrors(): FormErrors
+    /**
+     * Errors from the last rejected validation, as the FlashBag stored them:
+     * flat (FormErrors) or scoped to an error bag (FormErrorBags).
+     */
+    private static function buildErrors(): FormErrorBags|FormErrors
     {
         $bag = self::flashBag();
 
-        return new FormErrors($bag instanceof FlashBag ? $bag->pullErrors() : []);
+        return $bag instanceof FlashBag ? $bag->pullErrors() : new FormErrors();
     }
 
     /** The container's FlashBag, or null when it is not registered. */

@@ -93,9 +93,14 @@ if (!class_exists('moodleform', false)) {
             $this->_submitted_data = $data;
         }
 
+        /** Echoes a marker plus one span per element error, so tests can read what setElementError() received. */
         public function display(): void
         {
-            echo '<form class="mform">rendered</form>';
+            echo '<form class="mform">rendered';
+            foreach ($this->_form->elementErrors as $name => $message) {
+                echo '<span class="error" data-field="' . $name . '">' . $message . '</span>';
+            }
+            echo '</form>';
         }
     }
 }
