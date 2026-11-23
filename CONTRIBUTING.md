@@ -73,7 +73,11 @@ must remain consumable on its own.
   merged to `main`, never by a manual tag. On `1.x`, `fix:` cuts a patch and
   `feat:` cuts a minor; a break ships as `feat:`, never with `!` or a
   `BREAKING CHANGE:` footer. Every PR runs the version-family check
-  `php-version-family-check / check`. The rules are in
+  `php-version-family-check / check`.
+- From `2.0.0`, only the MAJOR version is shared across the `middag-php-*`
+  libraries; MINOR and PATCH releases are per library. The version check is
+  being aligned with this rule, so its output may still reflect the previous
+  lockstep behaviour until then. The rules are in
   [`API-STABILITY.md`](API-STABILITY.md#versioning) and on
   [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
 
