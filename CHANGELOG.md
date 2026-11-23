@@ -8,6 +8,10 @@
 * describe the shared-MAJOR family in the README ([564d95a](https://github.com/middag-io/middag-php-moodle/commit/564d95af3b1cb5e62c9d507e1fd47d6bdbca1d59))
 * say which PHP the Moodle 5.x cells install in CI ([113ea73](https://github.com/middag-io/middag-php-moodle/commit/113ea73e7d490ca446b97654949abf9b2be659b2))
 
+### Consumer impact
+
+No consumer impact: documentation-only release.
+
 ## [1.20.0](https://github.com/middag-io/middag-php-moodle/compare/v1.19.1...v1.20.0) (2026-11-23)
 
 
