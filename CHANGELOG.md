@@ -1,11 +1,22 @@
 # Changelog
 
-## [1.21.2](https://github.com/middag-io/middag-php-moodle/compare/v1.21.1...v1.21.2) (2026-11-23)
+## [1.22.0](https://github.com/middag-io/middag-php-moodle/compare/v1.21.1...v1.22.0) (2026-11-23)
+
+
+### Features
+
+* answer index introspection in XmldbSchemaAdapter ([b864e9d](https://github.com/middag-io/middag-php-moodle/commit/b864e9d1689ee8fde13814ca7d50e14270c4b34d))
 
 
 ### Documentation
 
 * match the README ranges to framework 1.22 and ui 1.13 ([8d5e93f](https://github.com/middag-io/middag-php-moodle/commit/8d5e93f343d2a54e124e8ef82649ce0f2a5b7993))
+
+### Consumer impact
+
+- New `XmldbSchemaAdapter::indexExistsOnColumns(string $table_name, array $columns): bool`: true when the table has an index of any name or uniqueness over exactly the given ordered column list. It reads `moodle_database::get_indexes()`, because `find_index_name()` ignores column order.
+- The `XmldbSchemaAdapter` constructor takes an optional `?moodle_database $db = null` (falls back to the host global `$DB`). Additive; existing callers are unchanged.
+- Required by the next framework minor, which adds the method to `SchemaBuilderAdapterInterface` and declares `middag-io/moodle <1.22` as a conflict.
 
 ## [1.21.1](https://github.com/middag-io/middag-php-moodle/compare/v1.21.0...v1.21.1) (2026-11-23)
 
@@ -13,6 +24,10 @@
 ### Documentation
 
 * add enum evolution policy and fix stale AGENTS notes ([ec6a6b3](https://github.com/middag-io/middag-php-moodle/commit/ec6a6b3708d1f5a834b7dcd9646dc930c2019461))
+
+### Consumer impact
+
+None. Docs only: API-STABILITY now states the enum evolution policy (control enums vs open enums) and AGENTS.md drops stale notes.
 
 ## [1.21.0](https://github.com/middag-io/middag-php-moodle/compare/v1.20.1...v1.21.0) (2026-11-23)
 
