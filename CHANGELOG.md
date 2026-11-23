@@ -12,6 +12,10 @@
 
 * drop the extension alias hook from SettingsSupport ([eaf20ec](https://github.com/middag-io/middag-php-moodle/commit/eaf20ec19cedaaaacb45aca4ca56164441f58140))
 
+### Consumer impact
+
+Requires `middag-io/ui` ^1.13 and `middag-io/framework` ^1.22, and `@middag-io/react` ^0.48.0 on the client (envelope version `2`). Shared props are built from the ui value objects: the client no longer receives `version`, `brandColor` or `inherit`, the shared flash carries only `success`, `error`, `info` and `warning` strings, and a slot that resolves to null is omitted. The navigation registry returns a `NavigationTree` instead of an array. `SettingsSupport::extensionAliases()` is removed: drop any override of it.
+
 ## [1.20.1](https://github.com/middag-io/middag-php-moodle/compare/v1.20.0...v1.20.1) (2026-11-23)
 
 
