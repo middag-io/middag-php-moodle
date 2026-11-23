@@ -36,7 +36,7 @@ role.
 | PHP | `^8.3`: 8.3, 8.4 and 8.5, within the PHP versions the Moodle version supports; `ext-json` |
 | Symfony | `^7.4 \|\| ^8.1` for every Symfony component it requires (the contracts keep their own ranges) |
 | Sibling libraries | `middag-io/framework` `^1.20.4` and `middag-io/ui` `^1.10.1` |
-| Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.4, tested; PHP 8.3 expected, not tested) |
+| Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.4; PHP 8.3 expected, not installed in CI) |
 | Database engines | PostgreSQL, MySQL and MariaDB, as supported by the Moodle version; SQL Server and Oracle are outside the range |
 
 The `DbSupport` `sql*` helpers are tested against real databases: the
