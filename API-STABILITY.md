@@ -124,6 +124,25 @@ What applies in this repository:
 - Releases are cut by release-please from Conventional Commits. The contributor
   rules, the version check included, are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+## Enum evolution
+
+Whether an enum can grow in a MINOR depends on what happens to a value the
+consumer does not know. This mirrors the policy in
+[`middag-io/ui` `API-STABILITY.md`](https://github.com/middag-io/middag-php-ui/blob/main/API-STABILITY.md#enum-evolution-on-the-wire).
+
+- **Control enums** drive behavior and reject an unknown value instead of
+  guessing. Adding a case to one is a **MAJOR** change.
+- **Open or presentational enums** reach a consumer that falls back safely on a
+  value it does not know. Adding a case to one is a **MINOR** change.
+- Removing or renaming a case is always a **MAJOR** change, for both kinds.
+
+The `@api` enums of this adapter (for example `Settings\Enum\SettingType`,
+`Security\Enum\CapabilityType`, `Security\Enum\CapabilityRisk`,
+`Shared\Enum\TextFormat` and the `Domain\*\Enum` types) are PHP-side value
+sets that mirror Moodle constants. Each case is classified by this rule when it
+is added: an enum that the adapter matches exhaustively or rejects on an unknown
+value is a control enum.
+
 ## Deprecation
 
 A removal or incompatible change of an `@api` element ships only in a MAJOR.
