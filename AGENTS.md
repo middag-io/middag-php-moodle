@@ -120,12 +120,13 @@ PHPStan resolves Moodle symbols through `michaelmeneses/moodle-stubs`.
 2. **`SettingsSupport` derives the config slug from a `{slug}_config` enum's
    short name** (keys use the library's neutral default policy; a real
    product such as MIDDAG injects its own prefix explicitly, see MDL-011).
-   Consumers can remap derived slugs by overriding `extensionAliases()`.
+   The `extensionAliases()` hook was removed in 1.21.0; a consumer that needs
+   a different slug names its enum accordingly.
    PascalCase spellings are normalised to snake_case first, and an enum whose
    name cannot be mapped onto `{slug}_config` is rejected with
    `InvalidArgumentException` — it never silently resolves a dead key. The
    adapter no longer ships a `framework_config` enum: those framework-level keys
-   are owned by the consumer product (e.g. `Middag\Core\Config\FrameworkConfig`);
+   are owned by the consumer product (e.g. `Middag\Core\Config\CoreConfig`, formerly `FrameworkConfig`);
    this lib only provides the generic resolution mechanism.
 3. **`Settings/Type/Storedfile` vs `Domain/File/StoredFile`** differ only by
    case — an accepted divergence: `Settings/Type/` mirrors Moodle's
