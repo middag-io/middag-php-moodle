@@ -81,6 +81,37 @@ jobs:
             symfony/routing:8
           audit-blocking-severities: critical, high
 
+  # Third run of the same component: the other end of the range. Removes the
+  # platform pin and resolves the lowest dependency versions that satisfy
+  # composer.json (prefer-lowest, stable only) on PHP 8.3, then runs the
+  # tests. It proves the declared floors still hold, and asserts that every
+  # Symfony component resolved to 7.x. Not a required check.
+  php-library-check-lowest:
+    name: PHP library check, lowest (PHP 8.3)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: middag-io/actions/php-library-check@php-library-check-v1
+        with:
+          php-version: '8.3'
+          static-checks: "false"
+          dependency-versions: lowest
+          unset-platform-php: "true"
+          expect-majors: |
+            symfony/dependency-injection:7
+            symfony/http-client:7
+            symfony/http-foundation:7
+            symfony/messenger:7
+            symfony/psr-http-message-bridge:7
+            symfony/routing:7
+          audit-blocking-severities: critical, high
+
   # Specific to this repository, so it stays inline: PHPStan against the
   # moodle-stubs series of each Moodle version in range. 4.5, 5.1, 5.2 and 5.3
   # are the supported range (upstream support); 5.0 stays as best effort, with
