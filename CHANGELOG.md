@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.21.0](https://github.com/middag-io/middag-php-moodle/compare/v1.20.1...v1.21.0) (2026-11-23)
+
+
+### Features
+
+* share the UI contract value objects as Inertia shared props ([5c6b865](https://github.com/middag-io/middag-php-moodle/commit/5c6b86550fea2ae376295208cdcc692d78d5c717))
+
+
+### Refactoring
+
+* drop the extension alias hook from SettingsSupport ([eaf20ec](https://github.com/middag-io/middag-php-moodle/commit/eaf20ec19cedaaaacb45aca4ca56164441f58140))
+
 ## [1.20.1](https://github.com/middag-io/middag-php-moodle/compare/v1.20.0...v1.20.1) (2026-11-23)
 
 
