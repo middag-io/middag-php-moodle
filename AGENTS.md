@@ -184,8 +184,7 @@ Architecture decisions live in [`docs/decisions/`](docs/decisions/) as `MDL-NNN`
 MIDDAG-MADR compact format: frontmatter, then Context → Considered Options
 → Decision → Consequences → Enforcement. A record states **why** (the choice, the alternatives, the
 consequences); specification (class lists, inventories, flows, naming tables) lives in the reference
-docs its Enforcement table points to, at docs.middag.dev (`docs-middag-dev`,
-`docs/framework/reference/adapters/moodle/`). Ids are never reused; a record merged into another
+docs its Enforcement table points to, at docs.middag.dev. Ids are never reused; a record merged into another
 stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `deciders` is a role id
 (`leadership`), never a person.
 
