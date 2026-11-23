@@ -221,8 +221,8 @@ stated for this lib in [`API-STABILITY.md`](API-STABILITY.md#versioning).
   a family major window after a deprecation (runtime notice) in an earlier
   minor. Family minor/major = a coordinated `Release-As: X.Y.0` in every lib.
   The **product owner** decides every family minor and major.
-- **Window check:** `.github/workflows/family-window.yml` runs
-  `php-version-family-check / check` on the PR title and every non-merge commit
+- **Window check:** the `pr-checks` job in `.github/workflows/pr-checks.yml`
+  runs `php-version-family-check / check` on the PR title and every non-merge commit
   against the organization variable `PHP_LIBS_OPEN_RELEASE` (empty = closed,
   `X.Y` = minor window, `X.0` = major window). A held PR stays open, kept
   current by merging `main` (never rebase/force-push); re-run the check when

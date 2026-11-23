@@ -8,7 +8,7 @@ permissions: {}
 
 jobs:
   # One job for the two pull request checks of middag-io/actions, called as
-  # composite actions by their major tags (onda 2, infra-terraform#450 D1).
+  # composite actions by their major tags.
   # The job name keeps the required check `php-version-family-check / check`
   # of the organization ruleset.
   pr-checks:
