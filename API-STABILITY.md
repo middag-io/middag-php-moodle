@@ -115,6 +115,9 @@ What applies in this repository:
 - A platform floor (the lowest PHP version or the lowest Symfony line) rises
   only in a MAJOR. Support for a new PHP version or a new Symfony LTS line is
   added in a MINOR.
+- The next MAJOR (`3.0`) raises the Symfony floor to the next Symfony LTS line
+  once it is released, and drops the PHP versions that no longer receive
+  security support.
 - The supported host versions belong to this adapter. Adding a host version is a
   MINOR. Dropping a host version whose upstream support has ended is not a
   breaking change and ships in a MINOR.
