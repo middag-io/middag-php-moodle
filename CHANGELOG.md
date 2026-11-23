@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.20.0](https://github.com/middag-io/middag-php-moodle/compare/v1.19.1...v1.20.0) (2026-11-23)
+
+
+### Features
+
+* **inertia:** drop the legacy session flash read path ([feace10](https://github.com/middag-io/middag-php-moodle/commit/feace10d7909bdc92751b32218f8e7aadd082fbf))
+
+
+### Bug Fixes
+
+* keep the PHPStan baseline entry that older Moodle stubs still need ([657cc36](https://github.com/middag-io/middag-php-moodle/commit/657cc3692874d41884741b47d2acbc520c2f9ce4))
+
+
+### Documentation
+
+* align SECURITY.md with the family security policy ([02d5b93](https://github.com/middag-io/middag-php-moodle/commit/02d5b9386c04d589ff19aa02d387df96ceedd70a))
+* apply the version-family support policy ([7b5c9a3](https://github.com/middag-io/middag-php-moodle/commit/7b5c9a3f6d5ea45e8cffd7df377e8624a0fcf2af))
+* drop the private docs repo reference from AGENTS.md ([9971f2e](https://github.com/middag-io/middag-php-moodle/commit/9971f2e96e3776da7cfc6d00c152b33848f5fc45))
+* state the 3.0 platform floor intent ([2dc7f65](https://github.com/middag-io/middag-php-moodle/commit/2dc7f654a771a4cefac00977d7d2ef17895978a6))
+* use the real composer package name in SECURITY.md ([74fc4c3](https://github.com/middag-io/middag-php-moodle/commit/74fc4c3b7120a152b513f55ba8a7e6f3c5ff4e66))
+
+
+### Consumer impact
+
+* The legacy `$SESSION->middag_flash_*` read path in `InertiaSharedProps` is removed. Only the framework FlashBag now feeds the `flash` prop. No known writer of the legacy keys exists in the plugin clones.
+* `SettingsSupport::extensionAliases()` is intentionally kept in this release.
+* Maintenance only, no consumer action: a new lowest dependencies CI cell and `ApiStabilityTagTest`, a PHPStan baseline reduction, docs and policy text updates, `SECURITY.md`, and the Engines workflow is now path-filtered on pull requests.
+
 ## [1.19.1](https://github.com/middag-io/middag-php-moodle/compare/v1.19.0...v1.19.1) (2026-11-17)
 
 
