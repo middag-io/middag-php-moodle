@@ -4,7 +4,7 @@
 
 The `1.x` line is pre-stable and unsupported: it gets no backports or security fixes, and the move to `2.0.0` is a clean cut.
 
-From `2.0.0`, `middag-io/middag-php-moodle` is part of the `middag-php-*` version family ([Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)). Security fixes go to the latest MINOR of the current MAJOR.
+From `2.0.0`, `middag-io/moodle` is part of the `middag-php-*` version family ([Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility)). Security fixes go to the latest MINOR of the current MAJOR.
 
 ## Reporting a vulnerability
 
