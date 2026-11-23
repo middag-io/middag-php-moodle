@@ -68,7 +68,7 @@ class InertiaSharedProps
         // Scope — global scope data (extensions populate in boot).
         InertiaManager::share('scope', fn (): array => self::buildScope());
 
-        // Flash — one-shot messages from session.
+        // Flash — one-shot messages from the framework FlashBag.
         InertiaManager::share('flash', fn (): ?array => self::buildFlash());
 
         // Kernel validation errors, in the shape useForm().errors expects.
@@ -221,9 +221,8 @@ class InertiaSharedProps
     }
 
     /**
-     * Messages left in the framework FlashBag, normalised to the same shape
-     * as the legacy flash. Resolved from the container; when no FlashBag is
-     * wired, returns an empty array and the legacy flash keeps working alone.
+     * Messages left in the framework FlashBag. Resolved from the container;
+     * when no FlashBag is wired, returns an empty array.
      *
      * @return array<string, string>
      */
@@ -274,41 +273,13 @@ class InertiaSharedProps
     }
 
     /**
-     * Build flash messages from session.
+     * Build flash messages from the framework FlashBag.
      *
-     * @return null|array{success?: string, error?: string, info?: string, warning?: string}
+     * @return null|array<string, string>
      */
     private static function buildFlash(): ?array
     {
-        global $SESSION;
-
-        // Drain the framework FlashBag FIRST. There are two separate stores: the
-        // kernel writes domain rejections there (createValidationResponse ->
-        // 303 + messages) through $_SESSION['_middag_flash'], while legacy
-        // controllers use $SESSION->middag_flash_*. Without this drain the
-        // message was written to one store and read from the other, so the user
-        // got the page back with no explanation of why it was rejected.
         $flash = self::pullFrameworkFlash();
-
-        if (!empty($SESSION->middag_flash_success)) {
-            $flash['success'] = $SESSION->middag_flash_success;
-            unset($SESSION->middag_flash_success);
-        }
-
-        if (!empty($SESSION->middag_flash_error)) {
-            $flash['error'] = $SESSION->middag_flash_error;
-            unset($SESSION->middag_flash_error);
-        }
-
-        if (!empty($SESSION->middag_flash_info)) {
-            $flash['info'] = $SESSION->middag_flash_info;
-            unset($SESSION->middag_flash_info);
-        }
-
-        if (!empty($SESSION->middag_flash_warning)) {
-            $flash['warning'] = $SESSION->middag_flash_warning;
-            unset($SESSION->middag_flash_warning);
-        }
 
         return $flash === [] ? null : $flash;
     }

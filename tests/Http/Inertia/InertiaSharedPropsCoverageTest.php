@@ -307,39 +307,13 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function flashClosureReturnsNullWhenSessionHasNoFlash(): void
+    public function flashClosureReturnsNullWhenFrameworkFlashBagIsEmpty(): void
     {
         $GLOBALS['SESSION'] = new stdClass();
 
         InertiaSharedProps::register();
 
         self::assertNull((InertiaManager::getShared()['flash'])());
-    }
-
-    #[Test]
-    public function flashClosureCollectsEveryLevelAndClearsTheSession(): void
-    {
-        $session = (object) [
-            'middag_flash_success' => 'saved',
-            'middag_flash_error' => 'boom',
-            'middag_flash_info' => 'fyi',
-            'middag_flash_warning' => 'careful',
-        ];
-        $GLOBALS['SESSION'] = $session;
-
-        InertiaSharedProps::register();
-        $flash = (InertiaManager::getShared()['flash'])();
-
-        self::assertSame(
-            ['success' => 'saved', 'error' => 'boom', 'info' => 'fyi', 'warning' => 'careful'],
-            $flash,
-        );
-
-        // One-shot: each key is consumed off the session.
-        self::assertFalse(isset($session->middag_flash_success));
-        self::assertFalse(isset($session->middag_flash_error));
-        self::assertFalse(isset($session->middag_flash_info));
-        self::assertFalse(isset($session->middag_flash_warning));
     }
 
     // --------------------------------------------------------------------- //
