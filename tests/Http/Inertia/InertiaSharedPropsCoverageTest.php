@@ -16,12 +16,13 @@ use Closure;
 use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Framework\Http\Session\ArraySession;
 use Middag\Framework\Http\Session\FlashBag;
-use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Inertia\InertiaSharedProps;
 use Middag\Moodle\Runtime\ContainerFactory;
 use Middag\Moodle\Runtime\Kernel;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
+use Middag\Ui\Navigation\NavigationNode;
+use Middag\Ui\Navigation\NavigationTree;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -35,9 +36,9 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Coverage for the Inertia shared-props registrar.
  *
- * register() shares seven props into the framework InertiaManager; the four
- * closure-backed builders (navigation, auth, theme, flash) and the two static
- * values (locale, version) are exercised by invoking the shared closures. The
+ * register() shares eight props into the framework InertiaManager; the four
+ * closure-backed builders (navigation, auth, theme, scope, flash, errors) and the
+ * lazy csrf_token/locale values are exercised by invoking the shared closures. The
  * navigation builder resolves the active route through a Kernel injected via
  * reflection (mirroring the kernel test recipe), so every resolveCurrentRoute()
  * branch — matched route, null context, ResourceNotFound, generic Throwable —
@@ -97,7 +98,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function registerSharesAllNinePropsWithStaticLocaleAndVersion(): void
+    public function registerSharesAllEightPropsWithoutVersion(): void
     {
         $GLOBALS['__middag_test_current_language'] = 'pt_br';
 
@@ -106,9 +107,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $shared = InertiaManager::getShared();
 
         self::assertSame(
-            ['navigation', 'auth', 'theme', 'scope', 'flash', 'errors', 'csrf_token', 'locale', 'version'],
+            ['navigation', 'auth', 'theme', 'scope', 'flash', 'errors', 'csrf_token', 'locale'],
             array_keys($shared),
         );
+        self::assertArrayNotHasKey('version', $shared);
 
         // Closure-backed props stay lazy (raw closures, not yet resolved).
         self::assertInstanceOf(Closure::class, $shared['navigation']);
@@ -122,9 +124,6 @@ final class InertiaSharedPropsCoverageTest extends TestCase
 
         // locale resolves through the lazy closure to the current language.
         self::assertSame('pt_br', ($shared['locale'])());
-
-        // version is the running component name (configured in tests/bootstrap.php).
-        self::assertSame(ComponentContext::name(), $shared['version']);
     }
 
     // --------------------------------------------------------------------- //
@@ -139,10 +138,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $this->injectKernel($this->routerWith($routes, new RequestContext()));
 
         $captured = null;
-        $registry = $this->registry(static function (string $route) use (&$captured): array {
+        $registry = $this->registry(static function (string $route) use (&$captured): NavigationTree {
             $captured = $route;
 
-            return ['tree' => [['key' => 'audience']], 'activeKey' => $route, 'footer' => []];
+            return new NavigationTree([new NavigationNode(key: 'audience', label: 'Audience')], $route);
         });
         Kernel::instance(NavigationRegistryInterface::class, $registry);
 
@@ -153,7 +152,8 @@ final class InertiaSharedPropsCoverageTest extends TestCase
 
         self::assertSame('audience.segments.index', $captured);
         self::assertSame('audience.segments.index', $payload['activeKey']);
-        self::assertSame([['key' => 'audience']], $payload['tree']);
+        self::assertSame('audience', $payload['tree'][0]['key']);
+        self::assertSame([], $payload['footer']);
     }
 
     #[Test]
@@ -162,10 +162,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $this->injectKernel($this->routerWith(new RouteCollection(), null));
 
         $captured = 'sentinel';
-        $registry = $this->registry(static function (string $route) use (&$captured): array {
+        $registry = $this->registry(static function (string $route) use (&$captured): NavigationTree {
             $captured = $route;
 
-            return ['tree' => [], 'activeKey' => $route, 'footer' => []];
+            return new NavigationTree([], $route);
         });
         Kernel::instance(NavigationRegistryInterface::class, $registry);
 
@@ -182,10 +182,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $this->injectKernel($this->routerWith(new RouteCollection(), new RequestContext()));
 
         $captured = 'sentinel';
-        $registry = $this->registry(static function (string $route) use (&$captured): array {
+        $registry = $this->registry(static function (string $route) use (&$captured): NavigationTree {
             $captured = $route;
 
-            return ['tree' => [], 'activeKey' => $route, 'footer' => []];
+            return new NavigationTree([], $route);
         });
         Kernel::instance(NavigationRegistryInterface::class, $registry);
 
@@ -204,10 +204,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         $this->injectKernel(null);
 
         $captured = 'sentinel';
-        $registry = $this->registry(static function (string $route) use (&$captured): array {
+        $registry = $this->registry(static function (string $route) use (&$captured): NavigationTree {
             $captured = $route;
 
-            return ['tree' => [], 'activeKey' => $route, 'footer' => []];
+            return new NavigationTree([], $route);
         });
         Kernel::instance(NavigationRegistryInterface::class, $registry);
 
@@ -232,7 +232,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         InertiaSharedProps::register();
         $auth = (InertiaManager::getShared()['auth'])();
 
-        self::assertSame(42, $auth['id']);
+        self::assertSame('42', $auth['id']);
         self::assertSame('Ada Lovelace', $auth['name']);
         self::assertSame('user@moodle.test', $auth['email']);
         self::assertSame('https://moodle.test/u/ada.png', $auth['avatarUrl']);
@@ -243,7 +243,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     }
 
     #[Test]
-    public function authClosureLeavesAvatarNullAndEmailBlankWhenUnavailable(): void
+    public function authClosureOmitsAvatarAndEmailWhenUnavailable(): void
     {
         $GLOBALS['USER'] = (object) ['id' => 7];
         $GLOBALS['PAGE'] = new stdClass();
@@ -253,9 +253,10 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         InertiaSharedProps::register();
         $auth = (InertiaManager::getShared()['auth'])();
 
-        self::assertSame(7, $auth['id']);
-        self::assertSame('', $auth['email']);
-        self::assertNull($auth['avatarUrl']);
+        self::assertSame('7', $auth['id']);
+        self::assertArrayNotHasKey('email', $auth);
+        self::assertArrayNotHasKey('avatarUrl', $auth);
+        self::assertArrayNotHasKey('logoutUrl', $auth);
         self::assertSame([], $auth['capabilities']);
     }
 
@@ -264,20 +265,18 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function themeClosureReturnsDisabledDefaultsWhenInheritanceOff(): void
+    public function themeClosureEmitsOnlyAppearanceAndStrings(): void
     {
-        // No config set → inheritance disabled → brandColor null.
         InertiaSharedProps::register();
         $theme = (InertiaManager::getShared()['theme'])();
 
-        self::assertSame([], $theme['strings']);
-        self::assertNull($theme['appearance']);
-        self::assertNull($theme['brandColor']);
-        self::assertFalse($theme['inherit']);
+        // No appearance preference: the key is omitted, strings is an empty object.
+        self::assertSame(['strings'], array_keys($theme));
+        self::assertEquals(new stdClass(), $theme['strings']);
     }
 
     #[Test]
-    public function themeClosureReturnsBrandColorWhenInheritanceEnabled(): void
+    public function themeClosureIgnoresMoodleBrandColorSettings(): void
     {
         $GLOBALS['__middag_test_config'] = ['mdglib_core_inherit_theme_colors' => '1'];
         $GLOBALS['PAGE'] = (object) [
@@ -287,8 +286,8 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         InertiaSharedProps::register();
         $theme = (InertiaManager::getShared()['theme'])();
 
-        self::assertSame('#0f6cbf', $theme['brandColor']);
-        self::assertTrue($theme['inherit']);
+        self::assertArrayNotHasKey('brandColor', $theme);
+        self::assertArrayNotHasKey('inherit', $theme);
     }
 
     // --------------------------------------------------------------------- //
@@ -296,12 +295,12 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function scopeClosureReturnsBaseIdentifiers(): void
+    public function scopeClosureReturnsAnEmptyObject(): void
     {
         InertiaSharedProps::register();
         $scope = (InertiaManager::getShared()['scope'])();
 
-        self::assertSame(['identifiers' => []], $scope);
+        self::assertEquals(new stdClass(), $scope);
     }
 
     // --------------------------------------------------------------------- //
@@ -349,6 +348,30 @@ final class InertiaSharedPropsCoverageTest extends TestCase
 
         self::assertSame(['success' => 'Saved.'], (InertiaManager::getShared()['flash'])());
         self::assertSame('legacy', $GLOBALS['SESSION']->middag_flash_success);
+    }
+
+    // --------------------------------------------------------------------- //
+    // errors closure + buildErrors()                                        //
+    // --------------------------------------------------------------------- //
+
+    #[Test]
+    public function errorsClosureReturnsAnEmptyObjectWhenThereAreNoErrors(): void
+    {
+        InertiaSharedProps::register();
+
+        self::assertEquals(new stdClass(), (InertiaManager::getShared()['errors'])());
+    }
+
+    #[Test]
+    public function errorsClosureReturnsTheFieldMapFromTheFlashBag(): void
+    {
+        $bag = new FlashBag(new ArraySession());
+        $bag->setErrors(['email' => 'Invalid.']);
+        $this->injectContainer($bag);
+
+        InertiaSharedProps::register();
+
+        self::assertSame(['email' => 'Invalid.'], (InertiaManager::getShared()['errors'])());
     }
 
     // --------------------------------------------------------------------- //
@@ -476,7 +499,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
                 return $this;
             }
 
-            public function build(string $activeRoute): array
+            public function build(string $activeRoute): NavigationTree
             {
                 return ($this->build)($activeRoute);
             }
