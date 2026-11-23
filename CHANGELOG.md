@@ -21,6 +21,13 @@
 * state the 3.0 platform floor intent ([2dc7f65](https://github.com/middag-io/middag-php-moodle/commit/2dc7f654a771a4cefac00977d7d2ef17895978a6))
 * use the real composer package name in SECURITY.md ([74fc4c3](https://github.com/middag-io/middag-php-moodle/commit/74fc4c3b7120a152b513f55ba8a7e6f3c5ff4e66))
 
+
+### Consumer impact
+
+* The legacy `$SESSION->middag_flash_*` read path in `InertiaSharedProps` is removed. Only the framework FlashBag now feeds the `flash` prop. No known writer of the legacy keys exists in the plugin clones.
+* `SettingsSupport::extensionAliases()` is intentionally kept in this release.
+* Maintenance only, no consumer action: a new lowest dependencies CI cell and `ApiStabilityTagTest`, a PHPStan baseline reduction, docs and policy text updates, `SECURITY.md`, and the Engines workflow is now path-filtered on pull requests.
+
 ## [1.19.1](https://github.com/middag-io/middag-php-moodle/compare/v1.19.0...v1.19.1) (2026-11-17)
 
 
