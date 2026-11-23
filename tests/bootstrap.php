@@ -327,6 +327,7 @@ if (!class_exists('moodle_recordset', false)) {
 if (!class_exists('moodle_database', false)) {
     eval('class moodle_database {
         public function count_records($table, ?array $conditions = null) { return 0; }
+        public function get_indexes($table) { return []; }
         public function count_records_sql($sql, ?array $params = null) { return 0; }
         public function record_exists($table, array $conditions) { return false; }
         public function get_field($table, $return, array $conditions, $strictness = 0) { return false; }
