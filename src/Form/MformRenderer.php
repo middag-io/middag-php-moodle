@@ -24,6 +24,7 @@ use Middag\Ui\Block\Contract\LayoutElementInterface;
 use Middag\Ui\Form\Contract\FieldInterface;
 use Middag\Ui\Form\Contract\FormInterface;
 use Middag\Ui\Form\Contract\FormRendererInterface;
+use Middag\Ui\Form\FieldMessage;
 use Middag\Ui\Shared\Enum\RenderTarget;
 use Middag\Ui\Shared\ValueObject\RendererOutput;
 use moodleform;
@@ -64,7 +65,7 @@ final readonly class MformRenderer implements FormRendererInterface
         }
 
         $state_values = $state->values();
-        $state_errors = $state->errors();
+        $state_errors = $this->errorTexts($state->errors());
 
         // Build an anonymous moodleform that applies the collected specs.
         $mform_instance = new class(null, ['specs' => $specs, 'state_values' => $state_values, 'state_errors' => $state_errors]) extends moodleform {
@@ -95,12 +96,9 @@ final readonly class MformRenderer implements FormRendererInterface
                     }
                 }
 
-                // Apply per-field errors from form_state.
+                // Apply per-field errors from form_state (already reduced to text).
                 foreach ($params['state_errors'] as $field => $msg) {
-                    $mform->setElementError(
-                        $field,
-                        is_array($msg) ? implode(' ', $msg) : $msg
-                    );
+                    $mform->setElementError($field, $msg);
                 }
 
                 // Populate existing values.
@@ -115,6 +113,40 @@ final readonly class MformRenderer implements FormRendererInterface
         $html = ob_get_clean() ?: '';
 
         return RendererOutput::html(RenderTarget::Html, $html);
+    }
+
+    /**
+     * Reduce each field's error to the text mform shows.
+     *
+     * A structured message ({@see FieldMessage} or its serialized array) shows
+     * its server-resolved `message`; a list joins its messages with a space.
+     *
+     * @param array<string, array{message: string, key: string, domain: string, params?: array<string, mixed>}|FieldMessage|list<array{message: string, key: string, domain: string, params?: array<string, mixed>}|FieldMessage|string>|string> $errors
+     *
+     * @return array<string, string>
+     */
+    private function errorTexts(array $errors): array
+    {
+        return array_map(
+            static fn (array|FieldMessage|string $error): string => is_array($error) && array_is_list($error)
+                ? implode(' ', array_map(self::messageText(...), $error))
+                : self::messageText($error),
+            $errors,
+        );
+    }
+
+    /**
+     * The text of one message: a string as given, a structured message by its `message`.
+     *
+     * @param array{message: string, key: string, domain: string, params?: array<string, mixed>}|FieldMessage|string $message
+     */
+    private static function messageText(array|FieldMessage|string $message): string
+    {
+        if ($message instanceof FieldMessage) {
+            return $message->message;
+        }
+
+        return is_array($message) ? $message['message'] : $message;
     }
 
     /**
