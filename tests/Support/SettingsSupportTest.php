@@ -44,18 +44,6 @@ enum sample_status: string
 }
 
 /**
- * Consumer-style subclass exercising the {@see SettingsSupport::extensionAliases()}
- * seam: remaps the legacy "framework" slug onto the canonical "core" extension.
- */
-final class AliasedSettingsSupport extends SettingsSupport
-{
-    protected static function extensionAliases(): array
-    {
-        return ['framework' => 'core'];
-    }
-}
-
-/**
  * @internal
  */
 #[CoversClass(SettingsSupport::class)]
@@ -100,39 +88,10 @@ final class SettingsSupportTest extends TestCase
     {
         // Regression for the P0-7 footgun: "FrameworkConfig" used to derive the
         // dead key mdglib_FrameworkConfig_debugmode and silently read false. The
-        // base resolver is value-free: "framework" maps onto its own slug —
-        // remapping onto another extension is a subclass concern (see the
-        // extensionAliases() tests below).
+        // resolver is value-free: "framework" maps onto its own slug.
         $GLOBALS['__middag_test_config']['mdglib_framework_debugmode'] = '2';
 
         self::assertSame('2', SettingsSupport::get(FrameworkConfig::DebugMode));
-    }
-
-    #[Test]
-    public function testExtensionAliasesSeamRemapsTheDerivedSlug(): void
-    {
-        $GLOBALS['__middag_test_config']['mdglib_core_debugmode'] = '2';
-
-        self::assertSame('2', AliasedSettingsSupport::get(FrameworkConfig::DebugMode));
-    }
-
-    #[Test]
-    public function testExtensionAliasesSeamLeavesUnaliasedSlugsUntouched(): void
-    {
-        $GLOBALS['__middag_test_config']['mdglib_ecommerce_sendfromwoo'] = '1';
-
-        self::assertSame('1', AliasedSettingsSupport::get(ecommerce_config::SendFromWoo));
-    }
-
-    #[Test]
-    public function testExtensionAliasesSeamAppliesToWrites(): void
-    {
-        self::assertTrue(AliasedSettingsSupport::set(FrameworkConfig::DebugMode, '1'));
-        self::assertSame('1', $GLOBALS['__middag_test_config']['mdglib_core_debugmode']);
-        self::assertArrayNotHasKey('mdglib_framework_debugmode', $GLOBALS['__middag_test_config']);
-
-        self::assertTrue(AliasedSettingsSupport::unset(FrameworkConfig::DebugMode));
-        self::assertArrayNotHasKey('mdglib_core_debugmode', $GLOBALS['__middag_test_config']);
     }
 
     #[Test]

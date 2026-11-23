@@ -18,10 +18,15 @@ use Middag\Framework\Http\Inertia\InertiaManager;
 use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Runtime\Kernel;
-use Middag\Moodle\Settings\SettingsNamingPolicy;
 use Middag\Moodle\Support\SessionSupport;
-use Middag\Moodle\Support\ThemeSupport;
+use Middag\Ui\Form\FormErrors;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
+use Middag\Ui\Navigation\NavigationTree;
+use Middag\Ui\Shared\ValueObject\FlashMessages;
+use Middag\Ui\Shared\ValueObject\Identity;
+use Middag\Ui\Shared\ValueObject\SharedAuth;
+use Middag\Ui\Shared\ValueObject\SharedTheme;
+use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -38,41 +43,29 @@ use Throwable;
  */
 class InertiaSharedProps
 {
-    private static ?SettingsNamingPolicy $themePolicy = null;
-
-    /**
-     * Configure the naming policy used by the default theme shared prop.
-     *
-     * Consumers with product-owned settings should inject their explicit
-     * prefix here; null preserves the library-neutral default.
-     */
-    public static function configureThemePolicy(?SettingsNamingPolicy $policy): void
-    {
-        self::$themePolicy = $policy;
-    }
-
     /**
      * Register all default shared props.
      */
     public static function register(): void
     {
         // Navigation — resolved from the DI container where extensions register items during boot().
-        InertiaManager::share('navigation', fn (): array => self::buildNavigation());
+        InertiaManager::share('navigation', fn (): array => self::buildNavigation()->jsonSerialize());
 
         // Auth — current user + capabilities.
-        InertiaManager::share('auth', fn (): array => self::buildAuth());
+        InertiaManager::share('auth', fn (): array => self::buildAuth()->jsonSerialize());
 
-        // Theme — appearance preference + brand color.
-        InertiaManager::share('theme', fn (): array => self::buildTheme());
+        // Theme — appearance preference + string overrides.
+        InertiaManager::share('theme', fn (): array => self::buildTheme()->jsonSerialize());
 
         // Scope — global scope data (extensions populate in boot).
-        InertiaManager::share('scope', fn (): array => self::buildScope());
+        InertiaManager::share('scope', fn (): stdClass => self::buildScope());
 
-        // Flash — one-shot messages from the framework FlashBag.
-        InertiaManager::share('flash', fn (): ?array => self::buildFlash());
+        // Flash — one-shot messages from the framework FlashBag; the slot is
+        // dropped from the wire when there is nothing to show.
+        InertiaManager::share('flash', fn (): array|stdClass|null => self::buildFlash()?->jsonSerialize());
 
         // Kernel validation errors, in the shape useForm().errors expects.
-        InertiaManager::share('errors', fn (): array => self::buildErrors());
+        InertiaManager::share('errors', fn (): array|stdClass => self::buildErrors()->jsonSerialize());
 
         // CSRF — the Moodle sesskey, under the name the @middag-io/react
         // shared-props contract already declares. Clients that cannot read the
@@ -80,25 +73,21 @@ class InertiaSharedProps
         // as X-CSRF-Token.
         InertiaManager::share('csrf_token', fn (): string => SessionSupport::sesskey());
 
-        // Locale + version (static, no closure needed).
         InertiaManager::share('locale', fn (): string => current_language());
-        InertiaManager::share('version', ComponentContext::name());
     }
 
     /**
      * Build the 3-level navigation tree from the DI-registered navigation_registry.
      *
-     * Returns NavigationTreePayload format (tree + activeKey + footer).
-     * The React SidebarNav detects this format and uses the TreeSidebarNav renderer
+     * Returns the NavigationTree value object (tree + activeKey + footer);
+     * the shared closure serialises it. The React SidebarNav detects this format and uses the TreeSidebarNav renderer
      * with drill-down support.
      *
      * Navigation items are registered by extensions during boot() via
      * $this->navigation(). The registry singleton lives in the
      * DI container, bound by core_extension::register().
-     *
-     * @return array{tree: array, activeKey: string, footer: array}
      */
-    public static function buildNavigation(): array
+    public static function buildNavigation(): NavigationTree
     {
         /** @var NavigationRegistryInterface $registry */
         $registry = Kernel::get(NavigationRegistryInterface::class);
@@ -142,9 +131,10 @@ class InertiaSharedProps
     /**
      * Build auth shared prop from current Moodle user.
      *
-     * @return array{id: int, name: string, email: string, avatarUrl: null|string, capabilities: string[]}
+     * The id is the string form of the Moodle user id. Email and avatar are
+     * left off the wire when absent (never an empty string or null).
      */
-    private static function buildAuth(): array
+    private static function buildAuth(): SharedAuth
     {
         global $USER, $PAGE;
 
@@ -174,50 +164,42 @@ class InertiaSharedProps
             $userpicture->size = 100;
             $avatar_url = $userpicture->get_url($PAGE)->out(false);
         } catch (Throwable) {
-            // Avatar unavailable — leave null.
+            // Avatar unavailable — omitted from the wire.
         }
 
-        return [
-            'id' => (int) $USER->id,
-            'name' => fullname($USER),
-            'email' => $USER->email ?? '',
-            'avatarUrl' => $avatar_url,
-            'capabilities' => $capabilities,
-        ];
+        $email = $USER->email ?? '';
+
+        return new SharedAuth(
+            identity: new Identity(
+                id: (string) $USER->id,
+                name: fullname($USER),
+                email: $email === '' ? null : $email,
+                avatarUrl: $avatar_url === '' ? null : $avatar_url,
+            ),
+            capabilities: $capabilities,
+        );
     }
 
     /**
      * Build theme shared prop.
      *
-     * Delegates brand color resolution to ThemeSupport (the theme bridge).
-     *
-     * @return array{strings: array, appearance: null|string, brandColor: null|string, inherit: bool}
+     * Moodle exposes no appearance preference or string overrides here, so
+     * the prop is the bare contract shape (empty strings map).
      */
-    private static function buildTheme(): array
+    private static function buildTheme(): SharedTheme
     {
-        $theme = ThemeSupport::buildTheme(self::$themePolicy);
-
-        return [
-            'strings' => [],
-            'appearance' => null,
-            'brandColor' => $theme['brandColor'],
-            'inherit' => $theme['inherit'],
-        ];
+        return new SharedTheme();
     }
 
     /**
      * Build global scope data.
      *
      * Extensions populate scope data via Inertia::share() in their boot().
-     * This returns a base structure; extensions merge their data.
-     *
-     * @return array{identifiers: string[]}
+     * The base value is an empty object ({} on the wire).
      */
-    private static function buildScope(): array
+    private static function buildScope(): stdClass
     {
-        return [
-            'identifiers' => [],
-        ];
+        return new stdClass();
     }
 
     /**
@@ -243,16 +225,12 @@ class InertiaSharedProps
         return $out;
     }
 
-    /**
-     * Map of field => errors from the last rejected validation.
-     *
-     * @return array<string, mixed>
-     */
-    private static function buildErrors(): array
+    /** Map of field => errors from the last rejected validation. */
+    private static function buildErrors(): FormErrors
     {
         $bag = self::flashBag();
 
-        return $bag instanceof FlashBag ? $bag->pullErrors() : [];
+        return new FormErrors($bag instanceof FlashBag ? $bag->pullErrors() : []);
     }
 
     /** The container's FlashBag, or null when it is not registered. */
@@ -273,14 +251,13 @@ class InertiaSharedProps
     }
 
     /**
-     * Build flash messages from the framework FlashBag.
-     *
-     * @return null|array<string, string>
+     * Build flash messages from the framework FlashBag; null when empty so
+     * the slot is dropped from the wire.
      */
-    private static function buildFlash(): ?array
+    private static function buildFlash(): ?FlashMessages
     {
         $flash = self::pullFrameworkFlash();
 
-        return $flash === [] ? null : $flash;
+        return $flash === [] ? null : FlashMessages::fromArray($flash);
     }
 }
