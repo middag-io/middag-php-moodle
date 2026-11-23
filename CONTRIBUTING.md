@@ -62,6 +62,27 @@ part of `composer test`) enforces that the adapter never imports any non-OSS
 MIDDAG namespace or package. Keep `src/` free of those imports — the adapter
 must remain consumable on its own.
 
+### PHPStan baseline (accepted debt)
+
+`phpstan-baseline.neon` holds 99 entries. They are accepted debt: the number
+may only go down, and new code adds no entry. Most come from analysing one
+code base against the stubs of every supported Moodle version:
+
+- `core\message\message` exposes its fields through magic accessors over
+  private properties (`property.private`, `assign.propertyType`).
+- The stubs type contexts as `context` while the code passes the
+  `core\context\*` classes that alias it (`argument.type`).
+- Guards that keep the code safe on older Moodle versions read as always true
+  or always false on the newest stubs (`*.alwaysTrue`, `*.alwaysFalse`,
+  `nullCoalesce.property`, `isset.property`).
+- `@api` traits that the library ships for hosts but does not use itself
+  (`trait.unused`).
+
+When a change touches a file with baseline entries, fix the entries it makes
+easy to fix and regenerate the baseline with
+`vendor/bin/phpstan analyse --configuration=.phpstan.neon --generate-baseline phpstan-baseline.neon`,
+then update the number above.
+
 ## Commit and PR conventions
 
 - [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): description`.
