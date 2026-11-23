@@ -55,18 +55,6 @@ parameters:
 			path: src/Domain/Completion/CourseCompletion.php
 
 		-
-			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Domain\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, context given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Domain/Context/Context.php
-
-		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Domain\\Context\\Context\:\:fromContext\(\) has invalid type context\.$#'
-			identifier: class.notFound
-			count: 2
-			path: src/Domain/Context/Context.php
-
-		-
 			message: '#^Default value of the parameter \#5 \$courseid \(null\) of method Middag\\Moodle\\Domain\\Message\\Contract\\MessageServiceInterface\:\:email\(\) is incompatible with type int\.$#'
 			identifier: parameter.defaultValue
 			count: 1
@@ -241,40 +229,34 @@ parameters:
 			path: src/Http/Controller/AbstractController.php
 
 		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\course given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Controller/AbstractController.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\module given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Controller/AbstractController.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:setContext\(\) expects core\\context\|null, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Controller/AbstractController.php
-
-		-
 			message: '#^Template type T of method Middag\\Moodle\\Http\\Controller\\AbstractController\:\:getService\(\) is not referenced in a parameter\.$#'
 			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Http/Controller/AbstractController.php
 
 		-
-			message: '#^Call to method out\(\) on an unknown class core\\output\\moodle_url\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/Inertia/InertiaSharedProps.php
-
-		-
 			message: '#^Parameter \#2 \$context of function has_capability expects context, core\\context\\system given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Http/Inertia/InertiaSharedProps.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: src/Logging/MoodleActorResolver.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: src/Logging/MoodleOriginResolver.php
+
+		-
+			message: '#^Parameter \$context of method Middag\\Moodle\\Privacy\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type core_privacy\\local\\request\\context\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Privacy/PrivacyProvider.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -301,48 +283,6 @@ parameters:
 			path: src/Runtime/Loader/MoodleHookfileLoader.php
 
 		-
-			message: '#^Class core_renderer not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Runtime/MoodleBootstrap.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Logging/MoodleActorResolver.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: src/Logging/MoodleOriginResolver.php
-
-		-
-			message: '#^Parameter \#2 \$context of static method Middag\\Moodle\\Support\\CapabilitySupport\:\:has\(\) expects core\\context, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Output/NavbarService.php
-
-		-
-			message: '#^Parameter \#1 \$context of method Middag\\Moodle\\Privacy\\Contract\\PrivacyProviderInterface\:\:deleteDataForAllUsersInContext\(\) expects core\\context, context given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Privacy/PrivacyProvider.php
-
-		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Privacy\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type context\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Privacy/PrivacyProvider.php
-
-		-
-			message: '#^Parameter \$context of method Middag\\Moodle\\Privacy\\PrivacyProvider\:\:delete_data_for_all_users_in_context\(\) has invalid type core_privacy\\local\\request\\context\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Privacy/PrivacyProvider.php
-
-		-
 			message: '#^Class Middag\\Moodle\\Security\\Authentication referenced with incorrect case\: Middag\\Moodle\\Security\\authentication\.$#'
 			identifier: class.nameCase
 			count: 2
@@ -353,30 +293,6 @@ parameters:
 			identifier: class.nameCase
 			count: 2
 			path: src/Security/Authorizer.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Security\\Capability\:\:resolveContext\(\) should return core\\context but returns core\\context\\block\|core\\context\\course\|core\\context\\coursecat\|core\\context\\module\|core\\context\\system\|core\\context\\user\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Security/Capability.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Settings\\Page referenced with incorrect case\: Middag\\Moodle\\Settings\\page\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: src/Settings/SettingsResolver.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Settings\\Setting referenced with incorrect case\: Middag\\Moodle\\Settings\\setting\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: src/Settings/SettingsResolver.php
-
-		-
-			message: '#^Default value of the parameter \#5 \$param \(null\) of method Middag\\Moodle\\Settings\\Text\:\:__construct\(\) is incompatible with type string\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: src/Settings/Text.php
 
 		-
 			message: '#^Trait Middag\\Moodle\\Shared\\Concerns\\HasUrl is used zero times and is not analysed\.$#'
@@ -421,90 +337,6 @@ parameters:
 			path: src/Support/CapabilitySupport.php
 
 		-
-			message: '#^Cannot access property \$id on core\\context\\coursecat\|false\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Support/CategorySupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 2
-			path: src/Support/CategorySupport.php
-
-		-
-			message: '#^Caught class moodle_exception not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CategorySupport.php
-
-		-
-			message: '#^Access to an undefined property core\\context\\system\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Call to function array_key_exists\(\) with ''cohorts'' and array\<int, object\> will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Call to function array_key_exists\(\) with ''totalcohorts'' and \*NEVER\* will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<int, object\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 2
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Offset ''cohorts'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Offset ''totalcohorts'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Support/CohortSupport.php
-
-		-
-			message: '#^Parameter \#3 \$contextorid of static method core_competency\\api\:\:add_evidence\(\) expects core_competency\\context\|int, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Support/CompetencySupport.php
-
-		-
-			message: '#^Parameter \#5 \$context of static method core_competency\\api\:\:list_frameworks\(\) expects core_competency\\context, core\\context\\system given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Support/CompetencySupport.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -514,12 +346,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with array\<cm_info\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: src/Support/CompletionSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 3
 			path: src/Support/CompletionSupport.php
 
 		-
@@ -535,54 +361,6 @@ parameters:
 			path: src/Support/CompletionSupport.php
 
 		-
-			message: '#^Method Middag\\Moodle\\Support\\ContextSupport\:\:classFor\(\) should return class\-string but returns string\.$#'
-			identifier: return.type
-			count: 2
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type class\-string is not subtype of native type ''\\\\core\\\\context\\\\base''\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\block is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\course is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\coursecat is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\module is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\system is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
-			message: '#^PHPDoc tag @var with type core\\context\\user is not subtype of native type string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Support/ContextSupport.php
-
-		-
 			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$category\.$#'
 			identifier: property.protected
 			count: 1
@@ -592,42 +370,6 @@ parameters:
 			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$format\.$#'
 			identifier: property.protected
 			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Access to protected property Middag\\Moodle\\Domain\\Course\\Course\:\:\$visible\.$#'
-			identifier: property.protected
-			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Call to method get_last_section_number\(\) on an unknown class course_format\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Call to method get_modinfo\(\) on an unknown class course_format\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Call to method is_section_visible\(\) on an unknown class course_format\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Cannot access property \$id on core\\context\\course\|false\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 7
 			path: src/Support/CourseSupport.php
 
 		-
@@ -649,52 +391,10 @@ parameters:
 			path: src/Support/CourseSupport.php
 
 		-
-			message: '#^PHPDoc tag @throws with type dml_exception is not subtype of Throwable$#'
-			identifier: throws.notThrowable
-			count: 24
-			path: src/Support/DbSupport.php
-
-		-
-			message: '#^PHPDoc tag @throws with type dml_exception is not subtype of Throwable$#'
-			identifier: throws.notThrowable
-			count: 2
-			path: src/Support/EnrolSupport.php
-
-		-
-			message: '#^Parameter \#1 \$context of function is_enrolled expects context, core\\context\\course\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Support/EnrolSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 4
-			path: src/Support/GradeSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 2
-			path: src/Support/GroupSupport.php
-
-		-
 			message: '#^Method Middag\\Moodle\\Support\\GroupSupport\:\:getGroupOptions\(\) should return array\<string, string\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Support/GroupSupport.php
-
-		-
-			message: '#^Parameter \#1 \$table of static method core\\output\\html_writer\:\:table\(\) expects core\\output\\html_table, core_table\\output\\html_table given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Support/HtmlWriterSupport.php
-
-		-
-			message: '#^Parameter \#1 \$url of static method core\\output\\html_writer\:\:input_hidden_params\(\) expects core\\output\\moodle_url, core\\url given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Support/HtmlWriterSupport.php
 
 		-
 			message: '#^Instanceof between core_string_manager and core_string_manager will always evaluate to true\.$#'
@@ -711,18 +411,6 @@ parameters:
 		-
 			message: '#^Access to private property core\\message\\message\:\:\$userto\.$#'
 			identifier: property.private
-			count: 1
-			path: src/Support/MessageSupport.php
-
-		-
-			message: '#^Cannot access property \$id on int\|object\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: src/Support/MessageSupport.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Support\\MessageSupport\:\:getNoreplyUser\(\) should return stdClass but returns core\\stdClass\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Support/MessageSupport.php
 
@@ -871,24 +559,6 @@ parameters:
 			path: src/Support/PluginSupport.php
 
 		-
-			message: '#^Call to static method instance\(\) on an unknown class context_course\.$#'
-			identifier: class.notFound
-			count: 2
-			path: src/Support/RoleSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 1
-			path: src/Support/RoleSupport.php
-
-		-
-			message: '#^PHPDoc tag @throws with type dml_exception is not subtype of Throwable$#'
-			identifier: throws.notThrowable
-			count: 1
-			path: src/Support/RoleSupport.php
-
-		-
 			message: '#^Parameter \#1 \$context of function get_assignable_roles expects context, core\\context given\.$#'
 			identifier: argument.type
 			count: 1
@@ -923,21 +593,3 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 2
 			path: src/Support/TaskSupport.php
-
-		-
-			message: '#^Caught class dml_exception is not an exception\.$#'
-			identifier: catch.notThrowable
-			count: 5
-			path: src/Support/UserFieldSupport.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$comparison_sql with type int is incompatible with native type string\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: src/Support/UserFieldSupport.php
-
-		-
-			message: '#^Parameter \#1 \$record of static method Middag\\Moodle\\Domain\\AbstractMoodleEntity\:\:fromRecord\(\) expects array\|stdClass, core\\stdClass\|true given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Support/UserSupport.php

@@ -184,8 +184,7 @@ Architecture decisions live in [`docs/decisions/`](docs/decisions/) as `MDL-NNN`
 MIDDAG-MADR compact format: frontmatter, then Context → Considered Options
 → Decision → Consequences → Enforcement. A record states **why** (the choice, the alternatives, the
 consequences); specification (class lists, inventories, flows, naming tables) lives in the reference
-docs its Enforcement table points to, at docs.middag.dev (`docs-middag-dev`,
-`docs/framework/reference/adapters/moodle/`). Ids are never reused; a record merged into another
+docs its Enforcement table points to, at docs.middag.dev. Ids are never reused; a record merged into another
 stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `deciders` is a role id
 (`leadership`), never a person.
 
@@ -221,8 +220,8 @@ stated for this lib in [`API-STABILITY.md`](API-STABILITY.md#versioning).
   a family major window after a deprecation (runtime notice) in an earlier
   minor. Family minor/major = a coordinated `Release-As: X.Y.0` in every lib.
   The **product owner** decides every family minor and major.
-- **Window check:** `.github/workflows/family-window.yml` runs
-  `php-version-family-check / check` on the PR title and every non-merge commit
+- **Window check:** the `pr-checks` job in `.github/workflows/pr-checks.yml`
+  runs `php-version-family-check / check` on the PR title and every non-merge commit
   against the organization variable `PHP_LIBS_OPEN_RELEASE` (empty = closed,
   `X.Y` = minor window, `X.0` = major window). A held PR stays open, kept
   current by merging `main` (never rebase/force-push); re-run the check when

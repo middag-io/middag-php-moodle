@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   # The php-library-check component of middag-io/actions, called as a
-  # composite action by its major tag (onda 2, infra-terraform#450 D1). One
+  # composite action by its major tag. One
   # job per PHP version, with the platform pin (8.3.0) kept: the static checks
   # (composer validate, strict PSR-4, PHPStan on the canonical stubs,
   # PHP-CS-Fixer, Rector and the check:lint parse lint) run on 8.3, the floor;

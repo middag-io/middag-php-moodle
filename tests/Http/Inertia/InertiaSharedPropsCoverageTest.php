@@ -14,6 +14,8 @@ namespace Middag\Moodle\Tests\Http\Inertia;
 
 use Closure;
 use Middag\Framework\Http\Inertia\InertiaManager;
+use Middag\Framework\Http\Session\ArraySession;
+use Middag\Framework\Http\Session\FlashBag;
 use Middag\Moodle\Config\ComponentContext;
 use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Inertia\InertiaSharedProps;
@@ -307,7 +309,7 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     // --------------------------------------------------------------------- //
 
     #[Test]
-    public function flashClosureReturnsNullWhenSessionHasNoFlash(): void
+    public function flashClosureReturnsNullWhenFrameworkFlashBagIsEmpty(): void
     {
         $GLOBALS['SESSION'] = new stdClass();
 
@@ -317,34 +319,67 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     }
 
     #[Test]
-    public function flashClosureCollectsEveryLevelAndClearsTheSession(): void
+    public function flashClosureIgnoresLegacySessionFlashKeys(): void
     {
-        $session = (object) [
-            'middag_flash_success' => 'saved',
-            'middag_flash_error' => 'boom',
+        $legacy = [
+            'middag_flash_success' => 'ok',
+            'middag_flash_error' => 'bad',
             'middag_flash_info' => 'fyi',
             'middag_flash_warning' => 'careful',
         ];
-        $GLOBALS['SESSION'] = $session;
+        $GLOBALS['SESSION'] = (object) $legacy;
 
         InertiaSharedProps::register();
-        $flash = (InertiaManager::getShared()['flash'])();
 
-        self::assertSame(
-            ['success' => 'saved', 'error' => 'boom', 'info' => 'fyi', 'warning' => 'careful'],
-            $flash,
-        );
+        self::assertNull((InertiaManager::getShared()['flash'])());
+        foreach ($legacy as $key => $value) {
+            self::assertSame($value, $GLOBALS['SESSION']->{$key}, $key . ' must stay untouched');
+        }
+    }
 
-        // One-shot: each key is consumed off the session.
-        self::assertFalse(isset($session->middag_flash_success));
-        self::assertFalse(isset($session->middag_flash_error));
-        self::assertFalse(isset($session->middag_flash_info));
-        self::assertFalse(isset($session->middag_flash_warning));
+    #[Test]
+    public function flashClosureReturnsOnlyFrameworkFlashBagMessages(): void
+    {
+        $GLOBALS['SESSION'] = (object) ['middag_flash_success' => 'legacy'];
+        $bag = new FlashBag(new ArraySession());
+        $bag->add('success', 'Saved.');
+        $this->injectContainer($bag);
+
+        InertiaSharedProps::register();
+
+        self::assertSame(['success' => 'Saved.'], (InertiaManager::getShared()['flash'])());
+        self::assertSame('legacy', $GLOBALS['SESSION']->middag_flash_success);
     }
 
     // --------------------------------------------------------------------- //
     // Helpers                                                               //
     // --------------------------------------------------------------------- //
+
+    /**
+     * Inject a pre-booted Kernel whose container resolves only the given FlashBag.
+     */
+    private function injectContainer(FlashBag $bag): void
+    {
+        $container = new readonly class($bag) implements ContainerInterface {
+            public function __construct(private FlashBag $bag) {}
+
+            public function has(string $id): bool
+            {
+                return FlashBag::class === $id;
+            }
+
+            public function get(string $id): FlashBag
+            {
+                return $this->bag;
+            }
+        };
+
+        $reflection = new ReflectionClass(Kernel::class);
+        $kernel = $reflection->newInstanceWithoutConstructor();
+        $reflection->getProperty('booted')->setValue($kernel, true);
+        $kernel->setInternalContainer($container);
+        $reflection->getProperty('instance')->setValue(null, $kernel);
+    }
 
     /**
      * Inject a pre-booted Kernel singleton with an optional router, bypassing a

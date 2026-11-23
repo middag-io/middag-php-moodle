@@ -3,7 +3,16 @@ name: Engines
 on:
   push:
     branches: [main]
+  # Engines are not required status checks (only the version-family check is),
+  # so skipping this workflow on unrelated pull requests cannot block a merge.
   pull_request:
+    paths:
+      - 'src/Support/Db*'
+      - 'src/Database/**'
+      - 'tests/Integration/Engine/**'
+      - '.github/workflows/engines.yml'
+      - 'composer.json'
+      - 'composer.lock'
   workflow_dispatch:
 
 permissions: {}

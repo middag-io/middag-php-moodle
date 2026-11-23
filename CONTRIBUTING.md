@@ -72,7 +72,7 @@ must remain consumable on its own.
   [release-please](https://github.com/googleapis/release-please) from commits
   merged to `main`, never by a manual tag. On `1.x`, `fix:` cuts a patch and
   `feat:` cuts a minor; a break ships as `feat:`, never with `!` or a
-  `BREAKING CHANGE:` footer. Every PR runs the family-window check
+  `BREAKING CHANGE:` footer. Every PR runs the version-family check
   `php-version-family-check / check`. The rules are in
   [`API-STABILITY.md`](API-STABILITY.md#versioning) and on
   [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).

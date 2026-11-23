@@ -89,7 +89,7 @@ The support rules of the `middag-php-*` version family (lifecycle, what a
 patch, minor and major may carry, the supported surface and the compatibility
 matrix) are on
 [Versioning and compatibility](https://docs.middag.dev/libraries/reference/versioning-and-compatibility).
-The platform and the CI jobs, the family-window check included, are on
+The platform and the CI jobs, the version-family check included, are on
 [Platform](https://docs.middag.dev/libraries/reference/platform).
 
 What applies in this repository:
@@ -101,14 +101,15 @@ What applies in this repository:
 - **On `1.x`:** `fix:` cuts a patch and `feat:` cuts a minor. A break of the
   `@api` surface ships as `feat:`, never as `fix:`, `refactor:` or `chore:`,
   and never with `!` or a `BREAKING CHANGE:` footer (release-please would cut
-  `2.0.0` in this lib alone, and the family-window check refuses both). The
+  `2.0.0` in this lib alone, and the version-family check refuses both). The
   1.x line is pre-stable and unsupported, and the move to `2.0.0` is a clean
   cut.
 - **From `2.0.0`:** every `middag-php-*` library shares `MAJOR.MINOR`. A patch
   carries fixes only, a minor never breaks, and a major carries the breaks,
   each one deprecated first in an earlier minor.
-- Every pull request runs the family-window check
-  `php-version-family-check / check` (`.github/workflows/family-window.yml`).
+- Every pull request runs the version-family check
+  `php-version-family-check / check` (the `pr-checks` job in
+  `.github/workflows/pr-checks.yml`).
 
 ## The contracts this adapter fulfils
 
