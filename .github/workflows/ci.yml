@@ -144,3 +144,25 @@ jobs:
 
       - name: PHPStan against the matrix stubs
         run: composer check:stan
+
+  # One stable check name for the branch rules: it fails unless every job
+  # above succeeded, so the rules do not list each PHP or Moodle version of
+  # the matrix.
+  ci-required:
+    name: CI required
+    if: always()
+    needs: [php-library-check, php-library-check-highest, php-library-check-lowest, stan-matrix]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Fail unless every CI job succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != success ]; then
+              echo "::error::a required CI job ended as ${result}"
+              exit 1
+            fi
+          done

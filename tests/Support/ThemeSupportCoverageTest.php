@@ -122,10 +122,7 @@ final class ThemeSupportCoverageTest extends TestCase
             ':root { --brand: #123456; }',
             ThemeSupport::getCssInjection($policy),
         );
-        self::assertSame(
-            ['brandColor' => '#123456', 'inherit' => true],
-            ThemeSupport::buildTheme($policy),
-        );
+        self::assertTrue(ThemeSupport::isInheritanceEnabled($policy));
     }
 
     #[Test]
@@ -171,20 +168,11 @@ final class ThemeSupportCoverageTest extends TestCase
     }
 
     #[Test]
-    public function testBuildThemeReturnsColorAndInheritWhenEnabled(): void
+    public function testBuildThemeIsGoneSinceTheHostSharesTheThemeThroughSharedTheme(): void
     {
-        $GLOBALS['__middag_test_config'][self::INHERIT_KEY] = 1;
-        $GLOBALS['PAGE'] = $this->pageWithBrand('#abcdef');
-
-        self::assertSame(['brandColor' => '#abcdef', 'inherit' => true], ThemeSupport::buildTheme());
-    }
-
-    #[Test]
-    public function testBuildThemeReturnsNullColorWhenDisabled(): void
-    {
-        $GLOBALS['PAGE'] = $this->pageWithBrand('#abcdef');
-
-        self::assertSame(['brandColor' => null, 'inherit' => false], ThemeSupport::buildTheme());
+        // InertiaSharedProps builds the theme prop from SharedTheme; the old
+        // brandColor/inherit array no longer has a caller.
+        self::assertFalse(method_exists(ThemeSupport::class, 'buildTheme'));
     }
 
     private function pageWithBrand(mixed $brandcolor): stdClass

@@ -98,21 +98,6 @@ class ThemeSupport
     }
 
     /**
-     * Build theme data for Inertia shared props.
-     *
-     * @return array{brandColor: ?string, inherit: bool}
-     */
-    public static function buildTheme(?SettingsNamingPolicy $policy = null): array
-    {
-        $inherit = self::isInheritanceEnabled($policy);
-
-        return [
-            'brandColor' => $inherit ? self::getBrandColor() : null,
-            'inherit' => $inherit,
-        ];
-    }
-
-    /**
      * CSS custom property name used by {@see getCssInjection()}.
      *
      * Value-free default: `--brand`. A host whose design system consumes a
