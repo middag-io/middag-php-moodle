@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.24.0](https://github.com/middag-io/middag-php-moodle/compare/v1.23.0...v1.24.0) (2026-11-23)
+
+
+### Features
+
+* remove ThemeSupport::buildTheme() ([f4e4da1](https://github.com/middag-io/middag-php-moodle/commit/f4e4da1a186a28921378b09981d493bdbecdd165))
+
+
+### Documentation
+
+* record the PHPStan baseline as accepted debt ([6e50e28](https://github.com/middag-io/middag-php-moodle/commit/6e50e28017d97bc7b61fc1c1e35d2d25a0045bb1))
+
+### Consumer impact
+
+- `ThemeSupport::buildTheme()` is removed (`@api`, pre-2.0, shipped as a MINOR). Build the theme prop through `InertiaSharedProps` (`SharedTheme`); to read the parts directly, call `ThemeSupport::getBrandColor()` and `ThemeSupport::isInheritanceEnabled()`. A subclass that overrode `buildTheme()` keeps working and can drop the override.
+- No dependency range changed.
+
 ## [1.23.0](https://github.com/middag-io/middag-php-moodle/compare/v1.22.0...v1.23.0) (2026-11-23)
 
 
