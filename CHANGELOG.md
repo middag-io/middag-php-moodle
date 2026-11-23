@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.1](https://github.com/middag-io/middag-php-moodle/compare/v1.21.0...v1.21.1) (2026-11-23)
+
+
+### Documentation
+
+* add enum evolution policy and fix stale AGENTS notes ([ec6a6b3](https://github.com/middag-io/middag-php-moodle/commit/ec6a6b3708d1f5a834b7dcd9646dc930c2019461))
+
 ## [1.21.0](https://github.com/middag-io/middag-php-moodle/compare/v1.20.1...v1.21.0) (2026-11-23)
 
 
