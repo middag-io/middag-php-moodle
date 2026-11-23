@@ -20,9 +20,12 @@ use Middag\Moodle\Http\Contract\RouterInterface;
 use Middag\Moodle\Http\Inertia\InertiaSharedProps;
 use Middag\Moodle\Runtime\ContainerFactory;
 use Middag\Moodle\Runtime\Kernel;
+use Middag\Ui\Form\FieldMessage;
+use Middag\Ui\Form\FormErrors;
 use Middag\Ui\Navigation\Contract\NavigationRegistryInterface;
 use Middag\Ui\Navigation\NavigationNode;
 use Middag\Ui\Navigation\NavigationTree;
+use Middag\Ui\Shared\ValueObject\Translatable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -366,12 +369,56 @@ final class InertiaSharedPropsCoverageTest extends TestCase
     public function errorsClosureReturnsTheFieldMapFromTheFlashBag(): void
     {
         $bag = new FlashBag(new ArraySession());
-        $bag->setErrors(['email' => 'Invalid.']);
+        $bag->setErrors(new FormErrors(['email' => 'Invalid.']));
         $this->injectContainer($bag);
 
         InertiaSharedProps::register();
 
-        self::assertSame(['email' => 'Invalid.'], (InertiaManager::getShared()['errors'])());
+        self::assertSame('{"email":"Invalid."}', json_encode((InertiaManager::getShared()['errors'])()));
+    }
+
+    #[Test]
+    public function errorsClosureCarriesStructuredFieldMessagesFromTheSession(): void
+    {
+        $bag = new FlashBag(new ArraySession());
+        $bag->setErrors(new FormErrors([
+            'email' => new FieldMessage('Not a valid email.', 'validation.email', 'validators'),
+            'tags' => ['Too many tags.', new FieldMessage('Tags must be unique.', 'validation.unique', 'validators', ['limit' => 3])],
+        ]));
+        $this->injectContainer($bag);
+
+        InertiaSharedProps::register();
+
+        self::assertSame(
+            '{"email":{"message":"Not a valid email.","key":"validation.email","domain":"validators"},'
+            . '"tags":["Too many tags.",{"message":"Tags must be unique.","key":"validation.unique","domain":"validators","params":{"limit":3}}]}',
+            json_encode((InertiaManager::getShared()['errors'])()),
+        );
+    }
+
+    #[Test]
+    public function errorsClosureNestsTheFieldMapUnderTheErrorBag(): void
+    {
+        $bag = new FlashBag(new ArraySession());
+        $bag->setErrors(new FormErrors(['email' => 'Invalid.']), 'login');
+        $this->injectContainer($bag);
+
+        InertiaSharedProps::register();
+
+        self::assertSame('{"login":{"email":"Invalid."}}', json_encode((InertiaManager::getShared()['errors'])()));
+    }
+
+    #[Test]
+    public function errorsAreReadOnlyOnce(): void
+    {
+        $bag = new FlashBag(new ArraySession());
+        $bag->setErrors(new FormErrors(['email' => 'Invalid.']));
+        $this->injectContainer($bag);
+
+        InertiaSharedProps::register();
+        (InertiaManager::getShared()['errors'])();
+
+        self::assertEquals(new stdClass(), (InertiaManager::getShared()['errors'])());
     }
 
     // --------------------------------------------------------------------- //
@@ -464,18 +511,43 @@ final class InertiaSharedPropsCoverageTest extends TestCase
         return new readonly class($build) implements NavigationRegistryInterface {
             public function __construct(private Closure $build) {}
 
-            public function group(string $key, string $label, ?string $icon = null, int $weight = 50): static
-            {
+            public function group(
+                string $key,
+                string|Translatable $label,
+                ?string $icon = null,
+                int $weight = 50,
+                ?string $entityType = null,
+                ?string $badgeVariant = null,
+                ?string $statusColor = null,
+            ): static {
                 return $this;
             }
 
-            public function section(string $key, string $label, ?string $icon = null, int $weight = 50): static
-            {
+            public function section(
+                string $key,
+                string|Translatable $label,
+                ?string $icon = null,
+                int $weight = 50,
+                ?string $entityType = null,
+                ?string $badgeVariant = null,
+                ?string $statusColor = null,
+            ): static {
                 return $this;
             }
 
-            public function item(string $key, string $label, string $route, array $routeParams = [], ?string $icon = null, int $weight = 50): static
-            {
+            public function item(
+                string $key,
+                string|Translatable $label,
+                ?string $route,
+                array $routeParams = [],
+                ?string $icon = null,
+                int $weight = 50,
+                ?string $entityType = null,
+                ?string $badgeVariant = null,
+                ?string $statusColor = null,
+                ?string $target = null,
+                ?string $href = null,
+            ): static {
                 return $this;
             }
 

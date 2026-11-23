@@ -20,6 +20,7 @@ use Middag\Ui\Form\Contract\FormInterface;
 use Middag\Ui\Form\Contract\FormRendererInterface;
 use Middag\Ui\Form\FieldConstraints;
 use Middag\Ui\Form\FieldDefinition;
+use Middag\Ui\Form\FieldMessage;
 use Middag\Ui\Form\FormState;
 use Middag\Ui\Shared\Enum\FieldType;
 use Middag\Ui\Shared\Enum\RenderTarget;
@@ -88,6 +89,41 @@ final class MformRendererCoverageTest extends TestCase
 
         $this->assertSame(RenderTarget::Html, $output->target);
         $this->assertStringContainsString('rendered', $output->body);
+        $this->assertStringContainsString('<span class="error" data-field="category">too short invalid</span>', $output->body);
+        $this->assertStringContainsString('<span class="error" data-field="tags">required</span>', $output->body);
+    }
+
+    #[Test]
+    public function showsTheMessageOfAStructuredFieldMessage(): void
+    {
+        $state = new FormState([], [
+            'email' => new FieldMessage('Not a valid email.', 'validation.email', 'validators'),
+            'name' => ['message' => 'Too short.', 'key' => 'validation.length', 'domain' => 'validators', 'params' => ['min' => 3]],
+        ]);
+
+        $output = $this->renderState($state);
+
+        $this->assertStringContainsString('<span class="error" data-field="email">Not a valid email.</span>', $output);
+        $this->assertStringContainsString('<span class="error" data-field="name">Too short.</span>', $output);
+    }
+
+    #[Test]
+    public function joinsStructuredFieldMessagesInsideAList(): void
+    {
+        $state = new FormState([], [
+            'tags' => [
+                'Too many tags.',
+                new FieldMessage('Tags must be unique.', 'validation.unique', 'validators', ['limit' => 3]),
+                ['message' => 'Tag too long.', 'key' => 'validation.length', 'domain' => 'validators'],
+            ],
+        ]);
+
+        $output = $this->renderState($state);
+
+        $this->assertStringContainsString(
+            '<span class="error" data-field="tags">Too many tags. Tags must be unique. Tag too long.</span>',
+            $output,
+        );
     }
 
     #[Test]
@@ -108,6 +144,15 @@ final class MformRendererCoverageTest extends TestCase
     public function implementsFormRendererInterface(): void
     {
         $this->assertInstanceOf(FormRendererInterface::class, new MformRenderer(new MformFieldMapper()));
+    }
+
+    private function renderState(FormState $state): string
+    {
+        $form = $this->createMock(FormInterface::class);
+        $form->method('schema')->willReturn([]);
+        $form->method('state')->willReturn($state);
+
+        return (new MformRenderer(new MformFieldMapper()))->render($form)->body;
     }
 
     private function fieldDefinition(FieldType $type, string $name, bool $required = false, array $options = []): FieldDefinition
