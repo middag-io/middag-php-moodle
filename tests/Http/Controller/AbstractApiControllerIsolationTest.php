@@ -42,8 +42,9 @@ final class AbstractApiControllerIsolationTest extends TestCase
         self::assertIsString($source);
 
         self::assertStringNotContainsString('use local_middag\\', $source, 'Adapter must not import plugin namespace.');
-        self::assertStringNotContainsString('local_middag\middag_metadata', $source, 'Plugin metadata constant must not appear.');
-        self::assertStringNotContainsString('local_middag\base\http\abstract_api_controller', $source, 'Plugin api_controller base must not appear.');
+        // Match the plugin classes in any sub-namespace, so a move inside the plugin does not empty the guard.
+        self::assertDoesNotMatchRegularExpression('/local_middag\\\(?:\w+\\\)*middag_metadata\b/', $source, 'Plugin metadata constant must not appear.');
+        self::assertDoesNotMatchRegularExpression('/local_middag\\\(?:\w+\\\)*abstract_api_controller\b/', $source, 'Plugin api_controller base must not appear.');
     }
 
     public function testSourceDeclaresAdapterNamespace(): void
