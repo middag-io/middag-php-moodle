@@ -99,7 +99,8 @@ final class NavbarService
      *
      * Organized as: Overview, quick actions (New Segment, New Connector),
      * separator, tools (System Status, Maintenance), separator, Settings.
-     * Docs/Support removed per NAVIGATION-SPEC.md — low operational value.
+     * Documentation and support links are intentionally left out of this menu:
+     * they carry little operational value for site administrators.
      *
      * URLs use PATH_INFO style (/local/middag/index.php/{route}) to match
      * the Symfony router.
