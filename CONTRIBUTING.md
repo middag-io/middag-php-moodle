@@ -35,7 +35,8 @@ host-provided; no private infrastructure is required.
   the released package.
 - **The platform is pinned to PHP 8.3** (`config.platform.php` `8.3.0`): a
   local install resolves the Symfony 7.4 line whatever PHP runs Composer. CI
-  removes the pin in its `highest` job to prove Symfony 8.x on PHP 8.4 and 8.5
+  removes the pin in its `highest` job to prove Symfony 8.x on PHP 8.4, 8.5
+  and 8.6
   ([Platform](https://docs.middag.dev/libraries/reference/platform)).
 - CI and external consumers resolve the `middag-io/*` packages from
   [Packagist](https://packagist.org/packages/middag-io/) — no private mirror and
