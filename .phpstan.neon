@@ -33,6 +33,17 @@ parameters:
         -
             identifier: parameter.defaultValue
             path: src/Settings/Type/Text.php
+        # XMLDB_INDEX_UNIQUE / XMLDB_INDEX_NOTUNIQUE are the booleans true and
+        # false (lib/xmldb/xmldb_constants.php), and xmldb_index::set_attributes()
+        # reads the type as `!empty($type)`. Moodle's own PHPDoc types the same
+        # argument as `string` on the xmldb_index constructor and as `int` on
+        # xmldb_table::add_index(), so no value satisfies both. Passing the
+        # constants is the documented call; the PHPDoc is wrong upstream.
+        # Stub-resolution false positive, scoped visible exemption.
+        -
+            message: "#^Parameter \\#2 \\$type of (class xmldb_index constructor expects string\\|null|method xmldb_table::add_index\\(\\) expects int), (bool|false) given\\.$#"
+            identifier: argument.type
+            path: src/Database/Schema/XmldbSchemaAdapter.php
         # Moodle signatures typed against the legacy global aliases (`context`,
         # `moodle_url`) reject the core\* types under PHPStan. Since stubs
         # v*.*.*.2 bimoo re-emits the runtime class_alias() calls as subclass

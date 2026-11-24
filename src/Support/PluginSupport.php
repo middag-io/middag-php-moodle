@@ -172,7 +172,7 @@ class PluginSupport
     /**
      * Retrieves all plugins as DTOs, grouped by type.
      *
-     * @return PluginDto grouped list of plugin DTOs
+     * @return array<string, list<PluginDto>> plugin DTOs grouped by plugin type
      */
     public function getAllPlugins(): array
     {

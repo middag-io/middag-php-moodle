@@ -25,14 +25,14 @@ use Middag\Moodle\Security\Contract\AuthorizerInterface;
  */
 class Authorizer implements AuthorizerInterface
 {
-    private readonly authentication $authentication;
+    private readonly Authentication $authentication;
 
-    private readonly capability $capability;
+    private readonly Capability $capability;
 
     public function __construct()
     {
-        $this->authentication = new authentication();
-        $this->capability = new capability();
+        $this->authentication = new Authentication();
+        $this->capability = new Capability();
     }
 
     public function requireLogin(?int $courseid = null, bool $autologinguest = true): void

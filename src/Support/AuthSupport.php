@@ -25,11 +25,11 @@ class AuthSupport
     /**
      * Ensures that the user is logged in.
      *
-     * @param mixed $courseorid     Course object or ID to check login for
-     * @param bool  $autologinguest Whether to automatically login guest users
-     * @param mixed $cm             Course module object or ID
-     * @param bool  $setocoinhibit  Whether to inhibit the setocoin
-     * @param bool  $displaymessage Whether to display a message
+     * @param mixed $courseorid      Course object or ID to check login for
+     * @param bool  $autologinguest  Whether to automatically login guest users
+     * @param mixed $cm              Course module object or ID
+     * @param bool  $setocoinhibit   Whether to store the current URL in $SESSION->wantsurl
+     * @param bool  $preventredirect Whether to throw an exception instead of redirecting to the login page
      *
      * @throws moodle_exception if user is not logged in
      */

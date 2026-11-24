@@ -119,6 +119,20 @@ final class GroupSupportCoverageTest extends TestCase
     }
 
     #[Test]
+    public function testGetGroupOptionsPutsNoneFirstAndKeepsNumericNamesAsIntKeys(): void
+    {
+        $this->db->recordsSql = [(object) ['name' => '2024'], (object) ['name' => 'G1']];
+
+        $options = GroupSupport::getGroupOptions();
+
+        self::assertSame(0, array_key_first($options));
+        self::assertSame('-- [/none] --', $options[0]);
+        self::assertArrayHasKey(2024, $options);
+        self::assertSame('2024', $options[2024]);
+        self::assertSame('G1', $options['G1']);
+    }
+
+    #[Test]
     public function testGetGroupOptionsWithContextFiltersByCourse(): void
     {
         $this->db->recordsSql = [(object) ['name' => 'G1']];

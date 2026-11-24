@@ -63,9 +63,12 @@ class GroupSupport
     /**
      * Retrieves options for group selection [name => name].
      *
+     * The first entry is the "none" option under key 0. PHP casts a numeric
+     * group name to an int key, so keys are not always strings.
+     *
      * @param null|context $coursecontext optional course context to filter groups
      *
-     * @return array<string, string> Map of group name to group name
+     * @return array<int|string, string> Map of group name to group name, plus the none option under key 0
      */
     public static function getGroupOptions(?context $coursecontext = null): array
     {
