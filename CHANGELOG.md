@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.24.1](https://github.com/middag-io/middag-php-moodle/compare/v1.24.0...v1.24.1) (2026-11-24)
+
+
+### Documentation
+
+* **output:** state the navbar docs/support omission inline ([4fa6131](https://github.com/middag-io/middag-php-moodle/commit/4fa6131d6946bc57f743cb9a4980ec30b4425a5d))
+
+### Consumer impact
+
+- None. Comment-only change in `NavbarService`; no `@api` change, no behavior change, no dependency range changed.
+
 ## [1.24.0](https://github.com/middag-io/middag-php-moodle/compare/v1.23.0...v1.24.0) (2026-11-23)
 
 
