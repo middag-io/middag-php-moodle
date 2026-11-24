@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.25.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.0...v1.25.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* build the transaction rollback exception with five arguments ([77df274](https://github.com/middag-io/middag-php-moodle/commit/77df274f04cdbdf49b7a28219c697337b29e8cf8))
+* clear the PHPStan baseline entries that flagged real code issues ([5d008bb](https://github.com/middag-io/middag-php-moodle/commit/5d008bbcc04422bb5fa05bf2fa0d4a42fbde274d))
+
 ## [1.25.0](https://github.com/middag-io/middag-php-moodle/compare/v1.24.1...v1.25.0) (2026-11-24)
 
 
