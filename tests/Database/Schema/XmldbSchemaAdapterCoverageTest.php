@@ -178,6 +178,24 @@ final class XmldbSchemaAdapterCoverageTest extends TestCase
     }
 
     #[Test]
+    public function addIndexPassesTheMoodleBooleanIndexType(): void
+    {
+        // XMLDB_INDEX_UNIQUE / XMLDB_INDEX_NOTUNIQUE are true / false in Moodle,
+        // whatever its PHPDoc says; xmldb_index reads the type as !empty($type).
+        $captured = [];
+        $this->dbman->expects($this->exactly(2))->method('add_index')
+            ->willReturnCallback(function ($table, $index) use (&$captured): void {
+                $captured[] = $index;
+            });
+
+        $this->adapter->addIndex('mdl_items', ['name' => 'uix', 'unique' => true, 'fields' => ['a']]);
+        $this->adapter->addIndex('mdl_items', ['name' => 'ix', 'fields' => ['b']]);
+
+        self::assertSame([true, ['a']], $captured[0]->ctor_args);
+        self::assertSame([false, ['b']], $captured[1]->ctor_args);
+    }
+
+    #[Test]
     public function addIndexWrapsFailures(): void
     {
         $this->dbman->method('add_index')->willThrowException(new RuntimeException('x'));

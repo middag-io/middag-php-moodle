@@ -44,7 +44,7 @@ class TransactionManager implements TransactionManagerInterface
             return $result;
         } catch (Throwable $throwable) {
             // Cast strictly to moodle_exception logic because moodle_transaction->rollback() fails on generic non-Exception Throwables
-            $cast_e = $throwable instanceof Exception ? $throwable : new moodle_exception('transactionerror', 'error', '', null, $throwable->getMessage(), $throwable);
+            $cast_e = $throwable instanceof Exception ? $throwable : new moodle_exception('transactionerror', 'error', '', null, $throwable->getMessage());
 
             try {
                 $transaction->rollback($cast_e);
@@ -71,7 +71,7 @@ class TransactionManager implements TransactionManagerInterface
 
             return $result;
         } catch (Throwable $throwable) {
-            $cast_e = $throwable instanceof Exception ? $throwable : new moodle_exception('transationalerror', 'error', '', null, $throwable->getMessage(), $throwable);
+            $cast_e = $throwable instanceof Exception ? $throwable : new moodle_exception('transationalerror', 'error', '', null, $throwable->getMessage());
 
             try {
                 // Moodle unconditionally forces this rollback call to throw!

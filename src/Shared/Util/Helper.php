@@ -42,7 +42,7 @@ class Helper
             $notification = new notification($message, $type, false);
             echo $output->render_from_template($notification->get_template_name(), $notification->export_for_template($output));
         } catch (Exception $exception) {
-            debug::traceException($exception);
+            Debug::traceException($exception);
         }
     }
 }

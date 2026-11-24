@@ -463,7 +463,8 @@ foreach ([
     'XMLDB_TYPE_INTEGER' => 1, 'XMLDB_TYPE_NUMBER' => 2, 'XMLDB_TYPE_FLOAT' => 3,
     'XMLDB_TYPE_CHAR' => 4, 'XMLDB_TYPE_TEXT' => 5, 'XMLDB_TYPE_BINARY' => 6,
     'XMLDB_KEY_PRIMARY' => 1, 'XMLDB_KEY_UNIQUE' => 2, 'XMLDB_KEY_FOREIGN' => 3,
-    'XMLDB_INDEX_UNIQUE' => 1, 'XMLDB_INDEX_NOTUNIQUE' => 0,
+    // Moodle defines the index types as booleans (lib/xmldb/xmldb_constants.php).
+    'XMLDB_INDEX_UNIQUE' => true, 'XMLDB_INDEX_NOTUNIQUE' => false,
     'XMLDB_NOTNULL' => 1, 'XMLDB_SEQUENCE' => 1,
 ] as $const => $value) {
     if (!defined($const)) {

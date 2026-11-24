@@ -1,30 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#2 \$type of class xmldb_index constructor expects string\|null, bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Database/Schema/XmldbSchemaAdapter.php
-
-		-
-			message: '#^Parameter \#2 \$type of class xmldb_index constructor expects string\|null, false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Database/Schema/XmldbSchemaAdapter.php
-
-		-
-			message: '#^Parameter \#2 \$type of method xmldb_table\:\:add_index\(\) expects int, bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Database/Schema/XmldbSchemaAdapter.php
-
-		-
-			message: '#^Class core\\exception\\moodle_exception constructor invoked with 6 parameters, 1\-5 required\.$#'
-			identifier: arguments.count
-			count: 2
-			path: src/Database/TransactionManager.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -283,18 +259,6 @@ parameters:
 			path: src/Runtime/Loader/MoodleHookfileLoader.php
 
 		-
-			message: '#^Class Middag\\Moodle\\Security\\Authentication referenced with incorrect case\: Middag\\Moodle\\Security\\authentication\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: src/Security/Authorizer.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Security\\Capability referenced with incorrect case\: Middag\\Moodle\\Security\\capability\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: src/Security/Authorizer.php
-
-		-
 			message: '#^Trait Middag\\Moodle\\Shared\\Concerns\\HasUrl is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1
@@ -305,18 +269,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
 			path: src/Shared/Util/Debug.php
-
-		-
-			message: '#^Class Middag\\Moodle\\Shared\\Util\\Debug referenced with incorrect case\: Middag\\Moodle\\Shared\\Util\\debug\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: src/Shared/Util/Helper.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$displaymessage$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/Support/AuthSupport.php
 
 		-
 			message: '#^Parameter \#1 \$context of function get_user_roles expects context, core\\context given\.$#'
@@ -389,12 +341,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: src/Support/CourseSupport.php
-
-		-
-			message: '#^Method Middag\\Moodle\\Support\\GroupSupport\:\:getGroupOptions\(\) should return array\<string, string\> but returns array\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Support/GroupSupport.php
 
 		-
 			message: '#^Instanceof between core_string_manager and core_string_manager will always evaluate to true\.$#'
@@ -501,12 +447,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with core\\plugininfo\\base and ''get_status'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Support/PluginSupport.php
-
-		-
-			message: '#^PHPDoc tag @return with type Middag\\Moodle\\Domain\\Platform\\PluginDto is incompatible with native type array\.$#'
-			identifier: return.phpDocType
 			count: 1
 			path: src/Support/PluginSupport.php
 

@@ -65,7 +65,7 @@ must remain consumable on its own.
 
 ### PHPStan baseline (accepted debt)
 
-`phpstan-baseline.neon` holds 99 entries. They are accepted debt: the number
+`phpstan-baseline.neon` holds 89 entries. They are accepted debt: the number
 may only go down, and new code adds no entry. Most come from analysing one
 code base against the stubs of every supported Moodle version:
 

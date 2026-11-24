@@ -16,6 +16,7 @@ use Error;
 use Middag\Framework\Database\Contract\TransactionManagerInterface;
 use Middag\Moodle\Database\TransactionManager;
 use moodle_database;
+use moodle_exception;
 use moodle_transaction;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -97,6 +98,28 @@ final class TransactionManagerCoverageTest extends TestCase
         $this->manager->executeAtomic(static function (): never {
             throw new Error('fatal-ish');
         });
+    }
+
+    #[Test]
+    public function atomicRollsBackWithAMoodleExceptionForANonExceptionThrowable(): void
+    {
+        // moodle_transaction::rollback() takes an Exception, so an Error is
+        // wrapped in a moodle_exception built with the arguments every
+        // supported Moodle version accepts. The original Error is rethrown.
+        $txn = new moodle_transaction();
+        $this->db->method('start_delegated_transaction')->willReturn($txn);
+        $error = new Error('fatal-ish');
+
+        try {
+            $this->manager->executeAtomic(static function () use ($error): never {
+                throw $error;
+            });
+            $this->fail('expected rethrow');
+        } catch (Error $caught) {
+            $this->assertSame($error, $caught);
+            $this->assertInstanceOf(moodle_exception::class, $txn->rolledback);
+            $this->assertSame('transactionerror', $txn->rolledback->getMessage());
+        }
     }
 
     #[Test]
