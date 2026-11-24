@@ -12,6 +12,10 @@
 
 * list the PHPStan ceiling script in the agent guide ([a546416](https://github.com/middag-io/middag-php-moodle/commit/a54641653af9af0b24ab3be20a3c6d3000e26c17))
 
+### Consumer impact
+
+- None; PHP 8.6 is now tested. The floor stays PHP 8.3 and no `@api` or dependency range changed.
+
 ## [1.24.1](https://github.com/middag-io/middag-php-moodle/compare/v1.24.0...v1.24.1) (2026-11-24)
 
 
