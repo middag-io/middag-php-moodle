@@ -101,10 +101,11 @@ final class TransactionManagerCoverageTest extends TestCase
     }
 
     #[Test]
-    public function atomicRollsBackWithAMoodleExceptionChainedToTheThrowable(): void
+    public function atomicRollsBackWithAMoodleExceptionForANonExceptionThrowable(): void
     {
-        // Moodle 5.3 added the $previous argument to moodle_exception; older
-        // versions ignore the extra argument.
+        // moodle_transaction::rollback() takes an Exception, so an Error is
+        // wrapped in a moodle_exception built with the arguments every
+        // supported Moodle version accepts. The original Error is rethrown.
         $txn = new moodle_transaction();
         $this->db->method('start_delegated_transaction')->willReturn($txn);
         $error = new Error('fatal-ish');
@@ -117,7 +118,7 @@ final class TransactionManagerCoverageTest extends TestCase
         } catch (Error $caught) {
             $this->assertSame($error, $caught);
             $this->assertInstanceOf(moodle_exception::class, $txn->rolledback);
-            $this->assertSame($error, $txn->rolledback->getPrevious());
+            $this->assertSame('transactionerror', $txn->rolledback->getMessage());
         }
     }
 
