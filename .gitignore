@@ -5,3 +5,4 @@ composer.lock
 .phpunit.no-host.cache/
 .cache/
 .idea/
+.claude/

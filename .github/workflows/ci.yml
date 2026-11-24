@@ -22,7 +22,8 @@ jobs:
   # (composer validate, strict PSR-4, PHPStan on the canonical stubs,
   # PHP-CS-Fixer, Rector and the check:lint parse lint) run on 8.3, the floor;
   # the audit and the tests (unit + no-host) on every version. The tool caches
-  # live in .cache.
+  # live in .cache. The 8.6 job also runs the PHPStan ceiling pass
+  # (.phpstan-ceiling.neon, phpVersion 80600) on top of the floor config.
   php-library-check:
     name: PHP library check (PHP ${{ matrix.php }})
     runs-on: ubuntu-24.04
@@ -32,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.3', '8.4', '8.5']
+        php: ['8.3', '8.4', '8.5', '8.6']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -46,9 +47,13 @@ jobs:
           tool-cache-paths: .cache
           audit-blocking-severities: critical, high
 
+      - name: PHPStan ceiling pass (phpVersion 80600)
+        if: matrix.php == '8.6'
+        run: composer check:stan:ceiling
+
   # Second run of the same component: removes the platform pin and resolves
   # the highest dependency versions on the PHP of each job, then runs the
-  # tests. Symfony 8.x needs PHP 8.4, so the job runs on 8.4 and 8.5 and
+  # tests. Symfony 8.x needs PHP 8.4, so the job runs on 8.4, 8.5 and 8.6 and
   # asserts that every Symfony component this adapter requires resolved to
   # 8.x. The static checks already run in the pinned job.
   php-library-check-highest:
@@ -60,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

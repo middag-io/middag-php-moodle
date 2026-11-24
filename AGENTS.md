@@ -195,6 +195,8 @@ stays as a `withdrawn` pointer. OSS records never cite proprietary record ids. `
 ## Composer scripts
 
 - `composer check` — `check:style` → `check:rector` → `check:stan`
+- `composer check:stan:ceiling` — PHPStan at `phpVersion: 80600` (PHP 8.6)
+  over the floor config (`.phpstan-ceiling.neon`); CI runs it on the 8.6 job
 - `composer fix` / `composer fix:all` — auto-fix style + rector (`fix:all`
   re-runs style after rector)
 - `composer test` / `composer test:cov` — PHPUnit (coverage via

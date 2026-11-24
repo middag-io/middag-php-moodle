@@ -33,7 +33,7 @@ role.
 
 | Item | Value |
 |------|-------|
-| PHP | `^8.3`: 8.3, 8.4 and 8.5, within the PHP versions the Moodle version supports; `ext-json` |
+| PHP | `^8.3`: 8.3 to 8.6, within the PHP versions the Moodle version supports; `ext-json` |
 | Symfony | `^7.4 \|\| ^8.1` for every Symfony component it requires (the contracts keep their own ranges) |
 | Sibling libraries | `middag-io/framework` `^1.24` and `middag-io/ui` `^1.14` |
 | Moodle | 4.5 (PHP 8.3), 5.1, 5.2 and 5.3 (PHP 8.4; PHP 8.3 expected, not installed in CI) |
@@ -121,8 +121,9 @@ development state and **not** a defect in the released package.
 
 The platform is pinned to PHP 8.3 (`config.platform.php` `8.3.0`), so a local
 install resolves the Symfony 7.4 line whatever PHP runs Composer. CI runs the
-checks and the tests on PHP 8.3, 8.4 and 8.5 with the pin, a `highest` job on
-8.4 and 8.5 without it that asserts the Symfony components resolve to 8.x, and
+checks and the tests on PHP 8.3, 8.4, 8.5 and 8.6 with the pin, a `highest`
+job on 8.4, 8.5 and 8.6 without it that asserts the Symfony components resolve
+to 8.x, a PHPStan ceiling pass at PHP 8.6 (`composer check:stan:ceiling`), and
 PHPStan against the Moodle stubs of 4.5, 5.0 (transition only), 5.1, 5.2 and 5.3
 ([Platform](https://docs.middag.dev/libraries/reference/platform)).
 

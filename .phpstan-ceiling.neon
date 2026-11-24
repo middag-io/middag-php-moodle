@@ -1,0 +1,9 @@
+# Ceiling pass: the same analysis as .phpstan.neon at the newest PHP version
+# that CI tests (8.6). The floor config keeps phpVersion 80300 (composer
+# require: php ^8.3); this one reports what PHP 8.6 deprecates or changes.
+# CI runs it on the PHP 8.6 job (composer check:stan:ceiling).
+includes:
+    - .phpstan.neon
+
+parameters:
+    phpVersion: 80600
