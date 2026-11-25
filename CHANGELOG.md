@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.0-rc.4](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.3...v2.0.0-rc.4) (2026-11-25)
+
+
+### Bug Fixes
+
+* **schema:** derrubar os índices que cobrem a coluna antes de derrubar a coluna ([c474c03](https://github.com/middag-io/middag-php-moodle/commit/c474c031abee05e738c8a43e7283c39cf5bdfa05))
+* **schema:** drop array_values calls PHPStan reads as no-ops ([69d15a4](https://github.com/middag-io/middag-php-moodle/commit/69d15a4b79ed9e78bb8a42d805c1659547df052f))
+* **schema:** drop the indexes covering a column before dropping the column ([fb252fc](https://github.com/middag-io/middag-php-moodle/commit/fb252fcac13ca592d3e4f782474f755032c870e5))
+
 ## [2.0.0-rc.3](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2026-11-25)
 
 
