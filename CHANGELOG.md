@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0-rc.2](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-11-25)
+
+
+### Bug Fixes
+
+* **user:** use the core user API to create and update users on Moodle 5.3+ ([c76b9aa](https://github.com/middag-io/middag-php-moodle/commit/c76b9aa3ff5c361024a147768917bac26040b04f))
+
+### Consumer impact
+
+- No `@api` change. `UserSupport::createUser()` and `UserSupport::updateUser()` keep their signatures, defaults and return values.
+- On Moodle 5.3+ user creation and update use the core user API, `\core\user::create_user()` and `\core\user::update_user()`, instead of the functions Moodle 5.3 deprecated (`user_create_user()`, `user_update_user()`, MDL-82650). Moodle 4.5 to 5.2 keep the legacy functions.
+- No dependency range change.
+- The version family is still frozen: until 2.0.0 only fixes land, released as `2.0.0-rc.N`.
+
 ## [2.0.0-rc.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.1...v2.0.0-rc.1) (2026-11-25)
 
 
