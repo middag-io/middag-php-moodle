@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0-rc.3](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2026-11-25)
+
+
+### Bug Fixes
+
+* compare autoload names case-insensitively and document every entry point ([aa910b9](https://github.com/middag-io/middag-php-moodle/commit/aa910b96f7537024d1d0b2a24a723a9fded35f70))
+* refuse a second MIDDAG product configuring ComponentContext ([acc5513](https://github.com/middag-io/middag-php-moodle/commit/acc551304e09009b510fd501df3a1acdc7053a76))
+
+
+### Documentation
+
+* keep site-wide hooks non-fatal when a second product configures the adapter ([b185252](https://github.com/middag-io/middag-php-moodle/commit/b185252e8077681ea72e1e55258f1b0de863cabc))
+
+### Consumer impact
+
+- `ComponentContext::configure()` keeps its signature; its behaviour changes. The first configuration of the process stays: the same component and autoload function again is a no-op (autoload names compare case-insensitively), while another component, or the same component with another autoload function, throws `MoodleConfigurationException`. A rejected call leaves the configured state untouched.
+- A Moodle site runs one plugin built on this adapter. Configure first in every entry point; code Moodle runs on every request (`lib.php`, site-wide hooks such as `after_config`) catches the exception, sets a local flag, logs one warning and skips the adapter (README, "One MIDDAG product per site").
+- Test suites that configure several components in one PHPUnit process call `ComponentContext::reset()` before each new component. `reset()` is for test isolation only.
+- No dependency range change.
+- The version family is still frozen: until 2.0.0 only fixes land, released as `2.0.0-rc.N`.
+
 ## [2.0.0-rc.2](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-11-25)
 
 
