@@ -7,6 +7,15 @@
 
 * cut the first 2.0 release candidate ([757c0ad](https://github.com/middag-io/middag-php-moodle/commit/757c0ad9bab1f2a3388b0bd5c3fb5f44ef331c94))
 
+### Consumer impact
+
+- No PHP API change since 1.25.1: `src/` is that of 1.25.1.
+- Requires `middag-io/framework` and `middag-io/ui` `^2.0.0-rc.1`. Neither candidate changes a PHP API or the wire since framework 1.25.1 and ui 1.15.0.
+- This is a release candidate. Composer installs it only when the root project allows the `rc` stability (for example `minimum-stability: dev` with `prefer-stable: true`) and the constraint names it, such as `^2.0.0-rc.1`. A root that does not allow prereleases stays on 1.x until 2.0.0.
+- 2.0.0 is the first supported release, and the cut from the unsupported 1.x line is clean: there is no deprecation cycle. A 1.x consumer applies the consumer impact entries of this changelog up to 1.25.1. The last breaking ones are 1.23.0 (the shared `errors` prop is `FormErrors`/`FormErrorBags`, field errors use the ui `FieldMessage` form) and 1.24.0 (`ThemeSupport::buildTheme()` removed).
+- Depend only on `@api` types, as `API-STABILITY.md` states, and require `middag-io/moodle` with `^2.0` once 2.0.0 is final.
+- From this candidate the version family is frozen: until 2.0.0 only fixes land, released as `2.0.0-rc.N`.
+
 ## [1.25.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.0...v1.25.1) (2026-11-24)
 
 
