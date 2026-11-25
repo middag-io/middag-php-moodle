@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-rc.2](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-11-25)
+
+
+### Bug Fixes
+
+* **user:** use the core user API to create and update users on Moodle 5.3+ ([c76b9aa](https://github.com/middag-io/middag-php-moodle/commit/c76b9aa3ff5c361024a147768917bac26040b04f))
+
 ## [2.0.0-rc.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.1...v2.0.0-rc.1) (2026-11-25)
 
 
