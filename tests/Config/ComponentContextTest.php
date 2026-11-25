@@ -116,6 +116,7 @@ final class ComponentContextTest extends TestCase
         ComponentContext::configure('local_acme');
         ComponentContext::configure('local_acme', 'local_acme_autoload');
         ComponentContext::configure('local_acme', '');
+        ComponentContext::configure('local_acme', 'LOCAL_ACME_AUTOLOAD');
 
         self::assertSame('local_acme', ComponentContext::name());
         self::assertSame('local_acme_autoload', ComponentContext::autoloadFunction());

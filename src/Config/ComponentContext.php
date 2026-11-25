@@ -32,23 +32,27 @@ use Middag\Moodle\Runtime\ContainerFactory;
  * Public surface: it is a documented composition-root seam, and the host glue
  * layered above this lib resolves the running component through {@see self::name()}.
  *
- * One MIDDAG product per site: this is a single process-wide slot, the same
- * single-host model as {@see HostContext}. Moodle
- * includes the {@code lib.php} of every plugin that declares a callback in use,
- * and cron runs the tasks of every plugin in one process, so two MIDDAG products
- * on one site would share this slot. The first {@see self::configure()} stays:
+ * One MIDDAG product per site: this is a single process-wide slot, a single-host
+ * model like {@see HostContext}, but here the first write wins and a different
+ * one throws (HostContext is last-write-wins). Moodle includes the
+ * {@code lib.php} of every plugin that declares a callback in use, and cron
+ * runs the tasks of every plugin in one process, so two MIDDAG products on one
+ * site would share this slot. The first {@see self::configure()} stays:
  * configuring the same component and autoload function again is a no-op, while
  * another component, or the same component with another autoload function,
  * throws instead of silently scoping capability checks, base URLs and
  * config/cache/lang access to the other product. A per-component registry may
  * replace this slot in a later minor without breaking the static API.
  *
- * Call {@see self::configure()} from the plugin's entry points (page, task, CLI
- * script, upgrade step) and let the exception surface there. A plugin's
- * {@code lib.php} is included on every page, so a fatal there breaks the whole
- * site: if {@code lib.php} configures the adapter, catch the exception, log a
- * warning and resolve nothing through the adapter in that request — the slot
- * belongs to the other product.
+ * Call {@see self::configure()} first in every entry point of the plugin (page,
+ * task, CLI script, upgrade step, event observer, hook callback, external
+ * function) and let the exception surface there: code that skips it runs with
+ * whatever component the process already holds. A plugin's {@code lib.php} is
+ * included on every page, so a fatal there breaks the whole site: if
+ * {@code lib.php} configures the adapter, catch the exception, set a local flag,
+ * log one warning and let the {@code lib.php} callbacks skip the adapter while
+ * the flag is set — the slot, and {@see self::isConfigured()}, belong to the
+ * other product.
  *
  * @api
  */
@@ -161,7 +165,8 @@ final class ComponentContext
     }
 
     /**
-     * Reset the configured state (test isolation / re-boot).
+     * Reset the configured state, for test isolation only. Production code never
+     * calls it: it would let another product take the slot.
      */
     public static function reset(): void
     {
@@ -189,7 +194,8 @@ final class ComponentContext
             ));
         }
 
-        if ($currentAutoload !== $autoloadFunction) {
+        // PHP function names are case-insensitive.
+        if (strcasecmp($currentAutoload, $autoloadFunction) !== 0) {
             throw new MoodleConfigurationException(sprintf(
                 'The Moodle adapter for %s is already configured in this process with the autoload function %s, '
                 . 'so it cannot switch to %s; the first configuration stays.',

@@ -23,8 +23,9 @@ role.
 ### One MIDDAG product per site
 
 The plugin's component lives in one process-wide slot
-(`Middag\Moodle\Config\ComponentContext`), the same single-host model as the
-framework's `Middag\Framework\Kernel\HostContext`. Moodle includes the `lib.php`
+(`Middag\Moodle\Config\ComponentContext`), a single-host model like the
+framework's `Middag\Framework\Kernel\HostContext`, except that here the first
+write wins and a different one throws. Moodle includes the `lib.php`
 of every plugin with a callback in use, and cron runs every plugin's tasks in
 one process, so a site runs **one plugin built on this adapter**.
 
@@ -33,11 +34,18 @@ one process, so a site runs **one plugin built on this adapter**.
 - Another component, or the same component with another autoload function,
   throws `MoodleConfigurationException` instead of silently scoping capability
   checks, base URLs and config, cache and string access to the other plugin.
-- Call `configure()` from your entry points (page, task, CLI script, upgrade
-  step) and let the exception surface there. `lib.php` is included on every
-  page, so a fatal there breaks the whole site: if your `lib.php` configures
-  the adapter, catch the exception, log a warning and resolve nothing through
-  the adapter in that request.
+- Call `configure()` first in every entry point (page, task, CLI script,
+  upgrade step, event observer, hook callback, external function) and let the
+  exception surface there. Code that skips it runs with whatever component the
+  process already holds.
+- `lib.php` is included on every page, so a fatal there breaks the whole site.
+  If your `lib.php` configures the adapter, catch the exception, set a local
+  flag, log one warning, and make your `lib.php` callbacks skip the adapter
+  while the flag is set. `isConfigured()` is true there: the slot belongs to
+  the other plugin.
+- In cron, the first plugin whose task runs holds the slot. The other plugin's
+  tasks then fail on every run and show the exception in the task logs.
+- `reset()` is for test isolation only; production code never calls it.
 
 A per-component registry may replace the single slot in a later minor without
 breaking the static API.
