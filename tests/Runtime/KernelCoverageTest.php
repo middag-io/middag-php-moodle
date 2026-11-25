@@ -508,6 +508,7 @@ final class KernelCoverageTest extends TestCase
     {
         // A component whose autoload function is NOT yet defined; its lib.php
         // defines that function so ensureAutoload() require_once's then calls it.
+        ComponentContext::reset();
         ComponentContext::configure('local_klautoloada', 'local_klautoloada_autoload');
         $GLOBALS['__middag_test_kl_autoloada'] = 0;
 
@@ -529,6 +530,7 @@ final class KernelCoverageTest extends TestCase
     {
         // No component directory registered => hostDirectory() throws; the catch
         // leaves consumer_lib null and boot() still completes.
+        ComponentContext::reset();
         ComponentContext::configure('local_klnodir', 'local_klnodir_autoload');
         unset($GLOBALS['__middag_test_component_dir']);
 
@@ -542,6 +544,7 @@ final class KernelCoverageTest extends TestCase
     public function ensureAutoloadSkipsWhenTheHostLibIsAbsent(): void
     {
         // Host directory resolves but contains no lib.php; require is skipped.
+        ComponentContext::reset();
         ComponentContext::configure('local_klnolib', 'local_klnolib_autoload');
         $GLOBALS['__middag_test_component_dir'] = $this->makeTempDir();
 
@@ -727,6 +730,7 @@ final class KernelCoverageTest extends TestCase
 
         // Restore the default composition-root component the bootstrap configures
         // (individual tests may reconfigure it to a scenario-specific component).
+        ComponentContext::reset();
         ComponentContext::configure('local_example', 'local_example_autoload');
     }
 }

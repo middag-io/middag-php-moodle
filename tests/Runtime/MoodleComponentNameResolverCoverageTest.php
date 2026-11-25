@@ -34,6 +34,7 @@ final class MoodleComponentNameResolverCoverageTest extends TestCase
     protected function setUp(): void
     {
         // The test bootstrap configures the component seam; re-assert for isolation.
+        ComponentContext::reset();
         ComponentContext::configure('local_example', 'local_example_autoload');
     }
 
@@ -41,6 +42,7 @@ final class MoodleComponentNameResolverCoverageTest extends TestCase
     {
         // Restore the bootstrap default so sibling suites relying on the seam
         // (and this class's own instantiation) are not affected by reconfigures.
+        ComponentContext::reset();
         ComponentContext::configure('local_example', 'local_example_autoload');
     }
 
@@ -66,6 +68,7 @@ final class MoodleComponentNameResolverCoverageTest extends TestCase
     {
         // Reconfigure the seam to a distinct component; the resolver must reflect
         // it, proving it reads ComponentContext::name() live on every call.
+        ComponentContext::reset();
         ComponentContext::configure('mod_widget', 'mod_widget_autoload');
 
         $resolver = new MoodleComponentNameResolver();

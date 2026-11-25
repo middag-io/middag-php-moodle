@@ -20,6 +20,28 @@ It binds the framework to a Moodle site. A Moodle plugin provides the
 composition root that wires it in; any `local_*` or `mod_*` plugin can play that
 role.
 
+### One MIDDAG product per site
+
+The plugin's component lives in one process-wide slot
+(`Middag\Moodle\Config\ComponentContext`), the same single-host model as the
+framework's `Middag\Framework\Kernel\HostContext`. Moodle includes the `lib.php`
+of every plugin with a callback in use, and cron runs every plugin's tasks in
+one process, so a site runs **one plugin built on this adapter**.
+
+- The first `ComponentContext::configure()` of the process stays. The same
+  component and autoload function again is a no-op.
+- Another component, or the same component with another autoload function,
+  throws `MoodleConfigurationException` instead of silently scoping capability
+  checks, base URLs and config, cache and string access to the other plugin.
+- Call `configure()` from your entry points (page, task, CLI script, upgrade
+  step) and let the exception surface there. `lib.php` is included on every
+  page, so a fatal there breaks the whole site: if your `lib.php` configures
+  the adapter, catch the exception, log a warning and resolve nothing through
+  the adapter in that request.
+
+A per-component registry may replace the single slot in a later minor without
+breaking the static API.
+
 ### What it does not include
 
 - No product features, business rules, or governed domain capabilities.
