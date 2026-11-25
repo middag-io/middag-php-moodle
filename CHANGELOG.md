@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-rc.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.1...v2.0.0-rc.1) (2026-11-25)
+
+
+### Miscellaneous
+
+* cut the first 2.0 release candidate ([757c0ad](https://github.com/middag-io/middag-php-moodle/commit/757c0ad9bab1f2a3388b0bd5c3fb5f44ef331c94))
+
 ## [1.25.1](https://github.com/middag-io/middag-php-moodle/compare/v1.25.0...v1.25.1) (2026-11-24)
 
 
