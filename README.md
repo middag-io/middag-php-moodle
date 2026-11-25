@@ -20,6 +20,36 @@ It binds the framework to a Moodle site. A Moodle plugin provides the
 composition root that wires it in; any `local_*` or `mod_*` plugin can play that
 role.
 
+### One MIDDAG product per site
+
+The plugin's component lives in one process-wide slot
+(`Middag\Moodle\Config\ComponentContext`), a single-host model like the
+framework's `Middag\Framework\Kernel\HostContext`, except that here the first
+write wins and a different one throws. Moodle includes the `lib.php`
+of every plugin with a callback in use, and cron runs every plugin's tasks in
+one process, so a site runs **one plugin built on this adapter**.
+
+- The first `ComponentContext::configure()` of the process stays. The same
+  component and autoload function again is a no-op.
+- Another component, or the same component with another autoload function,
+  throws `MoodleConfigurationException` instead of silently scoping capability
+  checks, base URLs and config, cache and string access to the other plugin.
+- Call `configure()` first in every entry point (page, task, CLI script,
+  upgrade step, web service function, event observer) and let the exception
+  surface there. Code that skips it runs with whatever component the process
+  already holds.
+- Code Moodle runs on every request is different: a fatal there breaks the
+  whole site. If `lib.php` or a site-wide hook callback such as `after_config`
+  configures the adapter, catch the exception, set a local flag, log one
+  warning, and make that code skip the adapter while the flag is set.
+  `isConfigured()` is true there: the slot belongs to the other plugin.
+- In cron, the first plugin whose task runs holds the slot. The other plugin's
+  tasks then fail on every run and show the exception in the task logs.
+- `reset()` is for test isolation only; production code never calls it.
+
+A per-component registry may replace the single slot in a later minor without
+breaking the static API.
+
 ### What it does not include
 
 - No product features, business rules, or governed domain capabilities.

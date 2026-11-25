@@ -108,6 +108,78 @@ final class ComponentContextTest extends TestCase
         self::assertSame('/mod/unidade', ComponentContext::baseUrlPath());
     }
 
+    public function testConfiguringTheSameComponentAgainIsANoOp(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_acme');
+
+        ComponentContext::configure('local_acme');
+        ComponentContext::configure('local_acme', 'local_acme_autoload');
+        ComponentContext::configure('local_acme', '');
+        ComponentContext::configure('local_acme', 'LOCAL_ACME_AUTOLOAD');
+
+        self::assertSame('local_acme', ComponentContext::name());
+        self::assertSame('local_acme_autoload', ComponentContext::autoloadFunction());
+    }
+
+    public function testConfiguringAnotherComponentThrowsAndKeepsTheFirst(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_acme');
+
+        try {
+            ComponentContext::configure('local_other');
+            self::fail('A second component must not configure the process.');
+        } catch (MoodleConfigurationException $moodleConfigurationException) {
+            self::assertStringContainsString('another MIDDAG product (local_acme)', $moodleConfigurationException->getMessage());
+            self::assertStringContainsString('one MIDDAG product per site', $moodleConfigurationException->getMessage());
+        }
+
+        self::assertSame('local_acme', ComponentContext::name());
+        self::assertSame('local_acme_autoload', ComponentContext::autoloadFunction());
+    }
+
+    public function testConfiguringTheSameComponentWithAnotherAutoloadFunctionThrows(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_acme');
+
+        try {
+            ComponentContext::configure('local_acme', 'other_autoload');
+            self::fail('The same component with another autoload function must not reconfigure the process.');
+        } catch (MoodleConfigurationException $moodleConfigurationException) {
+            self::assertStringContainsString('local_acme_autoload', $moodleConfigurationException->getMessage());
+        }
+
+        self::assertSame('local_acme_autoload', ComponentContext::autoloadFunction());
+    }
+
+    public function testEmptyComponentIsRejectedWithoutTouchingTheConfiguredOne(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_acme');
+
+        try {
+            ComponentContext::configure('');
+            self::fail('An empty component must be rejected.');
+        } catch (MoodleConfigurationException) {
+        }
+
+        self::assertSame('local_acme', ComponentContext::name());
+    }
+
+    public function testResetAllowsAnotherComponent(): void
+    {
+        ComponentContext::reset();
+        ComponentContext::configure('local_acme');
+
+        ComponentContext::reset();
+        ComponentContext::configure('local_other');
+
+        self::assertSame('local_other', ComponentContext::name());
+        self::assertSame('local_other_autoload', ComponentContext::autoloadFunction());
+    }
+
     public function testCapabilityComponentThrowsWhenUnconfigured(): void
     {
         ComponentContext::reset();
