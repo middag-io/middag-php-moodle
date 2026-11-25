@@ -491,7 +491,7 @@ if (!class_exists('xmldb_index', false)) {
 // Stub: database_manager — the DDL executor. Concrete stand-in so tests can mock
 // (createMock) the schema operations XmldbSchemaAdapter delegates to.
 if (!class_exists('database_manager', false)) {
-    eval('class database_manager { public function create_table($table) {} public function drop_table($table) {} public function add_field($table, $field) {} public function drop_field($table, $field) {} public function add_index($table, $index) {} public function drop_index($table, $index) {} public function table_exists($table) { return false; } public function field_exists($table, $field) { return false; } }');
+    eval('class database_manager { public function create_table($table) {} public function drop_table($table) {} public function add_field($table, $field) {} public function drop_field($table, $field) {} public function add_index($table, $index) {} public function drop_index($table, $index) {} public function table_exists($table) { return false; } public function field_exists($table, $field) { return false; } public function index_exists($table, $index) { return false; } }');
 }
 
 // Stub: admin_setting family. moodle-stubs declare these for PHPStan only. The

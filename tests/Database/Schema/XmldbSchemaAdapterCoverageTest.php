@@ -170,6 +170,42 @@ final class XmldbSchemaAdapterCoverageTest extends TestCase
     }
 
     #[Test]
+    public function dropColumnDropsTheIndexesCoveringItFirst(): void
+    {
+        // Moodle refuses to drop a column an index still points at; a <KEY
+        // TYPE="foreign"> is one of those indexes (middag-php-core#449).
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_indexes')->willReturn([
+            'mdl_midditem_con_ix' => ['unique' => false, 'columns' => ['contextid']],
+            'mdl_midditem_gui_uix' => ['unique' => true, 'columns' => ['guid']],
+        ]);
+
+        $adapter = new XmldbSchemaAdapter($this->dbman, $db);
+
+        $this->dbman->method('index_exists')->willReturn(true);
+        $this->dbman->expects($this->once())->method('drop_index');
+        $this->dbman->expects($this->once())->method('drop_field');
+
+        $adapter->dropColumn('mdl_middag_items', 'contextid');
+    }
+
+    #[Test]
+    public function dropColumnLeavesIndexesOverOtherColumnsAlone(): void
+    {
+        $db = $this->createMock(moodle_database::class);
+        $db->method('get_indexes')->willReturn([
+            'mdl_midditem_gui_uix' => ['unique' => true, 'columns' => ['guid']],
+        ]);
+
+        $adapter = new XmldbSchemaAdapter($this->dbman, $db);
+
+        $this->dbman->expects($this->never())->method('drop_index');
+        $this->dbman->expects($this->once())->method('drop_field');
+
+        $adapter->dropColumn('mdl_middag_items', 'contextid');
+    }
+
+    #[Test]
     public function addIndexDelegates(): void
     {
         $this->dbman->expects($this->once())->method('add_index');
