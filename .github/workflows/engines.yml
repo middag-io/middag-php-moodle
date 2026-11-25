@@ -62,15 +62,15 @@ jobs:
             moodle-tag: v5.3.1
             php: '8.4'
           - db: pgsql
-            image: postgres:17
+            image: public.ecr.aws/docker/library/postgres:17
             port: '5432'
             health-cmd: pg_isready -U moodle -d moodle
           - db: mysqli
-            image: mysql:8.4
+            image: public.ecr.aws/docker/library/mysql:8.4
             port: '3306'
             health-cmd: mysqladmin ping -h 127.0.0.1 -umoodle -pmoodle --silent
           - db: mariadb
-            image: mariadb:11.4
+            image: public.ecr.aws/docker/library/mariadb:11.4
             port: '3306'
             health-cmd: healthcheck.sh --connect --innodb_initialized
     services:
