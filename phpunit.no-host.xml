@@ -11,6 +11,8 @@
          colors="true"
          cacheDirectory=".phpunit.no-host.cache"
          executionOrder="depends,defects"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="true"
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
