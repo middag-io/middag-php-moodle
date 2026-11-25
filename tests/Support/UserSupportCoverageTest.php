@@ -23,7 +23,12 @@ use stdClass;
  * UserSupport wraps Moodle's user API. core\user::get_user() is a central
  * bootstrap stub, but get_user_by_email()/get_user_by_username() are not exposed
  * there, so those two wrappers are covered by skipped tests that auto-activate
- * once the central stub grows them. The create/update/delete/formatUserData
+ * once the central stub grows them. createUser/updateUser call the Moodle 5.3+
+ * core\user::create_user()/update_user() when they exist (the central stub has
+ * them) and the legacy user_create_user()/user_update_user() otherwise; the
+ * legacy branch is reached by making the namespaced method_exists() double
+ * (tests/stubs/support/method-exists.php) answer false for that probe, and each
+ * path records into its own global. The create/update/delete/formatUserData
  * paths require $CFG->dirroot to resolve their require_once() of user library
  * files, so a temp directory holding empty stand-ins is prepared in setUp.
  *
@@ -67,6 +72,9 @@ final class UserSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_profile_fields'],
             $GLOBALS['__middag_test_created_user'],
             $GLOBALS['__middag_test_updated_user'],
+            $GLOBALS['__middag_test_core_created_user'],
+            $GLOBALS['__middag_test_core_updated_user'],
+            $GLOBALS['__middag_test_method_exists'],
             $GLOBALS['__middag_test_new_user_id'],
             $GLOBALS['__middag_test_delete_result'],
             $GLOBALS['__middag_test_user_by_email'],
@@ -86,6 +94,9 @@ final class UserSupportCoverageTest extends TestCase
             $GLOBALS['__middag_test_profile_fields'],
             $GLOBALS['__middag_test_created_user'],
             $GLOBALS['__middag_test_updated_user'],
+            $GLOBALS['__middag_test_core_created_user'],
+            $GLOBALS['__middag_test_core_updated_user'],
+            $GLOBALS['__middag_test_method_exists'],
             $GLOBALS['__middag_test_new_user_id'],
             $GLOBALS['__middag_test_delete_result'],
             $GLOBALS['__middag_test_user_by_email'],
@@ -125,14 +136,14 @@ final class UserSupportCoverageTest extends TestCase
 
         self::assertSame(99, $id);
 
-        $created = $GLOBALS['__middag_test_created_user'][0];
+        $created = $GLOBALS['__middag_test_core_created_user'][0];
         self::assertSame('manual', $created->auth);
         self::assertSame(1, $created->confirmed);
         self::assertSame(1, $created->mnethostid);
-        self::assertFalse($GLOBALS['__middag_test_created_user'][1]);
-        // $triggerevent defaults to true and reaches user_create_user's 3rd arg,
+        self::assertFalse($GLOBALS['__middag_test_core_created_user'][1]);
+        // $triggerevent defaults to true and reaches core\user::create_user's 3rd arg,
         // so user_created fires by default (regression guard for the old $nologin mismap).
-        self::assertTrue($GLOBALS['__middag_test_created_user'][2]);
+        self::assertTrue($GLOBALS['__middag_test_core_created_user'][2]);
     }
 
     #[Test]
@@ -145,11 +156,11 @@ final class UserSupportCoverageTest extends TestCase
 
         UserSupport::createUser($userobj, true, true);
 
-        $created = $GLOBALS['__middag_test_created_user'][0];
+        $created = $GLOBALS['__middag_test_core_created_user'][0];
         self::assertSame('ldap', $created->auth);
         self::assertSame(0, $created->confirmed);
         self::assertSame(7, $created->mnethostid);
-        self::assertTrue($GLOBALS['__middag_test_created_user'][1]);
+        self::assertTrue($GLOBALS['__middag_test_core_created_user'][1]);
     }
 
     #[Test]
@@ -160,8 +171,60 @@ final class UserSupportCoverageTest extends TestCase
 
         UserSupport::updateUser($userobj, false, false);
 
-        self::assertSame($userobj, $GLOBALS['__middag_test_updated_user'][0]);
-        self::assertFalse($GLOBALS['__middag_test_updated_user'][1]);
+        self::assertSame($userobj, $GLOBALS['__middag_test_core_updated_user'][0]);
+        self::assertFalse($GLOBALS['__middag_test_core_updated_user'][1]);
+    }
+
+    #[Test]
+    public function testCreateUserUsesTheCoreUserApiWhenAvailable(): void
+    {
+        $GLOBALS['__middag_test_new_user_id'] = 42;
+        $userobj = (object) ['username' => 'jdoe', 'mnethostid' => 1];
+
+        $id = UserSupport::createUser($userobj, true, false);
+
+        self::assertSame(42, $id);
+        self::assertSame([$userobj, true, false], $GLOBALS['__middag_test_core_created_user']);
+        self::assertArrayNotHasKey('__middag_test_created_user', $GLOBALS);
+    }
+
+    #[Test]
+    public function testCreateUserFallsBackToUserCreateUserBeforeMoodle53(): void
+    {
+        $GLOBALS['__middag_test_method_exists']['core\user::create_user'] = false;
+        $GLOBALS['__middag_test_new_user_id'] = 43;
+        $userobj = (object) ['username' => 'jdoe', 'mnethostid' => 1];
+
+        $id = UserSupport::createUser($userobj, true, false);
+
+        self::assertSame(43, $id);
+        self::assertSame([$userobj, true, false], $GLOBALS['__middag_test_created_user']);
+        self::assertArrayNotHasKey('__middag_test_core_created_user', $GLOBALS);
+        self::assertSame('manual', $userobj->auth);
+        self::assertSame(1, $userobj->confirmed);
+    }
+
+    #[Test]
+    public function testUpdateUserUsesTheCoreUserApiWhenAvailable(): void
+    {
+        $userobj = (object) ['id' => 5];
+
+        UserSupport::updateUser($userobj, false, true);
+
+        self::assertSame([$userobj, false, true], $GLOBALS['__middag_test_core_updated_user']);
+        self::assertArrayNotHasKey('__middag_test_updated_user', $GLOBALS);
+    }
+
+    #[Test]
+    public function testUpdateUserFallsBackToUserUpdateUserBeforeMoodle53(): void
+    {
+        $GLOBALS['__middag_test_method_exists']['core\user::update_user'] = false;
+        $userobj = (object) ['id' => 5];
+
+        UserSupport::updateUser($userobj, false, true);
+
+        self::assertSame([$userobj, false, true], $GLOBALS['__middag_test_updated_user']);
+        self::assertArrayNotHasKey('__middag_test_core_updated_user', $GLOBALS);
     }
 
     #[Test]

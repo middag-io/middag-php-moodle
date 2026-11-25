@@ -90,3 +90,19 @@ parameters:
             message: "#::toMoodleSetting\\(\\) should return admin_setting but returns admin_setting_#"
             identifier: return.type
             path: src/Settings/Type/*.php
+        # UserSupport::createUser()/updateUser() call \core\user::create_user() /
+        # update_user() where the method exists (Moodle 5.3+, MDL-82650) and the
+        # legacy user_create_user() / user_update_user() otherwise (4.5 to 5.2).
+        # The literal method_exists() is what lets PHPStan accept the core call
+        # on the 4.5 to 5.2 stubs. On the 5.3 stubs the check folds to true, so
+        # PHPStan reports it as always true and flags the legacy branch, which
+        # 5.3 never runs, as deprecated. Version-branch false positive, scoped
+        # to these two calls; the older columns never match it.
+        -
+            message: "#^Call to function method_exists\\(\\) with 'core\\\\\\\\user' and '(create|update)_user' will always evaluate to true\\.$#"
+            identifier: function.alreadyNarrowedType
+            path: src/Support/UserSupport.php
+        -
+            message: "#^Call to deprecated function user_(create|update)_user\\(\\):#"
+            identifier: function.deprecated
+            path: src/Support/UserSupport.php
