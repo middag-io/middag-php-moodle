@@ -158,9 +158,12 @@ if (!function_exists('email_to_user')) {
 }
 
 // Stub: core\user::get_noreply_user() — deliverable pseudo-user template
-// (Moodle 4.5+ namespaced class; global core_user aliased for legacy callers)
+// (Moodle 4.5+ namespaced class; global core_user aliased for legacy callers).
+// create_user()/update_user() mirror the Moodle 5.3+ user API (MDL-82650) and
+// record into their own globals, apart from the legacy user_create_user() /
+// user_update_user() stubs, so a test can tell which path ran.
 if (!class_exists('core\user', false)) {
-    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } public static function get_user($userid, $fields = "*", $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_record"] ?? (object) ["id" => (int) $userid]; } public static function get_user_by_email($email, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_email"] ?? false; } public static function get_user_by_username($username, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_username"] ?? false; } }');
+    eval('namespace core; class user { public static function get_noreply_user(): \stdClass { $u = new \stdClass(); $u->id = -99; $u->email = "noreply@example.test"; $u->firstname = "No reply"; $u->lastname = ""; $u->maildisplay = 1; $u->emailstop = 0; $u->deleted = 0; $u->auth = "manual"; $u->mailformat = 1; return $u; } public static function get_user($userid, $fields = "*", $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_record"] ?? (object) ["id" => (int) $userid]; } public static function get_user_by_email($email, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_email"] ?? false; } public static function get_user_by_username($username, $fields = "*", $mnethostid = null, $strictness = \IGNORE_MISSING) { return $GLOBALS["__middag_test_user_by_username"] ?? false; } public static function create_user(\stdClass $user, bool $updatepassword = true, bool $triggerevent = true): int { $GLOBALS["__middag_test_core_created_user"] = [$user, $updatepassword, $triggerevent]; return $GLOBALS["__middag_test_new_user_id"] ?? 1; } public static function update_user(\stdClass $user, bool $updatepassword = true, bool $triggerevent = true): void { $GLOBALS["__middag_test_core_updated_user"] = [$user, $updatepassword, $triggerevent]; } }');
 }
 if (!class_exists('core_user', false)) {
     class_alias('core\user', 'core_user');

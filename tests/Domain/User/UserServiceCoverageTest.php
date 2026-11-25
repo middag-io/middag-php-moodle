@@ -59,8 +59,8 @@ final class UserServiceCoverageTest extends TestCase
         unset(
             $GLOBALS['__middag_test_user_record'],
             $GLOBALS['__middag_test_new_user_id'],
-            $GLOBALS['__middag_test_created_user'],
-            $GLOBALS['__middag_test_updated_user'],
+            $GLOBALS['__middag_test_core_created_user'],
+            $GLOBALS['__middag_test_core_updated_user'],
             $GLOBALS['__middag_test_delete_result'],
         );
     }
@@ -83,8 +83,8 @@ final class UserServiceCoverageTest extends TestCase
         }
 
         unset(
-            $GLOBALS['__middag_test_created_user'],
-            $GLOBALS['__middag_test_updated_user'],
+            $GLOBALS['__middag_test_core_created_user'],
+            $GLOBALS['__middag_test_core_updated_user'],
             $GLOBALS['__middag_test_delete_result'],
         );
     }
@@ -102,8 +102,8 @@ final class UserServiceCoverageTest extends TestCase
         $newId = $service->createUser($userobj, true, false);
 
         self::assertSame(77, $newId);
-        // The username survived delegation to Moodle's user_create_user stub.
-        self::assertSame('newbie', $GLOBALS['__middag_test_created_user'][0]->username);
+        // The username survived delegation to Moodle's core\user::create_user stub.
+        self::assertSame('newbie', $GLOBALS['__middag_test_core_created_user'][0]->username);
     }
 
     #[Test]
@@ -125,7 +125,7 @@ final class UserServiceCoverageTest extends TestCase
         $service = new UserService();
 
         self::assertTrue($service->updateUser($userobj, false, false));
-        self::assertSame(5, $GLOBALS['__middag_test_updated_user'][0]->id);
+        self::assertSame(5, $GLOBALS['__middag_test_core_updated_user'][0]->id);
     }
 
     #[Test]

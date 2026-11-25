@@ -77,6 +77,11 @@ class UserSupport
     /**
      * Creates a new Moodle user with sensible defaults.
      *
+     * Moodle 5.3 moved user creation to \core\user::create_user() and deprecated
+     * user_create_user() (MDL-82650). The core user API is used where it exists, and
+     * user_create_user() otherwise (Moodle 4.5 to 5.2). Both take the same arguments
+     * and return the new id.
+     *
      * @param stdClass $userobj        user data object
      * @param bool     $updatepassword whether to update the password
      * @param bool     $triggerevent   whether to trigger the user_created event
@@ -93,7 +98,9 @@ class UserSupport
 
         require_once $CFG->dirroot . '/user/lib.php';
 
-        $id = user_create_user($userobj, $updatepassword, $triggerevent);
+        $id = method_exists(core_user::class, 'create_user')
+            ? core_user::create_user($userobj, $updatepassword, $triggerevent)
+            : user_create_user($userobj, $updatepassword, $triggerevent);
 
         // `user_create_user()` writes the `user` table and silently ignores every
         // `profile_field_<shortname>` property on the object — those live in
@@ -108,6 +115,9 @@ class UserSupport
     /**
      * Updates an existing Moodle user.
      *
+     * Same version split as {@see self::createUser()}: \core\user::update_user() on
+     * Moodle 5.3+, user_update_user() on 4.5 to 5.2.
+     *
      * @param stdClass $userobj        user data object (must include 'id')
      * @param bool     $updatepassword whether to update the password
      * @param bool     $triggerevent   whether to trigger Moodle events
@@ -118,7 +128,11 @@ class UserSupport
 
         require_once $CFG->dirroot . '/user/lib.php';
 
-        user_update_user($userobj, $updatepassword, $triggerevent);
+        if (method_exists(core_user::class, 'update_user')) {
+            core_user::update_user($userobj, $updatepassword, $triggerevent);
+        } else {
+            user_update_user($userobj, $updatepassword, $triggerevent);
+        }
 
         // Same gap as on create: `user_update_user()` never touches `user_info_data`.
         self::saveProfileFields($userobj, (int) ($userobj->id ?? 0));
