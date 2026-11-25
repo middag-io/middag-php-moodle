@@ -134,6 +134,30 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
         try {
             $table = new xmldb_table($table_name);
             $field = new xmldb_field($column_name);
+
+            // An index still pointing at the column makes the drop impossible:
+            // Moodle answers "column X cannot be modified. Dependency found
+            // with index Y" and the migration dies mid-upgrade. The caller
+            // asked for the column to go, and an index over a column that no
+            // longer exists has nothing to describe, so the indexes covering it
+            // go first.
+            //
+            // Moodle implements <KEY TYPE="foreign"> and <KEY TYPE="unique"> as
+            // plain indexes, so this also covers a column declared as a key by
+            // the origin's install.xml — which is how a 5.0.0 site reached the
+            // scope-columns migration and stopped it (middag-php-core#449).
+            foreach ($this->indexesCovering($table_name, $column_name) as $name => $definition) {
+                $index = new xmldb_index(
+                    (string) $name,
+                    ($definition['unique'] ?? false) ? XMLDB_INDEX_UNIQUE : XMLDB_INDEX_NOTUNIQUE,
+                    $definition['columns'] ?? [],
+                );
+
+                if ($this->dbman->index_exists($table, $index)) {
+                    $this->dbman->drop_index($table, $index);
+                }
+            }
+
             $this->dbman->drop_field($table, $field);
         } catch (Throwable $throwable) {
             throw new MiddagPersistenceException(
@@ -225,6 +249,29 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
         }
 
         return false;
+    }
+
+    /**
+     * Live indexes of `$table_name` that include `$column_name`.
+     *
+     * Without a usable connection the answer is "none", which keeps the old
+     * behaviour: the drop is attempted and whatever the database says comes
+     * back as a MiddagPersistenceException.
+     *
+     * @return array<string, array{unique?: bool, columns?: list<string>}>
+     */
+    private function indexesCovering(string $table_name, string $column_name): array
+    {
+        try {
+            $indexes = $this->connection()->get_indexes($table_name);
+        } catch (Throwable) {
+            return [];
+        }
+
+        return array_filter(
+            $indexes,
+            static fn (array $definition): bool => in_array($column_name, $definition['columns'] ?? [], true),
+        );
     }
 
     private function connection(): moodle_database
