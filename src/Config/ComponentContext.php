@@ -45,14 +45,14 @@ use Middag\Moodle\Runtime\ContainerFactory;
  * replace this slot in a later minor without breaking the static API.
  *
  * Call {@see self::configure()} first in every entry point of the plugin (page,
- * task, CLI script, upgrade step, event observer, hook callback, external
- * function) and let the exception surface there: code that skips it runs with
- * whatever component the process already holds. A plugin's {@code lib.php} is
- * included on every page, so a fatal there breaks the whole site: if
- * {@code lib.php} configures the adapter, catch the exception, set a local flag,
- * log one warning and let the {@code lib.php} callbacks skip the adapter while
- * the flag is set — the slot, and {@see self::isConfigured()}, belong to the
- * other product.
+ * task, CLI script, upgrade step, web service function, event observer) and let
+ * the exception surface there: code that skips it runs with whatever component
+ * the process already holds. Code Moodle runs on every request is different: a
+ * fatal there breaks the whole site. If {@code lib.php} or a site-wide hook
+ * callback such as {@code after_config} configures the adapter, catch the
+ * exception, set a local flag, log one warning and let that code skip the
+ * adapter while the flag is set — the slot, and {@see self::isConfigured()},
+ * belong to the other product.
  *
  * @api
  */

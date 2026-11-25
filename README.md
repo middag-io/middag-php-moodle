@@ -35,14 +35,14 @@ one process, so a site runs **one plugin built on this adapter**.
   throws `MoodleConfigurationException` instead of silently scoping capability
   checks, base URLs and config, cache and string access to the other plugin.
 - Call `configure()` first in every entry point (page, task, CLI script,
-  upgrade step, event observer, hook callback, external function) and let the
-  exception surface there. Code that skips it runs with whatever component the
-  process already holds.
-- `lib.php` is included on every page, so a fatal there breaks the whole site.
-  If your `lib.php` configures the adapter, catch the exception, set a local
-  flag, log one warning, and make your `lib.php` callbacks skip the adapter
-  while the flag is set. `isConfigured()` is true there: the slot belongs to
-  the other plugin.
+  upgrade step, web service function, event observer) and let the exception
+  surface there. Code that skips it runs with whatever component the process
+  already holds.
+- Code Moodle runs on every request is different: a fatal there breaks the
+  whole site. If `lib.php` or a site-wide hook callback such as `after_config`
+  configures the adapter, catch the exception, set a local flag, log one
+  warning, and make that code skip the adapter while the flag is set.
+  `isConfigured()` is true there: the slot belongs to the other plugin.
 - In cron, the first plugin whose task runs holds the slot. The other plugin's
   tasks then fail on every run and show the exception in the task logs.
 - `reset()` is for test isolation only; production code never calls it.
