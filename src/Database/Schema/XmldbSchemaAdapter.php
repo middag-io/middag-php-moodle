@@ -150,7 +150,7 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
                 $index = new xmldb_index(
                     (string) $name,
                     ($definition['unique'] ?? false) ? XMLDB_INDEX_UNIQUE : XMLDB_INDEX_NOTUNIQUE,
-                    array_values($definition['columns'] ?? []),
+                    $definition['columns'] ?? [],
                 );
 
                 if ($this->dbman->index_exists($table, $index)) {
@@ -270,11 +270,7 @@ class XmldbSchemaAdapter implements SchemaBuilderAdapterInterface
 
         return array_filter(
             $indexes,
-            static fn (array $definition): bool => in_array(
-                $column_name,
-                array_values($definition['columns'] ?? []),
-                true,
-            ),
+            static fn (array $definition): bool => in_array($column_name, $definition['columns'] ?? [], true),
         );
     }
 
