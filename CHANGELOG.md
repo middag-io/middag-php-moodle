@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0-rc.3](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2026-11-25)
+
+
+### Bug Fixes
+
+* compare autoload names case-insensitively and document every entry point ([aa910b9](https://github.com/middag-io/middag-php-moodle/commit/aa910b96f7537024d1d0b2a24a723a9fded35f70))
+* refuse a second MIDDAG product configuring ComponentContext ([acc5513](https://github.com/middag-io/middag-php-moodle/commit/acc551304e09009b510fd501df3a1acdc7053a76))
+
+
+### Documentation
+
+* keep site-wide hooks non-fatal when a second product configures the adapter ([b185252](https://github.com/middag-io/middag-php-moodle/commit/b185252e8077681ea72e1e55258f1b0de863cabc))
+
 ## [2.0.0-rc.2](https://github.com/middag-io/middag-php-moodle/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-11-25)
 
 
